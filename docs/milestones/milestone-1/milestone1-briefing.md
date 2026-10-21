@@ -1,0 +1,38 @@
+From: Your Manager
+To: You
+Subject: Public website — first version
+
+Hi,
+
+As you know, we've decided to make the leap to digital. We need to launch our public website as soon as possible. Check the BRIEFING.md to understand exactly what our company does and what information we need to capture from interested people.
+
+The site should have two parts:
+
+1. Landing page — A presentation page with:
+
+    Header with clear navigation
+    Hero section explaining what we do and why they should choose us
+    Section highlighting our main features or key benefits (based on our industry experience)
+    Contact information or call to action
+    Professional footer
+
+2. Application/sign-up form — A separate page where people can:
+
+    Fill in their personal details
+    Provide the specific information we need (see BRIEFING.md)
+    Submit their application (you don't need to connect it to anything yet, just validate the data)
+
+Technical requirements you must meet:
+
+    Responsive: must look good on mobile, tablet, and desktop
+    Accessible: use semantic HTML, ARIA tags when needed, and alt attributes on images
+    SEO optimized: implement Schema.org to mark up company information
+    Full form validation with JavaScript — all fields must be validated before "submitting"
+    Clear error messages when something isn't correct
+
+Use Tailwind CSS for all design. I don't want to see custom hand-written CSS unless it's absolutely necessary.
+
+Make it professional. This is our digital debut and we want to make a good impression.
+
+Best,
+Your Manager
