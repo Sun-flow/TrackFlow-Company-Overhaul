@@ -17,6 +17,7 @@
 Format: `- what — branch, PR, environment (started date)`. Remove the line when it merges or is dropped.
 
 - WP1 site scaffold, done and waiting to merge — `claude/project-thread-wpdzyz`, PR #7, Claude Code cloud (2026-10-22)
+- WP3 form markup, done and waiting to merge (needs WP4's form script to stop a 404 in site-check) — `claude/project-thread-t2p6d4`, PR pending, Claude Code cloud (2026-10-22)
 
 ## Next
 

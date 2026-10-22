@@ -3,6 +3,12 @@
 > **Last updated**: 2026-10-22
 > Newest first. One entry per session: date, where it ran, what changed (link the PR or commit), what was left open. Keep about 15 entries. When there are more, move the oldest to `docs/archive/memory-bank-log.md` (create it the first time). Entries before this file existed were rebuilt from git history.
 
+### 2026-10-22 · WP3 form markup (Claude Code, cloud)
+- Filled the `<main>` of `uis/website/request-information.html` per the plan's form contract: 12 fields with labels and hints, hidden error elements tied by `aria-describedby`, fieldsets for the checkbox and radio groups, error summary, comments counter, hidden success message with the brief's exact text, `#volume-dialog` (D3), privacy link to `uis/website/privacy.html` in a new tab (D4), `novalidate`, a deferred script tag for WP4's form.js. Rebuilt `uis/website/dist/styles.css`. Branch `claude/project-thread-t2p6d4`.
+- Agreed the loose parts of the contract with the WP4 thread (summary heading plus empty `<ul>`, error elements start `hidden`, plain non-module script tag); the result is in the PR description.
+- Checks: `scripts/site-check.py` is clean with a stand-in form script (without it, the only failure is the 404 for that file until WP4 merges); axe also clean with every error, the summary, the success message and the dialog revealed; keyboard walk through every field.
+- Open: merging; WP5 checks the form end to end with WP4.
+
 ### 2026-10-22 · WP1 site scaffold (Claude Code, cloud)
 - Built `uis/website/`: pnpm package with Tailwind CLI 4.3.3, `uis/website/src/input.css` tokens, committed `uis/website/dist/styles.css`, three pages (`uis/website/index.html` with the brief's JSON-LD, `uis/website/request-information.html`, placeholder `uis/website/privacy.html` with `noindex`) sharing head, skip link, header, mobile menu (`uis/website/js/nav.js`) and footer; logo, favicon, self-hosted font; website README. Logged D1 and D2 in `docs/decisions.md`; removed `uis/website/` from `PLANNED_PATHS` in `scripts/check-memory.py`. Branch `claude/project-thread-wpdzyz`, PR #7.
 - D1: mae picked option B (deep teal and coral, Plus Jakarta Sans) from three screenshot previews (kept in the project's shared files under design/palette-options, outside the repo).
