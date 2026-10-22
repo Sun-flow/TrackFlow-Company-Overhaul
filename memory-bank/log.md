@@ -9,6 +9,12 @@
 - A9: after weighing the codes' benefits (stable through rewording and translation, tidy ids), mae approved renaming field names and option values to the brief's wording (`companyName`, `mainOperatingCountry` = `United States`, ...); form contract in the plan and `docs/decisions.md` updated, tests moved to the new values plus cases rejecting the old codes (481 pass). Checkbox and radio ids keep short slugs.
 - Open: merging after PR #15; the second to merge reruns `pnpm build`.
 
+### 2026-10-22 · Run the site with npx (Claude Code, cloud)
+- Milestone 1 review, audit items A1 and A10: documented `npx --yes http-server uis/website -p 3000 -c-1` in the root `README.md` ("Run the website"), `uis/website/README.md` ("Run locally", with the steps to make Codespaces port 3000 Public) and `memory-bank/context.md`; labelled port 3000 "Website" in `.devcontainer/devcontainer.json`. The website README now names the form page application.html, ahead of the parallel thread that renames it. Branch `claude/project-thread-jhublb`.
+- `memory-bank/context.md`, "Repo facts": the default branch is now `production`. The default-branch entry in `docs/FUTURE_WORK.md` is out of date; not changed here.
+- Checks: the command served every page, CSS, script and asset with 200 and `no-cache` headers; pages loaded in Chromium through it.
+- Open: mae sets port 3000 to Public in Codespaces for the external audit (steps in `uis/website/README.md`).
+
 ### 2026-10-22 · Milestone 1 close-out (Claude Code, cloud)
 - Plan progress table: WP5 (PR #13) and the validation edge-case follow-up (PR #12) marked merged; the follow-up is placed under WP4 and WP5, not as its own package. `memory-bank/status.md`: PR #12 moved from "In progress" to "Works". Branch `claude/project-thread-knpic0`, PR #14.
 - Open: mae's review of Milestone 1 as a whole.
@@ -73,6 +79,3 @@
 ### 2026-10-21 · Memory bank and agent rules (Claude Code, cloud)
 - Ported from mae's `Sun-flow/tailwind-dashboard`, keeping only what generalises (mae approved each item): the memory bank prompt and check script, the `AGENTS.md` / `CLAUDE.md` / Copilot entry points, semantic HTML and accessibility rules, new core rules with a stay-in-the-milestone rule, the decision log format (`docs/decisions.md`), and `scripts/site-check.py` adapted from the old screenshot script with an axe-core scan added. Branch `claude/project-thread-nul6yt`, PR #3.
 - Open: nothing. (`docs/FUTURE_WORK.md` came in with PR #2.)
-
-### 2026-10-21 · Future work list (Claude Code, cloud)
-- Added `docs/FUTURE_WORK.md` with the ideas and housekeeping items collected so far. PR #2.

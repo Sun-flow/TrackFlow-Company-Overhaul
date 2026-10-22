@@ -37,4 +37,22 @@ pnpm test          # run the validation tests (Node's built-in test runner)
 
 From the repo root, `python3 scripts/site-check.py` screenshots every page at four widths and fails on console errors, horizontal scroll or axe-core violations. Also tab through each page by keyboard.
 
-Open the pages through a local server (the site check starts its own), or straight from the file system.
+## Run locally
+
+From the repo root, with nothing to install first (works the same in Codespaces):
+
+```bash
+npx --yes http-server uis/website -p 3000 -c-1
+```
+
+Then open <http://localhost:3000>. `--yes` skips npx's install prompt and `-c-1` turns caching off, so a reload always shows the latest files. Stop it with Ctrl+C. The pages also open straight from the file system, and the site check starts its own server.
+
+In Codespaces, port 3000 is forwarded automatically and labelled "Website" in the Ports tab. It is private by default (only you, signed in to GitHub, can open it). To let someone else, or an external checker, open the site, make the port public:
+
+1. Start the server with the command above and leave the terminal running.
+2. Open the **Ports** tab in the bottom panel, next to Terminal (or run "Ports: Focus on Ports View" from the Command Palette).
+3. Right-click the row for port 3000 (labelled "Website") and choose **Port Visibility → Public**.
+4. Copy the **Forwarded Address** (it looks like `https://<codespace-name>-3000.app.github.dev`) and share that link.
+5. Check it in a private browser window: the site should load without a GitHub sign-in page.
+
+The link works only while the codespace is running and the server is up; a codespace stops after a period of inactivity (30 minutes by default). After a restart, start the server again and check the port is still Public. If Public isn't offered, an organization policy is blocking public ports. Set it back to Private when the review is done.
