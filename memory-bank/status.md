@@ -12,6 +12,8 @@
 - Tooling: `scripts/check-memory.py` (memory drift) and `scripts/site-check.py` (screenshots, console errors, horizontal scroll, axe-core).
 - Website scaffold (WP1, waiting to merge): `uis/website/` builds with `pnpm build`; `uis/website/index.html`, `uis/website/request-information.html` and `uis/website/privacy.html` (placeholder) share head, header, mobile menu and footer, with empty `<main>`s for WP2 and WP3; all pass `scripts/site-check.py` and keyboard checks. Look: teal and coral, Plus Jakarta Sans (`docs/decisions.md`).
 
+- Form validation (WP4, waiting to merge): `uis/website/js/validation.js` (pure rules, brief's messages), `uis/website/js/form.js` (contract wiring, D3 dialog), `pnpm test` (96 `node:test` cases). Checked end to end against WP3's branch.
+
 ## In progress
 
 Format: `- what — branch, PR, environment (started date)`. Remove the line when it merges or is dropped.
@@ -30,4 +32,5 @@ Format: `- what — branch, PR, environment (started date)`. Remove the line whe
 
 - `CONTEXT.md` gives two different CEO names; logged in `docs/FUTURE_WORK.md`, not fixed.
 - `docs/milestones/milestone-1/trackflow-BRIEFING.en.md` links to a Spanish brief that was never provided; logged in `docs/FUTURE_WORK.md`.
+- Opening a page from the file system logs two console errors: the font preload in every page's `<head>` is blocked by CORS there. Harmless over HTTP; flagged for WP5 in the WP4 PR.
 - A stale `main` branch on GitHub sits at the initial commit; see `memory-bank/context.md`, "Repo facts".

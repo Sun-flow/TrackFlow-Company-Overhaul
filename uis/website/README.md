@@ -19,6 +19,9 @@ Every page repeats the same `<head>` (apart from title, description and canonica
 | `src/input.css` | Tailwind entry: the `@theme` tokens (colours `brand-*` and `accent-*`, font `sans`) and the self-hosted font. Only hand-written CSS that Tailwind can't express goes here. |
 | `dist/styles.css` | Compiled, minified CSS. Committed so the site opens straight from the repo; rebuild and commit it with every class change. |
 | `js/nav.js` | Mobile menu toggle (`aria-expanded`, Escape closes it and returns focus). |
+| `js/validation.js` | The form's rules as pure functions with the brief's exact messages; no DOM. A classic script (`window.TrackFlowValidation` in the browser, `require()` in tests), so the form works from the file system. |
+| `js/form.js` | Wires the rules to `request-information.html` through the form contract in `docs/milestones/milestone-1/plan.md`; loads `js/validation.js` itself. |
+| `tests/` | `node:test` tests for `js/validation.js`. |
 | `assets/` | Logo mark, favicon and `fonts/` (Plus Jakarta Sans, latin subset, SIL Open Font License in `fonts/OFL.txt`). |
 
 ## Build and check
@@ -29,6 +32,7 @@ Run from this folder (Node 22 and pnpm via corepack):
 pnpm install       # once
 pnpm build         # compile src/input.css to dist/styles.css
 pnpm dev           # rebuild on every change
+pnpm test          # run the validation tests (Node's built-in test runner)
 ```
 
 From the repo root, `python3 scripts/site-check.py` screenshots every page at four widths and fails on console errors, horizontal scroll or axe-core violations. Also tab through each page by keyboard.

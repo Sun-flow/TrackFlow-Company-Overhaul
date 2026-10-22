@@ -3,6 +3,12 @@
 > **Last updated**: 2026-10-22
 > Newest first. One entry per session: date, where it ran, what changed (link the PR or commit), what was left open. Keep about 15 entries. When there are more, move the oldest to `docs/archive/memory-bank-log.md` (create it the first time). Entries before this file existed were rebuilt from git history.
 
+### 2026-10-22 · WP4 form validation (Claude Code, cloud)
+- Added `uis/website/js/validation.js` (one pure function per brief rule, exact messages, `validateForm`, `needsVolumeConfirmation`), `uis/website/js/form.js` (wiring per the form contract: submit then blur/change validation, error summary with focus, comments counter, D3 dialog, simulated success), `uis/website/tests/validation.test.js` and a `test` script. Branch `claude/project-thread-m7zya3`.
+- `uis/website/js/validation.js` is a classic script that the form script loads itself, so the form works from the file system and tests can `require()` it. Agreed the markup details with WP3 (branch `claude/project-thread-t2p6d4`).
+- Checks: `pnpm test` (96 pass); a Playwright walk-through of every rule, the summary, the dialog (Confirm, Nevermind, Escape) and success, on WP3's markup over HTTP and the file system; `scripts/site-check.py` clean.
+- Open: merging; WP5 to fix the font-preload console errors seen when pages open from the file system (shared `<head>`).
+
 ### 2026-10-22 · WP1 site scaffold (Claude Code, cloud)
 - Built `uis/website/`: pnpm package with Tailwind CLI 4.3.3, `uis/website/src/input.css` tokens, committed `uis/website/dist/styles.css`, three pages (`uis/website/index.html` with the brief's JSON-LD, `uis/website/request-information.html`, placeholder `uis/website/privacy.html` with `noindex`) sharing head, skip link, header, mobile menu (`uis/website/js/nav.js`) and footer; logo, favicon, self-hosted font; website README. Logged D1 and D2 in `docs/decisions.md`; removed `uis/website/` from `PLANNED_PATHS` in `scripts/check-memory.py`. Branch `claude/project-thread-wpdzyz`, PR #7.
 - D1: mae picked option B (deep teal and coral, Plus Jakarta Sans) from three screenshot previews (kept in the project's shared files under design/palette-options, outside the repo).
