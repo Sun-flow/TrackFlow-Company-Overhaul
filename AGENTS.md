@@ -4,7 +4,7 @@
 
 ## Project: TrackFlow Company Overhaul
 
-A monorepo for rebuilding the business infrastructure of TrackFlow, a last-mile delivery and warehouse company (see `CONTEXT.md`). The work is split into milestones, one at a time; each milestone's brief lives in `docs/milestones/`.
+A monorepo for rebuilding the business infrastructure of TrackFlow, a last-mile delivery and warehouse company (see `CONTEXT.md`). The work is split into milestones, one at a time; each milestone's folder in `docs/milestones/` holds its brief and its plan.
 
 Two folders with similar names do different jobs: `agents/` holds the AI agents the company's products use, while `.agents/` holds the prompt and rules for coding agents working on this repo.
 
@@ -27,7 +27,7 @@ The root `README.md` describes every top-level folder, and each folder has its o
 | Path | Purpose |
 |---|---|
 | `CONTEXT.md` | The company: departments, people, problems. |
-| `docs/milestones/` | One folder per milestone with its brief. |
+| `docs/milestones/` | One folder per milestone with its briefs and its plan (a plan.md in the milestone's folder; see `docs/milestones/README.md`). |
 | `docs/decisions.md` | Decisions with lasting consequences, and why. |
 | `docs/FUTURE_WORK.md` | Ideas parked for later milestones. |
 | `uis/website/` | Milestone 1: the public website (static HTML + Tailwind CSS). |

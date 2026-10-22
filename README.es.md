@@ -51,9 +51,10 @@ Estás construyendo **una sola empresa** a lo largo de muchos hitos y proyectos.
 
 ## Estado actual de la plantilla
 
-> 💡 Actualmente el repositorio ofrece solo una **estructura base de carpetas y documentación**. Todavía no incluye aplicaciones ejecutables ni scripts globales en la raíz.
+> 💡 El repositorio partió de la **estructura base de carpetas y documentación** del curso. Todavía no incluye aplicaciones ejecutables; el Hito 1 añade el sitio web público en `uis/website/`.
 >
-> - `CONTEXT.md` es un placeholder y debe sustituirse por el contexto de la empresa asignada.
+> - `CONTEXT.md` contiene el briefing de la empresa TrackFlow (solo en inglés).
+> - `scripts/` tiene dos scripts auxiliares globales, `check-memory.py` y `site-check.py` (ver [`scripts/README.es.md`](./scripts/README.es.md)).
 > - El `AGENTS.md` de la raíz es el punto de entrada para los agentes de código; lleva a `memory-bank/` (memoria de los agentes) y a `.agents/rules/`.
 > - Existe metadata del paquete compartido en `packages/shared/package.json` (`@repo/shared-types`), pero aún no hay runner de workspace en raíz.
 
@@ -70,6 +71,8 @@ Lee el `README.md` enlazado dentro de cada carpeta antes de empezar a programar 
 | [`CONTEXT.md`](./CONTEXT.md) | Fuente única de verdad de tu empresa (Brasaland, TrackFlow o Nexova) | **Primer paso:** copia aquí el briefing de tu empresa para que apps, agentes y prompts usen el mismo dominio |
 | `docker-compose.yml`         | Orquestación local de todo el stack                                  | Mantener en la raíz del repo — conecta `services/`, bases de datos y otros contenedores desde un solo lugar  |
 | `README.md` / `README.es.md` | Esta guía                                                            | Orientación — estás aquí                                                                                     |
+| [`AGENTS.md`](./AGENTS.md)   | Punto de entrada para los agentes de código                          | Los agentes lo leen primero; `CLAUDE.md` y `.github/copilot-instructions.md` apuntan a él                    |
+| [`company-choice.md`](./company-choice.md) | Por qué se eligió TrackFlow y la primera idea de agente | Lectura de contexto                                                                                          |
 
 ### `uis/` — interfaces de usuario
 
@@ -198,6 +201,8 @@ Lee el `README.md` enlazado dentro de cada carpeta antes de empezar a programar 
 
 - Diagramas de arquitectura, ADRs, guías de seguridad/observabilidad
 - Convenciones no atadas a una sola app o agente
+- Briefings y planes de cada hito: una carpeta por hito en `docs/milestones/`, con sus briefings y su `plan.md`
+- El registro de decisiones (`docs/decisions.md`) y las ideas aparcadas para hitos futuros (`docs/FUTURE_WORK.md`)
 
 → Ver [`docs/README.md`](./docs/README.md)
 
@@ -236,6 +241,15 @@ Lee el `README.md` enlazado dentro de cada carpeta antes de empezar a programar 
 - Tools con su propio `package.json`, tests y pasos de instalación
 
 → Ver [`internal/README.md`](./internal/README.md)
+
+### Carpetas de agentes y herramientas
+
+| Ruta | Qué hay aquí |
+| ---- | ------------ |
+| [`memory-bank/`](./memory-bank/README.md) | Memoria de trabajo de los agentes de código: estado, registro de sesiones, notas. Se lee a través de `AGENTS.md`. |
+| `.agents/` | El prompt del memory bank (`prompts/`) y las reglas que siguen los agentes de código (`rules/`). No confundir con `agents/`, que guarda los agentes de IA de la empresa. |
+| `.devcontainer/` | El dev container de Codespaces: Python 3.12, Node 22 con pnpm. |
+| `.github/` | Configuración de GitHub, incluido el puntero de Copilot a `AGENTS.md`. |
 
 ---
 

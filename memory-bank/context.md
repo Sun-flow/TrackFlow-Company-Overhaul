@@ -4,7 +4,7 @@
 
 ## What this is
 
-A long-running, milestone-based project to rebuild the business infrastructure of TrackFlow, a fictional last-mile delivery and warehouse company operating in the US and Spain (`CONTEXT.md`). It is mae's project for the 4Geeks Academy AI Engineering course; the repo started from the course's monorepo template, so most top-level folders hold only a `README.md` (and a Spanish twin, such as `README.es.md`) describing what goes there.
+A long-running, milestone-based project to rebuild the business infrastructure of TrackFlow, a fictional last-mile delivery and warehouse company operating in the US and Spain (`CONTEXT.md`). It is mae's project for the 4Geeks Academy AI Engineering course; the repo started from the course's monorepo template, so most top-level folders hold only a `README.md` (and a Spanish twin, such as `README.es.md`) describing what goes there. `CONTEXT.md` is English only; mae removed the template's Spanish placeholder.
 
 Work goes one milestone at a time. Each milestone has a folder with its brief under `docs/milestones/`. Ideas for later milestones are parked in `docs/FUTURE_WORK.md`, not built.
 
@@ -28,6 +28,7 @@ In Claude Code cloud sessions Chromium is preinstalled: skip the install step an
 ## Repo facts
 
 - The default branch is `codespace-curly-engine-pj5ggg9qgqjf645j`, not `main`; pull requests target it. (`docs/FUTURE_WORK.md` has an entry about changing this.)
+- A `main` branch also exists on GitHub, but it is stuck at the initial commit (`f540c71`) and has none of the agent docs. Don't branch from it or target it.
 
 ## Where facts live
 

@@ -1,5 +1,7 @@
 # Semantic HTML
 
+> **Last updated**: 2026-10-22
+
 - Use semantic elements: `<header>`, `<nav>`, `<main>`, `<section>`, `<article>`, `<aside>`, `<footer>` over generic `<div>`/`<span>`.
 - Use `<h1>`–`<h6>` for headings in logical hierarchy (one `<h1>` per page).
 - Use `<ul>` / `<ol>` for lists, `<button>` for actions, `<a>` for navigation links.
