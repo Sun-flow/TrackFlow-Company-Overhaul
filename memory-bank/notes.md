@@ -13,4 +13,5 @@
 
 - The website has no templating: header, footer and `<head>` are copied in each page in `uis/website/`, so change all of them together.
 - Tailwind 4 preflight hides any element with the `hidden` attribute, even one with a display class; the mobile menu and the form's hidden regions rely on that.
+- In Claude Code cloud sessions `corepack pnpm` fails (missing cached pnpm); the plain `pnpm` on the PATH works.
 - Tailwind 4 preflight sets `margin: 0` on everything, so a modal `<dialog>` needs `m-auto` to sit in the centre.
