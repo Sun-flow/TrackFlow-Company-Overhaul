@@ -15,22 +15,22 @@
 - Form markup (WP3, PR #10): `uis/website/request-information.html` has the 12-field form, error summary, low-volume dialog and success message per the plan's form contract.
 - Form validation (WP4, PR #11): `uis/website/js/validation.js` (pure rules, brief's messages), `uis/website/js/form.js` (contract wiring, D3 dialog), `pnpm test` (96 `node:test` cases). Checked end to end against the merged form markup.
 - Integration and QA (WP5, branch `claude/project-thread-6goo5h`, PR #13): every acceptance item in `docs/milestones/milestone-1/plan.md` is ticked with how it was checked. WP5 removed the font preload (no console errors from the file system now; `docs/decisions.md`), stopped the contact email splitting mid-word, and, after mae's preview review, raised the landing-page card text a step and centred the bullets on the first line.
+- Validation edge cases and stricter rules (follow-up to WP4 and WP5, PR #12): `uis/website/tests/validation-edge-cases.test.js` plus the clean-ups mae approved in `uis/website/js/validation.js` and `uis/website/js/form.js` (decision "Form validation rules" in `docs/decisions.md`); `pnpm test` runs 458 cases, none left as todo.
 
 ## In progress
 
 Format: `- what — branch, PR, environment (started date)`. Remove the line when it merges or is dropped.
 
-- Validation edge-case tests and the stricter rules and clean-ups mae approved (`uis/website/tests/validation-edge-cases.test.js`, `uis/website/js/validation.js`, `uis/website/js/form.js`; decision "Form validation rules" in `docs/decisions.md`) — `claude/project-thread-11jml5`, PR #12, Claude Code cloud (2026-10-22).
+- Nothing.
 
 ## Next
 
-1. WP5 (PR #13) is merged; mae reviews Milestone 1 as a whole.
-2. Merge PR #12 (edge-case tests and the stricter form rules; see "In progress").
-3. When mae calls Milestone 1 finished, move this file to the next milestone and review `docs/FUTURE_WORK.md` for entries it picks up.
+1. mae reviews Milestone 1 as a whole.
+2. When mae calls Milestone 1 finished, move this file to the next milestone and review `docs/FUTURE_WORK.md` for entries it picks up.
 
 ## Open questions
 
-- Where the edge-case work sits in the plan (WP5 or its own package) is the planning thread's call.
+- None.
 
 ## Known problems
 

@@ -3,6 +3,10 @@
 > **Last updated**: 2026-10-22
 > Newest first. One entry per session: date, where it ran, what changed (link the PR or commit), what was left open. Keep about 15 entries. When there are more, move the oldest to `docs/archive/memory-bank-log.md` (create it the first time). Entries before this file existed were rebuilt from git history.
 
+### 2026-10-22 · Milestone 1 close-out (Claude Code, cloud)
+- Plan progress table: WP5 (PR #13) and the validation edge-case follow-up (PR #12) marked merged; the follow-up is placed under WP4 and WP5, not as its own package. `memory-bank/status.md`: PR #12 moved from "In progress" to "Works". Branch `claude/project-thread-knpic0`, PR #14.
+- Open: mae's review of Milestone 1 as a whole.
+
 ### 2026-10-22 · Stricter form rules and clean-ups (Claude Code, cloud)
 - mae asked for regex improvements with before/after examples before any change; I wrote them up as a Claude Doc ("Form validation: proposed rule improvements", P1 to P12, outside the repo), and mae approved all of them. Applied them in `uis/website/js/validation.js` (new `tidyField`, `cleanEmail`, `autofillPhone`, `autofillWebsite`) and `uis/website/js/form.js` (clean-ups written back into the field on blur, on country change and on submit). Logged in `docs/decisions.md`; findings table updated with each ruling. Same branch and PR #12.
 - Checks: `pnpm test` (458 pass, no todos left; PR #11's extension test now expects valid); `scripts/site-check.py` clean; a Playwright walk-through of the clean-ups over HTTP (10 of 10 steps, no console errors).
@@ -69,6 +73,3 @@
 
 ### 2026-10-21 · Milestone 1 briefs (Claude Code, cloud)
 - Added the Milestone 1 briefs under `docs/milestones/milestone-1/`. PR #1.
-
-### 2026-10-09 · Repo set up (mae)
-- Created the repo from the 4Geeks monorepo template and filled `CONTEXT.md` and `company-choice.md`. Commits `8e3053c` to `f540c71`.
