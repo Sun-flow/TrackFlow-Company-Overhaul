@@ -48,6 +48,15 @@ function initForm() {
     }
   };
 
+  // Clean-ups from validation.js (paste debris in the email, the phone's "+", the website's "https://"),
+  // written back into the field so the user sees exactly what is checked and sent.
+  const TIDIED = ["company", "contact", "email", "phone", "website"];
+  const tidy = (name) => {
+    const control = form.elements[name];
+    const value = rules.tidyField(name, readValues());
+    if (control.value !== value) control.value = value;
+  };
+
   const checkField = (name) => {
     const message = rules.VALIDATORS[name](readValues()[name]);
     showError(name, message);
@@ -94,8 +103,18 @@ function initForm() {
     const name = event.target.name;
     if (attempted && Object.hasOwn(rules.VALIDATORS, name)) checkField(name);
   };
-  form.addEventListener("focusout", liveCheck);
-  form.addEventListener("change", liveCheck);
+  form.addEventListener("focusout", (event) => {
+    if (TIDIED.includes(event.target.name)) tidy(event.target.name);
+    liveCheck(event);
+  });
+  // The phone's "+" can depend on the country, which comes after it in the form.
+  form.addEventListener("change", (event) => {
+    if (event.target.name === "country") {
+      tidy("phone");
+      if (attempted) checkField("phone");
+    }
+    liveCheck(event);
+  });
 
   // While typing, only clear an error the field already shows. Waiting for blur would remove the
   // message on mousedown elsewhere, shift the layout and make that click miss its target.
@@ -107,6 +126,7 @@ function initForm() {
   form.addEventListener("submit", (event) => {
     event.preventDefault();
     attempted = true;
+    for (const name of TIDIED) tidy(name);
 
     const values = readValues();
     const errors = rules.validateForm(values);

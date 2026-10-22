@@ -20,17 +20,17 @@
 
 Format: `- what — branch, PR, environment (started date)`. Remove the line when it merges or is dropped.
 
-- None.
+- Validation edge-case tests and the stricter rules and clean-ups mae approved (`uis/website/tests/validation-edge-cases.test.js`, `uis/website/js/validation.js`, `uis/website/js/form.js`; decision "Form validation rules" in `docs/decisions.md`) — `claude/project-thread-11jml5`, PR #12, Claude Code cloud (2026-10-22).
 
 ## Next
 
-1. mae reviews and merges the WP5 pull request (#13), then reviews Milestone 1 as a whole.
-2. A separate thread is adding adversarial edge-case tests for the form to `uis/website/tests/`; merge it when it lands.
+1. WP5 (PR #13) is merged; mae reviews Milestone 1 as a whole.
+2. Merge PR #12 (edge-case tests and the stricter form rules; see "In progress").
 3. When mae calls Milestone 1 finished, move this file to the next milestone and review `docs/FUTURE_WORK.md` for entries it picks up.
 
 ## Open questions
 
-- None.
+- Where the edge-case work sits in the plan (WP5 or its own package) is the planning thread's call.
 
 ## Known problems
 

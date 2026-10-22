@@ -21,7 +21,7 @@ Every page repeats the same `<head>` (apart from title, description and canonica
 | `js/nav.js` | Mobile menu toggle (`aria-expanded`, Escape closes it and returns focus). |
 | `js/validation.js` | The form's rules as pure functions with the brief's exact messages; no DOM. A classic script (`window.TrackFlowValidation` in the browser, `require()` in tests), so the form works from the file system. |
 | `js/form.js` | Wires the rules to `request-information.html` through the form contract in `docs/milestones/milestone-1/plan.md`; loads `js/validation.js` itself. |
-| `tests/` | `node:test` tests for `js/validation.js`. |
+| `tests/` | `node:test` tests for `js/validation.js`: `validation.test.js` (each rule) and `validation-edge-cases.test.js` (real-world and adversarial input, plus the clean-ups; what it found is in `tests/EDGE-CASE-FINDINGS.md`). |
 | `assets/` | Logo mark, favicon and `fonts/` (Plus Jakarta Sans, latin subset, SIL Open Font License in `fonts/OFL.txt`). |
 
 ## Build and check

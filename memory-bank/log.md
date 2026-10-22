@@ -3,6 +3,16 @@
 > **Last updated**: 2026-10-22
 > Newest first. One entry per session: date, where it ran, what changed (link the PR or commit), what was left open. Keep about 15 entries. When there are more, move the oldest to `docs/archive/memory-bank-log.md` (create it the first time). Entries before this file existed were rebuilt from git history.
 
+### 2026-10-22 · Stricter form rules and clean-ups (Claude Code, cloud)
+- mae asked for regex improvements with before/after examples before any change; I wrote them up as a Claude Doc ("Form validation: proposed rule improvements", P1 to P12, outside the repo), and mae approved all of them. Applied them in `uis/website/js/validation.js` (new `tidyField`, `cleanEmail`, `autofillPhone`, `autofillWebsite`) and `uis/website/js/form.js` (clean-ups written back into the field on blur, on country change and on submit). Logged in `docs/decisions.md`; findings table updated with each ruling. Same branch and PR #12.
+- Checks: `pnpm test` (458 pass, no todos left; PR #11's extension test now expects valid); `scripts/site-check.py` clean; a Playwright walk-through of the clean-ups over HTTP (10 of 10 steps, no console errors).
+- Open: merging PR #12.
+
+### 2026-10-22 · Validation edge-case tests (Claude Code, cloud)
+- mae asked for test input built to break the form rules, not confirm them. Added `uis/website/tests/validation-edge-cases.test.js` (307 cases: names, emails from 23 providers, phones from 26 countries and territories, URLs, invisible characters, emoji, tampered values, the 0-100 dialog bands) and `uis/website/tests/EDGE-CASE-FINDINGS.md`. Expectations follow the brief's intent; the 48 cases that fail today run as `todo` with a finding id, so `pnpm test` stays green (403 tests, 355 pass, 48 todo). Branch `claude/project-thread-11jml5`, PR #12.
+- Findings: 9 bugs (F1 to F9; worst is F3, email accepts pasted debris like `ana@acme.com,` or `mailto:`), 10 ambiguities for mae (A1 to A10; phone extensions are the main one, and the WP4 tests assert they are invalid).
+- Open: mae's decisions on the findings; `uis/website/js/validation.js` not changed.
+
 ### 2026-10-22 · WP5 integration and QA (Claude Code, cloud)
 - Checked the merged site against the brief and ticked the acceptance checklist in `docs/milestones/milestone-1/plan.md` (with how each item was checked), filled its Progress table and set the plan to done. Branch `claude/project-thread-6goo5h`.
 - Checks: `pnpm build` left the committed `uis/website/dist/styles.css` unchanged before any fix; `pnpm test` 96 pass; `scripts/site-check.py` clean on all three pages at four widths, every screenshot looked at; keyboard walk of every page; JSON-LD identical to the brief and its types and properties checked against the schema.org vocabulary file (validator.schema.org is blocked by the cloud proxy; the vocabulary came from GitHub); all copy and the 12 messages compared word for word; D3 dialog (Confirm, Nevermind, Escape, only for 0-100) and D4 link walked in a browser over HTTP and from the file system.
