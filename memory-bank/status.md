@@ -2,7 +2,7 @@
 
 > **Last updated**: 2026-10-22
 
-**Current milestone**: Milestone 1, public website. Brief: `docs/milestones/milestone-1/` (landing page + information-request form; Tailwind CSS; responsive, accessible, SEO with Schema.org, full JavaScript validation). Code goes in `uis/website/`.
+**Current milestone**: Milestone 1, public website: **done, waiting for mae's review** (2026-10-22). Brief: `docs/milestones/milestone-1/` (landing page + information-request form; Tailwind CSS; responsive, accessible, SEO with Schema.org, full JavaScript validation). Code goes in `uis/website/`.
 
 ## Works
 
@@ -13,7 +13,8 @@
 - Website scaffold (WP1, PR #7): `uis/website/` builds with `pnpm build`; `uis/website/index.html`, `uis/website/request-information.html` and `uis/website/privacy.html` (placeholder) share head, header, mobile menu and footer, with empty `<main>`s for WP2 and WP3; all pass `scripts/site-check.py` and keyboard checks. Look: teal and coral, Plus Jakarta Sans (`docs/decisions.md`).
 - Landing page (WP2, PR #9): `uis/website/index.html` has the brief's Hero, Services, Coverage, Why TrackFlow and Contact sections with its exact copy; passes `scripts/site-check.py`.
 - Form markup (WP3, PR #10): `uis/website/request-information.html` has the 12-field form, error summary, low-volume dialog and success message per the plan's form contract.
-- Form validation (WP4, PR #11, waiting to merge): `uis/website/js/validation.js` (pure rules, brief's messages), `uis/website/js/form.js` (contract wiring, D3 dialog), `pnpm test` (96 `node:test` cases). Checked end to end against the merged form markup.
+- Form validation (WP4, PR #11): `uis/website/js/validation.js` (pure rules, brief's messages), `uis/website/js/form.js` (contract wiring, D3 dialog), `pnpm test` (96 `node:test` cases). Checked end to end against the merged form markup.
+- Integration and QA (WP5, branch `claude/project-thread-6goo5h`): every acceptance item in `docs/milestones/milestone-1/plan.md` is ticked with how it was checked. WP5 removed the font preload (no console errors from the file system now; `docs/decisions.md`), stopped the contact email splitting mid-word, and, after mae's preview review, raised the landing-page card text a step and centred the bullets on the first line.
 
 ## In progress
 
@@ -23,7 +24,9 @@ Format: `- what — branch, PR, environment (started date)`. Remove the line whe
 
 ## Next
 
-1. Build in the order of `docs/milestones/milestone-1/plan.md` (approved 2026-10-22): WP1 site scaffold is merged; WP2 to WP4 run in parallel threads, then WP5 integration and QA. The plan's "Progress" table tracks each package.
+1. mae reviews and merges the WP5 pull request, then reviews Milestone 1 as a whole.
+2. A separate thread is adding adversarial edge-case tests for the form to `uis/website/tests/`; merge it when it lands.
+3. When mae calls Milestone 1 finished, move this file to the next milestone and review `docs/FUTURE_WORK.md` for entries it picks up.
 
 ## Open questions
 
@@ -33,5 +36,4 @@ Format: `- what — branch, PR, environment (started date)`. Remove the line whe
 
 - `CONTEXT.md` gives two different CEO names; logged in `docs/FUTURE_WORK.md`, not fixed.
 - `docs/milestones/milestone-1/trackflow-BRIEFING.en.md` links to a Spanish brief that was never provided; logged in `docs/FUTURE_WORK.md`.
-- Opening a page from the file system logs two console errors: the font preload in every page's `<head>` is blocked by CORS there. Harmless over HTTP; flagged for WP5 in the WP4 PR.
 - A stale `main` branch on GitHub sits at the initial commit; see `memory-bank/context.md`, "Repo facts".

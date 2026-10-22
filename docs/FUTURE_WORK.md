@@ -74,6 +74,13 @@ The briefing specifies "© 2025 TrackFlow"; consider showing the current year (o
 - **Source:** Milestone 1 briefing, "Footer"
 - **Target:** Any
 
+### Continuous integration for the website
+
+The website's checks (`pnpm build` leaving `dist/styles.css` unchanged, `pnpm test`, `scripts/site-check.py`) only run when someone runs them. A CI workflow on pull requests would catch a stale stylesheet or a failing check before merge.
+
+- **Source:** Milestone 1 WP5 (integration and QA)
+- **Target:** ?
+
 ### Repository default branch
 
 The repo's default branch is a Codespaces branch (`codespace-curly-engine-…`) rather than `main`. Consider making `main` the default.
