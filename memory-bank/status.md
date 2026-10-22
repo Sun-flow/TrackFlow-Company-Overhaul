@@ -15,18 +15,16 @@
 
 Format: `- what — branch, PR, environment (started date)`. Remove the line when it merges or is dropped.
 
-- Nothing.
+- Milestone 1 execution plan, waiting for mae's approval — `claude/project-thread-knpic0`, PR pending, Claude Code cloud (2026-10-22)
 
 ## Next
 
-1. Build the Milestone 1 landing page in `uis/website/`.
-2. Build the information-request form page with JavaScript validation and the brief's error and success messages.
-3. Add the Schema.org markup the brief requires.
-4. Run `python3 scripts/site-check.py` and check every page by keyboard.
+1. mae approves `docs/milestones/milestone-1/plan.md` and answers its phase 0 decisions (D1 to D5).
+2. Build in the plan's order: WP1 site scaffold, then WP2 to WP4 in parallel threads, then WP5 integration and QA. The plan's "Progress" table tracks each package.
 
 ## Open questions
 
-- None.
+- Plan approval and decisions D1 to D5 in `docs/milestones/milestone-1/plan.md`.
 
 ## Known problems
 
