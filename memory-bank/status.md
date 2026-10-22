@@ -17,7 +17,6 @@
 
 Format: `- what — branch, PR, environment (started date)`. Remove the line when it merges or is dropped.
 
-- WP3 form markup, starting in its own thread — branch and PR to come, Claude Code cloud (2026-10-22)
 - WP4 form validation, starting in its own thread — branch and PR to come, Claude Code cloud (2026-10-22)
 
 ## Next
