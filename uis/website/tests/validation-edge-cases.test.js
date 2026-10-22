@@ -1,10 +1,7 @@
 // Edge cases for js/validation.js, picked to find breaks in the rules rather than confirm them.
-// Expected outcomes follow the intent of the brief (docs/milestones/milestone-1/trackflow-BRIEFING.en.md),
-// not what the code does today. Real-world data: names, phone numbers, emails and URLs from many countries.
-//
-// A case that fails today carries a finding id (see tests/EDGE-CASE-FINDINGS.md) and runs as a
-// node:test "todo": it is still run and reported, but it doesn't fail `pnpm test` until the finding is settled.
-// When a finding is fixed or decided, remove its id from the rows (or change the expectation) so the case becomes binding.
+// Expected outcomes follow the intent of the brief (docs/milestones/milestone-1/trackflow-BRIEFING.en.md) and
+// mae's rulings on it, not what the code happens to do. Real-world data: names, phone numbers, emails and URLs
+// from many countries. tests/EDGE-CASE-FINDINGS.md lists what the first run found and how each finding was settled.
 const { describe, test } = require("node:test");
 const assert = require("node:assert/strict");
 const v = require("../js/validation.js");
@@ -12,13 +9,13 @@ const v = require("../js/validation.js");
 const VALID = true;
 const INVALID = false;
 
-// rows: [input, VALID | INVALID, why, finding id (optional)].
+// rows: [input, VALID | INVALID, why].
 // message: the error text expected when INVALID (a RegExp for comments, whose text has a count in it).
 const cases = (validate, message, rows) => {
-  for (const [input, valid, why, finding] of rows) {
+  for (const [input, valid, why] of rows) {
     const shown = input === undefined ? "undefined" : JSON.stringify(input);
     const label = `${shown.length > 70 ? `${shown.slice(0, 67)}...` : shown} -> ${valid ? "valid" : "error"} (${why})`;
-    test(label, finding ? { todo: finding } : {}, () => {
+    test(label, () => {
       const result = validate(input);
       if (valid) assert.equal(result, "", `expected valid, got "${result}"`);
       else if (message instanceof RegExp) assert.match(result, message);
@@ -46,18 +43,19 @@ describe("company name: at least 2 characters", () => {
     // One character in disguise.
     ["X", INVALID, "one letter"],
     ["株", INVALID, "one CJK character"],
-    ["🚚", INVALID, "one emoji (two UTF-16 code units)", "F1"],
-    ["é", INVALID, "one accented letter written as e + combining accent", "F1"],
+    ["🚚", INVALID, "one emoji (two UTF-16 code units)"],
+    ["é", INVALID, "one accented letter written as e + combining accent"],
     // Blank in disguise.
     ["", INVALID, "empty"],
     ["  ", INVALID, "spaces only"],
     ["\t\n", INVALID, "tab and newline"],
     ["  ", INVALID, "non-breaking spaces (pasted from a web page)"],
-    ["​​", INVALID, "zero-width spaces, invisible", "F2"],
+    ["​​", INVALID, "zero-width spaces, invisible"],
     ["　　", INVALID, "ideographic (full-width) spaces"],
     ["X ", INVALID, "one letter plus a non-breaking space"],
-    ["--", INVALID, "punctuation only, no letter or digit", "A1"],
-    ["..", INVALID, "dots only", "A1"],
+    ["--", INVALID, "punctuation only, no letter or digit"],
+    ["&&", INVALID, "symbols only"],
+    ["..", INVALID, "dots only"],
     [null, INVALID, "null"],
     [42, INVALID, "not a string"],
   ]);
@@ -91,13 +89,13 @@ describe("contact person: first and last name", () => {
     ["Jean-Luc", INVALID, "hyphenated first name only"],
     ["O'Brien", INVALID, "surname only"],
     ["Madonna", INVALID, "mononym (brief asks for first and last)"],
-    ["李小龙", VALID, "Chinese full name, written without spaces", "A2"],
-    ["山田太郎", VALID, "Japanese full name, written without spaces", "A2"],
+    ["李小龙", VALID, "Chinese full name, written without spaces"],
+    ["山田太郎", VALID, "Japanese full name, written without spaces"],
     ["Ana 2", INVALID, "second word has no letter"],
     ["Ana -", INVALID, "second word is a dash"],
     ["Ana 🙂", INVALID, "second word is an emoji"],
     ["Ana​López", INVALID, "zero-width space looks like a gap but isn't one"],
-    ["A B", INVALID, "two single letters", "A3"],
+    ["A B", INVALID, "two single letters"],
     ["Ana L", VALID, "first name and last initial"],
     ["", INVALID, "empty"],
     ["　", INVALID, "ideographic space only"],
@@ -155,28 +153,31 @@ describe("email: valid format (contains @ and domain)", () => {
     ["ana@.acme.com", INVALID, "domain starts with a dot"],
     ["ana@acme..com", INVALID, "double dot in domain"],
     ["ana@acme,com", INVALID, "comma instead of dot"],
-    ["ana@acme.com,", INVALID, "trailing comma (from a pasted list)", "F3"],
-    ["ana@acme.com;", INVALID, "trailing semicolon", "F3"],
-    ["ana@acme.com>", INVALID, "trailing angle bracket", "F3"],
+    ["ana@acme.com,", INVALID, "trailing comma (from a pasted list)"],
+    ["ana@acme.com;", INVALID, "trailing semicolon"],
+    ["ana@acme.com>", INVALID, "trailing angle bracket"],
     ["Ana López <ana@acme.com>", INVALID, "display name and brackets"],
-    ["<ana@acme.com>", INVALID, "angle brackets only", "F3"],
-    ["mailto:ana@acme.com", INVALID, "mailto: link pasted", "F3"],
+    ["<ana@acme.com>", INVALID, "angle brackets only"],
+    ["mailto:ana@acme.com", INVALID, "mailto: link pasted"],
     ["ana@acme.com ana@other.com", INVALID, "two addresses"],
     ["ana@acme.com;bob@acme.com", INVALID, "two addresses, semicolon"],
     ["ana＠acme.com", INVALID, "full-width @ from a CJK keyboard"],
-    [".ana@acme.com", INVALID, "local part starts with a dot", "F4"],
-    ["ana.@acme.com", INVALID, "local part ends with a dot", "F4"],
-    ["ana..lopez@acme.com", INVALID, "two dots in a row in local part", "F4"],
-    ["ana@-acme.com", INVALID, "domain label starts with a hyphen", "F4"],
-    ["ana@acme-.com", INVALID, "domain label ends with a hyphen", "F4"],
-    ["ana@acme_retail.com", INVALID, "underscore in domain", "F4"],
-    ["ana@acme.c0m", INVALID, "digit in TLD", "F4"],
-    ["ana(work)@acme.com", INVALID, "brackets in local part", "F4"],
-    ["ana@acme.com/", INVALID, "trailing slash (URL habit)", "F3"],
-    [`${"a".repeat(65)}@acme.com`, INVALID, "local part over 64 characters", "F5"],
-    [`ana@${"a".repeat(64)}.com`, INVALID, "domain label over 63 characters", "F5"],
-    [`ana@${"sub.".repeat(62)}acme.com`, INVALID, "address over 254 characters", "F5"],
+    [".ana@acme.com", INVALID, "local part starts with a dot"],
+    ["ana.@acme.com", INVALID, "local part ends with a dot"],
+    ["ana..lopez@acme.com", INVALID, "two dots in a row in local part"],
+    ["ana@-acme.com", INVALID, "domain label starts with a hyphen"],
+    ["ana@acme-.com", INVALID, "domain label ends with a hyphen"],
+    ["ana@acme_retail.com", INVALID, "underscore in domain"],
+    ["ana@acme.c0m", INVALID, "digit in TLD"],
+    ["ana(work)@acme.com", INVALID, "brackets in local part"],
+    ["ana@acme.com/", INVALID, "trailing slash (URL habit)"],
+    [`${"a".repeat(65)}@acme.com`, INVALID, "local part over 64 characters"],
+    [`ana@${"a".repeat(64)}.com`, INVALID, "domain label over 63 characters"],
+    [`ana@${"sub.".repeat(62)}acme.com`, INVALID, "address over 254 characters"],
     ["ana@192.168.0.1", INVALID, "bare IP address as domain"],
+    ['"ana"@acme.com', INVALID, "quoted local part: RFC-valid but never used in practice"],
+    ["ana@acme.com.mx", VALID, "Mexican company domain"],
+    ["user%tag@acme.io", VALID, "percent sign in local part"],
     ["", INVALID, "empty"],
     ["@", INVALID, "just @"],
     [null, INVALID, "null"],
@@ -223,20 +224,29 @@ describe("phone: + and country code, then the number", () => {
     ["+65 6123 4567", VALID, "Singapore, 10 digits"],
     ["+852 2123 4567", VALID, "Hong Kong"],
     ["+500 51234", VALID, "Falkland Islands, 8 digits"],
-    ["+683 4002", VALID, "Niue, 7 digits: a real, complete number", "A4"],
+    ["+683 4002", VALID, "Niue, 7 digits: a real, complete number"],
     ["+290 22222", VALID, "Saint Helena, 8 digits"],
     ["+34 976 123 456", VALID, "non-breaking spaces (pasted from a web page)"],
     [" +34 976 123 456 ", VALID, "surrounding spaces"],
     ["+86 138 0013 8000 123", INVALID, "16 digits, over E.164's 15"],
+    // The two home markets have fixed lengths: +1 then 10 digits, +34 then 9.
+    ["+1 213 555 014", INVALID, "US number missing a digit"],
+    ["+1 213 555 01477", INVALID, "US number with an extra digit"],
+    ["+34 976 123 45", INVALID, "Spanish number missing a digit"],
+    ["+34 976 123 4567", INVALID, "Spanish number with an extra digit"],
+    ["+1 800 555 0199", VALID, "US toll-free"],
+    ["+34 91 123 45 67", VALID, "Madrid, two-digit area code"],
+    ["+1 213 555 0147 #204", VALID, "extension, '#'"],
+    ["+1 213 555 0147 ext 1234567", INVALID, "extension over 6 digits"],
     // Common ways people write a valid number that the rule may not expect.
-    ["+1 213 555 0147 ext. 204", VALID, "extension, 'ext.'", "A5"],
-    ["+1 213 555 0147 x204", VALID, "extension, 'x'", "A5"],
-    ["+34 976 123 456 ext 12", VALID, "extension on a Spanish number", "A5"],
-    ["+1 213 555 0147;ext=204", VALID, "RFC 3966 extension", "A5"],
-    ["+ 34 976 123 456", VALID, "space after the plus", "A6"],
-    ["+(34) 976 123 456", VALID, "country code in brackets", "A6"],
-    ["+49 30/1234567", VALID, "German slash after area code", "A6"],
-    ["＋３４ ９７６ １２３ ４５６", VALID, "full-width digits from a CJK keyboard", "A6"],
+    ["+1 213 555 0147 ext. 204", VALID, "extension, 'ext.'"],
+    ["+1 213 555 0147 x204", VALID, "extension, 'x'"],
+    ["+34 976 123 456 ext 12", VALID, "extension on a Spanish number"],
+    ["+1 213 555 0147;ext=204", VALID, "RFC 3966 extension"],
+    ["+ 34 976 123 456", VALID, "space after the plus"],
+    ["+(34) 976 123 456", VALID, "country code in brackets"],
+    ["+49 30/1234567", VALID, "German slash after area code"],
+    ["＋３４ ９７６ １２３ ４５６", VALID, "full-width digits from a CJK keyboard"],
     // Not a phone number with a country code.
     ["", INVALID, "empty"],
     ["976 123 456", INVALID, "Spanish number, no country code"],
@@ -245,13 +255,13 @@ describe("phone: + and country code, then the number", () => {
     ["011 34 976 123 456", INVALID, "US exit code instead of +"],
     ["34 976 123 456", INVALID, "country code without +"],
     ["++34 976 123 456", INVALID, "double plus"],
-    ["+0 213 555 0147", INVALID, "country codes never start with 0", "F6"],
+    ["+0 213 555 0147", INVALID, "country codes never start with 0"],
     ["+34 976 123 456 / +34 600 000 000", INVALID, "two numbers"],
     ["+1 800 FLOWERS", INVALID, "vanity letters"],
     ["+1 213 555 O147", INVALID, "letter O for zero"],
-    ["+1 ((213)) 555 0147", INVALID, "doubled brackets", "F7"],
-    ["+1 213 -- 555 .. 0147", INVALID, "runs of separators", "F7"],
-    ["+1 (213 555 0147", INVALID, "unclosed bracket", "F7"],
+    ["+1 ((213)) 555 0147", INVALID, "doubled brackets"],
+    ["+1 213 -- 555 .. 0147", INVALID, "runs of separators"],
+    ["+1 (213 555 0147", INVALID, "unclosed bracket"],
     ["+1 2", INVALID, "far too short"],
     ["+", INVALID, "plus only"],
     [null, INVALID, "null"],
@@ -274,7 +284,7 @@ describe("website: optional; if given, a valid URL starting with http:// or http
     ["https://acme.photography", VALID, "long TLD"],
     ["https://acme-retail.store", VALID, "hyphen and new gTLD"],
     ["HTTPS://ACME.COM", VALID, "uppercase"],
-    ["https://acme.com.", VALID, "trailing dot (fully qualified name, browsers accept it)", "A7"],
+    ["https://acme.com.", VALID, "trailing dot (fully qualified name, browsers accept it)"],
     // Without a scheme: the brief requires http:// or https://.
     ["acme.com", INVALID, "no scheme"],
     ["www.acme.com", INVALID, "www, no scheme"],
@@ -285,19 +295,19 @@ describe("website: optional; if given, a valid URL starting with http:// or http
     // Broken URLs.
     ["https://", INVALID, "scheme only"],
     ["http:/acme.com", INVALID, "one slash"],
-    ["https:///acme.com", INVALID, "three slashes", "F8"],
+    ["https:///acme.com", INVALID, "three slashes"],
     ["https//acme.com", INVALID, "missing colon"],
     ["https://acme", INVALID, "no dot in host"],
     ["https://localhost:3000", INVALID, "local address"],
     ["https://acme..com", INVALID, "empty label"],
-    ["https://acme.c", INVALID, "one-letter TLD (email rule wants 2+)", "F9"],
-    ["https://-acme.com", INVALID, "host starts with a hyphen", "F9"],
-    ["https://acme_retail.com", INVALID, "underscore in host", "F9"],
+    ["https://acme.c", INVALID, "one-letter TLD (email rule wants 2+)"],
+    ["https://-acme.com", INVALID, "host starts with a hyphen"],
+    ["https://acme_retail.com", INVALID, "underscore in host"],
     ["https://acme.com:99999", INVALID, "port out of range"],
     ["https://acme .com", INVALID, "space in host"],
     ["https://https://acme.com", INVALID, "scheme typed twice"],
-    ["https://acme.com,https://acme.es", INVALID, "two URLs", "F9"],
-    ["https://192.168.1.10", INVALID, "private IP address", "A8"],
+    ["https://acme.com,https://acme.es", INVALID, "two URLs"],
+    ["https://192.168.1.10", INVALID, "private IP address"],
   ]);
 });
 
@@ -339,7 +349,7 @@ describe("services of interest: at least one", () => {
     [[null], INVALID, "null inside the array"],
     ["warehousing", INVALID, "string instead of array"],
     [{ 0: "warehousing", length: 1 }, INVALID, "array-like object"],
-    [["warehousing", "teleportation"], INVALID, "one real value plus an unknown one", "A9"],
+    [["warehousing", "teleportation"], INVALID, "one real value plus an unknown one"],
   ]);
 });
 
@@ -358,8 +368,8 @@ describe("comments: 500 characters at most", () => {
     ["ñ".repeat(500), VALID, "500 accented letters"],
     ["日".repeat(500), VALID, "500 CJK characters"],
     ["📦".repeat(250), VALID, "250 emoji"],
-    ["📦".repeat(500), VALID, "500 emoji: 500 characters, 1,000 UTF-16 units", "A10"],
-    ["é".repeat(300), VALID, "300 accented letters typed as e + combining accent", "A10"],
+    ["📦".repeat(500), VALID, "500 emoji: 500 characters, 1,000 UTF-16 units"],
+    ["é".repeat(300), VALID, "300 accented letters typed as e + combining accent"],
   ]);
   test("the counter and the message agree on the count", () => {
     const value = "a".repeat(512);
@@ -426,5 +436,108 @@ describe("whole form", () => {
 
   test("unknown extra fields are ignored", () => {
     assert.deepEqual(v.validateForm({ ...valid, extra: "x", __proto__: { company: "" } }), {});
+  });
+});
+
+// Clean-ups the form applies before checking (tidyField). Each row: [typed, (country,) what the field becomes].
+describe("email clean-up: paste debris removed", () => {
+  for (const [typed, expected] of [
+    ["mailto:ana@acme.com", "ana@acme.com"],
+    ["<ana@acme.com>", "ana@acme.com"],
+    ["Ana López <ana@acme.com>", "ana@acme.com"],
+    ["ana@acme.com,", "ana@acme.com"],
+    ["ana@acme.com;", "ana@acme.com"],
+    [" <mailto:ana@acme.com>, ", "ana@acme.com"],
+    ["ana​@acme.com", "ana@acme.com"],
+    ["ana@acme.com", "ana@acme.com"],
+    ["ana@acme.com ana@other.com", "ana@acme.com ana@other.com"],
+  ]) {
+    test(`${JSON.stringify(typed)} -> ${JSON.stringify(expected)}`, () => {
+      assert.equal(v.cleanEmail(typed), expected);
+    });
+  }
+});
+
+describe("phone autofill: the + is added only where the country code is certain", () => {
+  for (const [typed, country, expected, why] of [
+    ["(213) 555-0147", "us", "+1 (213) 555-0147", "US, 10 digits"],
+    ["213 555 0147", "us", "+1 213 555 0147", "US, 10 digits"],
+    ["1 213 555 0147", "us", "+1 213 555 0147", "US, 11 digits starting with 1"],
+    ["011 34 976 123 456", "us", "+34 976 123 456", "US exit code"],
+    ["0034 976 123 456", "es", "+34 976 123 456", "00 international prefix"],
+    ["0034 976 123 456", "", "+34 976 123 456", "00 needs no country"],
+    ["976 123 456", "es", "+34 976 123 456", "Spain, 9 digits"],
+    ["612 34 56 78", "es", "+34 612 34 56 78", "Spanish mobile"],
+    ["34 612 34 56 78", "es", "+34 612 34 56 78", "Spain, code typed without +"],
+    ["＋３４ ９７６ １２３ ４５６", "", "+34 976 123 456", "full-width characters"],
+    ["+34 976 123 456", "us", "+34 976 123 456", "already has +"],
+    // Left alone: guessing here would turn a US or Spanish number into another country's.
+    ["213 555 0147", "both", "213 555 0147", "Both: country unknown (not +213, Algeria)"],
+    ["213 555 0147", "", "213 555 0147", "no country yet"],
+    ["976 123 456", "other", "976 123 456", "Other: not +976, Mongolia"],
+    ["213 555 0147", "es", "213 555 0147", "10 digits does not fit Spain"],
+    ["123 456 789", "es", "123 456 789", "Spanish numbers start with 6 to 9"],
+    ["", "us", "", "empty stays empty"],
+  ]) {
+    test(`${JSON.stringify(typed)} in ${JSON.stringify(country)} -> ${JSON.stringify(expected)} (${why})`, () => {
+      assert.equal(v.autofillPhone(typed, country), expected);
+    });
+  }
+  test("a number left alone still fails, so the user is asked for the code", () => {
+    assert.equal(v.validatePhone(v.autofillPhone("213 555 0147", "both")), v.MESSAGES.phone);
+  });
+});
+
+describe("website autofill: https:// added when no scheme was typed", () => {
+  for (const [typed, expected] of [
+    ["acme.com", "https://acme.com"],
+    ["www.acme.com/es", "https://www.acme.com/es"],
+    ["acme.com:8080", "https://acme.com:8080"],
+    ["//acme.com", "https://acme.com"],
+    ["http://acme.com", "http://acme.com"],
+    ["HTTPS://ACME.COM", "HTTPS://ACME.COM"],
+    ["ftp://acme.com", "ftp://acme.com"],
+    ["http:/acme.com", "http:/acme.com"],
+    ["javascript:alert(1)", "javascript:alert(1)"],
+    ["mailto:info@acme.com", "mailto:info@acme.com"],
+    ["  ", ""],
+    ["", ""],
+  ]) {
+    test(`${JSON.stringify(typed)} -> ${JSON.stringify(expected)}`, () => {
+      assert.equal(v.autofillWebsite(typed), expected);
+    });
+  }
+  test("other schemes are still rejected after the clean-up", () => {
+    for (const typed of ["ftp://acme.com", "javascript:alert(1)", "mailto:info@acme.com"]) {
+      assert.equal(v.validateWebsite(v.autofillWebsite(typed)), v.MESSAGES.website);
+    }
+  });
+});
+
+describe("tidyField: which clean-up each field gets", () => {
+  const values = {
+    company: "  Acme​ ",
+    contact: " Ana López ",
+    email: "<ana@acme.com>",
+    phone: "976 123 456",
+    website: "acme.es",
+    country: "es",
+    comments: "  keep my spaces  ",
+    services: ["warehousing"],
+    privacy: true,
+  };
+  test("text fields are trimmed and lose invisible characters", () => {
+    assert.equal(v.tidyField("company", values), "Acme");
+    assert.equal(v.tidyField("contact", values), "Ana López");
+  });
+  test("email, phone and website get their clean-ups", () => {
+    assert.equal(v.tidyField("email", values), "ana@acme.com");
+    assert.equal(v.tidyField("phone", values), "+34 976 123 456");
+    assert.equal(v.tidyField("website", values), "https://acme.es");
+  });
+  test("other fields are left as they are", () => {
+    assert.equal(v.tidyField("comments", values), "  keep my spaces  ");
+    assert.deepEqual(v.tidyField("services", values), ["warehousing"]);
+    assert.equal(v.tidyField("privacy", values), true);
   });
 });

@@ -12,7 +12,7 @@ Work goes one milestone at a time. Each milestone has a folder with its brief un
 
 - `uis/website/`: Milestone 1's static public website. HTML, Tailwind CSS 4 compiled by the Tailwind CLI (pnpm package in that folder, compiled `uis/website/dist/styles.css` committed), plain JavaScript, English first. Its `README.md` has the layout; the brief is `docs/milestones/milestone-1/milestone1-briefing.md`; build, language and look choices are in `docs/decisions.md`.
 - Dev container (`.devcontainer/devcontainer.json`): Ubuntu 24.04, Python 3.12, Node 22 with pnpm via corepack. There is no root Node or Python project file; the website's is `uis/website/package.json`.
-- Tests: `uis/website/tests/` (Node's built-in `node:test`, no extra dependencies) for the form rules, including an adversarial edge-case suite whose open findings run as `todo` (`uis/website/tests/EDGE-CASE-FINDINGS.md`). No CI.
+- Tests: `uis/website/tests/` (Node's built-in `node:test`, no extra dependencies) for the form rules, including an adversarial edge-case suite (`uis/website/tests/validation-edge-cases.test.js`; findings and how they were settled in `uis/website/tests/EDGE-CASE-FINDINGS.md`). No CI.
 
 ## Commands
 

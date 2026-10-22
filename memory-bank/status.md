@@ -19,7 +19,7 @@
 
 Format: `- what — branch, PR, environment (started date)`. Remove the line when it merges or is dropped.
 
-- Validation edge-case tests (`uis/website/tests/validation-edge-cases.test.js`, 307 cases; 48 failing ones run as `todo`) — `claude/project-thread-11jml5`, PR #12, Claude Code cloud (2026-10-22).
+- Validation edge-case tests and the stricter rules and clean-ups mae approved (`uis/website/tests/validation-edge-cases.test.js`, `uis/website/js/validation.js`, `uis/website/js/form.js`; decision "Form validation rules" in `docs/decisions.md`) — `claude/project-thread-11jml5`, PR #12, Claude Code cloud (2026-10-22).
 
 ## Next
 
@@ -27,7 +27,7 @@ Format: `- what — branch, PR, environment (started date)`. Remove the line whe
 
 ## Open questions
 
-- Which edge-case findings to fix and how to settle the rule ambiguities (A1 to A10, phone extensions first): `uis/website/tests/EDGE-CASE-FINDINGS.md`. mae decides; `uis/website/js/validation.js` is unchanged until then. Where the work sits in the plan (WP5 or its own package) is the planning thread's call.
+- Where the edge-case work sits in the plan (WP5 or its own package) is the planning thread's call.
 
 ## Known problems
 

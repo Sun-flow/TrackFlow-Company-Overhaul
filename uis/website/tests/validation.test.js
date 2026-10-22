@@ -67,7 +67,7 @@ describe("phone: + then country code and number", () => {
     ["001 213 555 0147", msg],
     ["+", msg],
     ["+1 555", msg],
-    ["+1 213 555 0147 ext 2", msg],
+    ["+1 213 555 0147 ext 2", ""],
     ["+1 2135 5501 4712 3456", msg],
   ]);
 });
