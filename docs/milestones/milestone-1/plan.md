@@ -1,7 +1,7 @@
 # Milestone 1 execution plan
 
 > **Date created**: 2026-10-22
-> **Status**: Draft, waiting for mae's approval. Nothing is built until mae approves. D3 to D5 decided by mae on 2026-10-22.
+> **Status**: Approved by mae on 2026-10-22, with D1 and D2 as recommended and D3 to D5 as mae decided. Building starts with WP1.
 > **Brief**: `milestone1-briefing.md` and `trackflow-BRIEFING.en.md` in this folder. The brief wins over this plan; if they disagree, fix the plan.
 
 This plan splits Milestone 1 (landing page + information-request form in `uis/website/`) into work packages. Each package is one branch, one pull request and one agent thread. Packages in the same phase can run at the same time because they touch different files; phases run in order.
@@ -25,7 +25,7 @@ WP3 and WP4 both concern the form, but they never edit the same file. They agree
 
 ## Phase 0: decisions for mae
 
-D1 and D2 have a recommendation; approving the plan approves them unless mae says otherwise, and WP1 logs them in `docs/decisions.md`. mae decided D3 to D5 on 2026-10-22; they are logged in `docs/decisions.md` already.
+mae approved D1 and D2 as recommended with the plan; WP1 logs them in `docs/decisions.md`. mae decided D3 to D5 on 2026-10-22; they are logged in `docs/decisions.md` already.
 
 | # | Question | Recommendation | Why |
 |---|---|---|---|
@@ -59,6 +59,8 @@ Sets up everything the page packages share, so they only fill in their own `<mai
 ## Phase 2 (parallel)
 
 Rules for all three threads:
+
+- Don't edit this plan; the Milestone 1 execution plan thread keeps the progress table. Report your branch, PR and state there instead.
 
 - Branch from the default branch after WP1 merges. Edit only the files listed for your package. If you need a change in a shared file (header, footer, `<head>`, `src/input.css`, `nav.js`), don't make it: say so in your PR and the change goes to WP5 or a small follow-up PR.
 - Use only the theme tokens from WP1 and Tailwind utilities.
@@ -136,9 +138,9 @@ Update this table as packages start and merge.
 
 | Package | Thread | Branch / PR | State |
 |---|---|---|---|
-| D1, D2 | Milestone 1 execution plan | | waiting for mae |
+| D1, D2 | Milestone 1 execution plan | PR #5 | approved 2026-10-22 (D1's pick happens in WP1) |
 | D3 to D5 | Milestone 1 execution plan | PR #5 | decided 2026-10-22 |
-| WP1 Site scaffold | | | not started |
+| WP1 Site scaffold | requested 2026-10-22 | | starting |
 | WP2 Landing page | | | not started |
 | WP3 Form markup | | | not started |
 | WP4 Form validation | | | not started |

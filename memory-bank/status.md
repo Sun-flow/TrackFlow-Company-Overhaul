@@ -15,16 +15,16 @@
 
 Format: `- what — branch, PR, environment (started date)`. Remove the line when it merges or is dropped.
 
-- Milestone 1 execution plan, waiting for mae's approval — `claude/project-thread-knpic0`, PR #5, Claude Code cloud (2026-10-22)
+- Milestone 1 execution plan, approved by mae, waiting to merge — `claude/project-thread-knpic0`, PR #5, Claude Code cloud (2026-10-22)
+- WP1 site scaffold, starting in its own thread — branch and PR to come, Claude Code cloud (2026-10-22)
 
 ## Next
 
-1. mae approves `docs/milestones/milestone-1/plan.md` and its phase 0 decisions D1 and D2 (D3 to D5 are decided).
-2. Build in the plan's order: WP1 site scaffold, then WP2 to WP4 in parallel threads, then WP5 integration and QA. The plan's "Progress" table tracks each package.
+1. Build in the order of `docs/milestones/milestone-1/plan.md` (approved 2026-10-22): WP1 site scaffold (mae picks the visual direction there, D1), then WP2 to WP4 in parallel threads, then WP5 integration and QA. The plan's "Progress" table tracks each package.
 
 ## Open questions
 
-- Plan approval and decisions D1 and D2 in `docs/milestones/milestone-1/plan.md`.
+- None.
 
 ## Known problems
 
