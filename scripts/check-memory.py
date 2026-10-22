@@ -25,7 +25,6 @@ LOG_ARCHIVE = "docs/archive/memory-bank-log.md"
 PLANNED_PATHS = {
     LOG_ARCHIVE,
     "uis/website/",  # Milestone 1's site, not started yet
-    "docs/FUTURE_WORK.md",  # added by PR #2
 }
 
 PATH_EXTENSIONS = (".md", ".py", ".js", ".ts", ".html", ".txt", ".json", ".yml", ".yaml", ".toml", ".png", ".sh", ".css")
