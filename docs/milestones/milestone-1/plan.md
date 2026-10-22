@@ -148,4 +148,4 @@ Update this table as packages start and merge.
 | WP2 Landing page | WP2 landing page | `claude/project-thread-fzjogd`, PR #9 | merged 2026-10-22 |
 | WP3 Form markup | WP3 form markup | `claude/project-thread-t2p6d4`, PR #10 | merged 2026-10-22 |
 | WP4 Form validation | WP4 form validation | `claude/project-thread-m7zya3`, PR #11 | merged 2026-10-22 |
-| WP5 Integration and QA | Integration and QA | `claude/project-thread-6goo5h` | done 2026-10-22, PR open |
+| WP5 Integration and QA | Integration and QA | `claude/project-thread-6goo5h`, PR #13 | done 2026-10-22, PR open |

@@ -14,7 +14,7 @@
 - Landing page (WP2, PR #9): `uis/website/index.html` has the brief's Hero, Services, Coverage, Why TrackFlow and Contact sections with its exact copy; passes `scripts/site-check.py`.
 - Form markup (WP3, PR #10): `uis/website/request-information.html` has the 12-field form, error summary, low-volume dialog and success message per the plan's form contract.
 - Form validation (WP4, PR #11): `uis/website/js/validation.js` (pure rules, brief's messages), `uis/website/js/form.js` (contract wiring, D3 dialog), `pnpm test` (96 `node:test` cases). Checked end to end against the merged form markup.
-- Integration and QA (WP5, branch `claude/project-thread-6goo5h`): every acceptance item in `docs/milestones/milestone-1/plan.md` is ticked with how it was checked. WP5 removed the font preload (no console errors from the file system now; `docs/decisions.md`), stopped the contact email splitting mid-word, and, after mae's preview review, raised the landing-page card text a step and centred the bullets on the first line.
+- Integration and QA (WP5, branch `claude/project-thread-6goo5h`, PR #13): every acceptance item in `docs/milestones/milestone-1/plan.md` is ticked with how it was checked. WP5 removed the font preload (no console errors from the file system now; `docs/decisions.md`), stopped the contact email splitting mid-word, and, after mae's preview review, raised the landing-page card text a step and centred the bullets on the first line.
 
 ## In progress
 
@@ -24,7 +24,7 @@ Format: `- what — branch, PR, environment (started date)`. Remove the line whe
 
 ## Next
 
-1. mae reviews and merges the WP5 pull request, then reviews Milestone 1 as a whole.
+1. mae reviews and merges the WP5 pull request (#13), then reviews Milestone 1 as a whole.
 2. A separate thread is adding adversarial edge-case tests for the form to `uis/website/tests/`; merge it when it lands.
 3. When mae calls Milestone 1 finished, move this file to the next milestone and review `docs/FUTURE_WORK.md` for entries it picks up.
 
