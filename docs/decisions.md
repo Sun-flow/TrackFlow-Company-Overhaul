@@ -22,6 +22,12 @@ Entry format:
 - **Alternatives considered**: leaving the brief's minimum rules; adding the `+` to every number; rejecting pasted email debris with an error instead of cleaning it; accepting quoted email local parts (RFC-valid, never used in practice).
 - **Status**: Accepted (2026-10-22).
 
+### [2026-10-22] No font preload in the website's `<head>`
+- **Decision**: The pages in `uis/website/` don't preload the self-hosted font; the stylesheet's `@font-face` (with `font-display: swap`) loads it.
+- **Rationale**: A font preload has to use CORS mode (`crossorigin`) to be reused by the font request, and browsers block CORS requests from `file://` pages, so every page logged console errors when opened from the file system; without `crossorigin` the preload is never used over HTTP and the font downloads twice. The font is one small file on the same site, found as soon as the stylesheet loads, so the preload saved little.
+- **Alternatives considered**: keeping the preload and accepting the file-system errors (fails `scripts/site-check.py`-style checks and the "opens straight from the repo" goal of the committed CSS); dropping `crossorigin` (double download and a console warning over HTTP).
+- **Status**: Accepted (2026-10-22).
+
 ### [2026-10-22] Website look: deep teal and coral, Plus Jakarta Sans
 - **Decision**: The Milestone 1 site uses a deep teal brand colour (`brand-*` tokens, `brand-900` #0f3d3a) with a coral-orange accent for calls to action (`accent-*`, `accent-500` #f97316), and Plus Jakarta Sans, self-hosted as a variable font. The tokens are in `uis/website/src/input.css`.
 - **Rationale**: mae picked it from three options shown as screenshots of the scaffold (D1 in the Milestone 1 plan). Self-hosting keeps visitors' requests on TrackFlow's own site (no third-party font requests, which matters for EU visitors) and avoids a flash of a different font.

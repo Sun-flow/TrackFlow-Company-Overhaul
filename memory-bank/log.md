@@ -13,6 +13,12 @@
 - Findings: 9 bugs (F1 to F9; worst is F3, email accepts pasted debris like `ana@acme.com,` or `mailto:`), 10 ambiguities for mae (A1 to A10; phone extensions are the main one, and the WP4 tests assert they are invalid).
 - Open: mae's decisions on the findings; `uis/website/js/validation.js` not changed.
 
+### 2026-10-22 · WP5 integration and QA (Claude Code, cloud)
+- Checked the merged site against the brief and ticked the acceptance checklist in `docs/milestones/milestone-1/plan.md` (with how each item was checked), filled its Progress table and set the plan to done. Branch `claude/project-thread-6goo5h`.
+- Checks: `pnpm build` left the committed `uis/website/dist/styles.css` unchanged before any fix; `pnpm test` 96 pass; `scripts/site-check.py` clean on all three pages at four widths, every screenshot looked at; keyboard walk of every page; JSON-LD identical to the brief and its types and properties checked against the schema.org vocabulary file (validator.schema.org is blocked by the cloud proxy; the vocabulary came from GitHub); all copy and the 12 messages compared word for word; D3 dialog (Confirm, Nevermind, Escape, only for 0-100) and D4 link walked in a browser over HTTP and from the file system.
+- Fixes: removed the font preload from every page (it caused the file-system console errors; `docs/decisions.md`); `<wbr>` before the @ of the contact email so it doesn't split mid-word at 768px; from mae's preview review, card list text `text-lg`, Why TrackFlow text a step up, contact cards a step up, and bullets centred on the first line with an `h-[1lh]` box. Added a CI entry to `docs/FUTURE_WORK.md`. PR #13.
+- Open: mae's review and merge; the form edge-case test thread; the preview thread republishes after merge.
+
 ### 2026-10-22 · WP4 form validation (Claude Code, cloud)
 - Added `uis/website/js/validation.js` (one pure function per brief rule, exact messages, `validateForm`, `needsVolumeConfirmation`), `uis/website/js/form.js` (wiring per the form contract: submit then blur/change validation, error summary with focus, comments counter, D3 dialog, simulated success), `uis/website/tests/validation.test.js` and a `test` script. Branch `claude/project-thread-m7zya3`, PR #11.
 - `uis/website/js/validation.js` is a classic script that the form script loads itself, so the form works from the file system and tests can `require()` it. Agreed the markup details with WP3 (branch `claude/project-thread-t2p6d4`).
