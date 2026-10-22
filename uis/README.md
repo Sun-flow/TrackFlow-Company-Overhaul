@@ -4,7 +4,7 @@ This folder contains **all projects with a user interface** for the cross-functi
 
 The two main projects stored here are:
 
-- **`website`** — the company's public-facing web presence.
+- **`website`** — the company's public-facing web presence. Built in Milestone 1 as static HTML with Tailwind CSS; see [`website/README.md`](./website/README.md).
 - **`backoffice`** — the internal admin application. This is the ideal place to develop multiple solutions within a single project: authentication, people management, operations management, internal communication, and other back-office capabilities.
 
 Organize `uis/` by **different concerns** — each subfolder covers a distinct area of the company (for example, public web vs internal operations) and includes its own technical and functional documentation.
