@@ -18,6 +18,7 @@ Work goes one milestone at a time. Each milestone has a folder with its brief un
 
 ```bash
 python3 scripts/check-memory.py                  # check the memory bank; lists commits since it was last updated
+npx --yes http-server uis/website -p 3000 -c-1   # serve the website at http://localhost:3000 (Codespaces: Ports tab, port 3000 "Website"; making it Public is in uis/website/README.md)
 (cd uis/website && pnpm install)                  # once, for the website build
 (cd uis/website && pnpm build)                    # compile uis/website/src/input.css to dist/styles.css; commit the result
 (cd uis/website && pnpm dev)                      # rebuild the CSS on every change
@@ -31,7 +32,7 @@ In Claude Code cloud sessions Chromium is preinstalled: skip the install step an
 
 ## Repo facts
 
-- The default branch is `codespace-curly-engine-pj5ggg9qgqjf645j`, not `main`; pull requests target it. (`docs/FUTURE_WORK.md` has an entry about changing this.)
+- The default branch is `production`; pull requests target it. The old default, `codespace-curly-engine-pj5ggg9qgqjf645j`, is stuck at the initial commit (checked 2026-10-22).
 - A `main` branch also exists on GitHub, but it is stuck at the initial commit (`f540c71`) and has none of the agent docs. Don't branch from it or target it.
 
 ## Where facts live

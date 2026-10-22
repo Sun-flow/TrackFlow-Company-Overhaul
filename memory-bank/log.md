@@ -3,6 +3,12 @@
 > **Last updated**: 2026-10-22
 > Newest first. One entry per session: date, where it ran, what changed (link the PR or commit), what was left open. Keep about 15 entries. When there are more, move the oldest to `docs/archive/memory-bank-log.md` (create it the first time). Entries before this file existed were rebuilt from git history.
 
+### 2026-10-22 · Run the site with npx (Claude Code, cloud)
+- Milestone 1 review, audit items A1 and A10: documented `npx --yes http-server uis/website -p 3000 -c-1` in the root `README.md` ("Run the website"), `uis/website/README.md` ("Run locally", with the steps to make Codespaces port 3000 Public) and `memory-bank/context.md`; labelled port 3000 "Website" in `.devcontainer/devcontainer.json`. The website README now names the form page application.html, ahead of the parallel thread that renames it. Branch `claude/project-thread-jhublb`.
+- `memory-bank/context.md`, "Repo facts": the default branch is now `production`. The default-branch entry in `docs/FUTURE_WORK.md` is out of date; not changed here.
+- Checks: the command served every page, CSS, script and asset with 200 and `no-cache` headers; pages loaded in Chromium through it.
+- Open: mae sets port 3000 to Public in Codespaces for the external audit (steps in `uis/website/README.md`).
+
 ### 2026-10-22 · Milestone 1 close-out (Claude Code, cloud)
 - Plan progress table: WP5 (PR #13) and the validation edge-case follow-up (PR #12) marked merged; the follow-up is placed under WP4 and WP5, not as its own package. `memory-bank/status.md`: PR #12 moved from "In progress" to "Works". Branch `claude/project-thread-knpic0`, PR #14.
 - Open: mae's review of Milestone 1 as a whole.
@@ -70,6 +76,3 @@
 
 ### 2026-10-21 · Future work list (Claude Code, cloud)
 - Added `docs/FUTURE_WORK.md` with the ideas and housekeeping items collected so far. PR #2.
-
-### 2026-10-21 · Milestone 1 briefs (Claude Code, cloud)
-- Added the Milestone 1 briefs under `docs/milestones/milestone-1/`. PR #1.
