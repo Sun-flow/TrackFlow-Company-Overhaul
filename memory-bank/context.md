@@ -10,14 +10,17 @@ Work goes one milestone at a time. Each milestone has a folder with its brief un
 
 ## Stack
 
-- No application code yet. Milestone 1 will add a static public website in `uis/website/`: HTML, Tailwind CSS compiled with a build step, and plain JavaScript for form validation, in English first (brief: `docs/milestones/milestone-1/milestone1-briefing.md`; build and language choices: `docs/decisions.md`).
-- Dev container (`.devcontainer/devcontainer.json`): Ubuntu 24.04, Python 3.12, Node 22 with pnpm via corepack. There is no root Node or Python project file yet.
+- `uis/website/`: Milestone 1's static public website. HTML, Tailwind CSS 4 compiled by the Tailwind CLI (pnpm package in that folder, compiled `uis/website/dist/styles.css` committed), plain JavaScript, English first. Its `README.md` has the layout; the brief is `docs/milestones/milestone-1/milestone1-briefing.md`; build, language and look choices are in `docs/decisions.md`.
+- Dev container (`.devcontainer/devcontainer.json`): Ubuntu 24.04, Python 3.12, Node 22 with pnpm via corepack. There is no root Node or Python project file; the website's is `uis/website/package.json`.
 - No tests and no CI.
 
 ## Commands
 
 ```bash
 python3 scripts/check-memory.py                  # check the memory bank; lists commits since it was last updated
+(cd uis/website && pnpm install)                  # once, for the website build
+(cd uis/website && pnpm build)                    # compile uis/website/src/input.css to dist/styles.css; commit the result
+(cd uis/website && pnpm dev)                      # rebuild the CSS on every change
 pip3 install -r scripts/requirements.txt         # once, for site-check
 python3 -m playwright install chromium           # once, unless Chromium for Playwright is already installed
 python3 scripts/site-check.py                    # screenshot uis/website/ pages; fail on console errors, horizontal scroll, axe violations

@@ -1,0 +1,30 @@
+@import "tailwindcss";
+
+/* Only scan the site's own files */
+@source not "../node_modules";
+
+/* Self-hosted font (latin subset). Tailwind has no utility for declaring a font file, so this is hand-written. */
+@font-face {
+  font-family: "Plus Jakarta Sans Variable";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url("../assets/fonts/plus-jakarta-sans-latin-wght-normal.woff2") format("woff2");
+}
+
+@theme {
+  --font-sans: "Plus Jakarta Sans Variable", ui-sans-serif, system-ui, sans-serif;
+
+  --color-brand-50: #effaf8;
+  --color-brand-100: #ccefe9;
+  --color-brand-600: #0f766e;
+  --color-brand-700: #115e59;
+  --color-brand-800: #134e4a;
+  --color-brand-900: #0f3d3a;
+  --color-brand-950: #062826;
+
+  --color-accent-300: #fdba8c;
+  --color-accent-400: #fb923c;
+  --color-accent-500: #f97316;
+  --color-accent-600: #ea580c;
+}

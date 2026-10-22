@@ -16,6 +16,18 @@ Entry format:
 
 ---
 
+### [2026-10-22] Website look: deep teal and coral, Plus Jakarta Sans
+- **Decision**: The Milestone 1 site uses a deep teal brand colour (`brand-*` tokens, `brand-900` #0f3d3a) with a coral-orange accent for calls to action (`accent-*`, `accent-500` #f97316), and Plus Jakarta Sans, self-hosted as a variable font. The tokens are in `uis/website/src/input.css`.
+- **Rationale**: mae picked it from three options shown as screenshots of the scaffold (D1 in the Milestone 1 plan). Self-hosting keeps visitors' requests on TrackFlow's own site (no third-party font requests, which matters for EU visitors) and avoids a flash of a different font.
+- **Alternatives considered**: navy and amber with Inter (the recommended option, more conventional); graphite and signal green with IBM Plex Sans (more industrial); loading the font from Google Fonts.
+- **Status**: Accepted (2026-10-22).
+
+### [2026-10-22] Commit the compiled website CSS
+- **Decision**: `uis/website/dist/styles.css` is committed. Anyone who changes classes rebuilds it with `pnpm build` and commits it in the same change; WP5 checks it is up to date.
+- **Rationale**: There is no CI or hosting yet, so a committed file means the site opens straight from the repo and `scripts/site-check.py` runs without a build.
+- **Alternatives considered**: ignoring `dist/` and building in CI or at deploy (no CI or hosting exists yet; revisit when one does).
+- **Status**: Accepted (2026-10-22).
+
 ### [2026-10-22] Draft website in the project files is reference only
 - **Decision**: The untested website draft kept outside the repo (project shared files, `drafts/website-draft`) is reference material. Milestone 1 packages may borrow from it but are built and checked to `docs/milestones/milestone-1/plan.md`.
 - **Rationale**: It was never reviewed or run through the checks; mae was fine with reference or ignore.
