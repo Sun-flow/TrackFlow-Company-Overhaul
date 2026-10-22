@@ -87,22 +87,22 @@ Rules for all three threads:
 
 ### Form contract (shared by WP3 and WP4)
 
-The form is `<form id="request-form" novalidate>`. For each field, `name` is the key below, the input `id` is the same (checkbox and radio groups: `id` is `<name>-<value>`), and the error element is `<p id="<name>-error">`.
+The form is `<form id="request-form" novalidate>`. For each field, `name` is the key below, the input `id` is the same (checkbox and radio groups: `id` is `<name>-<short form of the value>`, such as `servicesOfInterest-last-mile`), and the error element is `<p id="<name>-error">`. Names and values follow the brief's wording (changed from short codes after the Milestone 1 checklist audit; `docs/decisions.md`, "Form field names and values use the brief's wording").
 
 | Field | name | Control | Values |
 |---|---|---|---|
-| Company name | `company` | text | |
-| Contact person | `contact` | text | |
-| Corporate email | `email` | email | |
+| Company name | `companyName` | text | |
+| Contact person | `contactPerson` | text | |
+| Corporate email | `corporateEmail` | email | |
 | Phone | `phone` | tel | |
-| Company website | `website` | url | |
-| Main operating country | `country` | select | `us`, `es`, `both`, `other` |
-| Product type | `product` | select | `fashion`, `electronics`, `cosmetics`, `food`, `other` |
-| Monthly volume | `volume` | select | `0-100`, `101-500`, `501-2000`, `2000+`, `not-sure` |
-| Services of interest | `services` | checkboxes | `warehousing`, `last-mile`, `reverse-logistics` |
-| Current 3PL | `current3pl` | radios | `yes`, `no`, `evaluating` |
-| Comments | `comments` | textarea, `maxlength` not set (the JS enforces 500 so the message can show) | |
-| Privacy policy | `privacy` | checkbox | |
+| Company website | `companyWebsite` | url | |
+| Main operating country | `mainOperatingCountry` | select | `United States`, `Spain`, `Both`, `Other` |
+| Product type | `productType` | select | `Fashion`, `Electronics`, `Cosmetics`, `Food`, `Other` |
+| Monthly volume | `monthlyShippingVolume` | select | `0-100`, `101-500`, `501-2000`, `2000+`, `Not sure` |
+| Services of interest | `servicesOfInterest` | checkboxes | `Warehousing`, `Last mile`, `Reverse logistics` |
+| Current 3PL | `currentThreePL` | radios | `Yes`, `No`, `Evaluating options` |
+| Comments | `commentsOrSpecificNeeds` | textarea, `maxlength` not set (the JS enforces 500 so the message can show) | |
+| Privacy policy | `privacyPolicy` | checkbox | |
 
 Other ids: `error-summary` (list of links to fields with errors), `comments-counter`, `form-success`, and the low-volume dialog `<dialog id="volume-dialog" aria-labelledby="volume-dialog-title">` with heading `volume-dialog-title`, buttons `volume-confirm` ("Confirm") and `volume-cancel` ("Nevermind"), both `type="button"`. Selects start with an empty, disabled placeholder option. Hidden elements use the `hidden` attribute, which the JavaScript toggles.
 
@@ -151,4 +151,4 @@ Update this table as packages start and merge.
 | WP4 Form validation | WP4 form validation | `claude/project-thread-m7zya3`, PR #11 | merged 2026-10-22 |
 | WP5 Integration and QA | Integration and QA | `claude/project-thread-6goo5h`, PR #13 | merged 2026-10-22 |
 | Follow-up: validation edge cases (WP4/WP5) | Form validation edge-case tests | `claude/project-thread-11jml5`, PR #12 | 458 tests, rule changes approved by mae (`docs/decisions.md`, "Form validation rules"); merged 2026-10-22 |
-| Follow-up: form checklist fixes (A6 to A8) | Form checklist fixes | `claude/project-thread-e2jh0w` | form page renamed to `application.html`, "Clear form", validation from first edit; in review |
+| Follow-up: form checklist fixes (A6 to A9) | Form checklist fixes | `claude/project-thread-e2jh0w`, PR #16 | form page renamed to `application.html`, "Clear form", validation from first edit, field names and values in the brief's wording; in review |

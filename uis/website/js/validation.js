@@ -10,25 +10,25 @@
   const COMMENTS_MAX = 500;
 
   const OPTIONS = {
-    country: ["us", "es", "both", "other"],
-    product: ["fashion", "electronics", "cosmetics", "food", "other"],
-    volume: ["0-100", "101-500", "501-2000", "2000+", "not-sure"],
-    services: ["warehousing", "last-mile", "reverse-logistics"],
-    current3pl: ["yes", "no", "evaluating"],
+    mainOperatingCountry: ["United States", "Spain", "Both", "Other"],
+    productType: ["Fashion", "Electronics", "Cosmetics", "Food", "Other"],
+    monthlyShippingVolume: ["0-100", "101-500", "501-2000", "2000+", "Not sure"],
+    servicesOfInterest: ["Warehousing", "Last mile", "Reverse logistics"],
+    currentThreePL: ["Yes", "No", "Evaluating options"],
   };
 
   const MESSAGES = {
-    company: "Company name must have at least 2 characters",
-    contact: "Enter first and last name of contact",
-    email: "Enter a valid corporate email (example: name@company.com)",
+    companyName: "Company name must have at least 2 characters",
+    contactPerson: "Enter first and last name of contact",
+    corporateEmail: "Enter a valid corporate email (example: name@company.com)",
     phone: "Phone must include country code (example: +1 213 555 0147)",
-    website: "If you include website, it must be a valid URL",
-    country: "Select main operating country",
-    product: "Select the type of product you handle",
-    volume: "Select estimated monthly volume",
-    services: "Select at least one service of interest",
-    current3pl: "Indicate if you currently work with another logistics provider",
-    privacy: "You must accept the privacy policy to continue",
+    companyWebsite: "If you include website, it must be a valid URL",
+    mainOperatingCountry: "Select main operating country",
+    productType: "Select the type of product you handle",
+    monthlyShippingVolume: "Select estimated monthly volume",
+    servicesOfInterest: "Select at least one service of interest",
+    currentThreePL: "Indicate if you currently work with another logistics provider",
+    privacyPolicy: "You must accept the privacy policy to continue",
   };
 
   // Invisible format characters (zero-width spaces, joiners, direction marks).
@@ -52,7 +52,7 @@
   // At least 2 characters, one of them a letter or digit.
   const validateCompany = (value) => {
     const company = text(value);
-    return length(company) >= 2 && /[\p{L}\p{N}]/u.test(company) ? "" : MESSAGES.company;
+    return length(company) >= 2 && /[\p{L}\p{N}]/u.test(company) ? "" : MESSAGES.companyName;
   };
 
   // At least two words that contain a letter, one of them with 2+ letters: first and last name.
@@ -63,14 +63,14 @@
     if (CJK_NAME_RE.test(name)) return "";
     const words = name.split(/\s+/).filter((word) => /\p{L}/u.test(word));
     const fullWord = words.some((word) => (word.match(/\p{L}/gu) || []).length >= 2);
-    return words.length >= 2 && fullWord ? "" : MESSAGES.contact;
+    return words.length >= 2 && fullWord ? "" : MESSAGES.contactPerson;
   };
 
   // RFC 5321 limits: 64 characters before the @, 254 in all.
   const validateEmail = (value) => {
     const email = text(value);
     const local = email.slice(0, email.lastIndexOf("@"));
-    return EMAIL_RE.test(email) && local.length <= 64 && email.length <= 254 ? "" : MESSAGES.email;
+    return EMAIL_RE.test(email) && local.length <= 64 && email.length <= 254 ? "" : MESSAGES.corporateEmail;
   };
 
   // NFKC turns full-width digits and plus signs into plain ones. E.164: 7 to 15 digits, extension aside.
@@ -88,7 +88,7 @@
   const validateWebsite = (value) => {
     const website = text(value);
     if (website === "") return "";
-    if (!/^https?:\/\/(?!\/)/i.test(website)) return MESSAGES.website;
+    if (!/^https?:\/\/(?!\/)/i.test(website)) return MESSAGES.companyWebsite;
     try {
       // The parser gives IDN hosts in punycode. A trailing dot (fully qualified name) is fine.
       const labels = new URL(website).hostname.replace(/\.$/, "").split(".");
@@ -97,22 +97,22 @@
         labels.every((label) => /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/.test(label)) &&
         /^(?:[a-z]{2,63}|xn--[a-z0-9-]{1,59})$/.test(tld)
         ? ""
-        : MESSAGES.website;
+        : MESSAGES.companyWebsite;
     } catch {
-      return MESSAGES.website;
+      return MESSAGES.companyWebsite;
     }
   };
 
   const oneOf = (name) => (value) => (OPTIONS[name].includes(value) ? "" : MESSAGES[name]);
-  const validateCountry = oneOf("country");
-  const validateProduct = oneOf("product");
-  const validateVolume = oneOf("volume");
-  const validateCurrent3pl = oneOf("current3pl");
+  const validateCountry = oneOf("mainOperatingCountry");
+  const validateProduct = oneOf("productType");
+  const validateVolume = oneOf("monthlyShippingVolume");
+  const validateCurrent3pl = oneOf("currentThreePL");
 
   const validateServices = (values) =>
-    Array.isArray(values) && values.length > 0 && values.every((value) => OPTIONS.services.includes(value))
+    Array.isArray(values) && values.length > 0 && values.every((value) => OPTIONS.servicesOfInterest.includes(value))
       ? ""
-      : MESSAGES.services;
+      : MESSAGES.servicesOfInterest;
 
   // Negative once the limit is passed; the counter and the error message both show it.
   const commentsRemaining = (value) => COMMENTS_MAX - (typeof value === "string" ? length(value) : 0);
@@ -122,25 +122,25 @@
     return remaining >= 0 ? "" : `Comments cannot exceed ${COMMENTS_MAX} characters (${remaining} remaining)`;
   };
 
-  const validatePrivacy = (checked) => (checked === true ? "" : MESSAGES.privacy);
+  const validatePrivacy = (checked) => (checked === true ? "" : MESSAGES.privacyPolicy);
 
   // In form order, so the error summary lists fields top to bottom.
   const VALIDATORS = {
-    company: validateCompany,
-    contact: validateContact,
-    email: validateEmail,
+    companyName: validateCompany,
+    contactPerson: validateContact,
+    corporateEmail: validateEmail,
     phone: validatePhone,
-    website: validateWebsite,
-    country: validateCountry,
-    product: validateProduct,
-    volume: validateVolume,
-    services: validateServices,
-    current3pl: validateCurrent3pl,
-    comments: validateComments,
-    privacy: validatePrivacy,
+    companyWebsite: validateWebsite,
+    mainOperatingCountry: validateCountry,
+    productType: validateProduct,
+    monthlyShippingVolume: validateVolume,
+    servicesOfInterest: validateServices,
+    currentThreePL: validateCurrent3pl,
+    commentsOrSpecificNeeds: validateComments,
+    privacyPolicy: validatePrivacy,
   };
 
-  // values: field name -> string, except services (array of strings) and privacy (boolean).
+  // values: field name -> string, except servicesOfInterest (array of strings) and privacyPolicy (boolean).
   // Returns field name -> message for the fields that fail, in form order; empty when all pass.
   const validateForm = (values) => {
     const errors = {};
@@ -168,12 +168,12 @@
     const phone = text(value).normalize("NFKC");
     if (phone === "" || phone.startsWith("+")) return phone;
     if (phone.startsWith("00")) return `+${phone.slice(2).trimStart()}`;
-    if (country === "us" && phone.startsWith("011")) return `+${phone.slice(3).trimStart()}`;
+    if (country === "United States" && phone.startsWith("011")) return `+${phone.slice(3).trimStart()}`;
     const digits = phone.replace(/\D/g, "");
-    if (country === "us" && digits.length === 10) return `+1 ${phone}`;
-    if (country === "us" && digits.length === 11 && digits.startsWith("1")) return `+${phone}`;
-    if (country === "es" && digits.length === 9 && /^[6-9]/.test(digits)) return `+34 ${phone}`;
-    if (country === "es" && digits.length === 11 && digits.startsWith("34")) return `+${phone}`;
+    if (country === "United States" && digits.length === 10) return `+1 ${phone}`;
+    if (country === "United States" && digits.length === 11 && digits.startsWith("1")) return `+${phone}`;
+    if (country === "Spain" && digits.length === 9 && /^[6-9]/.test(digits)) return `+34 ${phone}`;
+    if (country === "Spain" && digits.length === 11 && digits.startsWith("34")) return `+${phone}`;
     return phone;
   };
 
@@ -189,15 +189,15 @@
   const tidyField = (name, values) => {
     const value = values[name];
     if (typeof value !== "string") return value;
-    if (name === "company" || name === "contact") return text(value);
-    if (name === "email") return cleanEmail(value);
-    if (name === "phone") return autofillPhone(value, values.country);
-    if (name === "website") return autofillWebsite(value);
+    if (name === "companyName" || name === "contactPerson") return text(value);
+    if (name === "corporateEmail") return cleanEmail(value);
+    if (name === "phone") return autofillPhone(value, values.mainOperatingCountry);
+    if (name === "companyWebsite") return autofillWebsite(value);
     return value;
   };
 
   // The brief's low-volume warning (decision D3): volume "0-100" with a product type chosen.
-  const needsVolumeConfirmation = (values) => values.volume === "0-100" && text(values.product) !== "";
+  const needsVolumeConfirmation = (values) => values.monthlyShippingVolume === "0-100" && text(values.productType) !== "";
 
   // When a field validates live (decision "Form validates each field from first touch"): a field
   // checks itself on blur, change and while typing once the user has typed in it or changed it, and

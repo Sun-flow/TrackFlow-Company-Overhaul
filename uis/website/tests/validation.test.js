@@ -42,10 +42,10 @@ describe("email: @ and a domain", () => {
   const msg = "Enter a valid corporate email (example: name@company.com)";
   cases(v.validateEmail, [
     ["name@company.com", ""],
-    ["first.last@sub.company.es", ""],
+    ["first.last@sub.companyName.es", ""],
     [" name@company.com ", ""],
     ["", msg],
-    ["name.company.com", msg],
+    ["name.companyName.com", msg],
     ["name@company", msg],
     ["name@company.c", msg],
     ["@company.com", msg],
@@ -79,10 +79,10 @@ describe("website: optional, http:// or https:// URL", () => {
     ["   ", ""],
     [undefined, ""],
     ["https://company.com", ""],
-    ["http://www.company.es/shop?x=1", ""],
+    ["http://www.companyName.es/shop?x=1", ""],
     ["HTTPS://Company.com", ""],
     ["company.com", msg],
-    ["www.company.com", msg],
+    ["www.companyName.com", msg],
     ["ftp://company.com", msg],
     ["https://", msg],
     ["https://localhost", msg],
@@ -93,9 +93,9 @@ describe("website: optional, http:// or https:// URL", () => {
 
 describe("selects: one of the contract's values", () => {
   for (const [name, validate, msg] of [
-    ["country", v.validateCountry, "Select main operating country"],
-    ["product", v.validateProduct, "Select the type of product you handle"],
-    ["volume", v.validateVolume, "Select estimated monthly volume"],
+    ["mainOperatingCountry", v.validateCountry, "Select main operating country"],
+    ["productType", v.validateProduct, "Select the type of product you handle"],
+    ["monthlyShippingVolume", v.validateVolume, "Select estimated monthly volume"],
   ]) {
     describe(name, () => {
       cases(validate, [
@@ -111,8 +111,8 @@ describe("selects: one of the contract's values", () => {
 describe("services of interest: at least one", () => {
   const msg = "Select at least one service of interest";
   cases(v.validateServices, [
-    [["warehousing"], ""],
-    [["last-mile", "reverse-logistics"], ""],
+    [["Warehousing"], ""],
+    [["Last mile", "Reverse logistics"], ""],
     [[], msg],
     [undefined, msg],
     [["teleportation"], msg],
@@ -122,9 +122,9 @@ describe("services of interest: at least one", () => {
 describe("current 3PL: one option chosen", () => {
   const msg = "Indicate if you currently work with another logistics provider";
   cases(v.validateCurrent3pl, [
-    ["yes", ""],
-    ["no", ""],
-    ["evaluating", ""],
+    ["Yes", ""],
+    ["No", ""],
+    ["Evaluating options", ""],
     ["", msg],
     [undefined, msg],
   ]);
@@ -160,18 +160,18 @@ describe("privacy policy: must be checked", () => {
 
 describe("whole form", () => {
   const valid = {
-    company: "Acme Retail",
-    contact: "Ana López",
-    email: "ana@acme.com",
+    companyName: "Acme Retail",
+    contactPerson: "Ana López",
+    corporateEmail: "ana@acme.com",
     phone: "+34 976 123 456",
-    website: "",
-    country: "es",
-    product: "fashion",
-    volume: "501-2000",
-    services: ["warehousing"],
-    current3pl: "no",
-    comments: "",
-    privacy: true,
+    companyWebsite: "",
+    mainOperatingCountry: "Spain",
+    productType: "Fashion",
+    monthlyShippingVolume: "501-2000",
+    servicesOfInterest: ["Warehousing"],
+    currentThreePL: "No",
+    commentsOrSpecificNeeds: "",
+    privacyPolicy: true,
   };
 
   test("a complete, valid form has no errors", () => {
@@ -179,40 +179,40 @@ describe("whole form", () => {
   });
 
   test("an empty form fails every required field, in form order", () => {
-    const errors = v.validateForm({ services: [], privacy: false });
+    const errors = v.validateForm({ servicesOfInterest: [], privacyPolicy: false });
     assert.deepEqual(Object.keys(errors), [
-      "company",
-      "contact",
-      "email",
+      "companyName",
+      "contactPerson",
+      "corporateEmail",
       "phone",
-      "country",
-      "product",
-      "volume",
-      "services",
-      "current3pl",
-      "privacy",
+      "mainOperatingCountry",
+      "productType",
+      "monthlyShippingVolume",
+      "servicesOfInterest",
+      "currentThreePL",
+      "privacyPolicy",
     ]);
   });
 
   test("only the failing fields are reported", () => {
-    const errors = v.validateForm({ ...valid, email: "nope", website: "acme.com" });
+    const errors = v.validateForm({ ...valid, corporateEmail: "nope", companyWebsite: "acme.com" });
     assert.deepEqual(errors, {
-      email: "Enter a valid corporate email (example: name@company.com)",
-      website: "If you include website, it must be a valid URL",
+      corporateEmail: "Enter a valid corporate email (example: name@company.com)",
+      companyWebsite: "If you include website, it must be a valid URL",
     });
   });
 });
 
 describe("low-volume confirmation (D3)", () => {
   test("volume 0-100 with a product chosen needs confirmation", () => {
-    assert.equal(v.needsVolumeConfirmation({ volume: "0-100", product: "food" }), true);
+    assert.equal(v.needsVolumeConfirmation({ monthlyShippingVolume: "0-100", productType: "Food" }), true);
   });
   test("volume 0-100 without a product does not", () => {
-    assert.equal(v.needsVolumeConfirmation({ volume: "0-100", product: "" }), false);
+    assert.equal(v.needsVolumeConfirmation({ monthlyShippingVolume: "0-100", productType: "" }), false);
   });
   test("other volumes do not", () => {
-    for (const volume of ["101-500", "501-2000", "2000+", "not-sure", ""]) {
-      assert.equal(v.needsVolumeConfirmation({ volume, product: "fashion" }), false);
+    for (const volume of ["101-500", "501-2000", "2000+", "Not sure", ""]) {
+      assert.equal(v.needsVolumeConfirmation({ monthlyShippingVolume: volume, productType: "Fashion" }), false);
     }
   });
 });

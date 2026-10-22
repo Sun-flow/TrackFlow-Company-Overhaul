@@ -34,8 +34,8 @@ function initForm() {
     const data = new FormData(form);
     const values = {};
     for (const name of Object.keys(rules.VALIDATORS)) values[name] = data.get(name) ?? "";
-    values.services = data.getAll("services");
-    values.privacy = form.elements.privacy.checked;
+    values.servicesOfInterest = data.getAll("servicesOfInterest");
+    values.privacyPolicy = form.elements.privacyPolicy.checked;
     return values;
   };
 
@@ -51,7 +51,7 @@ function initForm() {
 
   // Clean-ups from validation.js (paste debris in the email, the phone's "+", the website's "https://"),
   // written back into the field so the user sees exactly what is checked and sent.
-  const TIDIED = ["company", "contact", "email", "phone", "website"];
+  const TIDIED = ["companyName", "contactPerson", "corporateEmail", "phone", "companyWebsite"];
   const tidy = (name) => {
     const control = form.elements[name];
     const value = rules.tidyField(name, readValues());
@@ -87,7 +87,7 @@ function initForm() {
   };
 
   const updateCounter = () => {
-    counter.textContent = `${rules.commentsRemaining(form.elements.comments.value)} characters remaining`;
+    counter.textContent = `${rules.commentsRemaining(form.elements.commentsOrSpecificNeeds.value)} characters remaining`;
   };
 
   // Simulated submission: there is no backend yet, so nothing is sent anywhere.
@@ -116,7 +116,7 @@ function initForm() {
   form.addEventListener("change", (event) => {
     const name = event.target.name;
     if (isField(name)) live.touch(name);
-    if (name === "country") {
+    if (name === "mainOperatingCountry") {
       tidy("phone");
       liveCheck("phone");
     }
@@ -129,7 +129,7 @@ function initForm() {
   form.addEventListener("input", (event) => {
     const name = event.target.name;
     if (isField(name)) live.touch(name);
-    if (event.target === form.elements.comments) updateCounter();
+    if (event.target === form.elements.commentsOrSpecificNeeds) updateCounter();
     if (event.target.getAttribute("aria-invalid") === "true") liveCheck(name);
   });
 
@@ -143,7 +143,7 @@ function initForm() {
     // The browser restores the controls after this event, so read them once it has.
     setTimeout(() => {
       updateCounter();
-      form.elements.company.focus();
+      form.elements.companyName.focus();
     });
   });
 

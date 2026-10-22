@@ -14,14 +14,14 @@ describe("live validation: when a field checks itself", () => {
 
   test("a field checks itself from its first edit, before any submit", () => {
     const live = v.createLiveValidation();
-    live.touch("email");
-    assert.equal(live.shouldCheck("email"), true);
+    live.touch("corporateEmail");
+    assert.equal(live.shouldCheck("corporateEmail"), true);
   });
 
   test("editing one field doesn't make the others check themselves", () => {
     const live = v.createLiveValidation();
-    live.touch("email");
-    for (const name of FIELDS.filter((n) => n !== "email")) assert.equal(live.shouldCheck(name), false, name);
+    live.touch("corporateEmail");
+    for (const name of FIELDS.filter((n) => n !== "corporateEmail")) assert.equal(live.shouldCheck(name), false, name);
   });
 
   test("a field stays live after its first edit, even once it is valid again", () => {
@@ -39,8 +39,8 @@ describe("live validation: when a field checks itself", () => {
 
   test("Clear form (reset) puts every field back to quiet, edited or submitted", () => {
     const live = v.createLiveValidation();
-    live.touch("company");
-    live.touch("services");
+    live.touch("companyName");
+    live.touch("servicesOfInterest");
     live.submitted();
     live.reset();
     for (const name of FIELDS) assert.equal(live.shouldCheck(name), false, name);
@@ -50,15 +50,15 @@ describe("live validation: when a field checks itself", () => {
     const live = v.createLiveValidation();
     live.submitted();
     live.reset();
-    live.touch("website");
-    assert.equal(live.shouldCheck("website"), true);
-    assert.equal(live.shouldCheck("company"), false);
+    live.touch("companyWebsite");
+    assert.equal(live.shouldCheck("companyWebsite"), true);
+    assert.equal(live.shouldCheck("companyName"), false);
   });
 
   test("each form gets its own state", () => {
     const a = v.createLiveValidation();
     const b = v.createLiveValidation();
     a.submitted();
-    assert.equal(b.shouldCheck("company"), false);
+    assert.equal(b.shouldCheck("companyName"), false);
   });
 });

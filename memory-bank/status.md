@@ -21,7 +21,7 @@
 
 Format: `- what — branch, PR, environment (started date)`. Remove the line when it merges or is dropped.
 
-- Form checklist fixes (A6 to A8: form page renamed to `uis/website/application.html`, "Clear form", validation from first edit) — `claude/project-thread-e2jh0w`, cloud (2026-10-22). Merges together with the landing page fixes (PR #15).
+- Form checklist fixes (A6 to A9: form page renamed to `uis/website/application.html`, "Clear form", validation from first edit, field names and values in the brief's wording) — `claude/project-thread-e2jh0w`, PR #16, cloud (2026-10-22). Merges together with the landing page fixes (PR #15).
 
 ## Next
 
