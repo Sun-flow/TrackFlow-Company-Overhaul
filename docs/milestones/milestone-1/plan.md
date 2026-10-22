@@ -1,7 +1,7 @@
 # Milestone 1 execution plan
 
 > **Date created**: 2026-10-22
-> **Status**: Draft, waiting for mae's approval. Nothing is built until mae approves.
+> **Status**: Draft, waiting for mae's approval. Nothing is built until mae approves. D3 to D5 decided by mae on 2026-10-22.
 > **Brief**: `milestone1-briefing.md` and `trackflow-BRIEFING.en.md` in this folder. The brief wins over this plan; if they disagree, fix the plan.
 
 This plan splits Milestone 1 (landing page + information-request form in `uis/website/`) into work packages. Each package is one branch, one pull request and one agent thread. Packages in the same phase can run at the same time because they touch different files; phases run in order.
@@ -25,15 +25,15 @@ WP3 and WP4 both concern the form, but they never edit the same file. They agree
 
 ## Phase 0: decisions for mae
 
-Each has a recommendation. Approving the plan approves the recommendations unless mae says otherwise. Each outcome is logged in `docs/decisions.md` by WP1.
+D1 and D2 have a recommendation; approving the plan approves them unless mae says otherwise, and WP1 logs them in `docs/decisions.md`. mae decided D3 to D5 on 2026-10-22; they are logged in `docs/decisions.md` already.
 
 | # | Question | Recommendation | Why |
 |---|---|---|---|
 | D1 | Visual direction (colours, type) | WP1 offers two or three palette and font options as screenshots of the scaffold; mae picks one before WP2 to WP4 start. | `memory-bank/notes.md`: mae makes the design calls. Every page package depends on the tokens. |
 | D2 | Commit the compiled CSS (`uis/website/dist/styles.css`)? | Yes, commit it, and WP5 checks it is up to date. | No CI or hosting exists yet; a committed file means the site opens straight from the repo and `scripts/site-check.py` works without a build. |
-| D3 | The brief's under-100 warning says "volume is 0-100 AND the Product type field is relevant". What does "relevant" mean? | Show the warning when volume is 0-100 and any product type is chosen; it is a confirmation, not a block (a checkbox "Yes, continue" the user must tick to submit). | The brief's own wording ("Are you sure you want to continue?") asks for confirmation. Reading "relevant" as "filled in" is the most literal option. |
-| D4 | The privacy checkbox has no policy page to link to (parked in `docs/FUTURE_WORK.md`). | Plain label text, no link, for Milestone 1. | Building a policy page is out of scope; a dead link fails review. |
-| D5 | Reuse the untested draft in the project's shared files (`drafts/website-draft`, outside the repo)? | Reference only. Packages may borrow from it but must meet this plan and pass the checks. | The log for 2026-10-22 marks it optional reference; it was never reviewed. |
+| D3 | How does the brief's under-100 warning work? | **Decided by mae.** On submit, after every field is valid, if volume is `0-100` and a product type is chosen, a modal dialog explains that TrackFlow serves e-commerce brands outsourcing their logistics and asks if they are sure they want to continue. "Confirm" submits; "Nevermind" closes the dialog and does nothing else (no submit, nothing cleared). | mae's call. The dialog text includes the brief's warning sentence. |
+| D4 | The privacy checkbox has no policy page to link to. | **Decided by mae.** A placeholder `privacy.html`, clearly labelled as a placeholder, linked from the checkbox label. Replacing it with a real policy is tracked in `docs/FUTURE_WORK.md`. | mae's call. A real link beats bare text; the placeholder is honest about what it is. |
+| D5 | Reuse the untested draft in the project's shared files (`drafts/website-draft`, outside the repo)? | **Decided by mae.** Reference only: packages may borrow from it but must meet this plan and pass the checks. | It was never reviewed or checked. |
 
 Also settled already (`docs/decisions.md`): Tailwind through a pnpm build step, not the Play CDN; English as the base language, Spanish parked in `docs/FUTURE_WORK.md`. The footer keeps the brief's "© 2025 TrackFlow" text; the current-year idea stays parked.
 
@@ -46,13 +46,14 @@ Sets up everything the page packages share, so they only fill in their own `<mai
 - **Scope**
   - `uis/website/package.json` (pnpm, Tailwind CLI as dev dependency, `build` and `dev` scripts), lockfile, `.gitignore` for `node_modules/`.
   - `uis/website/src/input.css`: Tailwind import and the theme tokens mae picks in D1. Hand-written CSS only where Tailwind can't do it, with a comment saying why.
-  - Two pages, `index.html` and `request-information.html`, each with the full `<head>` (title, meta description, canonical, favicon, compiled stylesheet), the shared header (logo, nav Home | Services | Coverage | Contact, skip link, mobile menu), the shared footer (© 2025 TrackFlow. All rights reserved., LinkedIn), and an empty `<main id="main">` holding a placeholder comment.
+  - Three pages, `index.html`, `request-information.html` and `privacy.html`, each with the full `<head>` (title, meta description, canonical, favicon, compiled stylesheet), the shared header (logo, nav Home | Services | Coverage | Contact, skip link, mobile menu), the shared footer (© 2025 TrackFlow. All rights reserved., LinkedIn), and an empty `<main id="main">` holding a placeholder comment (`privacy.html` gets its content here instead, see below).
+  - `privacy.html` content (D4): a heading, a visible notice that this is a placeholder and the real policy is coming, and a short plain statement of what the form collects and why (to contact the company about logistics services). Mark it `<meta name="robots" content="noindex">`. No invented legal text.
   - The Schema.org `Organization` JSON-LD from the brief, verbatim, in the `<head>` of `index.html`.
   - `uis/website/js/nav.js` for the mobile menu (`aria-expanded`, Escape to close).
   - Shared assets in `uis/website/assets/`: logo and favicon.
   - `uis/website/README.md` (what it is, how to build and check it) and a line for it in `uis/README.md`.
   - Log D1 to D5 in `docs/decisions.md`; remove `uis/website/` from `PLANNED_PATHS` in `scripts/check-memory.py`; update `memory-bank/context.md` commands.
-- **Done when**: `pnpm build` works, both stub pages pass `python3 scripts/site-check.py`, and the header and footer work by keyboard at all four widths.
+- **Done when**: `pnpm build` works, all three pages pass `python3 scripts/site-check.py`, and the header and footer work by keyboard at all four widths.
 - **Outside its scope**: any section content, the form, validation.
 
 ## Phase 2 (parallel)
@@ -73,13 +74,13 @@ Rules for all three threads:
 ### WP3 Form markup
 
 - **Files**: the `<main>` of `uis/website/request-information.html`.
-- **Scope**: the form, following the contract below: every field with a `<label>`, hint text where the brief gives a format, an empty error element per field tied with `aria-describedby`, `<fieldset>` and `<legend>` for the checkbox and radio groups, an error summary region, the 0-100 warning block (hidden), the comments counter, and the success message region (hidden) with the brief's exact text. Add `novalidate` to the form so the JavaScript owns validation. Load `js/form.js` with `defer` (WP4 provides it).
+- **Scope**: the form, following the contract below: every field with a `<label>`, hint text where the brief gives a format, an empty error element per field tied with `aria-describedby`, `<fieldset>` and `<legend>` for the checkbox and radio groups, an error summary region, the low-volume confirmation `<dialog>` (D3), the privacy checkbox label linking to `privacy.html` in a new tab (so the form isn't lost, with "opens in a new tab" in the link text), the comments counter, and the success message region (hidden) with the brief's exact text. Add `novalidate` to the form so the JavaScript owns validation. Load `js/form.js` with `defer` (WP4 provides it).
 - **Done when**: site-check passes, every field is reachable and labelled by keyboard and screen reader, and the page is complete and usable as markup even before WP4 merges.
 
 ### WP4 Form validation
 
 - **Files**: `uis/website/js/validation.js` (pure functions, one per brief rule, no DOM), `uis/website/js/form.js` (wires the functions to the DOM through the contract), `uis/website/tests/validation.test.js` (Node's built-in test runner, no extra dependencies), and a `test` script in `package.json`.
-- **Scope**: every rule under "Specific validations" with the brief's exact error messages; validate on submit (all fields) and on blur after the first attempt; move focus to the error summary on a failed submit; live comments counter with the "(X remaining)" message; the 0-100 warning per D3; on success, hide the form, show the success message and move focus to it. No network request.
+- **Scope**: every rule under "Specific validations" with the brief's exact error messages; validate on submit (all fields) and on blur after the first attempt; move focus to the error summary on a failed submit; live comments counter with the "(X remaining)" message; the low-volume dialog per D3 (opened with `showModal()` only after every field passes; Confirm runs the success path; Nevermind, Escape or closing it leaves the form exactly as it was and returns focus to the submit button); on success, hide the form, show the success message and move focus to it. No network request.
 - **Done when**: `pnpm test` passes (cases for every rule, valid and invalid), and the form works end to end against WP3's markup. If WP3 hasn't merged yet, test against a scratch page built from the contract and don't commit it.
 
 ### Form contract (shared by WP3 and WP4)
@@ -100,9 +101,8 @@ The form is `<form id="request-form" novalidate>`. For each field, `name` is the
 | Current 3PL | `current3pl` | radios | `yes`, `no`, `evaluating` |
 | Comments | `comments` | textarea, `maxlength` not set (the JS enforces 500 so the message can show) | |
 | Privacy policy | `privacy` | checkbox | |
-| Low-volume confirmation | `volume-confirm` | checkbox inside `#volume-warning` | |
 
-Other ids: `error-summary` (list of links to fields with errors), `volume-warning`, `comments-counter`, `form-success`. Selects start with an empty, disabled placeholder option. Hidden elements use the `hidden` attribute, which the JavaScript toggles.
+Other ids: `error-summary` (list of links to fields with errors), `comments-counter`, `form-success`, and the low-volume dialog `<dialog id="volume-dialog" aria-labelledby="volume-dialog-title">` with heading `volume-dialog-title`, buttons `volume-confirm` ("Confirm") and `volume-cancel` ("Nevermind"), both `type="button"`. Selects start with an empty, disabled placeholder option. Hidden elements use the `hidden` attribute, which the JavaScript toggles.
 
 ## Phase 3
 
@@ -122,7 +122,8 @@ Other ids: `error-summary` (list of links to fields with errors), `volume-warnin
 | Separate form page with all 12 fields | WP3 |
 | Every validation rule and exact error message | WP4 |
 | Comments counter, 500 max | WP3, WP4 |
-| Under-100 warning | WP3, WP4 |
+| Under-100 warning (confirmation dialog, D3) | WP3, WP4 |
+| Placeholder privacy page linked from the form (D4) | WP1, WP3 |
 | Simulated submit with the exact success message | WP3, WP4 |
 | Responsive at 375, 768, 1024, 1440 | all, checked in WP5 |
 | Semantic HTML, ARIA where needed, `alt` on images, axe clean | all, checked in WP5 |
@@ -135,7 +136,8 @@ Update this table as packages start and merge.
 
 | Package | Thread | Branch / PR | State |
 |---|---|---|---|
-| D1 to D5 | Milestone 1 execution plan | | waiting for mae |
+| D1, D2 | Milestone 1 execution plan | | waiting for mae |
+| D3 to D5 | Milestone 1 execution plan | PR #5 | decided 2026-10-22 |
 | WP1 Site scaffold | | | not started |
 | WP2 Landing page | | | not started |
 | WP3 Form markup | | | not started |

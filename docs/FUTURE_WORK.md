@@ -35,11 +35,11 @@ The form is for e-commerce brands, not for consumers tracking a parcel or making
 - **Source:** Milestone 1 briefing, "Specific restriction"; `CONTEXT.md`, Last Mile and Carrier Management
 - **Target:** ?
 
-### Privacy policy page
+### Real privacy policy page
 
-The form requires accepting a privacy policy, but there is no policy page to link to yet.
+Milestone 1 ships `uis/website/privacy.html` as a clearly marked placeholder so the form's privacy checkbox has something to link to. Replace it with a real policy (written or reviewed by someone who can speak for TrackFlow) and drop the placeholder notice and `noindex`.
 
-- **Source:** Milestone 1 briefing, form fields
+- **Source:** Milestone 1 briefing, form fields; mae's decision of 2026-10-22 (`docs/decisions.md`)
 - **Target:** ?
 
 ## AI and agents

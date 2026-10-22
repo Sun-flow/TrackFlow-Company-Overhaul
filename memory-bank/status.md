@@ -19,12 +19,12 @@ Format: `- what — branch, PR, environment (started date)`. Remove the line whe
 
 ## Next
 
-1. mae approves `docs/milestones/milestone-1/plan.md` and answers its phase 0 decisions (D1 to D5).
+1. mae approves `docs/milestones/milestone-1/plan.md` and its phase 0 decisions D1 and D2 (D3 to D5 are decided).
 2. Build in the plan's order: WP1 site scaffold, then WP2 to WP4 in parallel threads, then WP5 integration and QA. The plan's "Progress" table tracks each package.
 
 ## Open questions
 
-- Plan approval and decisions D1 to D5 in `docs/milestones/milestone-1/plan.md`.
+- Plan approval and decisions D1 and D2 in `docs/milestones/milestone-1/plan.md`.
 
 ## Known problems
 
