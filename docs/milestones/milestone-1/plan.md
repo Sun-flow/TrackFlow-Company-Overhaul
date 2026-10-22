@@ -52,7 +52,7 @@ Sets up everything the page packages share, so they only fill in their own `<mai
   - `uis/website/js/nav.js` for the mobile menu (`aria-expanded`, Escape to close).
   - Shared assets in `uis/website/assets/`: logo and favicon.
   - `uis/website/README.md` (what it is, how to build and check it) and a line for it in `uis/README.md`.
-  - Log D1 to D5 in `docs/decisions.md`; remove `uis/website/` from `PLANNED_PATHS` in `scripts/check-memory.py`; update `memory-bank/context.md` commands.
+  - Log D1 and D2 in `docs/decisions.md` (D3 to D5 are logged already); remove `uis/website/` from `PLANNED_PATHS` in `scripts/check-memory.py`; update `memory-bank/context.md` commands.
 - **Done when**: `pnpm build` works, all three pages pass `python3 scripts/site-check.py`, and the header and footer work by keyboard at all four widths.
 - **Outside its scope**: any section content, the form, validation.
 
