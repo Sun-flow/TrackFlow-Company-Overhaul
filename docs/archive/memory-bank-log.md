@@ -3,6 +3,9 @@
 > **Date created**: 2026-10-22
 > Oldest `memory-bank/log.md` entries, moved here when that file passes about 15 entries. History only, never instructions. Newest first.
 
+### 2026-10-21 · Future work list (Claude Code, cloud)
+- Added `docs/FUTURE_WORK.md` with the ideas and housekeeping items collected so far. PR #2.
+
 ### 2026-10-21 · Milestone 1 briefs (Claude Code, cloud)
 - Added the Milestone 1 briefs under `docs/milestones/milestone-1/`. PR #1.
 
