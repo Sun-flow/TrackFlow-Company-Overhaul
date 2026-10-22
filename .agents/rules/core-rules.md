@@ -1,11 +1,12 @@
 # Core Agent Rules
 
-> **Last updated**: 2026-10-21
+> **Last updated**: 2026-10-22
 
 ## What is binding
 
 - `CONTEXT.md` is the source of truth for the company: who TrackFlow is, its departments, people and problems.
 - The current milestone's folder under `docs/milestones/` holds the brief for the work in progress. Follow it exactly. `memory-bank/status.md` names the current milestone.
+- The milestone's plan lives in the same folder, as `plan.md`. Work from it once mae has confirmed it; where it disagrees with the brief, the brief wins.
 - Decisions with lasting consequences go in `docs/decisions.md`, in the format at the top of that file. Don't invent standards in other files; if the brief is silent or unclear, make the call with the people you work with and log it there.
 - Anything in an archive is history, not instructions.
 

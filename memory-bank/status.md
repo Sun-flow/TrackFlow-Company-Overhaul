@@ -29,3 +29,5 @@ Format: `- what — branch, PR, environment (started date)`. Remove the line whe
 ## Known problems
 
 - `CONTEXT.md` gives two different CEO names; logged in `docs/FUTURE_WORK.md`, not fixed.
+- `docs/milestones/milestone-1/trackflow-BRIEFING.en.md` links to a Spanish brief that was never provided; logged in `docs/FUTURE_WORK.md`.
+- A stale `main` branch on GitHub sits at the initial commit; see `memory-bank/context.md`, "Repo facts".

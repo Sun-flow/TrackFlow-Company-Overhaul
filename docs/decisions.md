@@ -34,6 +34,12 @@ Entry format:
 - **Alternatives considered**: an inline warning with a checkbox the user must tick; an inline notice that doesn't ask anything.
 - **Status**: Accepted (2026-10-22).
 
+### [2026-10-22] Milestone plans live in their milestone's folder
+- **Decision**: Each milestone's plan is a `plan.md` inside its folder in `docs/milestones/`, next to the briefs. `docs/milestones/README.md` describes the layout.
+- **Rationale**: The plan only makes sense next to the brief it carries out, and agents already look in that folder for the current milestone. mae chose this as the standard "for now".
+- **Alternatives considered**: a separate `docs/plans/` folder (splits a milestone across two places); keeping the plan in `memory-bank/status.md` (that folder is pruned, and people need to read the plan).
+- **Status**: Accepted (2026-10-22).
+
 ### [2026-10-22] Milestone 1 website is in English first
 - **Decision**: The public website and the information-request form are built in English as the base language. A Spanish version is an enhancement for later, tracked in `docs/FUTURE_WORK.md`.
 - **Rationale**: The Milestone 1 brief requires one base language with full quality and makes a second language optional. English matches the brief's copy, which is already written in English, and the US headquarters.

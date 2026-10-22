@@ -51,9 +51,10 @@ You are building **one company** across many milestones and projects. Each top-l
 
 ## Current status of the template
 
-> 💡 This repository currently provides a **base folder structure and documentation skeleton** only. It does not include runnable apps or global scripts yet.
+> 💡 This repository started from the course's **base folder structure and documentation skeleton**. It has no runnable apps yet; Milestone 1 adds the public website in `uis/website/`.
 >
-> - `CONTEXT.md` is a placeholder and must be replaced with your assigned company context.
+> - `CONTEXT.md` holds the TrackFlow company briefing (in English only).
+> - `scripts/` has two global helper scripts, `check-memory.py` and `site-check.py` (see [`scripts/README.md`](./scripts/README.md)).
 > - The root `AGENTS.md` is the entry point for AI coding agents; it leads to `memory-bank/` (agent memory) and `.agents/rules/`.
 > - Shared package metadata exists in `packages/shared/package.json` (`@repo/shared-types`), but no workspace runner is configured at root.
 
@@ -70,6 +71,8 @@ Read the linked `README.md` inside each folder before you start coding there.
 | [`CONTEXT.md`](./CONTEXT.md) | Single source of truth for your company (Brasaland, TrackFlow, or Nexova) | **First step:** copy your assigned company briefing here so every app, agent, and prompt uses the same domain |
 | `docker-compose.yml`         | Local dev orchestration for the whole stack                               | Keep at repo root — wires `services/`, databases, and other containers from one place                         |
 | `README.md` / `README.es.md` | This guide                                                                | Orientation — you are here                                                                                    |
+| [`AGENTS.md`](./AGENTS.md)   | Entry point for AI coding agents                                          | Agents read it first; `CLAUDE.md` and `.github/copilot-instructions.md` point to it                           |
+| [`company-choice.md`](./company-choice.md) | Why TrackFlow was chosen, and the first agent idea          | Background reading                                                                                            |
 
 ### `uis/` — user interfaces
 
@@ -198,6 +201,8 @@ Read the linked `README.md` inside each folder before you start coding there.
 
 - System architecture diagrams, ADRs, security/observability guides
 - Conventions not tied to one app or agent
+- Milestone briefs and plans: one folder per milestone in `docs/milestones/`, holding its briefs and its `plan.md`
+- The decision log (`docs/decisions.md`) and ideas parked for later milestones (`docs/FUTURE_WORK.md`)
 
 → See [`docs/README.md`](./docs/README.md)
 
@@ -236,6 +241,15 @@ Read the linked `README.md` inside each folder before you start coding there.
 - Tools with their own `package.json`, tests, and install steps
 
 → See [`internal/README.md`](./internal/README.md)
+
+### Agent and tooling folders
+
+| Path | What lives here |
+| ---- | --------------- |
+| [`memory-bank/`](./memory-bank/README.md) | Working memory for AI coding agents: status, session log, notes. Read through `AGENTS.md`. |
+| `.agents/` | The memory bank prompt (`prompts/`) and the rules coding agents follow (`rules/`). Not to be confused with `agents/`, which holds the company's own AI agents. |
+| `.devcontainer/` | The dev container for Codespaces: Python 3.12, Node 22 with pnpm. |
+| `.github/` | GitHub configuration, including the Copilot pointer to `AGENTS.md`. |
 
 ---
 
