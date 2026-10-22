@@ -1,6 +1,6 @@
 # Context
 
-> **Last updated**: 2026-10-21
+> **Last updated**: 2026-10-22
 
 ## What this is
 
@@ -10,7 +10,7 @@ Work goes one milestone at a time. Each milestone has a folder with its brief un
 
 ## Stack
 
-- No application code yet. Milestone 1 will add a static public website in `uis/website/`: HTML, Tailwind CSS, and plain JavaScript for form validation (brief: `docs/milestones/milestone-1/milestone1-briefing.md`).
+- No application code yet. Milestone 1 will add a static public website in `uis/website/`: HTML, Tailwind CSS compiled with a build step, and plain JavaScript for form validation, in English first (brief: `docs/milestones/milestone-1/milestone1-briefing.md`; build and language choices: `docs/decisions.md`).
 - Dev container (`.devcontainer/devcontainer.json`): Ubuntu 24.04, Python 3.12, Node 22 with pnpm via corepack. There is no root Node or Python project file yet.
 - No tests and no CI.
 
