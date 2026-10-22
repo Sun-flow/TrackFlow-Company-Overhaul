@@ -8,7 +8,7 @@ Ideas and follow-ups that are **out of scope for the current milestone** but wor
 
 - Add an entry when an idea comes up that doesn't belong to the current milestone.
 - Give it a short title, one or two lines on what and why, a **Source** (where the idea came from), and a **Target** milestone if one is obvious (`?` if not).
-- When a milestone starts, review this file and move the entries it picks up into that milestone's plan. Delete them here once they're done.
+- When a milestone starts, review this file and move the entries it picks up into that milestone's plan (`docs/milestones/milestone-N/plan.md`). Delete them here once they're done.
 
 ---
 

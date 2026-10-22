@@ -3,12 +3,16 @@
 > **Last updated**: 2026-10-22
 > Newest first. One entry per session: date, where it ran, what changed (link the PR or commit), what was left open. Keep about 15 entries. When there are more, move the oldest to `docs/archive/memory-bank-log.md` (create it the first time). Entries before this file existed were rebuilt from git history.
 
+### 2026-10-22 · Repo consistency check (Claude Code, cloud)
+- Checked the agent docs against each other and the repo (the report, reports/repo-consistency-2026-10-22.md, is in the project's shared files, outside the repo) and fixed what mae approved: removed the placeholder CONTEXT.es.md, made a plan.md in each milestone's folder the documented home for milestone plans (new `docs/milestones/README.md`), refreshed the root README's status box and added the agent folders to it, and noted the stale `main` branch. Branch `claude/project-thread-kktbxp`.
+- Open: whether to delete the stale `main` branch or make it the default (mae's call).
+
 ### 2026-10-22 · Milestone 1 decisions (Claude Code, cloud)
-- Recorded two Milestone 1 decisions mae made in `docs/decisions.md`: Tailwind through a build step, and English as the base language. Branch `claude/project-thread-0e5coz`.
+- Recorded two Milestone 1 decisions mae made in `docs/decisions.md`: Tailwind through a build step, and English as the base language. Branch `claude/project-thread-0e5coz`, PR #4.
 - Open: nothing. Building the site is for a separate thread; an unpushed, untested draft from this session sits in the project's shared files (drafts/website-draft, outside the repo), and is optional reference only.
 
 ### 2026-10-21 · Memory bank and agent rules (Claude Code, cloud)
-- Ported from mae's `Sun-flow/tailwind-dashboard`, keeping only what generalises (mae approved each item): the memory bank prompt and check script, the `AGENTS.md` / `CLAUDE.md` / Copilot entry points, semantic HTML and accessibility rules, new core rules with a stay-in-the-milestone rule, the decision log format (`docs/decisions.md`), and `scripts/site-check.py` adapted from the old screenshot script with an axe-core scan added. Branch `claude/project-thread-nul6yt`.
+- Ported from mae's `Sun-flow/tailwind-dashboard`, keeping only what generalises (mae approved each item): the memory bank prompt and check script, the `AGENTS.md` / `CLAUDE.md` / Copilot entry points, semantic HTML and accessibility rules, new core rules with a stay-in-the-milestone rule, the decision log format (`docs/decisions.md`), and `scripts/site-check.py` adapted from the old screenshot script with an axe-core scan added. Branch `claude/project-thread-nul6yt`, PR #3.
 - Open: nothing. (`docs/FUTURE_WORK.md` came in with PR #2.)
 
 ### 2026-10-21 · Future work list (Claude Code, cloud)

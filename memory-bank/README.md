@@ -1,6 +1,6 @@
 # Memory Bank
 
-> **Last updated**: 2026-10-21
+> **Last updated**: 2026-10-22
 > Built from the project-agnostic prompt in `.agents/prompts/memory-bank.md`. That file has the full rules and the reasoning behind them; this one is the short version for this repo.
 
 Agents forget everything between sessions, and the next session may be a different agent or tool in a different environment. These files carry what would otherwise be lost. They are **memory, not standards**: the binding docs are listed below, and this folder points to them instead of copying them.
@@ -28,7 +28,7 @@ Then read the binding docs and code your task needs.
 ## Sources of truth (higher wins)
 
 1. The code, as it is now.
-2. `CONTEXT.md` (the company) and the current milestone's brief in `docs/milestones/`.
+2. `CONTEXT.md` (the company) and the current milestone's brief in `docs/milestones/`, then the milestone's plan (plan.md) beside it (the brief wins if they disagree).
 3. `docs/decisions.md`: why each decision was made. New decisions go there, not in this folder.
 4. `docs/FUTURE_WORK.md`: ideas parked for later milestones. Later ideas go there, not in this folder.
 5. This folder.
