@@ -4,7 +4,7 @@
 > Newest first. One entry per session: date, where it ran, what changed (link the PR or commit), what was left open. Keep about 15 entries. When there are more, move the oldest to `docs/archive/memory-bank-log.md` (create it the first time). Entries before this file existed were rebuilt from git history.
 
 ### 2026-10-22 · Milestone 1 execution plan (Claude Code, cloud)
-- Wrote `docs/milestones/milestone-1/plan.md`: five work packages (scaffold, then landing page, form markup and form validation in parallel, then integration and QA), five decisions for mae, a form contract so markup and validation can be built separately, and an acceptance checklist. Branch `claude/project-thread-knpic0`.
+- Wrote `docs/milestones/milestone-1/plan.md`: five work packages (scaffold, then landing page, form markup and form validation in parallel, then integration and QA), five decisions for mae, a form contract so markup and validation can be built separately, and an acceptance checklist. Branch `claude/project-thread-knpic0`, PR #5.
 - Open: mae's approval and decisions D1 to D5. Nothing built.
 
 ### 2026-10-22 · Milestone 1 decisions (Claude Code, cloud)

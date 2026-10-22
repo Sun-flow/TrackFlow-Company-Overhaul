@@ -15,7 +15,7 @@
 
 Format: `- what — branch, PR, environment (started date)`. Remove the line when it merges or is dropped.
 
-- Milestone 1 execution plan, waiting for mae's approval — `claude/project-thread-knpic0`, PR pending, Claude Code cloud (2026-10-22)
+- Milestone 1 execution plan, waiting for mae's approval — `claude/project-thread-knpic0`, PR #5, Claude Code cloud (2026-10-22)
 
 ## Next
 
