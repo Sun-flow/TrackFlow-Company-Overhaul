@@ -36,6 +36,7 @@ In Claude Code cloud sessions Chromium is preinstalled: skip the install step an
 |---|---|
 | The company: departments, people, problems | `CONTEXT.md` |
 | What the current milestone must deliver | `docs/milestones/milestone-1/milestone1-briefing.md` (the manager's email: what to build and the technical requirements) and `docs/milestones/milestone-1/trackflow-BRIEFING.en.md` (page content, form fields, validations, messages, Schema.org). Read both. |
+| How Milestone 1 is split into work packages, and their progress | `docs/milestones/milestone-1/plan.md` |
 | Why a decision was made, and what was rejected | `docs/decisions.md` |
 | Ideas for later milestones | `docs/FUTURE_WORK.md` |
 | What each top-level folder is for | root `README.md`, and each folder's `README.md` |

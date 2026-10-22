@@ -16,6 +16,24 @@ Entry format:
 
 ---
 
+### [2026-10-22] Draft website in the project files is reference only
+- **Decision**: The untested website draft kept outside the repo (project shared files, `drafts/website-draft`) is reference material. Milestone 1 packages may borrow from it but are built and checked to `docs/milestones/milestone-1/plan.md`.
+- **Rationale**: It was never reviewed or run through the checks; mae was fine with reference or ignore.
+- **Alternatives considered**: using it as the scaffold's starting point (untested code would become everyone's base); ignoring it.
+- **Status**: Accepted (2026-10-22).
+
+### [2026-10-22] Placeholder privacy policy page for Milestone 1
+- **Decision**: The site gets a `privacy.html` page that says plainly it is a placeholder, and the form's privacy checkbox links to it. Writing the real policy is tracked in `docs/FUTURE_WORK.md`.
+- **Rationale**: The brief requires accepting a privacy policy, and a working link is better than none, as long as the page doesn't pretend to be a real policy.
+- **Alternatives considered**: label text with no link (honest but the user can't read anything); a link to `#` (looks broken).
+- **Status**: Accepted (2026-10-22).
+
+### [2026-10-22] Low-volume warning is a confirmation dialog on submit
+- **Decision**: When a valid form is submitted with monthly volume "0-100" and a product type chosen, a modal dialog explains that TrackFlow serves e-commerce brands outsourcing their logistics and asks whether to continue. "Confirm" submits; "Nevermind" closes the dialog without submitting or changing anything.
+- **Rationale**: The brief asks for a warning with "Are you sure you want to continue?" but leaves the mechanics open; mae chose an explicit confirm or cancel at the moment of submitting.
+- **Alternatives considered**: an inline warning with a checkbox the user must tick; an inline notice that doesn't ask anything.
+- **Status**: Accepted (2026-10-22).
+
 ### [2026-10-22] Milestone plans live in their milestone's folder
 - **Decision**: Each milestone's plan is a `plan.md` inside its folder in `docs/milestones/`, next to the briefs. `docs/milestones/README.md` describes the layout.
 - **Rationale**: The plan only makes sense next to the brief it carries out, and agents already look in that folder for the current milestone. mae chose this as the standard "for now".

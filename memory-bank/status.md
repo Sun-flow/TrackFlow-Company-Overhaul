@@ -15,14 +15,12 @@
 
 Format: `- what — branch, PR, environment (started date)`. Remove the line when it merges or is dropped.
 
-- Nothing.
+- Milestone 1 execution plan, approved by mae, waiting to merge — `claude/project-thread-knpic0`, PR #5, Claude Code cloud (2026-10-22)
+- WP1 site scaffold, starting in its own thread — branch and PR to come, Claude Code cloud (2026-10-22)
 
 ## Next
 
-1. Build the Milestone 1 landing page in `uis/website/`.
-2. Build the information-request form page with JavaScript validation and the brief's error and success messages.
-3. Add the Schema.org markup the brief requires.
-4. Run `python3 scripts/site-check.py` and check every page by keyboard.
+1. Build in the order of `docs/milestones/milestone-1/plan.md` (approved 2026-10-22): WP1 site scaffold (mae picks the visual direction there, D1), then WP2 to WP4 in parallel threads, then WP5 integration and QA. The plan's "Progress" table tracks each package.
 
 ## Open questions
 
