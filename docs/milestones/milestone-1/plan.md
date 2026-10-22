@@ -1,7 +1,7 @@
 # Milestone 1 execution plan
 
 > **Date created**: 2026-10-22
-> **Status**: Approved by mae on 2026-10-22, with D1 and D2 as recommended and D3 to D5 as mae decided. Building starts with WP1.
+> **Status**: Done 2026-10-22, waiting for mae's review. Approved by mae on 2026-10-22, with D1 and D2 as recommended and D3 to D5 as mae decided; WP1 to WP5 are built and every acceptance item below is checked.
 > **Brief**: `milestone1-briefing.md` and `trackflow-BRIEFING.en.md` in this folder. The brief wins over this plan; if they disagree, fix the plan.
 
 This plan splits Milestone 1 (landing page + information-request form in `uis/website/`) into work packages. Each package is one branch, one pull request and one agent thread. Packages in the same phase can run at the same time because they touch different files; phases run in order.
@@ -115,22 +115,26 @@ Other ids: `error-summary` (list of links to fields with errors), `comments-coun
 
 ## Acceptance checklist (from the brief)
 
-| Requirement | Package |
-|---|---|
-| Header with logo and nav Home, Services, Coverage, Contact | WP1 |
-| Hero with the brief's headline, subheadline and "Request information" button | WP2 |
-| Services (3), Coverage (2), Why TrackFlow (4), Contact, in that order | WP2 |
-| Professional footer with © 2025 and LinkedIn | WP1 |
-| Separate form page with all 12 fields | WP3 |
-| Every validation rule and exact error message | WP4 |
-| Comments counter, 500 max | WP3, WP4 |
-| Under-100 warning (confirmation dialog, D3) | WP3, WP4 |
-| Placeholder privacy page linked from the form (D4) | WP1, WP3 |
-| Simulated submit with the exact success message | WP3, WP4 |
-| Responsive at 375, 768, 1024, 1440 | all, checked in WP5 |
-| Semantic HTML, ARIA where needed, `alt` on images, axe clean | all, checked in WP5 |
-| Schema.org Organization markup | WP1 |
-| Tailwind for all design, no hand-written CSS unless necessary | all, checked in WP5 |
+WP5 checked each item on 2026-10-22 against the merged site; the evidence column says how.
+
+| Done | Requirement | Package | Checked by |
+|---|---|---|---|
+| ✅ | Header with logo and nav Home, Services, Coverage, Contact | WP1 | Screenshots at four widths; nav links land on their sections |
+| ✅ | Hero with the brief's headline, subheadline and "Request information" button | WP2 | Copy compared word for word; button opens the form |
+| ✅ | Services (3), Coverage (2), Why TrackFlow (4), Contact, in that order | WP2 | Copy compared word for word, including the contact email and both phones |
+| ✅ | Professional footer with © 2025 and LinkedIn | WP1 | Screenshots |
+| ✅ | Separate form page with all 12 fields | WP3 | Markup against the form contract; keyboard walk reaches every field |
+| ✅ | Every validation rule and exact error message | WP4 | `pnpm test` (96 cases); all 12 messages compared with the brief; browser walk of an empty submit |
+| ✅ | Comments counter, 500 max | WP3, WP4 | Browser walk at 503 characters |
+| ✅ | Under-100 warning (confirmation dialog, D3) | WP3, WP4 | Browser walk: dialog only for 0-100; Confirm, Nevermind and Escape, over HTTP and from the file system |
+| ✅ | Placeholder privacy page linked from the form (D4) | WP1, WP3 | Link opens `privacy.html` in a new tab; page is `noindex` and says it is a placeholder |
+| ✅ | Simulated submit with the exact success message | WP3, WP4 | Browser walk: form hides, success shows with the brief's text, focus moves to it |
+| ✅ | Responsive at 375, 768, 1024, 1440 | all, checked in WP5 | `scripts/site-check.py`, every screenshot looked at |
+| ✅ | Semantic HTML, ARIA where needed, `alt` on images, axe clean | all, checked in WP5 | `scripts/site-check.py` (axe-core) and a keyboard walk of every page |
+| ✅ | Schema.org Organization markup | WP1 | JSON-LD identical to the brief; every type and property checked against the schema.org vocabulary file (the online validator is blocked from the build environment) |
+| ✅ | Tailwind for all design, no hand-written CSS unless necessary | all, checked in WP5 | Only hand-written CSS is the `@font-face` in `src/input.css`, with its reason; `pnpm build` leaves `dist/styles.css` unchanged |
+
+Adversarial edge cases for the form (unusual input to each rule) are covered by a separate test thread that adds to `uis/website/tests/`; it extends the "every validation rule" item and is not needed to close it.
 
 ## Progress
 
@@ -141,7 +145,7 @@ Update this table as packages start and merge.
 | D1, D2 | WP1 Site scaffold | PR #7 | decided 2026-10-22 (D1: teal and coral, Plus Jakarta Sans) |
 | D3 to D5 | Milestone 1 execution plan | PR #5 | decided 2026-10-22 |
 | WP1 Site scaffold | WP1 site scaffold | `claude/project-thread-wpdzyz`, PR #7 | merged 2026-10-22 |
-| WP2 Landing page | requested 2026-10-22 | | starting |
-| WP3 Form markup | requested 2026-10-22 | | starting |
-| WP4 Form validation | requested 2026-10-22 | | starting |
-| WP5 Integration and QA | | | not started |
+| WP2 Landing page | WP2 landing page | `claude/project-thread-fzjogd`, PR #9 | merged 2026-10-22 |
+| WP3 Form markup | WP3 form markup | `claude/project-thread-t2p6d4`, PR #10 | merged 2026-10-22 |
+| WP4 Form validation | WP4 form validation | `claude/project-thread-m7zya3`, PR #11 | merged 2026-10-22 |
+| WP5 Integration and QA | Integration and QA | `claude/project-thread-6goo5h`, PR #13 | done 2026-10-22, PR open |
