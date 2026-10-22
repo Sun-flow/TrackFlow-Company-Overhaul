@@ -199,6 +199,25 @@
   // The brief's low-volume warning (decision D3): volume "0-100" with a product type chosen.
   const needsVolumeConfirmation = (values) => values.volume === "0-100" && text(values.product) !== "";
 
+  // When a field validates live (decision "Form validates each field from first touch"): a field
+  // checks itself on blur, change and while typing once the user has typed in it or changed it, and
+  // every field does after the first submit. Fields the user has only tabbed past stay quiet.
+  const createLiveValidation = () => {
+    const touched = new Set();
+    let attempted = false;
+    return {
+      touch: (name) => touched.add(name),
+      submitted: () => {
+        attempted = true;
+      },
+      shouldCheck: (name) => attempted || touched.has(name),
+      reset: () => {
+        touched.clear();
+        attempted = false;
+      },
+    };
+  };
+
   const api = {
     COMMENTS_MAX,
     OPTIONS,
@@ -223,6 +242,7 @@
     autofillPhone,
     autofillWebsite,
     tidyField,
+    createLiveValidation,
   };
 
   if (typeof module === "object" && module.exports) module.exports = api;

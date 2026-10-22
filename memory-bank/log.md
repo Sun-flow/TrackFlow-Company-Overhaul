@@ -3,6 +3,11 @@
 > **Last updated**: 2026-10-22
 > Newest first. One entry per session: date, where it ran, what changed (link the PR or commit), what was left open. Keep about 15 entries. When there are more, move the oldest to `docs/archive/memory-bank-log.md` (create it the first time). Entries before this file existed were rebuilt from git history.
 
+### 2026-10-22 · Form checklist fixes (Claude Code, cloud)
+- From mae's Milestone 1 checklist audit (items A6 to A8): renamed the form page to `uis/website/application.html` (`git mv`; canonical, plan, website README and status updated; the hero link is changed in the landing thread's PR #15), added a "Clear form" reset button, made each field validate on blur from the user's first edit (`createLiveValidation` in `uis/website/js/validation.js`, new `uis/website/tests/live-validation.test.js`; `docs/decisions.md`, "Form validates each field from first touch"), `role="list"` on the error summary, and applied PR #15's header and footer to the form page. Branch `claude/project-thread-e2jh0w`.
+- Checks: `pnpm test` 466 pass; `scripts/site-check.py` clean; a Playwright walk of blur, typing, reset by mouse and keyboard and a valid submit (20 of 20).
+- Open: mae's call on A9 (renaming field names and option values to the brief's wording); merging together with PR #15, the second to merge reruns `pnpm build`.
+
 ### 2026-10-22 · Milestone 1 close-out (Claude Code, cloud)
 - Plan progress table: WP5 (PR #13) and the validation edge-case follow-up (PR #12) marked merged; the follow-up is placed under WP4 and WP5, not as its own package. `memory-bank/status.md`: PR #12 moved from "In progress" to "Works". Branch `claude/project-thread-knpic0`, PR #14.
 - Open: mae's review of Milestone 1 as a whole.
@@ -30,13 +35,13 @@
 - Open: merging; WP5 to fix the font-preload console errors seen when pages open from the file system (shared `<head>`).
 
 ### 2026-10-22 · WP3 form markup (Claude Code, cloud)
-- Filled the `<main>` of `uis/website/request-information.html` per the plan's form contract: 12 fields with labels and hints, hidden error elements tied by `aria-describedby`, fieldsets for the checkbox and radio groups, error summary, comments counter, hidden success message with the brief's exact text, `#volume-dialog` (D3), privacy link to `uis/website/privacy.html` in a new tab (D4), `novalidate`, a deferred script tag for WP4's form.js. Rebuilt `uis/website/dist/styles.css`. Branch `claude/project-thread-t2p6d4`, PR #10.
+- Filled the `<main>` of the form page (`uis/website/application.html` since the form checklist fixes) per the plan's form contract: 12 fields with labels and hints, hidden error elements tied by `aria-describedby`, fieldsets for the checkbox and radio groups, error summary, comments counter, hidden success message with the brief's exact text, `#volume-dialog` (D3), privacy link to `uis/website/privacy.html` in a new tab (D4), `novalidate`, a deferred script tag for WP4's form.js. Rebuilt `uis/website/dist/styles.css`. Branch `claude/project-thread-t2p6d4`, PR #10.
 - Agreed the loose parts of the contract with the WP4 thread (summary heading plus empty `<ul>`, error elements start `hidden`, plain non-module script tag); the result is in the PR description.
 - Checks: `scripts/site-check.py` is clean with a stand-in form script (without it, the only failure is the 404 for that file until WP4 merges); axe also clean with every error, the summary, the success message and the dialog revealed; keyboard walk through every field.
 - Open: merging the PR (removed my "In progress" line ahead of the merge; merged the base after WP2 landed and rebuilt the CSS); WP5 checks the form end to end with WP4.
 
 ### 2026-10-22 · WP2 landing page (Claude Code, cloud)
-- Filled the `<main>` of `uis/website/index.html` with the brief's sections in order and its exact copy: Hero (h1, subheadline, "Request information" to `uis/website/request-information.html`), Services (3 cards), Coverage (2 cards), Why TrackFlow (4 benefits), Contact (`mailto:` and `tel:` links in an `<address>`). Section ids `services`, `coverage`, `contact` with `scroll-mt-16` so the sticky header doesn't cover them. Icons and the hero illustration are inline decorative SVGs (`aria-hidden`), so no new asset files. Only `brand-*`, `accent-*` and slate utilities; rebuilt `uis/website/dist/styles.css`. Branch `claude/project-thread-fzjogd`, PR #9.
+- Filled the `<main>` of `uis/website/index.html` with the brief's sections in order and its exact copy: Hero (h1, subheadline, "Request information" to the form page (`uis/website/application.html` since the form checklist fixes)), Services (3 cards), Coverage (2 cards), Why TrackFlow (4 benefits), Contact (`mailto:` and `tel:` links in an `<address>`). Section ids `services`, `coverage`, `contact` with `scroll-mt-16` so the sticky header doesn't cover them. Icons and the hero illustration are inline decorative SVGs (`aria-hidden`), so no new asset files. Only `brand-*`, `accent-*` and slate utilities; rebuilt `uis/website/dist/styles.css`. Branch `claude/project-thread-fzjogd`, PR #9.
 - Checks: `scripts/site-check.py --pages index.html` clean at all four widths; nav links land on their sections; one h1, ordered headings.
 - Open: merging the PR (removed my "In progress" line ahead of the merge). No shared-file changes needed.
 
@@ -45,7 +50,7 @@
 - Open: WP2 to WP4, then WP5.
 
 ### 2026-10-22 · WP1 site scaffold (Claude Code, cloud)
-- Built `uis/website/`: pnpm package with Tailwind CLI 4.3.3, `uis/website/src/input.css` tokens, committed `uis/website/dist/styles.css`, three pages (`uis/website/index.html` with the brief's JSON-LD, `uis/website/request-information.html`, placeholder `uis/website/privacy.html` with `noindex`) sharing head, skip link, header, mobile menu (`uis/website/js/nav.js`) and footer; logo, favicon, self-hosted font; website README. Logged D1 and D2 in `docs/decisions.md`; removed `uis/website/` from `PLANNED_PATHS` in `scripts/check-memory.py`. Branch `claude/project-thread-wpdzyz`, PR #7.
+- Built `uis/website/`: pnpm package with Tailwind CLI 4.3.3, `uis/website/src/input.css` tokens, committed `uis/website/dist/styles.css`, three pages (`uis/website/index.html` with the brief's JSON-LD, the form page (`uis/website/application.html` since the form checklist fixes), placeholder `uis/website/privacy.html` with `noindex`) sharing head, skip link, header, mobile menu (`uis/website/js/nav.js`) and footer; logo, favicon, self-hosted font; website README. Logged D1 and D2 in `docs/decisions.md`; removed `uis/website/` from `PLANNED_PATHS` in `scripts/check-memory.py`. Branch `claude/project-thread-wpdzyz`, PR #7.
 - D1: mae picked option B (deep teal and coral, Plus Jakarta Sans) from three screenshot previews (kept in the project's shared files under design/palette-options, outside the repo).
 - Checks: `pnpm build`, `scripts/site-check.py` (12 page and width runs, clean), keyboard walk at all four widths (skip link, nav, menu open, Escape, link closes menu).
 - Open: merging the PR; then WP2 to WP4.
@@ -70,6 +75,3 @@
 
 ### 2026-10-21 · Future work list (Claude Code, cloud)
 - Added `docs/FUTURE_WORK.md` with the ideas and housekeeping items collected so far. PR #2.
-
-### 2026-10-21 · Milestone 1 briefs (Claude Code, cloud)
-- Added the Milestone 1 briefs under `docs/milestones/milestone-1/`. PR #1.

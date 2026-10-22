@@ -1,5 +1,6 @@
 // Information-request form: wires the rules in js/validation.js to the page through the form contract
-// in docs/milestones/milestone-1/plan.md. Validates on submit, then on blur and change; simulated submission.
+// in docs/milestones/milestone-1/plan.md. Validates each field on blur and change from the user's first edit,
+// and every field on submit; "Clear form" resets all of it; simulated submission.
 
 // validation.js is a classic script (so tests can require() it and the page works from file://).
 // The page loads only this file, so load the rules first and start once they arrive.
@@ -97,35 +98,58 @@ function initForm() {
     success.focus();
   };
 
-  // Fields validate live only after the first submit attempt (plan, WP4).
-  let attempted = false;
-  const liveCheck = (event) => {
-    const name = event.target.name;
-    if (attempted && Object.hasOwn(rules.VALIDATORS, name)) checkField(name);
+  // A field validates live from the user's first edit of it, and every field does after the first
+  // submit (docs/decisions.md, "Form validates each field from first touch").
+  const live = rules.createLiveValidation();
+  const isField = (name) => Object.hasOwn(rules.VALIDATORS, name);
+  const liveCheck = (name) => {
+    if (isField(name) && live.shouldCheck(name)) checkField(name);
   };
   form.addEventListener("focusout", (event) => {
     if (TIDIED.includes(event.target.name)) tidy(event.target.name);
-    liveCheck(event);
+    // Leaving for "Send request" or "Clear form": submit checks every field and reset clears them.
+    // A message shown now would push the button down between mousedown and mouseup, losing the click.
+    if (event.relatedTarget?.form === form && event.relatedTarget.tagName === "BUTTON") return;
+    liveCheck(event.target.name);
   });
   // The phone's "+" can depend on the country, which comes after it in the form.
   form.addEventListener("change", (event) => {
-    if (event.target.name === "country") {
+    const name = event.target.name;
+    if (isField(name)) live.touch(name);
+    if (name === "country") {
       tidy("phone");
-      if (attempted) checkField("phone");
+      liveCheck("phone");
     }
-    liveCheck(event);
+    liveCheck(name);
   });
 
-  // While typing, only clear an error the field already shows. Waiting for blur would remove the
-  // message on mousedown elsewhere, shift the layout and make that click miss its target.
+  // While typing, only clear or update an error the field already shows. Showing a new one would
+  // flag a half-typed value; waiting for blur would remove the message on mousedown elsewhere,
+  // shift the layout and make that click miss its target.
   form.addEventListener("input", (event) => {
+    const name = event.target.name;
+    if (isField(name)) live.touch(name);
     if (event.target === form.elements.comments) updateCounter();
-    if (event.target.getAttribute("aria-invalid") === "true") liveCheck(event);
+    if (event.target.getAttribute("aria-invalid") === "true") liveCheck(name);
+  });
+
+  // "Clear form" (type="reset"): the browser empties the controls; this clears everything the
+  // script added, so the form is as it was on page load, then focuses the first field.
+  form.addEventListener("reset", () => {
+    live.reset();
+    for (const name of Object.keys(rules.VALIDATORS)) showError(name, "");
+    summary.hidden = true;
+    summaryList.replaceChildren();
+    // The browser restores the controls after this event, so read them once it has.
+    setTimeout(() => {
+      updateCounter();
+      form.elements.company.focus();
+    });
   });
 
   form.addEventListener("submit", (event) => {
     event.preventDefault();
-    attempted = true;
+    live.submitted();
     for (const name of TIDIED) tidy(name);
 
     const values = readValues();
