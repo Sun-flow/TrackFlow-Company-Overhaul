@@ -42,5 +42,8 @@
   "python": "python -m pip install --upgrade pip uv && if [ -f pyproject.toml ]; then uv sync && uv cache clean; fi"
   },
   "forwardPorts": [3000, 8000, 5678],
+  "portsAttributes": {
+    "3000": { "label": "Website" }
+  },
   "remoteUser": "vscode"
 }
