@@ -25,7 +25,7 @@ const cases = (validate, message, rows) => {
 };
 
 describe("company name: at least 2 characters", () => {
-  cases(v.validateCompany, v.MESSAGES.company, [
+  cases(v.validateCompany, v.MESSAGES.companyName, [
     // Real company names, short and long, in several scripts.
     ["3M", VALID, "two characters, digit and letter"],
     ["HP", VALID, "two letters"],
@@ -62,7 +62,7 @@ describe("company name: at least 2 characters", () => {
 });
 
 describe("contact person: first and last name", () => {
-  cases(v.validateContact, v.MESSAGES.contact, [
+  cases(v.validateContact, v.MESSAGES.contactPerson, [
     // Real names: accents, hyphens, apostrophes, particles, other scripts.
     ["Ana López", VALID, "Spanish accent"],
     ["José María Fernández de la Vega", VALID, "compound name with particles"],
@@ -104,7 +104,7 @@ describe("contact person: first and last name", () => {
 });
 
 describe("email: valid format (contains @ and domain)", () => {
-  cases(v.validateEmail, v.MESSAGES.email, [
+  cases(v.validateEmail, v.MESSAGES.corporateEmail, [
     // Providers around the world, including the ones customers really use.
     ["ana.lopez@gmail.com", VALID, "Gmail"],
     ["ana@outlook.com", VALID, "Outlook"],
@@ -269,7 +269,7 @@ describe("phone: + and country code, then the number", () => {
 });
 
 describe("website: optional; if given, a valid URL starting with http:// or https://", () => {
-  cases(v.validateWebsite, v.MESSAGES.website, [
+  cases(v.validateWebsite, v.MESSAGES.companyWebsite, [
     ["", VALID, "left empty"],
     ["   ", VALID, "spaces only counts as empty"],
     ["https://trackflow.com", VALID, "plain https"],
@@ -313,10 +313,10 @@ describe("website: optional; if given, a valid URL starting with http:// or http
 
 describe("selects and radios: only the contract's values (guards against edited or stale form values)", () => {
   for (const [name, validate] of [
-    ["country", v.validateCountry],
-    ["product", v.validateProduct],
-    ["volume", v.validateVolume],
-    ["current3pl", v.validateCurrent3pl],
+    ["mainOperatingCountry", v.validateCountry],
+    ["productType", v.validateProduct],
+    ["monthlyShippingVolume", v.validateVolume],
+    ["currentThreePL", v.validateCurrent3pl],
   ]) {
     describe(name, () => {
       const first = v.OPTIONS[name][0];
@@ -332,24 +332,39 @@ describe("selects and radios: only the contract's values (guards against edited 
       ]);
     });
   }
-  describe("volume labels instead of values", () => {
-    cases(v.validateVolume, v.MESSAGES.volume, [
-      ["0–100", INVALID, "en dash, as a label might show it"],
+  describe("volume look-alikes", () => {
+    cases(v.validateVolume, v.MESSAGES.monthlyShippingVolume, [
+      ["0–100", INVALID, "en dash"],
       ["100", INVALID, "a number, not a range"],
-      ["Not sure", INVALID, "label text instead of value"],
+      ["Not sure ", INVALID, "trailing space"],
+    ]);
+  });
+  // Values were short codes before they took the brief's wording (docs/decisions.md); a stale page sends these.
+  describe("old short codes", () => {
+    for (const [validate, message, codes] of [
+      [v.validateCountry, v.MESSAGES.mainOperatingCountry, ["us", "es", "both", "other"]],
+      [v.validateProduct, v.MESSAGES.productType, ["fashion", "electronics", "cosmetics", "food", "other"]],
+      [v.validateVolume, v.MESSAGES.monthlyShippingVolume, ["not-sure"]],
+      [v.validateCurrent3pl, v.MESSAGES.currentThreePL, ["yes", "no", "evaluating"]],
+    ]) {
+      cases(validate, message, codes.map((code) => [code, INVALID, "old code"]));
+    }
+    cases(v.validateServices, v.MESSAGES.servicesOfInterest, [
+      [["last-mile"], INVALID, "old code"],
+      [["warehousing", "reverse-logistics"], INVALID, "old codes"],
     ]);
   });
 });
 
 describe("services of interest: at least one", () => {
-  cases(v.validateServices, v.MESSAGES.services, [
-    [["warehousing", "last-mile", "reverse-logistics"], VALID, "all three"],
-    [["warehousing", "warehousing"], VALID, "duplicate value"],
+  cases(v.validateServices, v.MESSAGES.servicesOfInterest, [
+    [["Warehousing", "Last mile", "Reverse logistics"], VALID, "all three"],
+    [["Warehousing", "Warehousing"], VALID, "duplicate value"],
     [[""], INVALID, "one empty value"],
     [[null], INVALID, "null inside the array"],
-    ["warehousing", INVALID, "string instead of array"],
-    [{ 0: "warehousing", length: 1 }, INVALID, "array-like object"],
-    [["warehousing", "teleportation"], INVALID, "one real value plus an unknown one"],
+    ["Warehousing", INVALID, "string instead of array"],
+    [{ 0: "Warehousing", length: 1 }, INVALID, "array-like object"],
+    [["Warehousing", "teleportation"], INVALID, "one real value plus an unknown one"],
   ]);
 });
 
@@ -379,7 +394,7 @@ describe("comments: 500 characters at most", () => {
 });
 
 describe("privacy policy: only a real check counts", () => {
-  cases(v.validatePrivacy, v.MESSAGES.privacy, [
+  cases(v.validatePrivacy, v.MESSAGES.privacyPolicy, [
     [true, VALID, "checked"],
     ["true", INVALID, "string 'true'"],
     [1, INVALID, "number 1"],
@@ -390,17 +405,17 @@ describe("privacy policy: only a real check counts", () => {
 
 describe("low-volume confirmation (D3): exactly volume 0-100 with a product chosen", () => {
   const rows = [
-    [{ volume: "0-100", product: "fashion" }, true, "lowest band, product chosen"],
-    [{ volume: "0-100", product: "other" }, true, "lowest band, product Other"],
-    [{ volume: "101-500", product: "fashion" }, false, "next band up (101 is past the threshold)"],
-    [{ volume: "not-sure", product: "fashion" }, false, "not sure"],
-    [{ volume: "0-100", product: "" }, false, "no product"],
-    [{ volume: "0-100", product: "   " }, false, "product is whitespace"],
-    [{ volume: "0-100" }, false, "product missing"],
-    [{ volume: "0-100 ", product: "fashion" }, false, "volume with a trailing space"],
-    [{ volume: "0–100", product: "fashion" }, false, "en dash"],
-    [{ volume: "100", product: "fashion" }, false, "number, not the band"],
-    [{ volume: "", product: "fashion" }, false, "no volume"],
+    [{ monthlyShippingVolume: "0-100", productType: "Fashion" }, true, "lowest band, product chosen"],
+    [{ monthlyShippingVolume: "0-100", productType: "Other" }, true, "lowest band, product Other"],
+    [{ monthlyShippingVolume: "101-500", productType: "Fashion" }, false, "next band up (101 is past the threshold)"],
+    [{ monthlyShippingVolume: "Not sure", productType: "Fashion" }, false, "not sure"],
+    [{ monthlyShippingVolume: "0-100", productType: "" }, false, "no product"],
+    [{ monthlyShippingVolume: "0-100", productType: "   " }, false, "product is whitespace"],
+    [{ monthlyShippingVolume: "0-100" }, false, "product missing"],
+    [{ monthlyShippingVolume: "0-100 ", productType: "Fashion" }, false, "volume with a trailing space"],
+    [{ monthlyShippingVolume: "0–100", productType: "Fashion" }, false, "en dash"],
+    [{ monthlyShippingVolume: "100", productType: "Fashion" }, false, "number, not the band"],
+    [{ monthlyShippingVolume: "", productType: "Fashion" }, false, "no volume"],
   ];
   for (const [values, expected, why] of rows) {
     test(`${JSON.stringify(values)} -> ${expected ? "dialog" : "no dialog"} (${why})`, () => {
@@ -411,18 +426,18 @@ describe("low-volume confirmation (D3): exactly volume 0-100 with a product chos
 
 describe("whole form", () => {
   const valid = {
-    company: "Müller GmbH",
-    contact: "Björk Guðmundsdóttir",
-    email: "einkauf@müller.de",
+    companyName: "Müller GmbH",
+    contactPerson: "Björk Guðmundsdóttir",
+    corporateEmail: "einkauf@müller.de",
     phone: "+49 (0)30 1234 5678",
-    website: "https://müller.de/shop",
-    country: "other",
-    product: "electronics",
-    volume: "2000+",
-    services: ["last-mile", "reverse-logistics"],
-    current3pl: "evaluating",
-    comments: "Wir versenden nach Spanien. ".repeat(17).trim(),
-    privacy: true,
+    companyWebsite: "https://müller.de/shop",
+    mainOperatingCountry: "Other",
+    productType: "Electronics",
+    monthlyShippingVolume: "2000+",
+    servicesOfInterest: ["Last mile", "Reverse logistics"],
+    currentThreePL: "Evaluating options",
+    commentsOrSpecificNeeds: "Wir versenden nach Spanien. ".repeat(17).trim(),
+    privacyPolicy: true,
   };
 
   test("an international, non-ASCII submission passes", () => {
@@ -430,12 +445,12 @@ describe("whole form", () => {
   });
 
   test("whitespace-only answers fail every required text field", () => {
-    const errors = v.validateForm({ ...valid, company: " ", contact: " ", email: " ", phone: " " });
-    assert.deepEqual(Object.keys(errors), ["company", "contact", "email", "phone"]);
+    const errors = v.validateForm({ ...valid, companyName: " ", contactPerson: " ", corporateEmail: " ", phone: " " });
+    assert.deepEqual(Object.keys(errors), ["companyName", "contactPerson", "corporateEmail", "phone"]);
   });
 
   test("unknown extra fields are ignored", () => {
-    assert.deepEqual(v.validateForm({ ...valid, extra: "x", __proto__: { company: "" } }), {});
+    assert.deepEqual(v.validateForm({ ...valid, extra: "x", __proto__: { companyName: "" } }), {});
   });
 });
 
@@ -460,31 +475,31 @@ describe("email clean-up: paste debris removed", () => {
 
 describe("phone autofill: the + is added only where the country code is certain", () => {
   for (const [typed, country, expected, why] of [
-    ["(213) 555-0147", "us", "+1 (213) 555-0147", "US, 10 digits"],
-    ["213 555 0147", "us", "+1 213 555 0147", "US, 10 digits"],
-    ["1 213 555 0147", "us", "+1 213 555 0147", "US, 11 digits starting with 1"],
-    ["011 34 976 123 456", "us", "+34 976 123 456", "US exit code"],
-    ["0034 976 123 456", "es", "+34 976 123 456", "00 international prefix"],
+    ["(213) 555-0147", "United States", "+1 (213) 555-0147", "US, 10 digits"],
+    ["213 555 0147", "United States", "+1 213 555 0147", "US, 10 digits"],
+    ["1 213 555 0147", "United States", "+1 213 555 0147", "US, 11 digits starting with 1"],
+    ["011 34 976 123 456", "United States", "+34 976 123 456", "US exit code"],
+    ["0034 976 123 456", "Spain", "+34 976 123 456", "00 international prefix"],
     ["0034 976 123 456", "", "+34 976 123 456", "00 needs no country"],
-    ["976 123 456", "es", "+34 976 123 456", "Spain, 9 digits"],
-    ["612 34 56 78", "es", "+34 612 34 56 78", "Spanish mobile"],
-    ["34 612 34 56 78", "es", "+34 612 34 56 78", "Spain, code typed without +"],
+    ["976 123 456", "Spain", "+34 976 123 456", "Spain, 9 digits"],
+    ["612 34 56 78", "Spain", "+34 612 34 56 78", "Spanish mobile"],
+    ["34 612 34 56 78", "Spain", "+34 612 34 56 78", "Spain, code typed without +"],
     ["＋３４ ９７６ １２３ ４５６", "", "+34 976 123 456", "full-width characters"],
-    ["+34 976 123 456", "us", "+34 976 123 456", "already has +"],
+    ["+34 976 123 456", "United States", "+34 976 123 456", "already has +"],
     // Left alone: guessing here would turn a US or Spanish number into another country's.
-    ["213 555 0147", "both", "213 555 0147", "Both: country unknown (not +213, Algeria)"],
+    ["213 555 0147", "Both", "213 555 0147", "Both: country unknown (not +213, Algeria)"],
     ["213 555 0147", "", "213 555 0147", "no country yet"],
-    ["976 123 456", "other", "976 123 456", "Other: not +976, Mongolia"],
-    ["213 555 0147", "es", "213 555 0147", "10 digits does not fit Spain"],
-    ["123 456 789", "es", "123 456 789", "Spanish numbers start with 6 to 9"],
-    ["", "us", "", "empty stays empty"],
+    ["976 123 456", "Other", "976 123 456", "Other: not +976, Mongolia"],
+    ["213 555 0147", "Spain", "213 555 0147", "10 digits does not fit Spain"],
+    ["123 456 789", "Spain", "123 456 789", "Spanish numbers start with 6 to 9"],
+    ["", "United States", "", "empty stays empty"],
   ]) {
     test(`${JSON.stringify(typed)} in ${JSON.stringify(country)} -> ${JSON.stringify(expected)} (${why})`, () => {
       assert.equal(v.autofillPhone(typed, country), expected);
     });
   }
   test("a number left alone still fails, so the user is asked for the code", () => {
-    assert.equal(v.validatePhone(v.autofillPhone("213 555 0147", "both")), v.MESSAGES.phone);
+    assert.equal(v.validatePhone(v.autofillPhone("213 555 0147", "Both")), v.MESSAGES.phone);
   });
 });
 
@@ -509,35 +524,35 @@ describe("website autofill: https:// added when no scheme was typed", () => {
   }
   test("other schemes are still rejected after the clean-up", () => {
     for (const typed of ["ftp://acme.com", "javascript:alert(1)", "mailto:info@acme.com"]) {
-      assert.equal(v.validateWebsite(v.autofillWebsite(typed)), v.MESSAGES.website);
+      assert.equal(v.validateWebsite(v.autofillWebsite(typed)), v.MESSAGES.companyWebsite);
     }
   });
 });
 
 describe("tidyField: which clean-up each field gets", () => {
   const values = {
-    company: "  Acme​ ",
-    contact: " Ana López ",
-    email: "<ana@acme.com>",
+    companyName: "  Acme​ ",
+    contactPerson: " Ana López ",
+    corporateEmail: "<ana@acme.com>",
     phone: "976 123 456",
-    website: "acme.es",
-    country: "es",
-    comments: "  keep my spaces  ",
-    services: ["warehousing"],
-    privacy: true,
+    companyWebsite: "acme.es",
+    mainOperatingCountry: "Spain",
+    commentsOrSpecificNeeds: "  keep my spaces  ",
+    servicesOfInterest: ["Warehousing"],
+    privacyPolicy: true,
   };
   test("text fields are trimmed and lose invisible characters", () => {
-    assert.equal(v.tidyField("company", values), "Acme");
-    assert.equal(v.tidyField("contact", values), "Ana López");
+    assert.equal(v.tidyField("companyName", values), "Acme");
+    assert.equal(v.tidyField("contactPerson", values), "Ana López");
   });
   test("email, phone and website get their clean-ups", () => {
-    assert.equal(v.tidyField("email", values), "ana@acme.com");
+    assert.equal(v.tidyField("corporateEmail", values), "ana@acme.com");
     assert.equal(v.tidyField("phone", values), "+34 976 123 456");
-    assert.equal(v.tidyField("website", values), "https://acme.es");
+    assert.equal(v.tidyField("companyWebsite", values), "https://acme.es");
   });
   test("other fields are left as they are", () => {
-    assert.equal(v.tidyField("comments", values), "  keep my spaces  ");
-    assert.deepEqual(v.tidyField("services", values), ["warehousing"]);
-    assert.equal(v.tidyField("privacy", values), true);
+    assert.equal(v.tidyField("commentsOrSpecificNeeds", values), "  keep my spaces  ");
+    assert.deepEqual(v.tidyField("servicesOfInterest", values), ["Warehousing"]);
+    assert.equal(v.tidyField("privacyPolicy", values), true);
   });
 });

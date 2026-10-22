@@ -46,7 +46,7 @@ Sets up everything the page packages share, so they only fill in their own `<mai
 - **Scope**
   - `uis/website/package.json` (pnpm, Tailwind CLI as dev dependency, `build` and `dev` scripts), lockfile, `.gitignore` for `node_modules/`.
   - `uis/website/src/input.css`: Tailwind import and the theme tokens mae picks in D1. Hand-written CSS only where Tailwind can't do it, with a comment saying why.
-  - Three pages, `index.html`, `request-information.html` and `privacy.html`, each with the full `<head>` (title, meta description, canonical, favicon, compiled stylesheet), the shared header (logo, nav Home | Services | Coverage | Contact, skip link, mobile menu), the shared footer (© 2025 TrackFlow. All rights reserved., LinkedIn), and an empty `<main id="main">` holding a placeholder comment (`privacy.html` gets its content here instead, see below).
+  - Three pages, `index.html`, `application.html` and `privacy.html`, each with the full `<head>` (title, meta description, canonical, favicon, compiled stylesheet), the shared header (logo, nav Home | Services | Coverage | Contact, skip link, mobile menu), the shared footer (© 2025 TrackFlow. All rights reserved., LinkedIn), and an empty `<main id="main">` holding a placeholder comment (`privacy.html` gets its content here instead, see below).
   - `privacy.html` content (D4): a heading, a visible notice that this is a placeholder and the real policy is coming, and a short plain statement of what the form collects and why (to contact the company about logistics services). Mark it `<meta name="robots" content="noindex">`. No invented legal text.
   - The Schema.org `Organization` JSON-LD from the brief, verbatim, in the `<head>` of `index.html`.
   - `uis/website/js/nav.js` for the mobile menu (`aria-expanded`, Escape to close).
@@ -70,39 +70,39 @@ Rules for all three threads:
 ### WP2 Landing page
 
 - **Files**: the `<main>` of `uis/website/index.html`; new section images and icons in `uis/website/assets/` (prefix `landing-`).
-- **Scope**: the brief's sections in its order and with its copy: Hero (headline, subheadline, "Request information" button to `request-information.html`), Services (3 columns), Coverage (2 columns), Why TrackFlow (4 benefits), Contact (email and both phones as `mailto:` and `tel:` links). Section ids match the nav: `services`, `coverage`, `contact`. One `<h1>`, ordered headings, `alt` on images, decorative SVGs `aria-hidden`.
+- **Scope**: the brief's sections in its order and with its copy: Hero (headline, subheadline, "Request information" button to `application.html`), Services (3 columns), Coverage (2 columns), Why TrackFlow (4 benefits), Contact (email and both phones as `mailto:` and `tel:` links). Section ids match the nav: `services`, `coverage`, `contact`. One `<h1>`, ordered headings, `alt` on images, decorative SVGs `aria-hidden`.
 - **Done when**: site-check passes for `index.html`, copy matches the brief word for word, and nav links land on the right sections.
 
 ### WP3 Form markup
 
-- **Files**: the `<main>` of `uis/website/request-information.html`.
+- **Files**: the `<main>` of `uis/website/application.html`.
 - **Scope**: the form, following the contract below: every field with a `<label>`, hint text where the brief gives a format, an empty error element per field tied with `aria-describedby`, `<fieldset>` and `<legend>` for the checkbox and radio groups, an error summary region, the low-volume confirmation `<dialog>` (D3), the privacy checkbox label linking to `privacy.html` in a new tab (so the form isn't lost, with "opens in a new tab" in the link text), the comments counter, and the success message region (hidden) with the brief's exact text. Add `novalidate` to the form so the JavaScript owns validation. Load `js/form.js` with `defer` (WP4 provides it).
 - **Done when**: site-check passes, every field is reachable and labelled by keyboard and screen reader, and the page is complete and usable as markup even before WP4 merges.
 
 ### WP4 Form validation
 
 - **Files**: `uis/website/js/validation.js` (pure functions, one per brief rule, no DOM), `uis/website/js/form.js` (wires the functions to the DOM through the contract), `uis/website/tests/validation.test.js` (Node's built-in test runner, no extra dependencies), and a `test` script in `package.json`.
-- **Scope**: every rule under "Specific validations" with the brief's exact error messages; validate on submit (all fields) and on blur after the first attempt; move focus to the error summary on a failed submit; live comments counter with the "(X remaining)" message; the low-volume dialog per D3 (opened with `showModal()` only after every field passes; Confirm runs the success path; Nevermind, Escape or closing it leaves the form exactly as it was and returns focus to the submit button); on success, hide the form, show the success message and move focus to it. No network request.
+- **Scope**: every rule under "Specific validations" with the brief's exact error messages; validate on submit (all fields) and on blur after the first attempt (since changed: each field validates on blur from the user's first edit, and a "Clear form" button resets the form; `docs/decisions.md`, "Form validates each field from first touch"); move focus to the error summary on a failed submit; live comments counter with the "(X remaining)" message; the low-volume dialog per D3 (opened with `showModal()` only after every field passes; Confirm runs the success path; Nevermind, Escape or closing it leaves the form exactly as it was and returns focus to the submit button); on success, hide the form, show the success message and move focus to it. No network request.
 - **Done when**: `pnpm test` passes (cases for every rule, valid and invalid), and the form works end to end against WP3's markup. If WP3 hasn't merged yet, test against a scratch page built from the contract and don't commit it.
 
 ### Form contract (shared by WP3 and WP4)
 
-The form is `<form id="request-form" novalidate>`. For each field, `name` is the key below, the input `id` is the same (checkbox and radio groups: `id` is `<name>-<value>`), and the error element is `<p id="<name>-error">`.
+The form is `<form id="request-form" novalidate>`. For each field, `name` is the key below, the input `id` is the same (checkbox and radio groups: `id` is `<name>-<short form of the value>`, such as `servicesOfInterest-last-mile`), and the error element is `<p id="<name>-error">`. Names and values follow the brief's wording (changed from short codes after the Milestone 1 checklist audit; `docs/decisions.md`, "Form field names and values use the brief's wording").
 
 | Field | name | Control | Values |
 |---|---|---|---|
-| Company name | `company` | text | |
-| Contact person | `contact` | text | |
-| Corporate email | `email` | email | |
+| Company name | `companyName` | text | |
+| Contact person | `contactPerson` | text | |
+| Corporate email | `corporateEmail` | email | |
 | Phone | `phone` | tel | |
-| Company website | `website` | url | |
-| Main operating country | `country` | select | `us`, `es`, `both`, `other` |
-| Product type | `product` | select | `fashion`, `electronics`, `cosmetics`, `food`, `other` |
-| Monthly volume | `volume` | select | `0-100`, `101-500`, `501-2000`, `2000+`, `not-sure` |
-| Services of interest | `services` | checkboxes | `warehousing`, `last-mile`, `reverse-logistics` |
-| Current 3PL | `current3pl` | radios | `yes`, `no`, `evaluating` |
-| Comments | `comments` | textarea, `maxlength` not set (the JS enforces 500 so the message can show) | |
-| Privacy policy | `privacy` | checkbox | |
+| Company website | `companyWebsite` | url | |
+| Main operating country | `mainOperatingCountry` | select | `United States`, `Spain`, `Both`, `Other` |
+| Product type | `productType` | select | `Fashion`, `Electronics`, `Cosmetics`, `Food`, `Other` |
+| Monthly volume | `monthlyShippingVolume` | select | `0-100`, `101-500`, `501-2000`, `2000+`, `Not sure` |
+| Services of interest | `servicesOfInterest` | checkboxes | `Warehousing`, `Last mile`, `Reverse logistics` |
+| Current 3PL | `currentThreePL` | radios | `Yes`, `No`, `Evaluating options` |
+| Comments | `commentsOrSpecificNeeds` | textarea, `maxlength` not set (the JS enforces 500 so the message can show) | |
+| Privacy policy | `privacyPolicy` | checkbox | |
 
 Other ids: `error-summary` (list of links to fields with errors), `comments-counter`, `form-success`, and the low-volume dialog `<dialog id="volume-dialog" aria-labelledby="volume-dialog-title">` with heading `volume-dialog-title`, buttons `volume-confirm` ("Confirm") and `volume-cancel` ("Nevermind"), both `type="button"`. Selects start with an empty, disabled placeholder option. Hidden elements use the `hidden` attribute, which the JavaScript toggles.
 
@@ -125,6 +125,7 @@ WP5 checked each item on 2026-10-22 against the merged site; the evidence column
 | ✅ | Professional footer with © 2025 and LinkedIn | WP1 | Screenshots |
 | ✅ | Separate form page with all 12 fields | WP3 | Markup against the form contract; keyboard walk reaches every field |
 | ✅ | Every validation rule and exact error message | WP4 | `pnpm test` (96 cases); all 12 messages compared with the brief; browser walk of an empty submit |
+| ✅ | Validation on blur from the first edit, and a "Clear form" button that resets errors, summary and counter | Form checklist fixes | `pnpm test` (`tests/live-validation.test.js`); browser walk of blur, typing, reset by mouse and keyboard, and a valid submit |
 | ✅ | Comments counter, 500 max | WP3, WP4 | Browser walk at 503 characters |
 | ✅ | Under-100 warning (confirmation dialog, D3) | WP3, WP4 | Browser walk: dialog only for 0-100; Confirm, Nevermind and Escape, over HTTP and from the file system |
 | ✅ | Placeholder privacy page linked from the form (D4) | WP1, WP3 | Link opens `privacy.html` in a new tab; page is `noindex` and says it is a placeholder |
@@ -150,3 +151,4 @@ Update this table as packages start and merge.
 | WP4 Form validation | WP4 form validation | `claude/project-thread-m7zya3`, PR #11 | merged 2026-10-22 |
 | WP5 Integration and QA | Integration and QA | `claude/project-thread-6goo5h`, PR #13 | merged 2026-10-22 |
 | Follow-up: validation edge cases (WP4/WP5) | Form validation edge-case tests | `claude/project-thread-11jml5`, PR #12 | 458 tests, rule changes approved by mae (`docs/decisions.md`, "Form validation rules"); merged 2026-10-22 |
+| Follow-up: form checklist fixes (A6 to A9) | Form checklist fixes | `claude/project-thread-e2jh0w`, PR #16 | form page renamed to `application.html`, "Clear form", validation from first edit, field names and values in the brief's wording; in review |
