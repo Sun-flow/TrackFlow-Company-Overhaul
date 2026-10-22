@@ -9,6 +9,15 @@
 - Checks: `pnpm test` (96 pass); a Playwright walk-through of every rule, the summary, the dialog (Confirm, Nevermind, Escape) and success, on WP3's markup over HTTP and the file system; `scripts/site-check.py` clean.
 - Open: merging; WP5 to fix the font-preload console errors seen when pages open from the file system (shared `<head>`).
 
+### 2026-10-22 · WP2 landing page (Claude Code, cloud)
+- Filled the `<main>` of `uis/website/index.html` with the brief's sections in order and its exact copy: Hero (h1, subheadline, "Request information" to `uis/website/request-information.html`), Services (3 cards), Coverage (2 cards), Why TrackFlow (4 benefits), Contact (`mailto:` and `tel:` links in an `<address>`). Section ids `services`, `coverage`, `contact` with `scroll-mt-16` so the sticky header doesn't cover them. Icons and the hero illustration are inline decorative SVGs (`aria-hidden`), so no new asset files. Only `brand-*`, `accent-*` and slate utilities; rebuilt `uis/website/dist/styles.css`. Branch `claude/project-thread-fzjogd`, PR #9.
+- Checks: `scripts/site-check.py --pages index.html` clean at all four widths; nav links land on their sections; one h1, ordered headings.
+- Open: merging the PR (removed my "In progress" line ahead of the merge). No shared-file changes needed.
+
+### 2026-10-22 · Milestone 1 coordination (Claude Code, cloud)
+- WP1 merged (PR #7); requested WP2, WP3 and WP4 as parallel threads. Updated the plan's progress table and `memory-bank/status.md`. Branch `claude/project-thread-knpic0`.
+- Open: WP2 to WP4, then WP5.
+
 ### 2026-10-22 · WP1 site scaffold (Claude Code, cloud)
 - Built `uis/website/`: pnpm package with Tailwind CLI 4.3.3, `uis/website/src/input.css` tokens, committed `uis/website/dist/styles.css`, three pages (`uis/website/index.html` with the brief's JSON-LD, `uis/website/request-information.html`, placeholder `uis/website/privacy.html` with `noindex`) sharing head, skip link, header, mobile menu (`uis/website/js/nav.js`) and footer; logo, favicon, self-hosted font; website README. Logged D1 and D2 in `docs/decisions.md`; removed `uis/website/` from `PLANNED_PATHS` in `scripts/check-memory.py`. Branch `claude/project-thread-wpdzyz`, PR #7.
 - D1: mae picked option B (deep teal and coral, Plus Jakarta Sans) from three screenshot previews (kept in the project's shared files under design/palette-options, outside the repo).

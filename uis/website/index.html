@@ -112,7 +112,160 @@
     </header>
 
     <main id="main" class="flex-1">
-      <!-- WP2 (landing page) fills this: Hero, Services, Coverage, Why TrackFlow, Contact. See docs/milestones/milestone-1/plan.md. -->
+      <section aria-labelledby="hero-title" class="relative overflow-hidden bg-brand-950 text-white">
+        <div class="mx-auto grid max-w-6xl items-center gap-12 px-4 py-16 sm:px-6 sm:py-24 lg:grid-cols-2 lg:px-8 lg:py-28">
+          <div>
+            <h1 id="hero-title" class="text-4xl font-extrabold tracking-tight text-balance sm:text-5xl lg:text-6xl">Logistics that scales with your e-commerce</h1>
+            <p class="mt-6 max-w-xl text-lg text-pretty text-brand-100 sm:text-xl">Warehouse management, last-mile deliveries, and reverse logistics in the United States and Spain. Over 15 years helping fashion, electronics, and cosmetics brands grow without worrying about operations.</p>
+            <a
+              href="request-information.html"
+              class="mt-10 inline-flex items-center justify-center gap-2 rounded-lg bg-accent-400 px-6 py-3 text-base font-semibold text-brand-950 shadow-sm hover:bg-accent-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white motion-safe:transition-colors"
+            >
+              Request information
+              <svg class="size-5" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                <path d="M4 10h12M11 5l5 5-5 5" />
+              </svg>
+            </a>
+          </div>
+
+          <svg class="hidden w-full lg:block" viewBox="0 0 480 320" fill="none" aria-hidden="true" focusable="false">
+            <rect x="0.5" y="0.5" width="479" height="319" rx="24" class="fill-brand-900 stroke-brand-800" />
+            <g class="stroke-brand-800" stroke-width="1">
+              <path d="M40 80h400M40 160h400M40 240h400M120 40v240M240 40v240M360 40v240" />
+            </g>
+            <path d="M110 200C170 80 310 80 370 170" class="stroke-accent-400" stroke-width="3" stroke-dasharray="8 10" stroke-linecap="round" />
+            <circle cx="110" cy="200" r="28" class="fill-brand-800" />
+            <circle cx="110" cy="200" r="12" class="fill-accent-400" />
+            <circle cx="370" cy="170" r="28" class="fill-brand-800" />
+            <circle cx="370" cy="170" r="12" class="fill-accent-400" />
+            <text x="110" y="256" text-anchor="middle" class="fill-brand-100 text-sm font-semibold">Los Angeles</text>
+            <text x="370" y="226" text-anchor="middle" class="fill-brand-100 text-sm font-semibold">Zaragoza</text>
+          </svg>
+        </div>
+      </section>
+
+      <section id="services" aria-labelledby="services-title" class="scroll-mt-16 bg-white py-16 sm:py-24">
+        <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+          <h2 id="services-title" class="text-3xl font-bold tracking-tight text-brand-900 sm:text-4xl">Services</h2>
+          <ul class="mt-10 grid gap-6 md:grid-cols-3 lg:gap-8">
+            <li class="flex flex-col rounded-2xl border border-slate-200 bg-slate-50 p-6 lg:p-8">
+              <span class="inline-flex size-12 items-center justify-center rounded-xl bg-brand-100 text-brand-700">
+                <svg class="size-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                  <path d="M3 21V9l9-5 9 5v12" /><path d="M7 21v-8h10v8" /><path d="M7 17h10" />
+                </svg>
+              </span>
+              <h3 class="mt-6 text-xl font-semibold text-brand-900">Warehouse Management</h3>
+              <ul class="mt-4 space-y-3 text-slate-700">
+                <li class="flex gap-3"><span class="mt-2.5 size-1.5 shrink-0 rounded-full bg-accent-500" aria-hidden="true"></span>Storage, picking and packing</li>
+                <li class="flex gap-3"><span class="mt-2.5 size-1.5 shrink-0 rounded-full bg-accent-500" aria-hidden="true"></span>Real-time inventory</li>
+                <li class="flex gap-3"><span class="mt-2.5 size-1.5 shrink-0 rounded-full bg-accent-500" aria-hidden="true"></span>We operate warehouses in Los Angeles and Zaragoza</li>
+              </ul>
+            </li>
+            <li class="flex flex-col rounded-2xl border border-slate-200 bg-slate-50 p-6 lg:p-8">
+              <span class="inline-flex size-12 items-center justify-center rounded-xl bg-brand-100 text-brand-700">
+                <svg class="size-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                  <path d="M2 6h11v10H2z" /><path d="M13 9h4l4 4v3h-8" /><circle cx="6" cy="18" r="2" /><circle cx="17" cy="18" r="2" />
+                </svg>
+              </span>
+              <h3 class="mt-6 text-xl font-semibold text-brand-900">Last-Mile Deliveries</h3>
+              <ul class="mt-4 space-y-3 text-slate-700">
+                <li class="flex gap-3"><span class="mt-2.5 size-1.5 shrink-0 rounded-full bg-accent-500" aria-hidden="true"></span>Certified carrier network in both countries</li>
+                <li class="flex gap-3"><span class="mt-2.5 size-1.5 shrink-0 rounded-full bg-accent-500" aria-hidden="true"></span>Unified shipment tracking</li>
+                <li class="flex gap-3"><span class="mt-2.5 size-1.5 shrink-0 rounded-full bg-accent-500" aria-hidden="true"></span>Incident and returns management</li>
+              </ul>
+            </li>
+            <li class="flex flex-col rounded-2xl border border-slate-200 bg-slate-50 p-6 lg:p-8">
+              <span class="inline-flex size-12 items-center justify-center rounded-xl bg-brand-100 text-brand-700">
+                <svg class="size-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                  <path d="M3 12a9 9 0 0 1 15.5-6.2L21 8" /><path d="M21 3v5h-5" /><path d="M21 12a9 9 0 0 1-15.5 6.2L3 16" /><path d="M3 21v-5h5" />
+                </svg>
+              </span>
+              <h3 class="mt-6 text-xl font-semibold text-brand-900">Reverse Logistics</h3>
+              <ul class="mt-4 space-y-3 text-slate-700">
+                <li class="flex gap-3"><span class="mt-2.5 size-1.5 shrink-0 rounded-full bg-accent-500" aria-hidden="true"></span>Complete returns management</li>
+                <li class="flex gap-3"><span class="mt-2.5 size-1.5 shrink-0 rounded-full bg-accent-500" aria-hidden="true"></span>Inspection and reconditioning</li>
+                <li class="flex gap-3"><span class="mt-2.5 size-1.5 shrink-0 rounded-full bg-accent-500" aria-hidden="true"></span>Integration with your sales platform</li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="coverage" aria-labelledby="coverage-title" class="scroll-mt-16 bg-brand-50 py-16 sm:py-24">
+        <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+          <h2 id="coverage-title" class="text-3xl font-bold tracking-tight text-brand-900 sm:text-4xl">Coverage</h2>
+          <ul class="mt-10 grid gap-6 md:grid-cols-2 lg:gap-8">
+            <li class="rounded-2xl border border-brand-100 bg-white p-6 shadow-sm lg:p-8">
+              <h3 class="flex items-center gap-3 text-xl font-semibold text-brand-900">
+                <svg class="size-6 text-brand-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                  <path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z" /><circle cx="12" cy="9.5" r="2.5" />
+                </svg>
+                United States
+              </h3>
+              <ul class="mt-4 space-y-3 text-slate-700">
+                <li class="flex gap-3"><span class="mt-2.5 size-1.5 shrink-0 rounded-full bg-accent-500" aria-hidden="true"></span>Warehouse in Los Angeles</li>
+                <li class="flex gap-3"><span class="mt-2.5 size-1.5 shrink-0 rounded-full bg-accent-500" aria-hidden="true"></span>National coverage</li>
+                <li class="flex gap-3"><span class="mt-2.5 size-1.5 shrink-0 rounded-full bg-accent-500" aria-hidden="true"></span>Carriers: UPS, FedEx, DHL</li>
+              </ul>
+            </li>
+            <li class="rounded-2xl border border-brand-100 bg-white p-6 shadow-sm lg:p-8">
+              <h3 class="flex items-center gap-3 text-xl font-semibold text-brand-900">
+                <svg class="size-6 text-brand-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                  <path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z" /><circle cx="12" cy="9.5" r="2.5" />
+                </svg>
+                Spain
+              </h3>
+              <ul class="mt-4 space-y-3 text-slate-700">
+                <li class="flex gap-3"><span class="mt-2.5 size-1.5 shrink-0 rounded-full bg-accent-500" aria-hidden="true"></span>Warehouse in Zaragoza</li>
+                <li class="flex gap-3"><span class="mt-2.5 size-1.5 shrink-0 rounded-full bg-accent-500" aria-hidden="true"></span>Peninsular and island coverage</li>
+                <li class="flex gap-3"><span class="mt-2.5 size-1.5 shrink-0 rounded-full bg-accent-500" aria-hidden="true"></span>Carriers: MRW, SEUR, DHL</li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section aria-labelledby="why-title" class="bg-white py-16 sm:py-24">
+        <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+          <h2 id="why-title" class="text-3xl font-bold tracking-tight text-brand-900 sm:text-4xl">Why TrackFlow</h2>
+          <ul class="mt-10 grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
+            <li class="border-t-4 border-accent-400 pt-6">
+              <p class="text-slate-700"><strong class="block text-lg font-semibold text-brand-900">Binational operation:</strong> The only operator with own infrastructure in the United States and Spain</p>
+            </li>
+            <li class="border-t-4 border-accent-400 pt-6">
+              <p class="text-slate-700"><strong class="block text-lg font-semibold text-brand-900">+130 professionals</strong> dedicated to your logistics</p>
+            </li>
+            <li class="border-t-4 border-accent-400 pt-6">
+              <p class="text-slate-700"><strong class="block text-lg font-semibold text-brand-900">Own technology</strong> for total visibility of your inventory</p>
+            </li>
+            <li class="border-t-4 border-accent-400 pt-6">
+              <p class="text-slate-700"><strong class="block text-lg font-semibold text-brand-900">E-commerce specialization</strong> in fashion, electronics, and cosmetics</p>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="contact" aria-labelledby="contact-title" class="scroll-mt-16 bg-brand-900 py-16 text-white sm:py-24">
+        <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+          <h2 id="contact-title" class="text-3xl font-bold tracking-tight sm:text-4xl">Contact</h2>
+          <address class="mt-10 not-italic">
+            <dl class="grid gap-6 md:grid-cols-3">
+              <div class="rounded-2xl bg-brand-800 p-6">
+                <dt class="text-sm font-medium text-brand-100">Email</dt>
+                <dd class="mt-2"><a href="mailto:comercial@trackflow.com" class="rounded-sm text-lg font-semibold break-all underline decoration-accent-400 underline-offset-4 hover:text-accent-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-400">comercial@trackflow.com</a></dd>
+              </div>
+              <div class="rounded-2xl bg-brand-800 p-6">
+                <dt class="text-sm font-medium text-brand-100">Los Angeles</dt>
+                <dd class="mt-2"><a href="tel:+12135550147" class="rounded-sm text-lg font-semibold underline decoration-accent-400 underline-offset-4 hover:text-accent-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-400">+1 213 555 0147</a></dd>
+              </div>
+              <div class="rounded-2xl bg-brand-800 p-6">
+                <dt class="text-sm font-medium text-brand-100">Zaragoza</dt>
+                <dd class="mt-2"><a href="tel:+34976123456" class="rounded-sm text-lg font-semibold underline decoration-accent-400 underline-offset-4 hover:text-accent-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-400">+34 976 123 456</a></dd>
+              </div>
+            </dl>
+          </address>
+        </div>
+      </section>
     </main>
 
     <footer class="bg-brand-950 text-slate-300">
