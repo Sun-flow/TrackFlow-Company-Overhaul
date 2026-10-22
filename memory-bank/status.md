@@ -10,13 +10,12 @@
 - `docs/FUTURE_WORK.md` holds ideas parked for later milestones (PR #2).
 - Agent setup: `AGENTS.md` entry point, `.agents/rules/`, this memory bank, `docs/decisions.md`.
 - Tooling: `scripts/check-memory.py` (memory drift) and `scripts/site-check.py` (screenshots, console errors, horizontal scroll, axe-core).
-- Website scaffold (WP1, waiting to merge): `uis/website/` builds with `pnpm build`; `uis/website/index.html`, `uis/website/request-information.html` and `uis/website/privacy.html` (placeholder) share head, header, mobile menu and footer, with empty `<main>`s for WP2 and WP3; all pass `scripts/site-check.py` and keyboard checks. Look: teal and coral, Plus Jakarta Sans (`docs/decisions.md`).
-
+- Website scaffold (WP1): `uis/website/` builds with `pnpm build`; `uis/website/index.html`, `uis/website/request-information.html` and `uis/website/privacy.html` (placeholder) share head, header, mobile menu and footer, with empty `<main>`s for WP2 and WP3; all pass `scripts/site-check.py` and keyboard checks. Look: teal and coral, Plus Jakarta Sans (`docs/decisions.md`).
 ## In progress
 
 Format: `- what — branch, PR, environment (started date)`. Remove the line when it merges or is dropped.
 
-- WP1 site scaffold, done and waiting to merge — `claude/project-thread-wpdzyz`, PR #7, Claude Code cloud (2026-10-22)
+- WP2 landing page, done and waiting to merge — `claude/project-thread-fzjogd`, PR pending, Claude Code cloud (2026-10-22)
 
 ## Next
 
