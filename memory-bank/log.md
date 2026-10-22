@@ -3,6 +3,11 @@
 > **Last updated**: 2026-10-22
 > Newest first. One entry per session: date, where it ran, what changed (link the PR or commit), what was left open. Keep about 15 entries. When there are more, move the oldest to `docs/archive/memory-bank-log.md` (create it the first time). Entries before this file existed were rebuilt from git history.
 
+### 2026-10-22 · Validation edge-case tests (Claude Code, cloud)
+- mae asked for test input built to break the form rules, not confirm them. Added `uis/website/tests/validation-edge-cases.test.js` (307 cases: names, emails from 23 providers, phones from 26 countries and territories, URLs, invisible characters, emoji, tampered values, the 0-100 dialog bands) and `uis/website/tests/EDGE-CASE-FINDINGS.md`. Expectations follow the brief's intent; the 48 cases that fail today run as `todo` with a finding id, so `pnpm test` stays green (403 tests, 355 pass, 48 todo). Branch `claude/project-thread-11jml5`.
+- Findings: 9 bugs (F1 to F9; worst is F3, email accepts pasted debris like `ana@acme.com,` or `mailto:`), 10 ambiguities for mae (A1 to A10; phone extensions are the main one, and the WP4 tests assert they are invalid).
+- Open: mae's decisions on the findings; `uis/website/js/validation.js` not changed.
+
 ### 2026-10-22 · WP4 form validation (Claude Code, cloud)
 - Added `uis/website/js/validation.js` (one pure function per brief rule, exact messages, `validateForm`, `needsVolumeConfirmation`), `uis/website/js/form.js` (wiring per the form contract: submit then blur/change validation, error summary with focus, comments counter, D3 dialog, simulated success), `uis/website/tests/validation.test.js` and a `test` script. Branch `claude/project-thread-m7zya3`, PR #11.
 - `uis/website/js/validation.js` is a classic script that the form script loads itself, so the form works from the file system and tests can `require()` it. Agreed the markup details with WP3 (branch `claude/project-thread-t2p6d4`).

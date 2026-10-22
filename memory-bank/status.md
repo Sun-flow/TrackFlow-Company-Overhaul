@@ -13,13 +13,13 @@
 - Website scaffold (WP1, PR #7): `uis/website/` builds with `pnpm build`; `uis/website/index.html`, `uis/website/request-information.html` and `uis/website/privacy.html` (placeholder) share head, header, mobile menu and footer, with empty `<main>`s for WP2 and WP3; all pass `scripts/site-check.py` and keyboard checks. Look: teal and coral, Plus Jakarta Sans (`docs/decisions.md`).
 - Landing page (WP2, PR #9): `uis/website/index.html` has the brief's Hero, Services, Coverage, Why TrackFlow and Contact sections with its exact copy; passes `scripts/site-check.py`.
 - Form markup (WP3, PR #10): `uis/website/request-information.html` has the 12-field form, error summary, low-volume dialog and success message per the plan's form contract.
-- Form validation (WP4, PR #11, waiting to merge): `uis/website/js/validation.js` (pure rules, brief's messages), `uis/website/js/form.js` (contract wiring, D3 dialog), `pnpm test` (96 `node:test` cases). Checked end to end against the merged form markup.
+- Form validation (WP4, PR #11, merged): `uis/website/js/validation.js` (pure rules, brief's messages), `uis/website/js/form.js` (contract wiring, D3 dialog), `pnpm test` (96 `node:test` cases). Checked end to end against the merged form markup.
 
 ## In progress
 
 Format: `- what — branch, PR, environment (started date)`. Remove the line when it merges or is dropped.
 
-- None.
+- Validation edge-case tests (`uis/website/tests/validation-edge-cases.test.js`, 307 cases; 48 failing ones run as `todo`) — `claude/project-thread-11jml5`, PR to come, Claude Code cloud (2026-10-22).
 
 ## Next
 
@@ -27,7 +27,7 @@ Format: `- what — branch, PR, environment (started date)`. Remove the line whe
 
 ## Open questions
 
-- None.
+- Which edge-case findings to fix and how to settle the rule ambiguities (A1 to A10, phone extensions first): `uis/website/tests/EDGE-CASE-FINDINGS.md`. mae decides; `uis/website/js/validation.js` is unchanged until then. Where the work sits in the plan (WP5 or its own package) is the planning thread's call.
 
 ## Known problems
 
