@@ -6,5 +6,5 @@
 ## Working with mae
 
 - mae makes the design calls. When a choice changes what users see, offer two or three options with a recommendation instead of picking silently, then log the outcome in `docs/decisions.md`.
-- Keep each thread and PR to the single task it was opened for. Don't start building while asked to assess or plan; ask first, and park the rest.
+- Confirm a plan with mae before building anything. Answering a question or settling a decision is not a go-ahead to start building.
 - mae works in more than one environment (Claude Code in the cloud, and GitHub Copilot in a Codespace). Nothing outside the repo carries over between them, so anything worth keeping goes in this folder or `docs/`.
