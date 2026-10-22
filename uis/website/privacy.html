@@ -26,17 +26,12 @@
           href="index.html"
           class="flex items-center gap-2 rounded-md text-xl font-bold tracking-tight text-brand-900 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-600"
         >
-          <svg class="size-8 shrink-0" viewBox="0 0 32 32" fill="none" aria-hidden="true" focusable="false">
-            <rect width="32" height="32" rx="8" class="fill-brand-900" />
-            <path d="M8 22.5h6.5a4 4 0 0 0 0-8h-1a4 4 0 0 1 0-8H24" class="stroke-white" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" />
-            <circle cx="8" cy="22.5" r="2.4" class="fill-accent-500" />
-            <path d="M21 3.5l3 3-3 3" class="stroke-white" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" />
-          </svg>
+          <img src="assets/logo-mark.svg" alt="" class="size-8 shrink-0" width="32" height="32" />
           TrackFlow
         </a>
 
         <nav aria-label="Main">
-          <ul class="hidden items-center gap-1 md:flex">
+          <ul role="list" class="hidden items-center gap-1 md:flex">
             <li><a href="index.html" class="rounded-md px-3 py-2 text-sm font-medium text-slate-700 hover:bg-brand-50 hover:text-brand-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 aria-[current=page]:text-brand-900 aria-[current=page]:font-semibold">Home</a></li>
             <li><a href="index.html#services" class="rounded-md px-3 py-2 text-sm font-medium text-slate-700 hover:bg-brand-50 hover:text-brand-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600">Services</a></li>
             <li><a href="index.html#coverage" class="rounded-md px-3 py-2 text-sm font-medium text-slate-700 hover:bg-brand-50 hover:text-brand-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600">Coverage</a></li>
@@ -59,7 +54,7 @@
             </svg>
           </button>
 
-          <ul id="mobile-menu" class="absolute inset-x-0 top-16 border-b border-slate-200 bg-white px-4 pt-2 pb-4 shadow-lg md:hidden" hidden>
+          <ul id="mobile-menu" role="list" class="absolute inset-x-0 top-16 border-b border-slate-200 bg-white px-4 pt-2 pb-4 shadow-lg md:hidden" hidden>
             <li><a href="index.html" class="block rounded-md px-3 py-3 text-base font-medium text-slate-700 hover:bg-brand-50 hover:text-brand-900 focus-visible:outline-2 focus-visible:outline-brand-600 aria-[current=page]:text-brand-900 aria-[current=page]:font-semibold">Home</a></li>
             <li><a href="index.html#services" class="block rounded-md px-3 py-3 text-base font-medium text-slate-700 hover:bg-brand-50 hover:text-brand-900 focus-visible:outline-2 focus-visible:outline-brand-600">Services</a></li>
             <li><a href="index.html#coverage" class="block rounded-md px-3 py-3 text-base font-medium text-slate-700 hover:bg-brand-50 hover:text-brand-900 focus-visible:outline-2 focus-visible:outline-brand-600">Coverage</a></li>
@@ -90,19 +85,28 @@
     </main>
 
     <footer class="bg-brand-950 text-slate-300">
-      <div class="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-10 sm:px-6 md:flex-row md:items-center md:justify-between lg:px-8">
-        <p class="text-sm">© 2025 TrackFlow. All rights reserved.</p>
-        <ul class="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm">
-          <li><a href="privacy.html" class="rounded-sm underline-offset-4 hover:text-white hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-400">Privacy policy</a></li>
-          <li>
-            <a href="https://linkedin.com/company/trackflow" class="inline-flex items-center gap-2 rounded-sm underline-offset-4 hover:text-white hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-400">
-              <svg class="size-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
-                <path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z" />
-              </svg>
-              LinkedIn
-            </a>
-          </li>
-        </ul>
+      <div class="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-10 sm:px-6 lg:px-8">
+        <address class="not-italic">
+          <ul role="list" class="flex flex-col gap-2 text-sm md:flex-row md:flex-wrap md:gap-x-8">
+            <li>Email: <a href="mailto:comercial@trackflow.com" class="rounded-sm font-medium text-white underline decoration-accent-400 underline-offset-4 hover:text-accent-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-400">comercial@trackflow.com</a></li>
+            <li>Los Angeles: <a href="tel:+12135550147" class="rounded-sm font-medium text-white underline decoration-accent-400 underline-offset-4 hover:text-accent-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-400">+1 213 555 0147</a></li>
+            <li>Zaragoza: <a href="tel:+34976123456" class="rounded-sm font-medium text-white underline decoration-accent-400 underline-offset-4 hover:text-accent-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-400">+34 976 123 456</a></li>
+          </ul>
+        </address>
+        <div class="flex flex-col gap-6 border-t border-brand-800 pt-6 md:flex-row md:items-center md:justify-between">
+          <p class="text-sm">© 2025 TrackFlow. All rights reserved.</p>
+          <ul role="list" class="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm">
+            <li><a href="privacy.html" class="rounded-sm underline-offset-4 hover:text-white hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-400">Privacy policy</a></li>
+            <li>
+              <a href="https://linkedin.com/company/trackflow" class="inline-flex items-center gap-2 rounded-sm underline-offset-4 hover:text-white hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-400">
+                <svg class="size-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+                  <path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z" />
+                </svg>
+                LinkedIn
+              </a>
+            </li>
+          </ul>
+        </div>
       </div>
     </footer>
   </body>

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 320" fill="none">
+  <rect x="0.5" y="0.5" width="479" height="319" rx="24" fill="#0f3d3a" stroke="#134e4a"/>
+  <g stroke="#134e4a" stroke-width="1">
+    <path d="M40 80h400M40 160h400M40 240h400M120 40v240M240 40v240M360 40v240"/>
+  </g>
+  <path d="M110 200C170 80 310 80 370 170" stroke="#fb923c" stroke-width="3" stroke-dasharray="8 10" stroke-linecap="round"/>
+  <circle cx="110" cy="200" r="28" fill="#134e4a"/>
+  <circle cx="110" cy="200" r="12" fill="#fb923c"/>
+  <circle cx="370" cy="170" r="28" fill="#134e4a"/>
+  <circle cx="370" cy="170" r="12" fill="#fb923c"/>
+  <g fill="#ccefe9" font-family="'Plus Jakarta Sans Variable', ui-sans-serif, system-ui, sans-serif" font-size="14" font-weight="600" text-anchor="middle">
+    <text x="110" y="256">Los Angeles</text>
+    <text x="370" y="226">Zaragoza</text>
+  </g>
+</svg>

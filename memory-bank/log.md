@@ -7,7 +7,13 @@
 - From mae's Milestone 1 checklist audit (items A6 to A9): renamed the form page to `uis/website/application.html` (`git mv`; canonical, plan, website README and status updated; the hero link is changed in the landing thread's PR #15), added a "Clear form" reset button, made each field validate on blur from the user's first edit (`createLiveValidation` in `uis/website/js/validation.js`, new `uis/website/tests/live-validation.test.js`; `docs/decisions.md`, "Form validates each field from first touch"), `role="list"` on the error summary, and applied PR #15's header and footer to the form page. Branch `claude/project-thread-e2jh0w`.
 - Checks: `pnpm test` 466 pass; `scripts/site-check.py` clean; a Playwright walk of blur, typing, reset by mouse and keyboard and a valid submit (20 of 20).
 - A9: after weighing the codes' benefits (stable through rewording and translation, tidy ids), mae approved renaming field names and option values to the brief's wording (`companyName`, `mainOperatingCountry` = `United States`, ...); form contract in the plan and `docs/decisions.md` updated, tests moved to the new values plus cases rejecting the old codes (481 pass). Checkbox and radio ids keep short slugs.
-- Open: merging after PR #15; the second to merge reruns `pnpm build`.
+- Merged production after PR #15 landed (log order, one more archive move) and reran `pnpm build`. Open: mae merges PR #16.
+
+### 2026-10-22 · Landing page checklist fixes (Claude Code, cloud)
+- Audit items A2 to A5 for `uis/website/index.html` and `uis/website/privacy.html`: footer now has an `<address>` with the email and both phones as `mailto:`/`tel:` links above the copyright row; header logo is `<img src="assets/logo-mark.svg" alt="">`; hero map moved to `uis/website/assets/hero-map.svg` (hard-coded colours) as an `<img>` with descriptive alt; Services and Coverage cards wrapped in `<article>`; `role="list"` on every styled `<ul>`; hero CTA points to application.html (renamed by the form thread). No copy changes beyond the footer's "Email:", "Los Angeles:", "Zaragoza:" labels. Branch `claude/project-thread-z4x6cm`.
+- Sent the shared header and footer markup to the "Form checklist fixes" thread to apply to application.html. The two PRs merge together; the second to merge reruns `pnpm build`.
+- Checks: `pnpm build`; `scripts/site-check.py --pages index.html privacy.html` clean at four widths, screenshots looked at.
+- Open: merging alongside the form PR; copy pass (Group B) with mae.
 
 ### 2026-10-22 · Run the site with npx (Claude Code, cloud)
 - Milestone 1 review, audit items A1 and A10: documented `npx --yes http-server uis/website -p 3000 -c-1` in the root `README.md` ("Run the website"), `uis/website/README.md` ("Run locally", with the steps to make Codespaces port 3000 Public) and `memory-bank/context.md`; labelled port 3000 "Website" in `.devcontainer/devcontainer.json`. The website README now names the form page application.html, ahead of the parallel thread that renames it. Branch `claude/project-thread-jhublb`.
@@ -75,7 +81,3 @@
 ### 2026-10-22 · Milestone 1 decisions (Claude Code, cloud)
 - Recorded two Milestone 1 decisions mae made in `docs/decisions.md`: Tailwind through a build step, and English as the base language. Branch `claude/project-thread-0e5coz`, PR #4.
 - Open: nothing. Building the site is for a separate thread; an unpushed, untested draft from this session sits in the project's shared files (drafts/website-draft, outside the repo), and is optional reference only.
-
-### 2026-10-21 · Memory bank and agent rules (Claude Code, cloud)
-- Ported from mae's `Sun-flow/tailwind-dashboard`, keeping only what generalises (mae approved each item): the memory bank prompt and check script, the `AGENTS.md` / `CLAUDE.md` / Copilot entry points, semantic HTML and accessibility rules, new core rules with a stay-in-the-milestone rule, the decision log format (`docs/decisions.md`), and `scripts/site-check.py` adapted from the old screenshot script with an axe-core scan added. Branch `claude/project-thread-nul6yt`, PR #3.
-- Open: nothing. (`docs/FUTURE_WORK.md` came in with PR #2.)
