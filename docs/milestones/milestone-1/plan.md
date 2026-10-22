@@ -138,10 +138,10 @@ Update this table as packages start and merge.
 
 | Package | Thread | Branch / PR | State |
 |---|---|---|---|
-| D1, D2 | Milestone 1 execution plan | PR #5 | approved 2026-10-22 (D1's pick happens in WP1) |
+| D1, D2 | WP1 Site scaffold | PR #7 | decided 2026-10-22 (D1: teal and coral, Plus Jakarta Sans) |
 | D3 to D5 | Milestone 1 execution plan | PR #5 | decided 2026-10-22 |
-| WP1 Site scaffold | requested 2026-10-22 | | starting |
-| WP2 Landing page | | | not started |
-| WP3 Form markup | | | not started |
-| WP4 Form validation | | | not started |
+| WP1 Site scaffold | WP1 site scaffold | `claude/project-thread-wpdzyz`, PR #7 | merged 2026-10-22 |
+| WP2 Landing page | requested 2026-10-22 | | starting |
+| WP3 Form markup | requested 2026-10-22 | | starting |
+| WP4 Form validation | requested 2026-10-22 | | starting |
 | WP5 Integration and QA | | | not started |
