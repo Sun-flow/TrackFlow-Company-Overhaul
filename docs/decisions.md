@@ -16,6 +16,18 @@ Entry format:
 
 ---
 
+### [2026-10-22] Milestone 1 website is in English first
+- **Decision**: The public website and the information-request form are built in English as the base language. A Spanish version is an enhancement for later, tracked in `docs/FUTURE_WORK.md`.
+- **Rationale**: The Milestone 1 brief requires one base language with full quality and makes a second language optional. English matches the brief's copy, which is already written in English, and the US headquarters.
+- **Alternatives considered**: Spanish as the base (the tech team is in Zaragoza, but the brief's copy and Schema.org markup are in English); both languages at once (doubles the content work and risks a weaker base experience, which the brief warns against).
+- **Status**: Accepted (2026-10-22).
+
+### [2026-10-22] Tailwind CSS through a build step, not the Play CDN
+- **Decision**: The Milestone 1 website installs Tailwind CSS as a dev dependency (pnpm, in `uis/website/`) and compiles one minified stylesheet from the classes the HTML uses.
+- **Rationale**: The site is TrackFlow's public launch and must be "professional" and SEO-optimised. The compiled file is small, works without JavaScript and doesn't flash unstyled content. Node 22 and pnpm are already in the dev container.
+- **Alternatives considered**: the Tailwind Play CDN script (no install, but Tailwind documents it as development-only; it ships a large script, builds CSS in every visitor's browser and can show the page unstyled for a moment).
+- **Status**: Accepted (2026-10-22).
+
 ### [2026-10-21] Agent memory in `memory-bank/`, one entry point in `AGENTS.md`
 - **Decision**: Coding agents keep working memory in `memory-bank/` (built from `.agents/prompts/memory-bank.md`, checked by `scripts/check-memory.py`), and every tool's instructions start from `AGENTS.md`. The prompt, check script and HTML/accessibility rules were ported from mae's earlier `Sun-flow/tailwind-dashboard` project, keeping only what generalises.
 - **Rationale**: Work happens across sessions, tools and environments (Claude Code in the cloud, Copilot in a Codespace), and none of their memories carry over. The repo is the one place they all read.
