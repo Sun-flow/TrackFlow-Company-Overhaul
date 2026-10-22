@@ -60,6 +60,18 @@ You are building **one company** across many milestones and projects. Each top-l
 
 ---
 
+## Run the website
+
+The Milestone 1 website is static, so any file server will do. From the repo root, locally or in Codespaces:
+
+```bash
+npx --yes http-server uis/website -p 3000 -c-1
+```
+
+Open <http://localhost:3000>; in Codespaces, use the forwarded port 3000 ("Website" in the Ports tab). To share it outside your GitHub account, set that port to Public; the steps are in [`uis/website/README.md`](./uis/website/README.md#run-locally).
+
+---
+
 ## Folder guide — what goes where
 
 Read the linked `README.md` inside each folder before you start coding there.
