@@ -15,7 +15,7 @@
 
 Format: `- what — branch, PR, environment (started date)`. Remove the line when it merges or is dropped.
 
-- WP2 landing page, done and waiting to merge — `claude/project-thread-fzjogd`, PR pending, Claude Code cloud (2026-10-22)
+- WP2 landing page, done and waiting to merge — `claude/project-thread-fzjogd`, PR #9, Claude Code cloud (2026-10-22)
 
 ## Next
 
