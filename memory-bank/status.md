@@ -19,7 +19,7 @@
 
 Format: `- what — branch, PR, environment (started date)`. Remove the line when it merges or is dropped.
 
-- Validation edge-case tests (`uis/website/tests/validation-edge-cases.test.js`, 307 cases; 48 failing ones run as `todo`) — `claude/project-thread-11jml5`, PR to come, Claude Code cloud (2026-10-22).
+- Validation edge-case tests (`uis/website/tests/validation-edge-cases.test.js`, 307 cases; 48 failing ones run as `todo`) — `claude/project-thread-11jml5`, PR #12, Claude Code cloud (2026-10-22).
 
 ## Next
 
