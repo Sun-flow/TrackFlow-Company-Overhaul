@@ -30,7 +30,7 @@ Format: `- what — branch, PR, environment (started date)`. Remove the line whe
 
 ## Next
 
-1. mae runs PageSpeed or Lighthouse on the updated site (definition of done R7).
+1. mae switches on GitHub Pages (Settings → Pages → Source: GitHub Actions) and runs PageSpeed Insights on https://sun-flow.github.io/TrackFlow-Company-Overhaul/ (definition of done R7).
 2. mae reviews Milestone 1 as a whole, using `docs/milestones/milestone-1/definition-of-done.md`.
 3. When mae calls Milestone 1 finished, move this file to the next milestone and review `docs/FUTURE_WORK.md` for entries it picks up.
 

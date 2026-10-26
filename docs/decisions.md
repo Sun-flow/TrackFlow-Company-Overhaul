@@ -16,6 +16,12 @@ Entry format:
 
 ---
 
+### [2026-10-26] Public copy of the website on GitHub Pages
+- **Decision**: `.github/workflows/pages.yml` deploys `uis/website/` (pages, `assets/`, `dist/`, `js/`) to GitHub Pages, https://sun-flow.github.io/TrackFlow-Company-Overhaul/, on pushes to `production` that touch the site, and by hand from the Actions tab.
+- **Rationale**: PageSpeed Insights (definition of done R7) needs a public URL, and mae's Codespaces credits ran out. The site is static with relative links and committed CSS, so Pages serves it as is, free on a public repo, and it stays up without anyone's machine running. mae picked it (2026-10-26).
+- **Alternatives considered**: Lighthouse in Chrome DevTools on localhost (no public URL; the rubric accepts a screenshot); a Cloudflare quick tunnel or Netlify Drop (temporary links that need mae's machine or a manual upload each time).
+- **Status**: Accepted (2026-10-26).
+
 ### [2026-10-26] No public Codespaces URL for Milestone 1
 - **Decision**: The deliverables item "Expose the site on a public Codespaces URL" (L15) is removed from `docs/milestones/milestone-1/definition-of-done.md`. The performance check (R7) is run by mae with PageSpeed Insights or Lighthouse after the website copy is updated.
 - **Rationale**: Management told mae they can view the site on their end without a public URL (2026-10-26). Running the score after the copy lands measures the final pages.

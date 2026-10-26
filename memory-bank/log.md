@@ -22,7 +22,8 @@
 - Result: 36 done, 2 partial (C2 experience and advantages, C4 tone: brief-only copy, being written with mae in the website copy thread), 1 needs mae (R7, the PageSpeed or Lighthouse run). mae then dropped the public Codespaces URL item (management can view the site without it; `docs/decisions.md`), so the list is 39 items.
 - Checks: `pnpm test` 481 pass; `pnpm build` no CSS change; `scripts/site-check.py` clean; a Playwright walk of keyboard, menu, form errors, clear, dialog and success; local Lighthouse 12.8.2 scored 100 in all four categories on both pages, mobile and desktop.
 - After PR #19 (website copy) merged: merged production into this branch, re-rated C2 and C4 as done from the new About page and Coverage copy, and updated H2, H4, H10, R1 and R7 for the About page. Re-checks: `pnpm test` 481 pass, `scripts/site-check.py` clean on four pages, Lighthouse mobile 100 in all four categories on home, About and form. Now 38 of 39 done.
-- Open: mae runs R7 (PageSpeed or Lighthouse) and merges PR #18.
+- mae's Codespaces credits ran out, so mae picked GitHub Pages for a public URL: added `.github/workflows/pages.yml` (copies the pages and `uis/website/assets`, `uis/website/dist`, `uis/website/js`; no build), documented in `uis/website/README.md`, root `README.md`, `memory-bank/context.md` and `docs/decisions.md`. Checked by serving the same files under the same sub-path Pages uses, locally: every page and link loads, no 404s or console errors. Merged production (PR #20, hero snap) first.
+- Open: mae merges PR #18 and sets Settings → Pages → Source to GitHub Actions; then runs PageSpeed on https://sun-flow.github.io/TrackFlow-Company-Overhaul/ (R7).
 
 
 ### 2026-10-22 · Form checklist fixes (Claude Code, cloud)
@@ -89,9 +90,3 @@
 - D1: mae picked option B (deep teal and coral, Plus Jakarta Sans) from three screenshot previews (kept in the project's shared files under design/palette-options, outside the repo).
 - Checks: `pnpm build`, `scripts/site-check.py` (12 page and width runs, clean), keyboard walk at all four widths (skip link, nav, menu open, Escape, link closes menu).
 - Open: merging the PR; then WP2 to WP4.
-
-### 2026-10-22 · Milestone 1 execution plan (Claude Code, cloud)
-- Wrote `docs/milestones/milestone-1/plan.md`: five work packages (scaffold, then landing page, form markup and form validation in parallel, then integration and QA), five decisions for mae, a form contract so markup and validation can be built separately, and an acceptance checklist. Branch `claude/project-thread-knpic0`, PR #5.
-- mae decided D3 (low-volume confirmation dialog), D4 (placeholder privacy page) and D5 (draft is reference only); logged in `docs/decisions.md`, plan updated, privacy entry in `docs/FUTURE_WORK.md` reworded.
-- mae approved the plan (D1 and D2 as recommended); WP1 site scaffold requested as its own thread.
-- Open: merging PR #5; WP1 onward.

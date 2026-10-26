@@ -27,7 +27,7 @@ To re-check, update the rating and evidence in place and the "Last checked" line
 
 Left to solidify:
 
-1. **R7 (🙋 mae)**: run PageSpeed Insights or Lighthouse now that the website copy is in, and keep the screenshot. A local Lighthouse run on the updated pages already scores 100 in every category.
+1. **R7 (🙋 mae)**: switch on GitHub Pages (Settings → Pages → Source: GitHub Actions), run PageSpeed Insights on https://sun-flow.github.io/TrackFlow-Company-Overhaul/, and keep the screenshot. A local Lighthouse run on the updated pages already scores 100 in every category.
 
 ## HTML structure and semantics
 
@@ -56,7 +56,7 @@ Left to solidify:
 | R4 | All styles are Tailwind utility classes, with no unnecessary custom CSS | E4, E6, L8 | ✅ | No `style` attributes, no `<style>` blocks, no styles set from JS. The only hand-written CSS is the `@font-face` and the `@theme` colour tokens in `src/input.css` (`docs/decisions.md`). `pnpm build` leaves `dist/styles.css` unchanged. |
 | R5 | Breakpoints `sm:`, `md:`, `lg:` used appropriately | E5 | ✅ | `index.html`: 19 `sm:`, 12 `md:`, 19 `lg:`; `application.html`: 15, 9, 3. Grids go 1 → 2/3 → 4 columns; padding and type sizes step up. |
 | R6 | Visually coherent and professional design | E7 | ✅ | One palette and type scale across pages (teal and coral, Plus Jakarta Sans; `docs/decisions.md`); mae reviewed the preview in WP5. This is a judgement call, so mae's view decides. |
-| R7 | Performance score of at least 80 (ideal 90+) in PageSpeed Insights, or a Lighthouse screenshot from Chrome DevTools | E8 | 🙋 | Local Lighthouse 12.8.2 (headless Chromium, served with the npx command): Performance, Accessibility, Best Practices and SEO all 100 on home and form, mobile and desktop (mobile LCP 1.6 to 1.8 s, CLS ≤ 0.013, TBT 0 ms); after the copy update, all 100 again on home, About and form (mobile). mae runs the scored check now that the copy is in. |
+| R7 | Performance score of at least 80 (ideal 90+) in PageSpeed Insights, or a Lighthouse screenshot from Chrome DevTools | E8 | 🙋 | Local Lighthouse 12.8.2 (headless Chromium, served with the npx command): Performance, Accessibility, Best Practices and SEO all 100 on home and form, mobile and desktop (mobile LCP 1.6 to 1.8 s, CLS ≤ 0.013, TBT 0 ms); after the copy update, all 100 again on home, About and form (mobile). mae runs the scored check now that the copy is in, against the GitHub Pages copy at https://sun-flow.github.io/TrackFlow-Company-Overhaul/ once it is switched on. |
 
 ## Accessibility
 
