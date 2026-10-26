@@ -16,6 +16,12 @@ Entry format:
 
 ---
 
+### [2026-10-26] No public Codespaces URL for Milestone 1
+- **Decision**: The deliverables item "Expose the site on a public Codespaces URL" (L15) is removed from `docs/milestones/milestone-1/definition-of-done.md`. The performance check (R7) is run by mae with PageSpeed Insights or Lighthouse after the website copy is updated.
+- **Rationale**: Management told mae they can view the site on their end without a public URL (2026-10-26). Running the score after the copy lands measures the final pages.
+- **Alternatives considered**: keeping the public URL for the external PageSpeed run, which management no longer needs.
+- **Status**: Accepted (2026-10-26).
+
 ### [2026-10-22] Form field names and values use the brief's wording
 - **Decision**: The form's `name`s and option values in `uis/website/application.html` read as the brief's field list: `companyName`, `contactPerson`, `corporateEmail`, `phone`, `companyWebsite`, `mainOperatingCountry`, `productType`, `monthlyShippingVolume`, `servicesOfInterest`, `currentThreePL`, `commentsOrSpecificNeeds`, `privacyPolicy`, with values such as `United States` and `Evaluating options` (full list: the form contract in `docs/milestones/milestone-1/plan.md`). Checkbox and radio ids keep a short form of the value (`servicesOfInterest-last-mile`). A Spanish version keeps these English values and translates only the labels.
 - **Rationale**: The Milestone 1 checklist says field names and domain values must match the brief, and an auditor reading the HTML could mark short codes down. mae approved it (2026-10-22). Keeping the values in English when the page is translated preserves what codes gave: values that don't change when the wording on screen does.

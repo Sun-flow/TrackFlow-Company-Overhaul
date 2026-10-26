@@ -1,7 +1,7 @@
 # Milestone 1 definition of done
 
 > **Date created**: 2026-10-26
-> **Last checked**: 2026-10-26, against `production` at `ac4eb88`
+> **Last checked**: 2026-10-26, against `production` at `ac4eb88`; L15 removed the same day
 > **Sources**: the course's "What We Will Evaluate" rubric and its two deliverables checklists (landing page, application form), merged and de-duplicated. The brief (`trackflow-BRIEFING.en.md`, called `BRIEFING.md` in the checklists) still wins where it is more specific.
 
 Milestone 1 is done when every item below is rated ✅. The items are grouped by the rubric's five sections. Where the rubric and a deliverables checklist ask for the same thing (alt text, labels, Schema.org, the npx command, Tailwind only, responsive), they are one item, and the Source column lists every checklist it came from.
@@ -9,6 +9,8 @@ Milestone 1 is done when every item below is rated ✅. The items are grouped by
 **Sources**: **E** = rubric ("What We Will Evaluate"), **L** = landing page deliverables, **F** = application form deliverables. The number is the item's position in that checklist (E counts within its section).
 
 **Ratings**: ✅ Completely done · 🟡 Partially done · ⬜ Not done · 🙋 Needs mae (only mae can do it) · ❔ Not verifiable here
+
+**Removed**: L15, "Expose the site on a public Codespaces URL", dropped on 2026-10-26 because management can view the site without it (`docs/decisions.md`). R2's npx command stays.
 
 To re-check, update the rating and evidence in place and the "Last checked" line above. The checks used are listed at the end.
 
@@ -19,13 +21,13 @@ To re-check, update the rating and evidence in place and the "Last checked" line
 | ✅ Completely done | 36 |
 | 🟡 Partially done | 2 |
 | ⬜ Not done | 0 |
-| 🙋 Needs mae | 2 |
+| 🙋 Needs mae | 1 |
 | ❔ Not verifiable here | 0 |
-| **Total** | **40** |
+| **Total** | **39** |
 
 Left to solidify:
 
-1. **R7, R8 (🙋 mae)**: make Codespaces port 3000 Public (steps in `uis/website/README.md`, "Run locally"), then run PageSpeed Insights on that URL, or Lighthouse in Chrome DevTools if PageSpeed can't reach it, and keep the screenshot. A local Lighthouse run already scores 100 in every category.
+1. **R7 (🙋 mae)**: run PageSpeed Insights or Lighthouse after the website copy is updated, and keep the screenshot. A local Lighthouse run already scores 100 in every category.
 2. **C2, C4 (🟡)**: the landing page carries the brief's copy only. Company experience, competitive advantages and tone get their full treatment in the website copy work being done with mae.
 
 ## HTML structure and semantics
@@ -55,8 +57,7 @@ Left to solidify:
 | R4 | All styles are Tailwind utility classes, with no unnecessary custom CSS | E4, E6, L8 | ✅ | No `style` attributes, no `<style>` blocks, no styles set from JS. The only hand-written CSS is the `@font-face` and the `@theme` colour tokens in `src/input.css` (`docs/decisions.md`). `pnpm build` leaves `dist/styles.css` unchanged. |
 | R5 | Breakpoints `sm:`, `md:`, `lg:` used appropriately | E5 | ✅ | `index.html`: 19 `sm:`, 12 `md:`, 19 `lg:`; `application.html`: 15, 9, 3. Grids go 1 → 2/3 → 4 columns; padding and type sizes step up. |
 | R6 | Visually coherent and professional design | E7 | ✅ | One palette and type scale across pages (teal and coral, Plus Jakarta Sans; `docs/decisions.md`); mae reviewed the preview in WP5. This is a judgement call, so mae's view decides. |
-| R7 | Site exposed on a public Codespaces URL (port forwarding → Public) for an external audit | L15 | 🙋 | Only mae's Codespace can do this. Steps in `uis/website/README.md`, "Run locally". |
-| R8 | Performance score of at least 80 (ideal 90+) in PageSpeed Insights on the public Codespaces URL, or a Lighthouse screenshot from Chrome DevTools if PageSpeed can't reach it | E8 | 🙋 | Local Lighthouse 12.8.2 (headless Chromium, served with the npx command): Performance, Accessibility, Best Practices and SEO all 100 on both pages, mobile and desktop (mobile LCP 1.6 to 1.8 s, CLS ≤ 0.013, TBT 0 ms). The rubric wants the run on the public URL, or mae's DevTools screenshot. |
+| R7 | Performance score of at least 80 (ideal 90+) in PageSpeed Insights, or a Lighthouse screenshot from Chrome DevTools | E8 | 🙋 | Local Lighthouse 12.8.2 (headless Chromium, served with the npx command): Performance, Accessibility, Best Practices and SEO all 100 on both pages, mobile and desktop (mobile LCP 1.6 to 1.8 s, CLS ≤ 0.013, TBT 0 ms). mae runs the scored check once the website copy is updated, so it measures the final pages. |
 
 ## Accessibility
 
