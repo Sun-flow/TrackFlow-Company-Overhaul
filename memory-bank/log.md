@@ -1,7 +1,13 @@
 # Session Log
 
-> **Last updated**: 2026-10-22
+> **Last updated**: 2026-10-26
 > Newest first. One entry per session: date, where it ran, what changed (link the PR or commit), what was left open. Keep about 15 entries. When there are more, move the oldest to `docs/archive/memory-bank-log.md` (create it the first time). Entries before this file existed were rebuilt from git history.
+
+### 2026-10-26 · Definition of done (Claude Code, cloud)
+- mae shared the course's "What We Will Evaluate" rubric alongside the two deliverables checklists already audited. Merged all five into `docs/milestones/milestone-1/definition-of-done.md`: 40 de-duplicated items under the rubric's sections, each with its sources, a rating (Completely done / Partially done / Not done / Needs mae / Not verifiable here) and evidence from `production` at `ac4eb88`. Linked from the milestone README, `docs/milestones/README.md` and the plan's acceptance checklist. No site code or copy changed. Branch `claude/project-thread-hhij7g`.
+- Result: 36 done, 2 partial (C2 experience and advantages, C4 tone: brief-only copy, being written with mae in the website copy thread), 2 need mae (R7 public Codespaces URL, R8 PageSpeed on it).
+- Checks: `pnpm test` 481 pass; `pnpm build` no CSS change; `scripts/site-check.py` clean; a Playwright walk of keyboard, menu, form errors, clear, dialog and success; local Lighthouse 12.8.2 scored 100 in all four categories on both pages, mobile and desktop.
+- Open: R7 and R8 need mae's Codespace; re-rate C2 and C4 when the copy lands.
 
 ### 2026-10-22 · Form checklist fixes (Claude Code, cloud)
 - From mae's Milestone 1 checklist audit (items A6 to A9): renamed the form page to `uis/website/application.html` (`git mv`; canonical, plan, website README and status updated; the hero link is changed in the landing thread's PR #15), added a "Clear form" reset button, made each field validate on blur from the user's first edit (`createLiveValidation` in `uis/website/js/validation.js`, new `uis/website/tests/live-validation.test.js`; `docs/decisions.md`, "Form validates each field from first touch"), `role="list"` on the error summary, and applied PR #15's header and footer to the form page. Branch `claude/project-thread-e2jh0w`.
@@ -77,7 +83,3 @@
 ### 2026-10-22 · Repo consistency check (Claude Code, cloud)
 - Checked the agent docs against each other and the repo (the report, reports/repo-consistency-2026-10-22.md, is in the project's shared files, outside the repo) and fixed what mae approved: removed the placeholder CONTEXT.es.md, made a plan.md in each milestone's folder the documented home for milestone plans (new `docs/milestones/README.md`), refreshed the root README's status box and added the agent folders to it, and noted the stale `main` branch. Branch `claude/project-thread-kktbxp`.
 - Open: whether to delete the stale `main` branch or make it the default (mae's call).
-
-### 2026-10-22 · Milestone 1 decisions (Claude Code, cloud)
-- Recorded two Milestone 1 decisions mae made in `docs/decisions.md`: Tailwind through a build step, and English as the base language. Branch `claude/project-thread-0e5coz`, PR #4.
-- Open: nothing. Building the site is for a separate thread; an unpushed, untested draft from this session sits in the project's shared files (drafts/website-draft, outside the repo), and is optional reference only.

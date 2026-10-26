@@ -8,6 +8,7 @@ Each milestone folder holds:
 | ---- | ---------- |
 | `README.md` | An index of the folder's files. |
 | The briefs | The milestone's source briefs, kept as received. They are binding. |
+| `definition-of-done.md` | Optional. The checklists the milestone is judged against, merged into one list with a rating and evidence per item. Added when such checklists are given. |
 | `plan.md` | How the milestone gets built: work packages, their order, what can run in parallel, and progress. Written once the milestone starts, and confirmed with mae before building. Where the plan and a brief disagree, the brief wins. |
 
 Decisions made while planning or building go in [`../decisions.md`](../decisions.md), not in the plan. Ideas that belong to a later milestone go in [`../FUTURE_WORK.md`](../FUTURE_WORK.md).

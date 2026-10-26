@@ -1,6 +1,6 @@
 # Status
 
-> **Last updated**: 2026-10-22
+> **Last updated**: 2026-10-26
 
 **Current milestone**: Milestone 1, public website: **done, waiting for mae's review** (2026-10-22). Brief: `docs/milestones/milestone-1/` (landing page + information-request form; Tailwind CSS; responsive, accessible, SEO with Schema.org, full JavaScript validation). Code goes in `uis/website/`.
 
@@ -18,16 +18,20 @@
 - Validation edge cases and stricter rules (follow-up to WP4 and WP5, PR #12): `uis/website/tests/validation-edge-cases.test.js` plus the clean-ups mae approved in `uis/website/js/validation.js` and `uis/website/js/form.js` (decision "Form validation rules" in `docs/decisions.md`); `pnpm test` runs 458 cases, none left as todo.
 - Milestone 1 checklist fixes (PRs #15, #16, #17): footer contact details, logo and hero map as `<img>`, `role="list"`, `<article>` cards; form page renamed to `uis/website/application.html` with "Clear form", validation from first edit and field names and values in the brief's wording (`docs/decisions.md`); npx run command in the READMEs. `pnpm test` runs 481 cases.
 
+- Definition of done (2026-10-26): `docs/milestones/milestone-1/definition-of-done.md` merges the course rubric and deliverables checklists into 40 rated items; 36 done, 2 partial (copy), 2 need mae (public URL, PageSpeed).
+
 ## In progress
 
 Format: `- what — branch, PR, environment (started date)`. Remove the line when it merges or is dropped.
 
-- Nothing.
+- Definition of done file — branch `claude/project-thread-hhij7g`, PR pending, cloud (2026-10-26).
+- Website copy, written with mae in its own thread; C2 and C4 in the definition of done wait on it.
 
 ## Next
 
-1. mae reviews Milestone 1 as a whole.
-2. When mae calls Milestone 1 finished, move this file to the next milestone and review `docs/FUTURE_WORK.md` for entries it picks up.
+1. mae makes Codespaces port 3000 Public and runs PageSpeed or Lighthouse on it (definition of done R7, R8).
+2. mae reviews Milestone 1 as a whole, using `docs/milestones/milestone-1/definition-of-done.md`.
+3. When mae calls Milestone 1 finished, move this file to the next milestone and review `docs/FUTURE_WORK.md` for entries it picks up.
 
 ## Open questions
 

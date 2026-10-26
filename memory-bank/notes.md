@@ -1,6 +1,6 @@
 # Notes
 
-> **Last updated**: 2026-10-22
+> **Last updated**: 2026-10-26
 > Things learned the hard way. Add to this as soon as you learn something the next session would otherwise rediscover. Keep each note to a line or two, keep only what is highly relevant, and remove notes that stop being true.
 
 ## Working with mae
@@ -18,3 +18,4 @@
 - Don't add a font `<link rel="preload">` to the website pages: it logs CORS errors when a page opens from the file system (`docs/decisions.md`).
 - `validator.schema.org` and `schema.org` are blocked by the cloud proxy; the schema.org vocabulary file can be fetched from `raw.githubusercontent.com/schemaorg/schemaorg` to check JSON-LD offline.
 - Tailwind 4 preflight sets `margin: 0` on everything, so a modal `<dialog>` needs `m-auto` to sit in the centre.
+- Lighthouse runs in cloud sessions: serve with the npx command, then `CHROME_PATH=/opt/pw-browsers/chromium npx --yes lighthouse@12 <url> --chrome-flags="--headless=new --no-sandbox"` (add `--preset=desktop` for desktop).
