@@ -42,6 +42,13 @@ The steps of becoming a client: request, call with the commercial team, proposal
 - **Source:** website copy thread, mae's direction of 2026-10-26
 - **Target:** ?
 
+### Real WhatsApp contact for Customer Experience
+
+The Meet the team copy says Valentina Cruz's team answers by email, WhatsApp and phone (`CONTEXT.md`), but the brief gives no WhatsApp number. Milestone 1 keeps the word with no link, or an obviously fake placeholder; add the real number or link once one exists.
+
+- **Source:** website copy thread, mae's direction of 2026-10-26
+- **Target:** ?
+
 ### Send the information-request form to the backend
 
 In Milestone 1 the form only validates and simulates submission. Later it should post leads to the company API (e.g. a `/leads` endpoint in `services/`) so the commercial team receives qualified leads.
