@@ -1,9 +1,10 @@
 // Home page hero snap: while the full-screen hero is in view, one scroll gesture (wheel, swipe or key)
 // glides straight to #services, and one gesture back up from there returns to the top. Below Services
-// the page scrolls normally. The glide is short and fixed (GLIDE ms) and scrolling is free again as soon
-// as it lands, so a reader who keeps scrolling carries straight on. It is instant for users who prefer
-// reduced motion. If the hero doesn't fit the screen (a short landscape window), the snap is off so
-// nothing in the hero is skipped.
+// the page scrolls normally. The glide is short and fixed (GLIDE ms), and the reader gets control back
+// for its last stretch (HANDBACK): a fresh scroll, swipe or key there takes over from the glide. After
+// it lands only the dying momentum of the flick that started it is held back, so there is no pause.
+// It is instant for users who prefer reduced motion. If the hero doesn't fit the screen (a short
+// landscape window), the snap is off so nothing in the hero is skipped.
 document.addEventListener("DOMContentLoaded", () => {
   const hero = document.querySelector("[data-hero-snap]");
   const services = document.getElementById("services");
@@ -11,12 +12,20 @@ document.addEventListener("DOMContentLoaded", () => {
   if (!hero || !services || !header) return;
 
   const SLACK = 2; // px of rounding to ignore when comparing scroll positions
-  const GLIDE = 350; // ms the glide takes
-  const SETTLE = 120; // ms after landing that a wheel gesture's leftover momentum is still swallowed
+  const GLIDE = 300; // ms the glide takes
+  const HANDBACK = 0.7; // share of the glide after which fresh input takes over
+  const GESTURE_GAP = 80; // ms between wheel events that means the earlier gesture has ended
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
   let gliding = false;
-  let landedAt = -Infinity;
+  let glideStart = 0;
+  let glideId = 0; // bumped to cancel a running glide
+  // After a snap, a trackpad keeps sending the flick's momentum as wheel events that get smaller one by one.
+  // Those are held back so they don't carry the page past Services; an event as big as the last one or
+  // bigger is the reader pushing again, and ends the hold.
+  let holdingMomentum = false;
+  let lastWheelAt = -Infinity;
+  let lastWheelSize = 0;
   let touchY = null;
   let touchSnapped = false;
 
@@ -37,12 +46,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Our own eased animation rather than the browser's smooth scroll, whose length varies by browser
   // and distance: this one always ends after GLIDE ms. "instant" bypasses the page's scroll-smooth.
+  const stopGlide = () => {
+    glideId += 1;
+    gliding = false;
+    holdingMomentum = false;
+  };
+  const inHandback = () => gliding && performance.now() - glideStart > GLIDE * HANDBACK;
+
   const glide = (to) => {
     const from = window.scrollY;
     const target = to === "services" ? servicesTop() : 0;
     const land = () => {
       gliding = false;
-      landedAt = performance.now();
+      holdingMomentum = true;
     };
     if (reducedMotion.matches) {
       window.scrollTo({ top: target, behavior: "instant" });
@@ -50,19 +66,20 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
     gliding = true;
-    const start = performance.now();
+    glideStart = performance.now();
+    const id = ++glideId;
     const step = (now) => {
-      const t = Math.min((now - start) / GLIDE, 1);
-      const eased = 1 - (1 - t) ** 3; // cubic, fast start and soft landing
+      if (id !== glideId) return; // cancelled
+      const t = Math.min((now - glideStart) / GLIDE, 1);
+      // Cubic in-and-out: it stops moving right as the glide ends, with no long slow tail that would
+      // look like it had arrived while input was still held.
+      const eased = t < 0.5 ? 4 * t ** 3 : 1 - (2 - 2 * t) ** 3 / 2;
       window.scrollTo({ top: from + (target - from) * eased, behavior: "instant" });
       if (t < 1) requestAnimationFrame(step);
       else land();
     };
     requestAnimationFrame(step);
   };
-
-  // True while a snap is moving or has only just landed, so the flick that caused it can't overshoot.
-  const settling = () => gliding || performance.now() - landedAt < SETTLE;
 
   // A scroll that comes to rest part-way through the hero (a dragged scrollbar, or swipe momentum
   // carried up from Services) finishes the move in the direction it was going.
@@ -86,9 +103,24 @@ document.addEventListener("DOMContentLoaded", () => {
     "wheel",
     (event) => {
       if (event.ctrlKey || event.deltaY === 0) return; // pinch zoom, sideways scroll
-      if (settling()) {
-        event.preventDefault();
+      const now = performance.now();
+      const size = Math.abs(event.deltaY);
+      // A new gesture, or the reader pushing harder, rather than momentum dying away.
+      const fresh =
+        now - lastWheelAt > GESTURE_GAP || size > lastWheelSize || (size === lastWheelSize && size >= 10);
+      lastWheelAt = now;
+      lastWheelSize = size;
+      if (gliding) {
+        if (fresh && inHandback()) stopGlide(); // let this event scroll the page as usual
+        else event.preventDefault();
         return;
+      }
+      if (holdingMomentum) {
+        if (!fresh) {
+          event.preventDefault();
+          return;
+        }
+        holdingMomentum = false;
       }
       const to = snapFor(event.deltaY > 0);
       if (!to) return;
@@ -111,8 +143,14 @@ document.addEventListener("DOMContentLoaded", () => {
     "touchmove",
     (event) => {
       if (touchY === null) return;
-      if (touchSnapped || gliding) {
+      if (touchSnapped) {
         event.preventDefault();
+        return;
+      }
+      if (gliding) {
+        // A new touch late in the glide takes over; earlier, it waits.
+        if (inHandback()) stopGlide();
+        else event.preventDefault();
         return;
       }
       const dy = touchY - event.touches[0].clientY; // positive when the finger moves up (page scrolls down)
@@ -141,7 +179,8 @@ document.addEventListener("DOMContentLoaded", () => {
     else if (upKeys.includes(event.key) || (event.key === " " && event.shiftKey)) down = false;
     else return;
     if (gliding) {
-      event.preventDefault();
+      if (inHandback()) stopGlide(); // the key scrolls as usual
+      else event.preventDefault();
       return;
     }
     const to = snapFor(down);
