@@ -1,8 +1,9 @@
 // Home page hero snap: while the full-screen hero is in view, one scroll gesture (wheel, swipe or key)
 // glides straight to #services, and one gesture back up from there returns to the top. Below Services
-// the page scrolls normally. The glide follows the page's CSS scroll-behavior, so it is instant for
-// users who prefer reduced motion. If the hero doesn't fit the screen (a short landscape window), the
-// snap is off so nothing in the hero is skipped.
+// the page scrolls normally. The glide is short and fixed (GLIDE ms) and scrolling is free again as soon
+// as it lands, so a reader who keeps scrolling carries straight on. It is instant for users who prefer
+// reduced motion. If the hero doesn't fit the screen (a short landscape window), the snap is off so
+// nothing in the hero is skipped.
 document.addEventListener("DOMContentLoaded", () => {
   const hero = document.querySelector("[data-hero-snap]");
   const services = document.getElementById("services");
@@ -10,12 +11,12 @@ document.addEventListener("DOMContentLoaded", () => {
   if (!hero || !services || !header) return;
 
   const SLACK = 2; // px of rounding to ignore when comparing scroll positions
-  const QUIET = 200; // ms without wheel events that ends a gesture's momentum
-  const MAX_GLIDE = 1000; // ms fallback where scrollend isn't supported
+  const GLIDE = 350; // ms the glide takes
+  const SETTLE = 120; // ms after landing that a wheel gesture's leftover momentum is still swallowed
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
   let gliding = false;
-  let absorbing = false; // swallow the rest of a wheel gesture (trackpad momentum) after a snap
-  let lastAbsorbed = 0;
+  let landedAt = -Infinity;
   let touchY = null;
   let touchSnapped = false;
 
@@ -34,24 +35,34 @@ document.addEventListener("DOMContentLoaded", () => {
     return null;
   };
 
+  // Our own eased animation rather than the browser's smooth scroll, whose length varies by browser
+  // and distance: this one always ends after GLIDE ms. "instant" bypasses the page's scroll-smooth.
   const glide = (to) => {
-    gliding = true;
-    absorbing = true;
-    lastAbsorbed = performance.now();
-    let timer;
-    const done = () => {
+    const from = window.scrollY;
+    const target = to === "services" ? servicesTop() : 0;
+    const land = () => {
       gliding = false;
-      clearTimeout(timer);
-      window.removeEventListener("scrollend", done);
+      landedAt = performance.now();
     };
-    timer = setTimeout(done, MAX_GLIDE);
-    window.addEventListener("scrollend", done);
-    if (to === "services") services.scrollIntoView({ block: "start" });
-    else window.scrollTo({ top: 0 });
+    if (reducedMotion.matches) {
+      window.scrollTo({ top: target, behavior: "instant" });
+      land();
+      return;
+    }
+    gliding = true;
+    const start = performance.now();
+    const step = (now) => {
+      const t = Math.min((now - start) / GLIDE, 1);
+      const eased = 1 - (1 - t) ** 3; // cubic, fast start and soft landing
+      window.scrollTo({ top: from + (target - from) * eased, behavior: "instant" });
+      if (t < 1) requestAnimationFrame(step);
+      else land();
+    };
+    requestAnimationFrame(step);
   };
 
-  // True while a snap is still settling, so the gesture that caused it can't scroll past it.
-  const settling = () => gliding || (absorbing && performance.now() - lastAbsorbed < QUIET);
+  // True while a snap is moving or has only just landed, so the flick that caused it can't overshoot.
+  const settling = () => gliding || performance.now() - landedAt < SETTLE;
 
   // A scroll that comes to rest part-way through the hero (a dragged scrollbar, or swipe momentum
   // carried up from Services) finishes the move in the direction it was going.
@@ -77,10 +88,8 @@ document.addEventListener("DOMContentLoaded", () => {
       if (event.ctrlKey || event.deltaY === 0) return; // pinch zoom, sideways scroll
       if (settling()) {
         event.preventDefault();
-        lastAbsorbed = performance.now();
         return;
       }
-      absorbing = false;
       const to = snapFor(event.deltaY > 0);
       if (!to) return;
       event.preventDefault();
