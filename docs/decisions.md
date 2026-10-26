@@ -16,6 +16,18 @@ Entry format:
 
 ---
 
+### [2026-10-26] Public copy of the website on GitHub Pages
+- **Decision**: `.github/workflows/pages.yml` deploys `uis/website/` (pages, `assets/`, `dist/`, `js/`) to GitHub Pages, https://sun-flow.github.io/TrackFlow-Company-Overhaul/, on pushes to `production` that touch the site, and by hand from the Actions tab.
+- **Rationale**: PageSpeed Insights (definition of done R7) needs a public URL, and mae's Codespaces credits ran out. The site is static with relative links and committed CSS, so Pages serves it as is, free on a public repo, and it stays up without anyone's machine running. mae picked it (2026-10-26).
+- **Alternatives considered**: Lighthouse in Chrome DevTools on localhost (no public URL; the rubric accepts a screenshot); a Cloudflare quick tunnel or Netlify Drop (temporary links that need mae's machine or a manual upload each time).
+- **Status**: Accepted (2026-10-26).
+
+### [2026-10-26] No public Codespaces URL for Milestone 1
+- **Decision**: The deliverables item "Expose the site on a public Codespaces URL" (L15) is removed from `docs/milestones/milestone-1/definition-of-done.md`. The performance check (R7) is run by mae with PageSpeed Insights or Lighthouse after the website copy is updated.
+- **Rationale**: Management told mae they can view the site on their end without a public URL (2026-10-26). Running the score after the copy lands measures the final pages.
+- **Alternatives considered**: keeping the public URL for the external PageSpeed run, which management no longer needs.
+- **Status**: Accepted (2026-10-26).
+
 ### [2026-10-26] Full-screen home hero that snaps to Services
 - **Decision**: On `uis/website/index.html` the hero fills the screen below the header, and so does Services, with its content centred. While the hero is in view, one scroll gesture (wheel or trackpad, swipe, or Arrow, Page and Space keys) glides to Services in one motion, and one gesture back up from Services returns to the top; below Services the page scrolls normally. A scroll that comes to rest part-way through the hero finishes the move. It lives in `uis/website/js/hero-snap.js`. The glide follows the page's `scroll-behavior`, so it is instant for reduced motion, and the snap switches itself off when the hero is taller than the screen (a short landscape window) so nothing in it is skipped. Without JavaScript the page scrolls as before.
 - **Rationale**: mae asked for the hero to cover the whole screen on open and for the first scroll to land on Services like swiping a photo on a phone (2026-10-26). The brief is silent on scroll behaviour.

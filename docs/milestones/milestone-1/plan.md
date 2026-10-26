@@ -135,6 +135,8 @@ WP5 checked each item on 2026-10-22 against the merged site; the evidence column
 | ✅ | Schema.org Organization markup | WP1 | JSON-LD identical to the brief; every type and property checked against the schema.org vocabulary file (the online validator is blocked from the build environment) |
 | ✅ | Tailwind for all design, no hand-written CSS unless necessary | all, checked in WP5 | Only hand-written CSS is the `@font-face` in `src/input.css`, with its reason; `pnpm build` leaves `dist/styles.css` unchanged |
 
+The course's rubric and deliverables checklists are a wider list than this one; they are merged, rated and evidenced in [`definition-of-done.md`](./definition-of-done.md).
+
 Adversarial edge cases for the form (unusual input to each rule) are covered by a separate test thread that adds to `uis/website/tests/`; it extends the "every validation rule" item and is not needed to close it.
 
 ## Progress

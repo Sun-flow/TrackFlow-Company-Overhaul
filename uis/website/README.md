@@ -58,3 +58,10 @@ In Codespaces, port 3000 is forwarded automatically and labelled "Website" in th
 5. Check it in a private browser window: the site should load without a GitHub sign-in page.
 
 The link works only while the codespace is running and the server is up; a codespace stops after a period of inactivity (30 minutes by default). After a restart, start the server again and check the port is still Public. If Public isn't offered, an organization policy is blocking public ports. Set it back to Private when the review is done.
+
+## Public copy on GitHub Pages
+
+`.github/workflows/pages.yml` publishes the site to <https://sun-flow.github.io/TrackFlow-Company-Overhaul/> whenever a push to `production` changes `uis/website/` (or the workflow), and it can also be run by hand from the Actions tab ("Deploy website to GitHub Pages", Run workflow). It copies only the pages, `assets/`, `dist/` and `js/`; nothing is built, since `dist/styles.css` is committed. Use that link for PageSpeed Insights and for anyone outside the repo.
+
+One-time setup, by a repo admin: **Settings → Pages → Build and deployment → Source: GitHub Actions**. Until then the workflow fails at its deploy step. GitHub Pages is free here because the repo is public.
+

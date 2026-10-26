@@ -1,6 +1,6 @@
 # Context
 
-> **Last updated**: 2026-10-22
+> **Last updated**: 2026-10-26
 
 ## What this is
 
@@ -12,7 +12,8 @@ Work goes one milestone at a time. Each milestone has a folder with its brief un
 
 - `uis/website/`: Milestone 1's static public website. HTML, Tailwind CSS 4 compiled by the Tailwind CLI (pnpm package in that folder, compiled `uis/website/dist/styles.css` committed), plain JavaScript, English first. Its `README.md` has the layout; the brief is `docs/milestones/milestone-1/milestone1-briefing.md`; build, language and look choices are in `docs/decisions.md`.
 - Dev container (`.devcontainer/devcontainer.json`): Ubuntu 24.04, Python 3.12, Node 22 with pnpm via corepack. There is no root Node or Python project file; the website's is `uis/website/package.json`.
-- Tests: `uis/website/tests/` (Node's built-in `node:test`, no extra dependencies) for the form rules, including an adversarial edge-case suite (`uis/website/tests/validation-edge-cases.test.js`; findings and how they were settled in `uis/website/tests/EDGE-CASE-FINDINGS.md`). No CI.
+- Tests: `uis/website/tests/` (Node's built-in `node:test`, no extra dependencies) for the form rules, including an adversarial edge-case suite (`uis/website/tests/validation-edge-cases.test.js`; findings and how they were settled in `uis/website/tests/EDGE-CASE-FINDINGS.md`). No CI for tests.
+- Hosting: GitHub Pages at https://sun-flow.github.io/TrackFlow-Company-Overhaul/, deployed by `.github/workflows/pages.yml` on pushes to `production` that touch `uis/website/` (`uis/website/README.md`, "Public copy on GitHub Pages"). Needs Settings → Pages → Source: GitHub Actions once.
 
 ## Commands
 
@@ -42,6 +43,7 @@ In Claude Code cloud sessions Chromium is preinstalled: skip the install step an
 | The company: departments, people, problems | `CONTEXT.md` |
 | What the current milestone must deliver | `docs/milestones/milestone-1/milestone1-briefing.md` (the manager's email: what to build and the technical requirements) and `docs/milestones/milestone-1/trackflow-BRIEFING.en.md` (page content, form fields, validations, messages, Schema.org). Read both. |
 | How Milestone 1 is split into work packages, and their progress | `docs/milestones/milestone-1/plan.md` |
+| What Milestone 1 is graded on, and how each item stands | `docs/milestones/milestone-1/definition-of-done.md` |
 | Why a decision was made, and what was rejected | `docs/decisions.md` |
 | Ideas for later milestones | `docs/FUTURE_WORK.md` |
 | What each top-level folder is for | root `README.md`, and each folder's `README.md` |

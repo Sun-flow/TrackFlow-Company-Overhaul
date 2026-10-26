@@ -70,6 +70,8 @@ npx --yes http-server uis/website -p 3000 -c-1
 
 Open <http://localhost:3000>; in Codespaces, use the forwarded port 3000 ("Website" in the Ports tab). To share it outside your GitHub account, set that port to Public; the steps are in [`uis/website/README.md`](./uis/website/README.md#run-locally).
 
+A public copy is published to GitHub Pages at <https://sun-flow.github.io/TrackFlow-Company-Overhaul/> on every push to `production` that touches `uis/website/` ([`.github/workflows/pages.yml`](./.github/workflows/pages.yml); details in [`uis/website/README.md`](./uis/website/README.md#public-copy-on-github-pages)).
+
 ---
 
 ## Folder guide — what goes where
