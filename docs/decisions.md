@@ -16,6 +16,12 @@ Entry format:
 
 ---
 
+### [2026-10-26] Full-screen home hero that snaps to Services
+- **Decision**: On `uis/website/index.html` the hero fills the screen below the header, and so does Services, with its content centred. While the hero is in view, one scroll gesture (wheel or trackpad, swipe, or Arrow, Page and Space keys) glides to Services in one motion, and one gesture back up from Services returns to the top; below Services the page scrolls normally. A scroll that comes to rest part-way through the hero finishes the move. It lives in `uis/website/js/hero-snap.js`. The glide follows the page's `scroll-behavior`, so it is instant for reduced motion, and the snap switches itself off when the hero is taller than the screen (a short landscape window) so nothing in it is skipped. Without JavaScript the page scrolls as before.
+- **Rationale**: mae asked for the hero to cover the whole screen on open and for the first scroll to land on Services like swiping a photo on a phone (2026-10-26). The brief is silent on scroll behaviour.
+- **Alternatives considered**: CSS scroll snap alone (`mandatory` traps the reader between the hero and Services on a long page; `proximity` only snaps when already close, so it doesn't give one sure jump); a hero sized by `vh` (`svh` used instead so the mobile address bar doesn't hide the button).
+- **Status**: Accepted (2026-10-26).
+
 ### [2026-10-26] Website copy adds to the brief's text, never replaces it
 - **Decision**: Every word of the brief's sample copy stays as written. New copy is added around it: an intro and two short blocks in Coverage, a link to the About page after Why TrackFlow, one line and a "Request information" button under Contact, a one-line description in every footer, and a rewritten form intro (our own text, not the brief's). The voice is warm, people-first and down-to-earth. Copy uses only facts from `CONTEXT.md` and the brief, never invented numbers. The Contact section keeps only the brief's three lines plus the form prompt, because mae wants leads to use the form. Drafts were reviewed by mae as Claude Docs (outside the repo) before building.
 - **Rationale**: The brief is the source of truth and an auditor may check its text, but on its own it said nothing about who TrackFlow is (rubric items C2 and C4). mae chose the voice and each piece.
