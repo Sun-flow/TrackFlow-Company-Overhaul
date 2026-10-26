@@ -6,6 +6,7 @@
 ### 2026-10-26 · Website copy, CEO name (Claude Code, cloud)
 - mae confirmed the CEO is Thomas Harry; "Daniel Espinoza" was a leftover name. Replaced it in `CONTEXT.md` (three places) and removed the housekeeping entry from `docs/FUTURE_WORK.md` and the known problem from `status.md`. Branch `claude/project-thread-hb198c`.
 - Copy direction from mae, for the website copy thread: keep the brief's text word for word and add supplementary content drawn from the briefings, drafted per domain in docs before anything is built; voice warm and people-first, down-to-earth, for farmers, truckers, mid-size local businesses and online stores alike. Recorded in `notes.md`.
+- mae picked four copy areas for Milestone 1 (Our story, Coverage, Meet the team, Contact) and parked three in `docs/FUTURE_WORK.md` (Who we serve, Services in more depth, How it works).
 - Open: the copy drafts and mae's review of them.
 
 ### 2026-10-22 · Form checklist fixes (Claude Code, cloud)
