@@ -7,7 +7,9 @@
 - mae confirmed the CEO is Thomas Harry; "Daniel Espinoza" was a leftover name. Replaced it in `CONTEXT.md` (three places) and removed the housekeeping entry from `docs/FUTURE_WORK.md` and the known problem from `status.md`. Branch `claude/project-thread-hb198c`.
 - Copy direction from mae, for the website copy thread: keep the brief's text word for word and add supplementary content drawn from the briefings, drafted per domain in docs before anything is built; voice warm and people-first, down-to-earth, for farmers, truckers, mid-size local businesses and online stores alike. Recorded in `notes.md`.
 - mae picked four copy areas for Milestone 1 (Our story, Coverage, Meet the team, Contact) and parked three in `docs/FUTURE_WORK.md` (Who we serve, Services in more depth, How it works).
-- Open: the copy drafts and mae's review of them.
+- mae reviewed the four drafts in Claude Docs and chose an About page in the menu and a plain Contact section pointing to the form. Built: `uis/website/about.html`, Coverage additions, Contact form prompt, footer line on all pages, new form intro; decisions logged.
+- Checks: `pnpm test` 481 pass; `pnpm build`; `scripts/site-check.py` clean on all four pages at four widths, screenshots looked at; Lighthouse mobile 100 in all four categories on index, about and application.
+- Open: mae merges PR #19; re-rate C2 and C4 in the definition of done; the parked copy areas in `docs/FUTURE_WORK.md`.
 
 ### 2026-10-22 · Form checklist fixes (Claude Code, cloud)
 - From mae's Milestone 1 checklist audit (items A6 to A9): renamed the form page to `uis/website/application.html` (`git mv`; canonical, plan, website README and status updated; the hero link is changed in the landing thread's PR #15), added a "Clear form" reset button, made each field validate on blur from the user's first edit (`createLiveValidation` in `uis/website/js/validation.js`, new `uis/website/tests/live-validation.test.js`; `docs/decisions.md`, "Form validates each field from first touch"), `role="list"` on the error summary, and applied PR #15's header and footer to the form page. Branch `claude/project-thread-e2jh0w`.
