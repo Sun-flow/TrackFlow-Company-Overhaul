@@ -7,6 +7,7 @@ The Milestone 1 public website: a landing page and an information-request form, 
 | File | Page |
 |---|---|
 | `index.html` | Landing page. Carries the Schema.org `Organization` JSON-LD in its `<head>`. |
+| `about.html` | About page: Our story and Meet the team (seven team leads). |
 | `application.html` | Information-request form. |
 | `privacy.html` | Placeholder privacy policy, marked `noindex`. Replacing it is tracked in `docs/FUTURE_WORK.md`. |
 
