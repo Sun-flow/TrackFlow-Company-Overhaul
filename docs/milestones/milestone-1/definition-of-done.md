@@ -1,7 +1,7 @@
 # Milestone 1 definition of done
 
 > **Date created**: 2026-10-26
-> **Last checked**: 2026-10-26, against `production` at `ac4eb88`; L15 removed the same day
+> **Last checked**: 2026-10-26, against `production` at `b454624` (after the website copy, PR #19); L15 removed the same day
 > **Sources**: the course's "What We Will Evaluate" rubric and its two deliverables checklists (landing page, application form), merged and de-duplicated. The brief (`trackflow-BRIEFING.en.md`, called `BRIEFING.md` in the checklists) still wins where it is more specific.
 
 Milestone 1 is done when every item below is rated ✅. The items are grouped by the rubric's five sections. Where the rubric and a deliverables checklist ask for the same thing (alt text, labels, Schema.org, the npx command, Tailwind only, responsive), they are one item, and the Source column lists every checklist it came from.
@@ -18,8 +18,8 @@ To re-check, update the rating and evidence in place and the "Last checked" line
 
 | Rating | Items |
 |---|---|
-| ✅ Completely done | 36 |
-| 🟡 Partially done | 2 |
+| ✅ Completely done | 38 |
+| 🟡 Partially done | 0 |
 | ⬜ Not done | 0 |
 | 🙋 Needs mae | 1 |
 | ❔ Not verifiable here | 0 |
@@ -27,23 +27,22 @@ To re-check, update the rating and evidence in place and the "Last checked" line
 
 Left to solidify:
 
-1. **R7 (🙋 mae)**: run PageSpeed Insights or Lighthouse after the website copy is updated, and keep the screenshot. A local Lighthouse run already scores 100 in every category.
-2. **C2, C4 (🟡)**: the landing page carries the brief's copy only. Company experience, competitive advantages and tone get their full treatment in the website copy work being done with mae.
+1. **R7 (🙋 mae)**: run PageSpeed Insights or Lighthouse now that the website copy is in, and keep the screenshot. A local Lighthouse run on the updated pages already scores 100 in every category.
 
 ## HTML structure and semantics
 
 | ID | Item | Source | Rating | Evidence |
 |---|---|---|---|---|
 | H1 | `index.html` uses semantic HTML5 tags (`<section>`, `<article>`, `<nav>`, ...) instead of generic `<div>`s | E1, L1, L12 | ✅ | `index.html` has `header`, `nav`, `main`, 5 `section`, 5 `article`, 2 `address`, `footer`; its 12 `div`s are layout wrappers only. |
-| H2 | `<header>` with the company logo or name and navigation | L3 | ✅ | Logo mark plus "TrackFlow", nav Home, Services, Coverage, Contact on every page. |
+| H2 | `<header>` with the company logo or name and navigation | L3 | ✅ | Logo mark plus "TrackFlow", nav Home, Services, Coverage, About, Contact on every page (About added; see "About page" in `docs/decisions.md`). |
 | H3 | Hero section presents the company and its value proposition | L4 | ✅ | The brief's headline, subheadline and "Request information" button, word for word. |
-| H4 | At least two more sections (features, benefits, experience, ...) | L5 | ✅ | Services, Coverage, Why TrackFlow and Contact, in the brief's order. |
+| H4 | At least two more sections (features, benefits, experience, ...) | L5 | ✅ | Services, Coverage, Why TrackFlow and Contact, in the brief's order, plus a separate About page (`about.html`). |
 | H5 | `<footer>` with contact information | L6 | ✅ | `<address>` with `mailto:` and both `tel:` links, © 2025 line, LinkedIn. |
 | H6 | A link or button that leads to the application form | L7 | ✅ | Hero CTA `href="application.html"`, checked in a browser. |
 | H7 | Every image has descriptive `alt` text | E2, L11 | ✅ | Hero map `alt="Map of a delivery route linking TrackFlow's warehouses in Los Angeles and Zaragoza"`. The logo has `alt=""` on purpose: the word "TrackFlow" sits beside it, so a description would be read twice. The 24 icon SVGs are decorative and `aria-hidden`. |
 | H8 | Every input has a `<label>` tied to it with `for` | E3, F4 | ✅ | 16 `label for` attributes, one per input id (text fields, selects, each checkbox and radio, textarea). |
 | H9 | Schema.org `Organization` markup, correctly implemented | E4, L14 | ✅ | JSON-LD in `index.html`'s `<head>` parses and is identical to the brief's block. validator.schema.org is blocked here; types and properties were checked against the schema.org vocabulary file in WP5. |
-| H10 | Document structure is logical and hierarchical | E5 | ✅ | One `h1` per page, an `h2` per section, `h3` per card, no skipped levels; Lighthouse heading-order audit passes. |
+| H10 | Document structure is logical and hierarchical | E5 | ✅ | One `h1` per page, an `h2` per section, `h3` per card, no skipped levels on any of the four pages (About included); Lighthouse heading-order audit passes. |
 | H11 | `application.html` with a structured form | F1 | ✅ | `uis/website/application.html`, one `<form novalidate>` with the 12 fields. |
 | H12 | Related fields grouped with `<fieldset>` and `<legend>` | F5 | ✅ | 4 fieldsets with legends: "About your company", "Your logistics", "Services of interest", "Do you currently work with another 3PL?". |
 
@@ -51,13 +50,13 @@ Left to solidify:
 
 | ID | Item | Source | Rating | Evidence |
 |---|---|---|---|---|
-| R1 | Fully responsive: mobile, tablet and desktop, form included | E1, L9, F7 | ✅ | `scripts/site-check.py`: all three pages at 375, 768, 1024 and 1440 px with no horizontal scroll; screenshots looked at. |
+| R1 | Fully responsive: mobile, tablet and desktop, form included | E1, L9, F7 | ✅ | `scripts/site-check.py`: all four pages (home, About, form, privacy) at 375, 768, 1024 and 1440 px with no horizontal scroll; screenshots looked at. |
 | R2 | A documented, working `npx` command, compatible with Codespaces, runs the site locally | E2, L2 | ✅ | `npx --yes http-server uis/website -p 3000 -c-1` in the root `README.md` and `uis/website/README.md`; run here, every page answers 200. Port 3000 is labelled in `.devcontainer/devcontainer.json`. Not run inside a real Codespace from here. |
 | R3 | Mobile-first design | E3, L10 | ✅ | Unprefixed classes are the mobile layout and `sm:`/`md:`/`lg:` add to it (for example `grid gap-6 md:grid-cols-3`); no `max-*:` variants anywhere. |
 | R4 | All styles are Tailwind utility classes, with no unnecessary custom CSS | E4, E6, L8 | ✅ | No `style` attributes, no `<style>` blocks, no styles set from JS. The only hand-written CSS is the `@font-face` and the `@theme` colour tokens in `src/input.css` (`docs/decisions.md`). `pnpm build` leaves `dist/styles.css` unchanged. |
 | R5 | Breakpoints `sm:`, `md:`, `lg:` used appropriately | E5 | ✅ | `index.html`: 19 `sm:`, 12 `md:`, 19 `lg:`; `application.html`: 15, 9, 3. Grids go 1 → 2/3 → 4 columns; padding and type sizes step up. |
 | R6 | Visually coherent and professional design | E7 | ✅ | One palette and type scale across pages (teal and coral, Plus Jakarta Sans; `docs/decisions.md`); mae reviewed the preview in WP5. This is a judgement call, so mae's view decides. |
-| R7 | Performance score of at least 80 (ideal 90+) in PageSpeed Insights, or a Lighthouse screenshot from Chrome DevTools | E8 | 🙋 | Local Lighthouse 12.8.2 (headless Chromium, served with the npx command): Performance, Accessibility, Best Practices and SEO all 100 on both pages, mobile and desktop (mobile LCP 1.6 to 1.8 s, CLS ≤ 0.013, TBT 0 ms). mae runs the scored check once the website copy is updated, so it measures the final pages. |
+| R7 | Performance score of at least 80 (ideal 90+) in PageSpeed Insights, or a Lighthouse screenshot from Chrome DevTools | E8 | 🙋 | Local Lighthouse 12.8.2 (headless Chromium, served with the npx command): Performance, Accessibility, Best Practices and SEO all 100 on home and form, mobile and desktop (mobile LCP 1.6 to 1.8 s, CLS ≤ 0.013, TBT 0 ms); after the copy update, all 100 again on home, About and form (mobile). mae runs the scored check now that the copy is in. |
 
 ## Accessibility
 
@@ -90,14 +89,15 @@ Left to solidify:
 | ID | Item | Source | Rating | Evidence |
 |---|---|---|---|---|
 | C1 | The landing page reflects the company type and sector in the brief | E1 | ✅ | Last-mile delivery and warehousing for e-commerce, three services, US and Spain coverage with carriers, JSON-LD from the brief. |
-| C2 | Content presents the company's experience and competitive advantages | E2 | 🟡 | They are present, but only as the brief's lines: "Over 15 years" in the hero and the four Why TrackFlow points (binational, +130 professionals, own technology, e-commerce specialisation). There's no fuller experience or proof content yet; that's the website copy work. |
+| C2 | Content presents the company's experience and competitive advantages | E2 | ✅ | Experience: the About page's "Our story" (founded in Los Angeles in 2009, 15+ years, the move to Zaragoza, about 130 people who learned logistics on warehouse floors) and "Meet the team" (seven named leads and what each team does). Advantages: the brief's four Why TrackFlow points, plus two new Coverage blocks (one partner for both sides of the Atlantic; a coordinator picks among 8 carriers per parcel). The brief's own text is unchanged (`docs/decisions.md`). |
 | C3 | Domain-specific validation rules are implemented | E4 | ✅ | Phone must start with `+` and a country code, website must be http(s), 500-character comments counter, and a warning dialog for the 0-100 volume (the brief's text; for e-commerce businesses, not consumers). Covered by the tests. |
-| C4 | Tone and content suit an established company going digital | E5 | 🟡 | The tone is professional, but the copy is the brief's text only, so it reads thin for a 15-year operator. Judged again once the website copy work lands. |
+| C4 | Tone and content suit an established company going digital | E5 | ✅ | A warm, plain voice mae chose, in the first person plural, that leads with track record ("since 2009", "more than 15 years learning how to keep that promise") and says outright that the company is now putting that hands-on experience into its own technology. Contact and the footer were rewritten in the same voice. Tone is a judgement call, so mae's view decides. |
 
 ## How each check was run
 
 - `cd uis/website && pnpm test` (481 pass) and `pnpm build` (no change to `dist/styles.css`).
 - `python3 scripts/site-check.py`: screenshots at four widths, console errors, horizontal scroll and axe-core, all clean.
-- Markup read straight from `index.html` and `application.html` (tags, labels, input types, ARIA, breakpoints, JSON-LD compared with the brief by parsing both).
+- Markup read straight from `index.html`, `about.html` and `application.html` (tags, labels, input types, ARIA, breakpoints, JSON-LD compared with the brief by parsing both).
 - A Playwright walk over `npx --yes http-server uis/website -p 3000 -c-1`: keyboard order, mobile menu, empty submit, blur errors, clear, the 0-100 dialog, valid submit, console errors.
-- `npx lighthouse@12` against the same local server with headless Chromium, mobile and desktop presets.
+- `npx lighthouse@12` against the same local server with headless Chromium, mobile and desktop presets; re-run in mobile after PR #19 on home, About and form.
+- C2 and C4 re-rated on 2026-10-26 by reading the merged copy on `index.html` and `about.html`.

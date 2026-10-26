@@ -29,7 +29,7 @@ TrackFlow has good clients, a skilled operations team, and a clear value proposi
 
 The consequence is that TrackFlow is slower, more error-prone, and less profitable than it needs to be — and the gap is growing as competitors invest in automation.
 
-Daniel has created an internal unit called TrackFlow Tech with a clear mandate: build the systems, integrations, and intelligent automations that allow TrackFlow to operate as the modern logistics company it needs to become.
+Thomas has created an internal unit called TrackFlow Tech with a clear mandate: build the systems, integrations, and intelligent automations that allow TrackFlow to operate as the modern logistics company it needs to become.
 
 You are part of that unit.
 The Departments and Their Problems
@@ -77,9 +77,9 @@ TrackFlow's tech architecture is the result of years of unplanned growth: two di
 What they need: Centralised telemetry and logging from both countries, a data pipeline feeding all company dashboards, real-time monitoring with automatic alerts, a technical documentation agent, and automated ops tasks (backups, health checks, incident notifications).
 📊 Executive Direction
 
-CEO: Daniel Espinoza
+CEO: Thomas Harry
 
-Daniel receives a consolidated report every Monday that his directors prepare on Sunday evening — 3 to 4 hours of work per director. By 10am Monday, some data is already two days old. There is no unified view of the business by country. Strategic decisions are made with partial data.
+Thomas receives a consolidated report every Monday that his directors prepare on Sunday evening — 3 to 4 hours of work per director. By 10am Monday, some data is already two days old. There is no unified view of the business by country. Strategic decisions are made with partial data.
 
 What he needs: A global executive dashboard with real-time KPIs from both operations (shipment volume, on-time delivery, costs, returns, CSAT), an automatically generated weekly report at 7am Monday, country comparison views, threshold alerts, and a natural-language AI assistant.
 

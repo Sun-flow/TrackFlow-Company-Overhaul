@@ -22,6 +22,18 @@ Entry format:
 - **Alternatives considered**: keeping the public URL for the external PageSpeed run, which management no longer needs.
 - **Status**: Accepted (2026-10-26).
 
+### [2026-10-26] Website copy adds to the brief's text, never replaces it
+- **Decision**: Every word of the brief's sample copy stays as written. New copy is added around it: an intro and two short blocks in Coverage, a link to the About page after Why TrackFlow, one line and a "Request information" button under Contact, a one-line description in every footer, and a rewritten form intro (our own text, not the brief's). The voice is warm, people-first and down-to-earth. Copy uses only facts from `CONTEXT.md` and the brief, never invented numbers. The Contact section keeps only the brief's three lines plus the form prompt, because mae wants leads to use the form. Drafts were reviewed by mae as Claude Docs (outside the repo) before building.
+- **Rationale**: The brief is the source of truth and an auditor may check its text, but on its own it said nothing about who TrackFlow is (rubric items C2 and C4). mae chose the voice and each piece.
+- **Alternatives considered**: rewriting the brief's copy (rejected: drifts from the brief); naming Spain's islands or giving delivery times (rejected: not in any source); moving the contact details to a separate page (rejected: the brief requires a Contact section on the landing page).
+- **Status**: Accepted (2026-10-26).
+
+### [2026-10-26] About page, with "About" in the menu
+- **Decision**: `uis/website/about.html` holds Our story and Meet the team, and every page's menu reads Home, Services, Coverage, About, Contact.
+- **Rationale**: mae wanted the story and the people on a page of their own and chose to list it in the menu, knowing the brief's menu is Home, Services, Coverage, Contact. This is a deliberate departure from the brief.
+- **Alternatives considered**: the About page linked only from the footer and the home page, keeping the brief's menu exactly (recommended, not picked); both sections on the home page.
+- **Status**: Accepted (2026-10-26).
+
 ### [2026-10-22] Form field names and values use the brief's wording
 - **Decision**: The form's `name`s and option values in `uis/website/application.html` read as the brief's field list: `companyName`, `contactPerson`, `corporateEmail`, `phone`, `companyWebsite`, `mainOperatingCountry`, `productType`, `monthlyShippingVolume`, `servicesOfInterest`, `currentThreePL`, `commentsOrSpecificNeeds`, `privacyPolicy`, with values such as `United States` and `Evaluating options` (full list: the form contract in `docs/milestones/milestone-1/plan.md`). Checkbox and radio ids keep a short form of the value (`servicesOfInterest-last-mile`). A Spanish version keeps these English values and translates only the labels.
 - **Rationale**: The Milestone 1 checklist says field names and domain values must match the brief, and an auditor reading the HTML could mark short codes down. mae approved it (2026-10-22). Keeping the values in English when the page is translated preserves what codes gave: values that don't change when the wording on screen does.
