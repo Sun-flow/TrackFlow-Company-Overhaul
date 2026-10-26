@@ -1,6 +1,6 @@
 # Notes
 
-> **Last updated**: 2026-10-22
+> **Last updated**: 2026-10-26
 > Things learned the hard way. Add to this as soon as you learn something the next session would otherwise rediscover. Keep each note to a line or two, keep only what is highly relevant, and remove notes that stop being true.
 
 ## Working with mae
@@ -8,6 +8,7 @@
 - mae makes the design calls. When a choice changes what users see, offer two or three options with a recommendation instead of picking silently, then log the outcome in `docs/decisions.md`.
 - Confirm a plan with mae before building anything. Answering a question or settling a decision is not a go-ahead to start building.
 - mae likes rule changes proposed first with concrete before/after examples, then approves them in one go.
+- Website copy: keep the brief's text word for word and add supplementary content around it, drafted per domain in a doc for mae to review first, with improvements to existing sections marked as such. Voice is warm, people-first and down-to-earth, so farmers, truckers, mid-size local businesses and online stores all feel it is for them.
 - mae works in more than one environment (Claude Code in the cloud, and GitHub Copilot in a Codespace). Nothing outside the repo carries over between them, so anything worth keeping goes in this folder or `docs/`.
 
 ## Environment and tools

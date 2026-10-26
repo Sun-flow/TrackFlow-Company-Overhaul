@@ -1,6 +1,6 @@
 # Status
 
-> **Last updated**: 2026-10-22
+> **Last updated**: 2026-10-26
 
 **Current milestone**: Milestone 1, public website: **done, waiting for mae's review** (2026-10-22). Brief: `docs/milestones/milestone-1/` (landing page + information-request form; Tailwind CSS; responsive, accessible, SEO with Schema.org, full JavaScript validation). Code goes in `uis/website/`.
 
@@ -35,6 +35,5 @@ Format: `- what — branch, PR, environment (started date)`. Remove the line whe
 
 ## Known problems
 
-- `CONTEXT.md` gives two different CEO names; logged in `docs/FUTURE_WORK.md`, not fixed.
 - `docs/milestones/milestone-1/trackflow-BRIEFING.en.md` links to a Spanish brief that was never provided; logged in `docs/FUTURE_WORK.md`.
 - A stale `main` branch on GitHub sits at the initial commit; see `memory-bank/context.md`, "Repo facts".

@@ -53,13 +53,6 @@ A top-level "orchestrator" agent that knows what every company agent can do and 
 
 ## Housekeeping
 
-### Inconsistent CEO name in `CONTEXT.md`
-
-`CONTEXT.md` names the CEO as both Thomas Harry and Daniel Espinoza. Confirm which is correct and fix it.
-
-- **Source:** Repo review
-- **Target:** Any
-
 ### Missing Spanish version of the Milestone 1 briefing
 
 `trackflow-BRIEFING.en.md` links to `trackflow-BRIEFING.es.md`, which wasn't provided.
