@@ -3,6 +3,11 @@
 > **Last updated**: 2026-10-26
 > Newest first. One entry per session: date, where it ran, what changed (link the PR or commit), what was left open. Keep about 15 entries. When there are more, move the oldest to `docs/archive/memory-bank-log.md` (create it the first time). Entries before this file existed were rebuilt from git history.
 
+### 2026-10-26 · Full-screen hero with snap scroll (Claude Code, cloud)
+- mae asked for the home hero to fill the screen and for the first scroll to glide to Services like swiping a photo, then scroll normally. Built `uis/website/js/hero-snap.js` (wheel, touch, keys, rest-point finish; off when the hero doesn't fit; instant for reduced motion); hero and Services sections now `min-h-[calc(100svh-4rem-1px)]`. Decision logged. Branch `claude/project-thread-rb8nep`.
+- Checks: `pnpm test` 481 pass; `scripts/site-check.py` clean; Playwright wheel, key and touch runs land on Services and back at 1440, 1024 and 375; Lighthouse 12 index 100 in all four categories, mobile and desktop.
+- Open: mae to review the draft. The hero map stays hidden below `lg` as before; showing it on phones is mae's call.
+
 ### 2026-10-26 · Website copy, CEO name (Claude Code, cloud)
 - mae confirmed the CEO is Thomas Harry; "Daniel Espinoza" was a leftover name. Replaced it in `CONTEXT.md` (three places) and removed the housekeeping entry from `docs/FUTURE_WORK.md` and the known problem from `status.md`. Branch `claude/project-thread-hb198c`.
 - Copy direction from mae, for the website copy thread: keep the brief's text word for word and add supplementary content drawn from the briefings, drafted per domain in docs before anything is built; voice warm and people-first, down-to-earth, for farmers, truckers, mid-size local businesses and online stores alike. Recorded in `notes.md`.

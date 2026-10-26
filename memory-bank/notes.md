@@ -19,5 +19,6 @@
 - In Claude Code cloud sessions `corepack pnpm` fails (missing cached pnpm); the plain `pnpm` on the PATH works.
 - Don't add a font `<link rel="preload">` to the website pages: it logs CORS errors when a page opens from the file system (`docs/decisions.md`).
 - `validator.schema.org` and `schema.org` are blocked by the cloud proxy; the schema.org vocabulary file can be fetched from `raw.githubusercontent.com/schemaorg/schemaorg` to check JSON-LD offline.
+- Lighthouse runs in cloud sessions with `CHROME_PATH=/opt/pw-browsers/chromium npx --yes lighthouse@12 <url> --chrome-flags="--headless=new --no-sandbox"` against a local `http-server`.
 - Tailwind 4 preflight sets `margin: 0` on everything, so a modal `<dialog>` needs `m-auto` to sit in the centre.
 - Lighthouse runs in cloud sessions: serve with the npx command, then `CHROME_PATH=/opt/pw-browsers/chromium npx --yes lighthouse@12 <url> --chrome-flags="--headless=new --no-sandbox"` (add `--preset=desktop` for desktop).

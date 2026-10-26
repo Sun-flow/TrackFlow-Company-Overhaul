@@ -20,6 +20,7 @@ Every page repeats the same `<head>` (apart from title, description and canonica
 | `src/input.css` | Tailwind entry: the `@theme` tokens (colours `brand-*` and `accent-*`, font `sans`) and the self-hosted font. Only hand-written CSS that Tailwind can't express goes here. |
 | `dist/styles.css` | Compiled, minified CSS. Committed so the site opens straight from the repo; rebuild and commit it with every class change. |
 | `js/nav.js` | Mobile menu toggle (`aria-expanded`, Escape closes it and returns focus). |
+| `js/hero-snap.js` | Home page only: one scroll gesture from the full-screen hero glides to Services and back (`docs/decisions.md`). |
 | `js/validation.js` | The form's rules as pure functions with the brief's exact messages; no DOM. A classic script (`window.TrackFlowValidation` in the browser, `require()` in tests), so the form works from the file system. |
 | `js/form.js` | Wires the rules to `application.html` through the form contract in `docs/milestones/milestone-1/plan.md`; loads `js/validation.js` itself. |
 | `tests/` | `node:test` tests for `js/validation.js`: `validation.test.js` (each rule), `live-validation.test.js` (when a field validates before submit) and `validation-edge-cases.test.js` (real-world and adversarial input, plus the clean-ups; what it found is in `tests/EDGE-CASE-FINDINGS.md`). |
