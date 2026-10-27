@@ -10,6 +10,10 @@
 - mae then asked to minify the JavaScript too, so the site is ready for more content: a workflow step runs esbuild on the published `uis/website/js/` copies (25.7 KB to 10.8 KB). Form validation, mobile menu and hero snap behave the same on the minified copy, no console errors; Lighthouse unminified-JS audit passes.
 - Open: mae to rerun PageSpeed after PR #23 merges and deploys.
 
+### 2026-10-26 · Hero snap lockout fix (Claude Code, cloud)
+- mae found that after the snap, continued scrolling was blocked for 1 to 2 seconds (the script waited for the browser's smooth scroll and then for 200 ms of wheel silence). A first fix (own 350 ms glide, 120 ms hold after landing) still felt like a half-second pause, so `uis/website/js/hero-snap.js` now runs a 300 ms in-and-out glide, hands control to any fresh input in its last 30% (mae's idea), and after landing holds back only momentum events that keep getting smaller. Decision entry updated. Branch `claude/project-thread-rb8nep` restarted from production after PR #20 merged.
+- Checks: `pnpm test` 481 pass; site check clean; in-page wheel runs: a decaying flick stops on Services with nothing let through, steady scrolling is handed back at about 0.23 s, a new push right after a flick passes at once; Lighthouse 12 index 100 in all four categories, mobile and desktop.
+
 ### 2026-10-26 · Full-screen hero with snap scroll (Claude Code, cloud)
 - mae asked for the home hero to fill the screen and for the first scroll to glide to Services like swiping a photo, then scroll normally. Built `uis/website/js/hero-snap.js` (wheel, touch, keys, rest-point finish; off when the hero doesn't fit; instant for reduced motion); hero and Services sections now `min-h-[calc(100svh-4rem-1px)]`. Decision logged. Branch `claude/project-thread-rb8nep`.
 - Checks: `pnpm test` 481 pass; `scripts/site-check.py` clean; Playwright wheel, key and touch runs land on Services and back at 1440, 1024 and 375; Lighthouse 12 index 100 in all four categories, mobile and desktop.
@@ -87,7 +91,3 @@
 - Filled the `<main>` of `uis/website/index.html` with the brief's sections in order and its exact copy: Hero (h1, subheadline, "Request information" to the form page (`uis/website/application.html` since the form checklist fixes)), Services (3 cards), Coverage (2 cards), Why TrackFlow (4 benefits), Contact (`mailto:` and `tel:` links in an `<address>`). Section ids `services`, `coverage`, `contact` with `scroll-mt-16` so the sticky header doesn't cover them. Icons and the hero illustration are inline decorative SVGs (`aria-hidden`), so no new asset files. Only `brand-*`, `accent-*` and slate utilities; rebuilt `uis/website/dist/styles.css`. Branch `claude/project-thread-fzjogd`, PR #9.
 - Checks: `scripts/site-check.py --pages index.html` clean at all four widths; nav links land on their sections; one h1, ordered headings.
 - Open: merging the PR (removed my "In progress" line ahead of the merge). No shared-file changes needed.
-
-### 2026-10-22 · Milestone 1 coordination (Claude Code, cloud)
-- WP1 merged (PR #7); requested WP2, WP3 and WP4 as parallel threads. Updated the plan's progress table and `memory-bank/status.md`. Branch `claude/project-thread-knpic0`.
-- Open: WP2 to WP4, then WP5.
