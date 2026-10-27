@@ -21,17 +21,16 @@
 - PageSpeed fixes (2026-10-27, branch `claude/project-thread-wqxbug`): mae's live PageSpeed mobile run scored 100 in all four categories; size-matched fallback font removes the hero's font-swap shift, and the Pages workflow inlines the stylesheet so nothing blocks the first paint and minifies the scripts; PR #23 (`docs/decisions.md`).
 - Milestone 1 checklist fixes (PRs #15, #16, #17): footer contact details, logo and hero map as `<img>`, `role="list"`, `<article>` cards; form page renamed to `uis/website/application.html` with "Clear form", validation from first edit and field names and values in the brief's wording (`docs/decisions.md`); npx run command in the READMEs. `pnpm test` runs 481 cases.
 
-- Definition of done (2026-10-26): `docs/milestones/milestone-1/definition-of-done.md` merges the course rubric and deliverables checklists into 39 rated items; 38 done, 1 needs mae (the PageSpeed or Lighthouse run, now that the copy is in). The public Codespaces URL item was dropped (`docs/decisions.md`).
+- Definition of done (2026-10-26): `docs/milestones/milestone-1/definition-of-done.md` merges the course rubric and deliverables checklists into 39 rated items; all 39 done (R7 from mae's PageSpeed run on the live GitHub Pages site: 100 in all four categories, mobile). The public Codespaces URL item was dropped (`docs/decisions.md`).
 
 ## In progress
 
 Format: `- what — branch, PR, environment (started date)`. Remove the line when it merges or is dropped.
 
-- Definition of done file — branch `claude/project-thread-hhij7g`, PR pending, cloud (2026-10-26).
 
 ## Next
 
-1. After the PageSpeed fixes PR merges and deploys, mae reruns PageSpeed Insights on https://sun-flow.github.io/TrackFlow-Company-Overhaul/ (the first run, 100 in all four categories, settles definition of done R7).
+1. Optional: after the PageSpeed fixes (PR #23) deploy, mae can rerun PageSpeed Insights on https://sun-flow.github.io/TrackFlow-Company-Overhaul/ to confirm the gains; definition of done R7 is already settled by the first run (100 in all four categories).
 2. mae reviews Milestone 1 as a whole, using `docs/milestones/milestone-1/definition-of-done.md`.
 3. When mae calls Milestone 1 finished, move this file to the next milestone and review `docs/FUTURE_WORK.md` for entries it picks up.
 

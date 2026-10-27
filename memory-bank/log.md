@@ -10,6 +10,11 @@
 - mae then asked to minify the JavaScript too, so the site is ready for more content: a workflow step runs esbuild on the published `uis/website/js/` copies (25.7 KB to 10.8 KB). Form validation, mobile menu and hero snap behave the same on the minified copy, no console errors; Lighthouse unminified-JS audit passes.
 - Open: mae to rerun PageSpeed after PR #23 merges and deploys.
 
+### 2026-10-27 · Definition of done: R7 done (Claude Code, cloud)
+- PR #18 merged on 2026-10-26 and the first GitHub Pages deploy succeeded. mae ran PageSpeed Insights (mobile) on https://sun-flow.github.io/TrackFlow-Company-Overhaul/: 100 in Performance, Accessibility, Best Practices and SEO (LCP 1.0 s, CLS 0.015). Rated R7 done in `docs/milestones/milestone-1/definition-of-done.md`, so all 39 items are done; status and the status dashboard updated. Branch `claude/project-thread-hhij7g`, restarted from `production`.
+- Merged production after PR #23 (PageSpeed fixes): R4's evidence now names the fallback `@font-face` rules and the inlined stylesheet on the live copy; `pnpm test` 481 pass, site check clean, `pnpm build` no change.
+- Open: mae's review of Milestone 1 as a whole.
+
 ### 2026-10-26 · Hero snap lockout fix (Claude Code, cloud)
 - mae found that after the snap, continued scrolling was blocked for 1 to 2 seconds (the script waited for the browser's smooth scroll and then for 200 ms of wheel silence). A first fix (own 350 ms glide, 120 ms hold after landing) still felt like a half-second pause, so `uis/website/js/hero-snap.js` now runs a 300 ms in-and-out glide, hands control to any fresh input in its last 30% (mae's idea), and after landing holds back only momentum events that keep getting smaller. Decision entry updated. Branch `claude/project-thread-rb8nep` restarted from production after PR #20 merged.
 - Checks: `pnpm test` 481 pass; site check clean; in-page wheel runs: a decaying flick stops on Services with nothing let through, steady scrolling is handed back at about 0.23 s, a new push right after a flick passes at once; Lighthouse 12 index 100 in all four categories, mobile and desktop.
@@ -35,7 +40,6 @@
 - After PR #19 (website copy) merged: merged production into this branch, re-rated C2 and C4 as done from the new About page and Coverage copy, and updated H2, H4, H10, R1 and R7 for the About page. Re-checks: `pnpm test` 481 pass, `scripts/site-check.py` clean on four pages, Lighthouse mobile 100 in all four categories on home, About and form. Now 38 of 39 done.
 - mae's Codespaces credits ran out, so mae picked GitHub Pages for a public URL: added `.github/workflows/pages.yml` (copies the pages and `uis/website/assets`, `uis/website/dist`, `uis/website/js`; no build), documented in `uis/website/README.md`, root `README.md`, `memory-bank/context.md` and `docs/decisions.md`. Checked by serving the same files under the same sub-path Pages uses, locally: every page and link loads, no 404s or console errors. Merged production (PR #20, hero snap) first.
 - Open: mae merges PR #18 and sets Settings → Pages → Source to GitHub Actions; then runs PageSpeed on https://sun-flow.github.io/TrackFlow-Company-Overhaul/ (R7).
-
 
 ### 2026-10-22 · Form checklist fixes (Claude Code, cloud)
 - From mae's Milestone 1 checklist audit (items A6 to A9): renamed the form page to `uis/website/application.html` (`git mv`; canonical, plan, website README and status updated; the hero link is changed in the landing thread's PR #15), added a "Clear form" reset button, made each field validate on blur from the user's first edit (`createLiveValidation` in `uis/website/js/validation.js`, new `uis/website/tests/live-validation.test.js`; `docs/decisions.md`, "Form validates each field from first touch"), `role="list"` on the error summary, and applied PR #15's header and footer to the form page. Branch `claude/project-thread-e2jh0w`.
@@ -86,8 +90,3 @@
 - Agreed the loose parts of the contract with the WP4 thread (summary heading plus empty `<ul>`, error elements start `hidden`, plain non-module script tag); the result is in the PR description.
 - Checks: `scripts/site-check.py` is clean with a stand-in form script (without it, the only failure is the 404 for that file until WP4 merges); axe also clean with every error, the summary, the success message and the dialog revealed; keyboard walk through every field.
 - Open: merging the PR (removed my "In progress" line ahead of the merge; merged the base after WP2 landed and rebuilt the CSS); WP5 checks the form end to end with WP4.
-
-### 2026-10-22 · WP2 landing page (Claude Code, cloud)
-- Filled the `<main>` of `uis/website/index.html` with the brief's sections in order and its exact copy: Hero (h1, subheadline, "Request information" to the form page (`uis/website/application.html` since the form checklist fixes)), Services (3 cards), Coverage (2 cards), Why TrackFlow (4 benefits), Contact (`mailto:` and `tel:` links in an `<address>`). Section ids `services`, `coverage`, `contact` with `scroll-mt-16` so the sticky header doesn't cover them. Icons and the hero illustration are inline decorative SVGs (`aria-hidden`), so no new asset files. Only `brand-*`, `accent-*` and slate utilities; rebuilt `uis/website/dist/styles.css`. Branch `claude/project-thread-fzjogd`, PR #9.
-- Checks: `scripts/site-check.py --pages index.html` clean at all four widths; nav links land on their sections; one h1, ordered headings.
-- Open: merging the PR (removed my "In progress" line ahead of the merge). No shared-file changes needed.
