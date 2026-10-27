@@ -16,10 +16,10 @@ Entry format:
 
 ---
 
-### [2026-10-27] Stylesheet inlined in the published pages; size-matched fallback font
-- **Decision**: The GitHub Pages workflow replaces each page's `<link rel="stylesheet" href="dist/styles.css">` with the stylesheet's contents in a `<style>` tag, in the published copy only; the repo's pages keep the link. `uis/website/src/input.css` declares "Plus Jakarta Sans Fallback", Arial-family faces sized to the web font's metrics, second in `--font-sans`.
+### [2026-10-27] Stylesheet inlined and scripts minified in the published pages; size-matched fallback font
+- **Decision**: The GitHub Pages workflow minifies `js/*.js` with esbuild (top-level names kept, no bundling) and replaces each page's `<link rel="stylesheet" href="dist/styles.css">` with the stylesheet's contents in a `<style>` tag, in the published copy only; the repo's pages keep the link. `uis/website/src/input.css` declares "Plus Jakarta Sans Fallback", Arial-family faces sized to the web font's metrics, second in `--font-sans`.
 - **Rationale**: mae's PageSpeed mobile run (100 in all four categories) still flagged the stylesheet as render-blocking (est. 130 ms) and a 0.015 layout shift when the font swapped in on the hero. Inlining removes the blocking request; the sized fallback keeps line breaks when the font arrives. Keeping the link in the repo means the pages still open straight from disk.
-- **Alternatives considered**: a font preload (brings back the `file://` console errors; see "No font preload"); `font-display: optional` (no shift, but first-time visitors on slow networks would see Arial); a critical-CSS build tool (more tooling for a 6 KB stylesheet); minifying the JavaScript (2 to 8 KB, no time saved, not worth a build step).
+- **Alternatives considered**: a font preload (brings back the `file://` console errors; see "No font preload"); `font-display: optional` (no shift, but first-time visitors on slow networks would see Arial); a critical-CSS build tool (more tooling for a 6 KB stylesheet). Minifying the scripts saves no measurable time today (25.7 KB down to 10.8 KB before compression), but mae asked for it so the site is ready for more content.
 - **Status**: Accepted
 
 ### [2026-10-26] Public copy of the website on GitHub Pages

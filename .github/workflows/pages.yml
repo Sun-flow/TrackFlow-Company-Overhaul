@@ -36,6 +36,11 @@ jobs:
           cp uis/website/*.html _site/
           cp -r uis/website/assets uis/website/dist uis/website/js _site/
 
+      # Minify the published scripts; the repo keeps the readable, commented sources. Top-level names are kept,
+      # so the classic scripts that share globals (form.js uses validation.js) still work together.
+      - name: Minify the scripts
+        run: npx --yes esbuild@0.25.10 _site/js/*.js --minify --outdir=_site/js --allow-overwrite
+
       # Put the stylesheet inside each published page so the first paint doesn't wait for a second request
       # (PageSpeed "render-blocking requests"). The repo keeps the <link> so the pages still open from disk.
       - name: Inline the stylesheet
