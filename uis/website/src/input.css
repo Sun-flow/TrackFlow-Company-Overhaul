@@ -12,8 +12,42 @@
   src: url("../assets/fonts/plus-jakarta-sans-latin-wght-normal.woff2") format("woff2");
 }
 
+/* Arial-family stand-ins sized to Plus Jakarta Sans's metrics, so text keeps its line breaks and doesn't shift
+   when the web font swaps in (PageSpeed layout shift). Numbers come from the fonts' files: average letter width
+   0.4741 em regular and 0.4884 em bold, against Arial's 0.447 and 0.4841; ascent 1.038 em, descent 0.222 em.
+   The extra-bold size (105%) was tuned until the hero heading kept its line breaks at phone widths. */
+@font-face {
+  font-family: "Plus Jakarta Sans Fallback";
+  font-weight: 100 500;
+  src: local("Arial"), local("ArialMT"), local("Liberation Sans"), local("Helvetica");
+  size-adjust: 106.06%;
+  ascent-override: 97.87%;
+  descent-override: 20.93%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: "Plus Jakarta Sans Fallback";
+  font-weight: 600 700;
+  src: local("Arial Bold"), local("Arial-BoldMT"), local("Liberation Sans Bold"), local("Helvetica Bold");
+  size-adjust: 100.89%;
+  ascent-override: 102.88%;
+  descent-override: 22%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: "Plus Jakarta Sans Fallback";
+  font-weight: 800 900;
+  src: local("Arial Bold"), local("Arial-BoldMT"), local("Liberation Sans Bold"), local("Helvetica Bold");
+  size-adjust: 105%;
+  ascent-override: 98.86%;
+  descent-override: 21.14%;
+  line-gap-override: 0%;
+}
+
 @theme {
-  --font-sans: "Plus Jakarta Sans Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Plus Jakarta Sans Variable", "Plus Jakarta Sans Fallback", ui-sans-serif, system-ui, sans-serif;
 
   --color-brand-50: #effaf8;
   --color-brand-100: #ccefe9;
