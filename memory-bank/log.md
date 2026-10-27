@@ -1,7 +1,14 @@
 # Session Log
 
-> **Last updated**: 2026-10-26
+> **Last updated**: 2026-10-27
 > Newest first. One entry per session: date, where it ran, what changed (link the PR or commit), what was left open. Keep about 15 entries. When there are more, move the oldest to `docs/archive/memory-bank-log.md` (create it the first time). Entries before this file existed were rebuilt from git history.
+
+### 2026-10-27 · PageSpeed fixes (Claude Code, cloud)
+- mae shared their PageSpeed Insights mobile report for the live Pages site: 100 in all four categories, FCP 0.8 s, LCP 1.0 s, CLS 0.015; flagged the render-blocking `uis/website/dist/styles.css` and the HTML > CSS > font chain. To-do doc: https://claude.ai/artifact/SQym1yzs62LAjvWHawY4zV. mae said to handle the issues as I see fit.
+- Added size-matched fallback font faces to `uis/website/src/input.css` and a step in `.github/workflows/pages.yml` that inlines the stylesheet into the published pages. Decision logged. Branch `claude/project-thread-wqxbug`.
+- Checks: with the font delayed 1.2 s, the home page's layout shift at 412 px went 0.010 to 0; Lighthouse 12 mobile on the workflow's output: 100 in all four categories on home, About and form, render-blocking audit passes, CLS 0. `pnpm test` 481 pass; `scripts/site-check.py` clean.
+- mae then asked to minify the JavaScript too, so the site is ready for more content: a workflow step runs esbuild on the published `uis/website/js/` copies (25.7 KB to 10.8 KB). Form validation, mobile menu and hero snap behave the same on the minified copy, no console errors; Lighthouse unminified-JS audit passes.
+- Open: mae to rerun PageSpeed after PR #23 merges and deploys.
 
 ### 2026-10-26 · Hero snap lockout fix (Claude Code, cloud)
 - mae found that after the snap, continued scrolling was blocked for 1 to 2 seconds (the script waited for the browser's smooth scroll and then for 200 ms of wheel silence). A first fix (own 350 ms glide, 120 ms hold after landing) still felt like a half-second pause, so `uis/website/js/hero-snap.js` now runs a 300 ms in-and-out glide, hands control to any fresh input in its last 30% (mae's idea), and after landing holds back only momentum events that keep getting smaller. Decision entry updated. Branch `claude/project-thread-rb8nep` restarted from production after PR #20 merged.
@@ -84,7 +91,3 @@
 - Filled the `<main>` of `uis/website/index.html` with the brief's sections in order and its exact copy: Hero (h1, subheadline, "Request information" to the form page (`uis/website/application.html` since the form checklist fixes)), Services (3 cards), Coverage (2 cards), Why TrackFlow (4 benefits), Contact (`mailto:` and `tel:` links in an `<address>`). Section ids `services`, `coverage`, `contact` with `scroll-mt-16` so the sticky header doesn't cover them. Icons and the hero illustration are inline decorative SVGs (`aria-hidden`), so no new asset files. Only `brand-*`, `accent-*` and slate utilities; rebuilt `uis/website/dist/styles.css`. Branch `claude/project-thread-fzjogd`, PR #9.
 - Checks: `scripts/site-check.py --pages index.html` clean at all four widths; nav links land on their sections; one h1, ordered headings.
 - Open: merging the PR (removed my "In progress" line ahead of the merge). No shared-file changes needed.
-
-### 2026-10-22 · Milestone 1 coordination (Claude Code, cloud)
-- WP1 merged (PR #7); requested WP2, WP3 and WP4 as parallel threads. Updated the plan's progress table and `memory-bank/status.md`. Branch `claude/project-thread-knpic0`.
-- Open: WP2 to WP4, then WP5.

@@ -1,6 +1,6 @@
 # Notes
 
-> **Last updated**: 2026-10-26
+> **Last updated**: 2026-10-27
 > Things learned the hard way. Add to this as soon as you learn something the next session would otherwise rediscover. Keep each note to a line or two, keep only what is highly relevant, and remove notes that stop being true.
 
 ## Working with mae
@@ -23,3 +23,5 @@
 - Tailwind scans the website's JS too, comments included: a word like `ease-out` in a comment adds CSS to `uis/website/dist/styles.css`, and because the compiled file is then scanned it stays after the word is gone. Restore `uis/website/dist/styles.css` from git and rebuild.
 - Tailwind 4 preflight sets `margin: 0` on everything, so a modal `<dialog>` needs `m-auto` to sit in the centre.
 - Lighthouse runs in cloud sessions: serve with the npx command, then `CHROME_PATH=/opt/pw-browsers/chromium npx --yes lighthouse@12 <url> --chrome-flags="--headless=new --no-sandbox"` (add `--preset=desktop` for desktop).
+- `scripts/site-check.py` in cloud sessions: the Python Playwright expects a newer headless shell than `/opt/pw-browsers` has; run it with `PLAYWRIGHT_CHROMIUM_EXECUTABLE=/opt/pw-browsers/chromium-1243/chrome-linux64/chrome` (check the folder name with `ls /opt/pw-browsers`).
+- Cloud sessions can't open pagespeed.web.dev or the github.io site (proxy), and the keyless PageSpeed API is often over quota; ask mae for screenshots of the report.
