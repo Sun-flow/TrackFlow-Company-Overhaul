@@ -1,7 +1,13 @@
 # Session Log
 
-> **Last updated**: 2026-10-26
+> **Last updated**: 2026-10-27
 > Newest first. One entry per session: date, where it ran, what changed (link the PR or commit), what was left open. Keep about 15 entries. When there are more, move the oldest to `docs/archive/memory-bank-log.md` (create it the first time). Entries before this file existed were rebuilt from git history.
+
+### 2026-10-27 · PageSpeed fixes (Claude Code, cloud)
+- mae shared their PageSpeed Insights mobile report for the live Pages site: 100 in all four categories, FCP 0.8 s, LCP 1.0 s, CLS 0.015; flagged the render-blocking `uis/website/dist/styles.css` and the HTML > CSS > font chain. To-do doc: https://claude.ai/artifact/SQym1yzs62LAjvWHawY4zV. mae said to handle the issues as I see fit.
+- Added size-matched fallback font faces to `uis/website/src/input.css` and a step in `.github/workflows/pages.yml` that inlines the stylesheet into the published pages. Decision logged. Branch `claude/project-thread-wqxbug`.
+- Checks: with the font delayed 1.2 s, the home page's layout shift at 412 px went 0.010 to 0; Lighthouse 12 mobile on the workflow's output: 100 in all four categories on home, About and form, render-blocking audit passes, CLS 0. `pnpm test` 481 pass; `scripts/site-check.py` clean.
+- Open: mae to rerun PageSpeed after the PR merges and deploys.
 
 ### 2026-10-26 · Full-screen hero with snap scroll (Claude Code, cloud)
 - mae asked for the home hero to fill the screen and for the first scroll to glide to Services like swiping a photo, then scroll normally. Built `uis/website/js/hero-snap.js` (wheel, touch, keys, rest-point finish; off when the hero doesn't fit; instant for reduced motion); hero and Services sections now `min-h-[calc(100svh-4rem-1px)]`. Decision logged. Branch `claude/project-thread-rb8nep`.
@@ -84,9 +90,3 @@
 ### 2026-10-22 · Milestone 1 coordination (Claude Code, cloud)
 - WP1 merged (PR #7); requested WP2, WP3 and WP4 as parallel threads. Updated the plan's progress table and `memory-bank/status.md`. Branch `claude/project-thread-knpic0`.
 - Open: WP2 to WP4, then WP5.
-
-### 2026-10-22 · WP1 site scaffold (Claude Code, cloud)
-- Built `uis/website/`: pnpm package with Tailwind CLI 4.3.3, `uis/website/src/input.css` tokens, committed `uis/website/dist/styles.css`, three pages (`uis/website/index.html` with the brief's JSON-LD, the form page (`uis/website/application.html` since the form checklist fixes), placeholder `uis/website/privacy.html` with `noindex`) sharing head, skip link, header, mobile menu (`uis/website/js/nav.js`) and footer; logo, favicon, self-hosted font; website README. Logged D1 and D2 in `docs/decisions.md`; removed `uis/website/` from `PLANNED_PATHS` in `scripts/check-memory.py`. Branch `claude/project-thread-wpdzyz`, PR #7.
-- D1: mae picked option B (deep teal and coral, Plus Jakarta Sans) from three screenshot previews (kept in the project's shared files under design/palette-options, outside the repo).
-- Checks: `pnpm build`, `scripts/site-check.py` (12 page and width runs, clean), keyboard walk at all four widths (skip link, nav, menu open, Escape, link closes menu).
-- Open: merging the PR; then WP2 to WP4.

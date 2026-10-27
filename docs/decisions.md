@@ -16,6 +16,12 @@ Entry format:
 
 ---
 
+### [2026-10-27] Stylesheet inlined in the published pages; size-matched fallback font
+- **Decision**: The GitHub Pages workflow replaces each page's `<link rel="stylesheet" href="dist/styles.css">` with the stylesheet's contents in a `<style>` tag, in the published copy only; the repo's pages keep the link. `uis/website/src/input.css` declares "Plus Jakarta Sans Fallback", Arial-family faces sized to the web font's metrics, second in `--font-sans`.
+- **Rationale**: mae's PageSpeed mobile run (100 in all four categories) still flagged the stylesheet as render-blocking (est. 130 ms) and a 0.015 layout shift when the font swapped in on the hero. Inlining removes the blocking request; the sized fallback keeps line breaks when the font arrives. Keeping the link in the repo means the pages still open straight from disk.
+- **Alternatives considered**: a font preload (brings back the `file://` console errors; see "No font preload"); `font-display: optional` (no shift, but first-time visitors on slow networks would see Arial); a critical-CSS build tool (more tooling for a 6 KB stylesheet); minifying the JavaScript (2 to 8 KB, no time saved, not worth a build step).
+- **Status**: Accepted
+
 ### [2026-10-26] Public copy of the website on GitHub Pages
 - **Decision**: `.github/workflows/pages.yml` deploys `uis/website/` (pages, `assets/`, `dist/`, `js/`) to GitHub Pages, https://sun-flow.github.io/TrackFlow-Company-Overhaul/, on pushes to `production` that touch the site, and by hand from the Actions tab.
 - **Rationale**: PageSpeed Insights (definition of done R7) needs a public URL, and mae's Codespaces credits ran out. The site is static with relative links and committed CSS, so Pages serves it as is, free on a public repo, and it stays up without anyone's machine running. mae picked it (2026-10-26).

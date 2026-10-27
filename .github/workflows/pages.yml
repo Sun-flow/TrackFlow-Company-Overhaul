@@ -36,6 +36,20 @@ jobs:
           cp uis/website/*.html _site/
           cp -r uis/website/assets uis/website/dist uis/website/js _site/
 
+      # Put the stylesheet inside each published page so the first paint doesn't wait for a second request
+      # (PageSpeed "render-blocking requests"). The repo keeps the <link> so the pages still open from disk.
+      - name: Inline the stylesheet
+        run: |
+          python3 - <<'EOF'
+          import pathlib
+          css = pathlib.Path("_site/dist/styles.css").read_text().replace("url(../assets/", "url(assets/")
+          link = '<link rel="stylesheet" href="dist/styles.css" />'
+          for page in pathlib.Path("_site").glob("*.html"):
+              html = page.read_text()
+              assert html.count(link) == 1, f"{page.name}: stylesheet link not found"
+              page.write_text(html.replace(link, f"<style>{css}</style>"))
+          EOF
+
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
