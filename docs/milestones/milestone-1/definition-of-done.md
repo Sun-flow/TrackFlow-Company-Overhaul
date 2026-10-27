@@ -1,7 +1,7 @@
 # Milestone 1 definition of done
 
 > **Date created**: 2026-10-26
-> **Last checked**: 2026-10-26, against `production` at `b454624` (after the website copy, PR #19); L15 removed the same day
+> **Last checked**: 2026-10-26, against `production` at `b454624` (after the website copy, PR #19); L15 removed the same day; R7 rated from mae's PageSpeed run on 2026-10-27
 > **Sources**: the course's "What We Will Evaluate" rubric and its two deliverables checklists (landing page, application form), merged and de-duplicated. The brief (`trackflow-BRIEFING.en.md`, called `BRIEFING.md` in the checklists) still wins where it is more specific.
 
 Milestone 1 is done when every item below is rated ✅. The items are grouped by the rubric's five sections. Where the rubric and a deliverables checklist ask for the same thing (alt text, labels, Schema.org, the npx command, Tailwind only, responsive), they are one item, and the Source column lists every checklist it came from.
@@ -18,16 +18,14 @@ To re-check, update the rating and evidence in place and the "Last checked" line
 
 | Rating | Items |
 |---|---|
-| ✅ Completely done | 38 |
+| ✅ Completely done | 39 |
 | 🟡 Partially done | 0 |
 | ⬜ Not done | 0 |
-| 🙋 Needs mae | 1 |
+| 🙋 Needs mae | 0 |
 | ❔ Not verifiable here | 0 |
 | **Total** | **39** |
 
-Left to solidify:
-
-1. **R7 (🙋 mae)**: switch on GitHub Pages (Settings → Pages → Source: GitHub Actions), run PageSpeed Insights on https://sun-flow.github.io/TrackFlow-Company-Overhaul/, and keep the screenshot. A local Lighthouse run on the updated pages already scores 100 in every category.
+Left to solidify: nothing. Every item is ✅ as of 2026-10-27, the last being R7 (mae's PageSpeed run on the live site).
 
 ## HTML structure and semantics
 
@@ -56,7 +54,7 @@ Left to solidify:
 | R4 | All styles are Tailwind utility classes, with no unnecessary custom CSS | E4, E6, L8 | ✅ | No `style` attributes, no `<style>` blocks, no styles set from JS. The only hand-written CSS is the `@font-face` and the `@theme` colour tokens in `src/input.css` (`docs/decisions.md`). `pnpm build` leaves `dist/styles.css` unchanged. |
 | R5 | Breakpoints `sm:`, `md:`, `lg:` used appropriately | E5 | ✅ | `index.html`: 19 `sm:`, 12 `md:`, 19 `lg:`; `application.html`: 15, 9, 3. Grids go 1 → 2/3 → 4 columns; padding and type sizes step up. |
 | R6 | Visually coherent and professional design | E7 | ✅ | One palette and type scale across pages (teal and coral, Plus Jakarta Sans; `docs/decisions.md`); mae reviewed the preview in WP5. This is a judgement call, so mae's view decides. |
-| R7 | Performance score of at least 80 (ideal 90+) in PageSpeed Insights, or a Lighthouse screenshot from Chrome DevTools | E8 | 🙋 | Local Lighthouse 12.8.2 (headless Chromium, served with the npx command): Performance, Accessibility, Best Practices and SEO all 100 on home and form, mobile and desktop (mobile LCP 1.6 to 1.8 s, CLS ≤ 0.013, TBT 0 ms); after the copy update, all 100 again on home, About and form (mobile). mae runs the scored check now that the copy is in, against the GitHub Pages copy at https://sun-flow.github.io/TrackFlow-Company-Overhaul/ once it is switched on. |
+| R7 | Performance score of at least 80 (ideal 90+) in PageSpeed Insights, or a Lighthouse screenshot from Chrome DevTools | E8 | ✅ | mae's PageSpeed Insights run on the live GitHub Pages site, https://sun-flow.github.io/TrackFlow-Company-Overhaul/ (Oct 26, 2026, 4:56 PM PDT; Lighthouse 13.5.0, mobile, emulated Moto G Power on slow 4G): Performance 100, Accessibility 100, Best Practices 100, SEO 100. FCP 0.8 s, LCP 1.0 s, TBT 0 ms, CLS 0.015, Speed Index 0.8 s. mae holds the screenshot. Earlier local Lighthouse runs also scored 100 in every category. |
 
 ## Accessibility
 

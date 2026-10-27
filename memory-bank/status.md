@@ -1,6 +1,6 @@
 # Status
 
-> **Last updated**: 2026-10-26
+> **Last updated**: 2026-10-27
 
 **Current milestone**: Milestone 1, public website: **done, waiting for mae's review** (2026-10-22). Brief: `docs/milestones/milestone-1/` (landing page + information-request form; Tailwind CSS; responsive, accessible, SEO with Schema.org, full JavaScript validation). Code goes in `uis/website/`.
 
@@ -20,19 +20,17 @@
 - Full-screen hero with snap to Services (2026-10-26, branch `claude/project-thread-rb8nep`): `uis/website/js/hero-snap.js`; site check clean, Lighthouse 100 mobile and desktop on index; waiting for mae's review.
 - Milestone 1 checklist fixes (PRs #15, #16, #17): footer contact details, logo and hero map as `<img>`, `role="list"`, `<article>` cards; form page renamed to `uis/website/application.html` with "Clear form", validation from first edit and field names and values in the brief's wording (`docs/decisions.md`); npx run command in the READMEs. `pnpm test` runs 481 cases.
 
-- Definition of done (2026-10-26): `docs/milestones/milestone-1/definition-of-done.md` merges the course rubric and deliverables checklists into 39 rated items; 38 done, 1 needs mae (the PageSpeed or Lighthouse run, now that the copy is in). The public Codespaces URL item was dropped (`docs/decisions.md`).
+- Definition of done (2026-10-26): `docs/milestones/milestone-1/definition-of-done.md` merges the course rubric and deliverables checklists into 39 rated items; all 39 done (R7 from mae's PageSpeed run on the live GitHub Pages site: 100 in all four categories, mobile). The public Codespaces URL item was dropped (`docs/decisions.md`).
 
 ## In progress
 
 Format: `- what — branch, PR, environment (started date)`. Remove the line when it merges or is dropped.
 
-- Definition of done file — branch `claude/project-thread-hhij7g`, PR pending, cloud (2026-10-26).
 
 ## Next
 
-1. mae switches on GitHub Pages (Settings → Pages → Source: GitHub Actions) and runs PageSpeed Insights on https://sun-flow.github.io/TrackFlow-Company-Overhaul/ (definition of done R7).
-2. mae reviews Milestone 1 as a whole, using `docs/milestones/milestone-1/definition-of-done.md`.
-3. When mae calls Milestone 1 finished, move this file to the next milestone and review `docs/FUTURE_WORK.md` for entries it picks up.
+1. mae reviews Milestone 1 as a whole, using `docs/milestones/milestone-1/definition-of-done.md`.
+2. When mae calls Milestone 1 finished, move this file to the next milestone and review `docs/FUTURE_WORK.md` for entries it picks up.
 
 ## Open questions
 
