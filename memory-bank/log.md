@@ -3,6 +3,10 @@
 > **Last updated**: 2026-10-27
 > Newest first. One entry per session: date, where it ran, what changed (link the PR or commit), what was left open. Keep about 15 entries. When there are more, move the oldest to `docs/archive/memory-bank-log.md` (create it the first time). Entries before this file existed were rebuilt from git history.
 
+### 2026-10-27 · PageSpeed screenshot in the repo (Claude Code, cloud)
+- mae asked for their PageSpeed Insights screenshot (run after PR #23: 100 in all four categories, CLS 0) to go in the repo as PageSpeed. Saved it as `docs/milestones/milestone-1/PageSpeed.png`, linked from R7 in `docs/milestones/milestone-1/definition-of-done.md` and from the milestone README. Branch `claude/project-thread-hhij7g`, restarted from `production`.
+- Open: mae merges the PR; mae's review of Milestone 1 as a whole.
+
 ### 2026-10-27 · PageSpeed fixes (Claude Code, cloud)
 - mae shared their PageSpeed Insights mobile report for the live Pages site: 100 in all four categories, FCP 0.8 s, LCP 1.0 s, CLS 0.015; flagged the render-blocking `uis/website/dist/styles.css` and the HTML > CSS > font chain. To-do doc: https://claude.ai/artifact/SQym1yzs62LAjvWHawY4zV. mae said to handle the issues as I see fit.
 - Added size-matched fallback font faces to `uis/website/src/input.css` and a step in `.github/workflows/pages.yml` that inlines the stylesheet into the published pages. Decision logged. Branch `claude/project-thread-wqxbug`.
@@ -84,9 +88,3 @@
 - `uis/website/js/validation.js` is a classic script that the form script loads itself, so the form works from the file system and tests can `require()` it. Agreed the markup details with WP3 (branch `claude/project-thread-t2p6d4`).
 - Checks: `pnpm test` (96 pass); a Playwright walk-through of every rule, the summary, the dialog (Confirm, Nevermind, Escape) and success, on WP3's markup over HTTP and the file system; `scripts/site-check.py` clean.
 - Open: merging; WP5 to fix the font-preload console errors seen when pages open from the file system (shared `<head>`).
-
-### 2026-10-22 · WP3 form markup (Claude Code, cloud)
-- Filled the `<main>` of the form page (`uis/website/application.html` since the form checklist fixes) per the plan's form contract: 12 fields with labels and hints, hidden error elements tied by `aria-describedby`, fieldsets for the checkbox and radio groups, error summary, comments counter, hidden success message with the brief's exact text, `#volume-dialog` (D3), privacy link to `uis/website/privacy.html` in a new tab (D4), `novalidate`, a deferred script tag for WP4's form.js. Rebuilt `uis/website/dist/styles.css`. Branch `claude/project-thread-t2p6d4`, PR #10.
-- Agreed the loose parts of the contract with the WP4 thread (summary heading plus empty `<ul>`, error elements start `hidden`, plain non-module script tag); the result is in the PR description.
-- Checks: `scripts/site-check.py` is clean with a stand-in form script (without it, the only failure is the 404 for that file until WP4 merges); axe also clean with every error, the summary, the success message and the dialog revealed; keyboard walk through every field.
-- Open: merging the PR (removed my "In progress" line ahead of the merge; merged the base after WP2 landed and rebuilt the CSS); WP5 checks the form end to end with WP4.
