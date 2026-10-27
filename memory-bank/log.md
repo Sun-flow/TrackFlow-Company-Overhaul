@@ -3,6 +3,10 @@
 > **Last updated**: 2026-10-26
 > Newest first. One entry per session: date, where it ran, what changed (link the PR or commit), what was left open. Keep about 15 entries. When there are more, move the oldest to `docs/archive/memory-bank-log.md` (create it the first time). Entries before this file existed were rebuilt from git history.
 
+### 2026-10-26 · Hero snap lockout fix (Claude Code, cloud)
+- mae found that after the snap, continued scrolling was blocked for 1 to 2 seconds (the script waited for the browser's smooth scroll and then for 200 ms of wheel silence). A first fix (own 350 ms glide, 120 ms hold after landing) still felt like a half-second pause, so `uis/website/js/hero-snap.js` now runs a 300 ms in-and-out glide, hands control to any fresh input in its last 30% (mae's idea), and after landing holds back only momentum events that keep getting smaller. Decision entry updated. Branch `claude/project-thread-rb8nep` restarted from production after PR #20 merged.
+- Checks: `pnpm test` 481 pass; site check clean; in-page wheel runs: a decaying flick stops on Services with nothing let through, steady scrolling is handed back at about 0.23 s, a new push right after a flick passes at once; Lighthouse 12 index 100 in all four categories, mobile and desktop.
+
 ### 2026-10-26 · Full-screen hero with snap scroll (Claude Code, cloud)
 - mae asked for the home hero to fill the screen and for the first scroll to glide to Services like swiping a photo, then scroll normally. Built `uis/website/js/hero-snap.js` (wheel, touch, keys, rest-point finish; off when the hero doesn't fit; instant for reduced motion); hero and Services sections now `min-h-[calc(100svh-4rem-1px)]`. Decision logged. Branch `claude/project-thread-rb8nep`.
 - Checks: `pnpm test` 481 pass; `scripts/site-check.py` clean; Playwright wheel, key and touch runs land on Services and back at 1440, 1024 and 375; Lighthouse 12 index 100 in all four categories, mobile and desktop.
@@ -84,9 +88,3 @@
 ### 2026-10-22 · Milestone 1 coordination (Claude Code, cloud)
 - WP1 merged (PR #7); requested WP2, WP3 and WP4 as parallel threads. Updated the plan's progress table and `memory-bank/status.md`. Branch `claude/project-thread-knpic0`.
 - Open: WP2 to WP4, then WP5.
-
-### 2026-10-22 · WP1 site scaffold (Claude Code, cloud)
-- Built `uis/website/`: pnpm package with Tailwind CLI 4.3.3, `uis/website/src/input.css` tokens, committed `uis/website/dist/styles.css`, three pages (`uis/website/index.html` with the brief's JSON-LD, the form page (`uis/website/application.html` since the form checklist fixes), placeholder `uis/website/privacy.html` with `noindex`) sharing head, skip link, header, mobile menu (`uis/website/js/nav.js`) and footer; logo, favicon, self-hosted font; website README. Logged D1 and D2 in `docs/decisions.md`; removed `uis/website/` from `PLANNED_PATHS` in `scripts/check-memory.py`. Branch `claude/project-thread-wpdzyz`, PR #7.
-- D1: mae picked option B (deep teal and coral, Plus Jakarta Sans) from three screenshot previews (kept in the project's shared files under design/palette-options, outside the repo).
-- Checks: `pnpm build`, `scripts/site-check.py` (12 page and width runs, clean), keyboard walk at all four widths (skip link, nav, menu open, Escape, link closes menu).
-- Open: merging the PR; then WP2 to WP4.
