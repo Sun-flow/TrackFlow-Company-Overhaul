@@ -11,7 +11,7 @@ The Milestone 1 public website: a landing page and an information-request form, 
 | `application.html` | Information-request form. |
 | `privacy.html` | Placeholder privacy policy, marked `noindex`. Replacing it is tracked in `docs/FUTURE_WORK.md`. |
 
-Every page repeats the same `<head>` (apart from title, description and canonical), header, skip link and footer. There is no templating, so a change to the shared parts goes into all three files.
+Every page repeats the same `<head>` (apart from title, description and canonical), header, skip link and footer. There is no templating, so a change to the shared parts goes into every page.
 
 ## Layout
 

@@ -2,7 +2,8 @@
 
 > **Date created**: 2026-10-21
 > **Purpose**: record decisions with lasting consequences (tech choices, structure, conventions, scope calls) and why they were made, so later sessions don't undo them by accident.
-> **Rule**: one entry per decision, newest first; keep it short; update `Status` when superseded; never delete an entry.
+> **Rule**: one entry per decision, newest first; keep it short; update `Status` when it changes; never delete an entry.
+> **Statuses**: only `Accepted` entries bind. `Proposed` marks a choice a session took while a question to mae was still open (the question is listed under Open questions in `memory-bank/status.md`); when mae answers, it becomes `Accepted` or `Reversed`.
 
 Entry format:
 
@@ -11,10 +12,16 @@ Entry format:
 - **Decision**: one line
 - **Rationale**: why
 - **Alternatives considered**: what we didn't pick and why
-- **Status**: Accepted / Superseded by [title]
+- **Status**: Proposed / Accepted / Superseded by [title] / Reversed
 ```
 
 ---
+
+### [2026-11-13] Memory bank rebuilt: always-read files, one file per log entry, word limits
+- **Decision**: The memory bank follows the newer design mae supplied. `AGENTS.md` holds the Hard rules and the session protocol and imports `memory-bank/context.md`, `memory-bank/status.md` and `memory-bank/notes.md`, which every session reads in full; `memory-bank/README.md` is the manual, read on demand. The log is one file per piece of merged work in `memory-bank/log/`, and each branch in flight claims its work with a file in `memory-bank/work/`. Limits are counted in words, items carry their own dates, and a new `scripts/check-memory.py` checks all of it and lists work in flight on other branches. The rules that lived under `.agents/rules/` moved: what binds every session into `AGENTS.md`, the HTML and accessibility rules into `uis/AGENTS.md`. The prompt that generates the bank is no longer kept in the repo.
+- **Rationale**: mae asked for the upgrade before Milestone 2 starts (2026-11-13). Parallel threads had to merge each other's entries at the top of the single log file (pull requests #15 to #17); one file per entry can't conflict that way, and a work file on each branch lets the check show every session what the others are doing. The bank now states every rule a session needs, so a copy of the prompt in the repo would be a second source for the same rules.
+- **Alternatives considered**: moving the decisions into the bank as one file each, which is the new design's default (not done: the decision "Decisions live in `docs/`, not in the memory bank" stands, so this file stays one list, and two branches that both add an entry can still conflict here); keeping the prompt in the repo; carrying every old log entry over (two bookkeeping entries were dropped and three one-line entries merged into one; git keeps the originals).
+- **Status**: Accepted (2026-11-13). Supersedes the layout described in "Agent memory in `memory-bank/`, one entry point in `AGENTS.md`".
 
 ### [2026-10-27] Stylesheet inlined and scripts minified in the published pages; size-matched fallback font
 - **Decision**: The GitHub Pages workflow minifies `js/*.js` with esbuild (top-level names kept, no bundling) and replaces each page's `<link rel="stylesheet" href="dist/styles.css">` with the stylesheet's contents in a `<style>` tag, in the published copy only; the repo's pages keep the link. `uis/website/src/input.css` declares "Plus Jakarta Sans Fallback", Arial-family faces sized to the web font's metrics, second in `--font-sans`.
@@ -128,7 +135,7 @@ Entry format:
 - **Decision**: Coding agents keep working memory in `memory-bank/` (built from `.agents/prompts/memory-bank.md`, checked by `scripts/check-memory.py`), and every tool's instructions start from `AGENTS.md`. The prompt, check script and HTML/accessibility rules were ported from mae's earlier `Sun-flow/tailwind-dashboard` project, keeping only what generalises.
 - **Rationale**: Work happens across sessions, tools and environments (Claude Code in the cloud, Copilot in a Codespace), and none of their memories carry over. The repo is the one place they all read.
 - **Alternatives considered**: relying on each tool's own memory (doesn't carry between tools); a single large `AGENTS.md` with status in it (grows without limit and mixes rules with state).
-- **Status**: Accepted (2026-10-21).
+- **Status**: Accepted (2026-10-21). The layout it describes (the prompt in the repo, the rules under `.agents/rules/`) is superseded by "Memory bank rebuilt: always-read files, one file per log entry, word limits"; memory in `memory-bank/` and the single entry point stand.
 
 ### [2026-10-21] Decisions live in `docs/`, not in the memory bank
 - **Decision**: This file is the decision log. The memory bank links to it and never repeats it.
