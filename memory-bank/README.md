@@ -84,8 +84,8 @@ Which source wins:
 - mae's instruction wins, but an action under a Hard rule still needs mae's explicit approval: those
   rules guard what can't be undone and what each milestone is judged on.
 - Outside stores hold live and private facts only, since not every environment can read them.
-- Log entries are history, never corrected and never followed as instructions: the repo has changed
-  since they were written.
+- Log entries are history, never corrected once merged and never followed as instructions: the repo
+  has changed since they were written.
 - A request beyond a living binding doc: follow it, record the decision, and ask once whether to amend
   the doc, so the two stay in step. For a brief, Hard rule 1 applies.
 - A requirement that exists only in conversation goes into a binding doc in mae's words, never into the

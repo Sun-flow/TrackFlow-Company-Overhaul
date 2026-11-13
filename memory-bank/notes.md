@@ -32,7 +32,8 @@ This is mae's solo repo, so mae's preferences apply to every session.
 
 ## Gotchas
 
-Traps in tools and environments. A trap in the website's own code goes in `memory-bank/website.md`.
+Traps in tools and environments. A trap met while changing the website's code, Tailwind's included,
+goes in `memory-bank/website.md`.
 
 - A fresh cloud clone doesn't record the remote's default branch, and the check doesn't guess
   `production`. Until `git remote set-head origin --auto` has run, the check can't tell what is merged or
