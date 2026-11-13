@@ -17,10 +17,16 @@ Entry format:
 
 ---
 
+### [2026-11-13] Decisions stay in one file
+- **Decision**: `docs/decisions.md` stays one list, newest first, rather than one file per decision.
+- **Rationale**: mae said one file makes the decisions easier to learn from later (2026-11-13), since they read as one history. This confirms "Decisions live in `docs/`, not in the memory bank" after the memory bank rebuild raised the question.
+- **Alternatives considered**: one file per decision under `docs/` or in the bank, which the memory bank design prefers because parallel branches can't conflict on separate files. Two branches that each add an entry can still conflict at the top of this file.
+- **Status**: Accepted (2026-11-13).
+
 ### [2026-11-13] Claude cloud sessions are the only environment; GitHub Pages the only hosting
 - **Decision**: All work on the project happens in Claude Code cloud sessions, and the website is hosted only on GitHub Pages, by `.github/workflows/pages.yml`. The Codespace is no longer used: the bank and the READMEs stop describing it as an environment, and the Codespaces port steps leave `uis/website/README.md`. `.devcontainer/devcontainer.json` stays, marked unused in the root READMEs, because it came with the course template.
 - **Rationale**: mae said so (2026-11-13). mae's Codespaces credits ran out on 2026-10-26, and Pages has served the site since then.
-- **Alternatives considered**: deleting `.devcontainer/` (left to mae, since it is part of the template the course supplied).
+- **Alternatives considered**: deleting `.devcontainer/`; mae chose to keep it for now (2026-11-13).
 - **Status**: Accepted (2026-11-13).
 
 ### [2026-11-13] Testing kit installed: test rules, edit guards and CI on pull requests
