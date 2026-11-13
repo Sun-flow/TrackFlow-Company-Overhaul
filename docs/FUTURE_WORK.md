@@ -97,7 +97,7 @@ The briefing specifies "© 2025 TrackFlow"; consider showing the current year (o
 
 ### Continuous integration for the website
 
-The website's checks (`pnpm build` leaving `dist/styles.css` unchanged, `pnpm test`, `scripts/site-check.py`) and the memory bank check (`scripts/check-memory.py`) only run when someone runs them. A CI workflow on pull requests would catch a stale stylesheet or a failing check before merge.
+The website's checks (`pnpm build` leaving `dist/styles.css` unchanged, `pnpm test`, `scripts/site-check.py`) and the memory bank check (`scripts/check-memory.py`) only run when someone runs them. A CI workflow on pull requests would catch a stale stylesheet or a failing check before merge. It is also the moment to revisit the decision "Commit the compiled website CSS" in `docs/decisions.md`: it was taken because no CI or hosting existed, and the site has been hosted on GitHub Pages since Milestone 1.
 
 - **Source:** Milestone 1 WP5 (integration and QA)
 - **Target:** ?

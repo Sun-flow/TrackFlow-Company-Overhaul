@@ -1,9 +1,9 @@
 # Conventions for user interfaces
 
 These apply to everything under `uis/`. A milestone brief or an app's own README can add stricter ones.
-Before changing the website, also read `memory-bank/website.md`.
-They came with the agent setup on 2026-10-21 (`docs/decisions.md`), and Milestone 1 was judged on both
-(`docs/milestones/milestone-1/definition-of-done.md`).
+The two sections below came with the agent setup on 2026-10-21 (`docs/decisions.md`), and Milestone 1
+was judged on both (`docs/milestones/milestone-1/definition-of-done.md`). Before changing the website,
+also read `memory-bank/website.md`.
 
 ## Semantic HTML
 

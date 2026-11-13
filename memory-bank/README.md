@@ -54,8 +54,9 @@ closing commit removed the file, unless it was never claimed; its pull request t
 **Log entry.** Named `<YYYY-MM-DD-HHMM>-<slug>.md`: the UTC time from `date -u +%Y-%m-%d-%H%M`, then
 lowercase words joined by dashes. It says what changed and why, how it was verified, what was left open,
 and the pull request or commit if one exists. A lesson that could recur also goes in
-`memory-bank/notes.md`. It is added in the last commit before merge and never edited once merged. A
-reconcile deletes entries that no longer tell a session anything it needs; git keeps them.
+`memory-bank/notes.md`. It is added in the branch's closing commit, corrected if review changes the
+work, and never edited once merged. A reconcile deletes entries that no longer tell a session anything
+it needs; git keeps them.
 
 **Decision.** Decisions live in `docs/decisions.md`, which states its own format and statuses, because
 mae keeps them where people read them (decided 2026-10-21). The bank has no decisions folder. A choice
@@ -64,7 +65,9 @@ questions in `memory-bank/status.md`.
 
 **Directory `AGENTS.md`.** Conventions that apply inside one directory, with a `CLAUDE.md` beside it
 holding `@AGENTS.md` and a row in the index. Some tools load it only when a session opens a file there,
-so anything that must hold for a whole session goes in the root `AGENTS.md`.
+so anything that must hold for a whole session goes in the root `AGENTS.md`. None goes inside
+`uis/website/`: Tailwind compiles words from every file there into the stylesheet, so the website's
+conventions are in `memory-bank/website.md`.
 
 ## Bank rules
 
@@ -121,8 +124,9 @@ Size:
 - The limits are in the index, and only mae changes them: a limit a session could raise for itself
   would stop nothing.
 - Near a limit, remove or relocate; never compress. Delete what is stale, then move reasoning to a
-  decision, directory conventions to that directory's `AGENTS.md`, and procedures to scripts. A sentence
-  cut to a fragment or a rule stripped of its reason costs more than the words saved.
+  decision, directory conventions to that directory's `AGENTS.md` (the website's to
+  `memory-bank/website.md`), and procedures to scripts. A sentence cut to a fragment or a rule stripped
+  of its reason costs more than the words saved.
 - An on-demand file over its limit usually holds two topics: split it.
 - Wrap prose near 100 characters; a bullet may continue on indented lines. Git merges by line, so short
   lines conflict less.

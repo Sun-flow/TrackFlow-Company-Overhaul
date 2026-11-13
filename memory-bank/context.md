@@ -34,7 +34,7 @@ not a real company's system.
 # Setup in a fresh clone: only to rebuild the stylesheet or run the browser check
 (cd uis/website && pnpm install)
 pip3 install -r scripts/requirements.txt
-python3 -m playwright install chromium   # ❓ not run: a Claude cloud session has its own Chromium (notes.md)
+python3 -m playwright install chromium   # ❓ not run: cloud sessions skip it and use their own Chromium (notes.md)
 
 # Run the project: the website at http://localhost:3000
 npx --yes http-server uis/website -p 3000 -c-1
