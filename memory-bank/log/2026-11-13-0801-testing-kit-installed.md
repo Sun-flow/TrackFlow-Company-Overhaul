@@ -1,6 +1,6 @@
 # Testing kit installed
 
-2026-11-13, Claude Code in the cloud. Branch `claude/install-testing-kit`.
+2026-11-13, Claude Code in the cloud. Pull request #26, branch `claude/install-testing-kit`.
 
 - Changed: mae asked for the testing kit (claude-testing-toolkit 0.4.0, standard profile, with CI). It
   adds `.claude/` (rules, hooks, skills, agents, `testing-kit.json`), `docs/testing/`, a `## Testing`
