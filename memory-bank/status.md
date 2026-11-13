@@ -24,17 +24,17 @@ Current milestone: Milestone 2. Its brief is not in the repo yet, so nothing is 
   requests #26 and #27. (2026-11-13)
 - `production` is protected: a ruleset requires the testing kit's `all-green` check before a merge
   (mae, 2026-11-13; GitHub lists the branch as protected). (2026-11-13)
+- The `Milestone-1` branch, for grading, points at the end of Milestone 1, the merge of pull request
+  #24: `git ls-remote origin Milestone-1` prints 34e5069. (2026-11-13)
 - All 39 items of Milestone 1's definition of done are rated done:
   `grep -A9 '^## Summary' docs/milestones/milestone-1/definition-of-done.md`. (2026-11-13)
 
 ## Next
 
-1. mae creates the `Milestone-1` grading branch at the end of Milestone 1, the merge of pull request
-   #24 (34e5069); a session can't (`docs/decisions.md`). (2026-11-13)
-2. mae provides the Milestone 2 brief. It goes in a new folder under `docs/milestones/`, kept as
+1. mae provides the Milestone 2 brief. It goes in a new folder under `docs/milestones/`, kept as
    received, with a row in `docs/milestones/README.md`. (2026-11-13)
-3. Review `docs/FUTURE_WORK.md` for entries Milestone 2 picks up. (2026-11-13)
-4. Reconcile the bank (Reconcile in `memory-bank/README.md`), then write the milestone's plan beside
+2. Review `docs/FUTURE_WORK.md` for entries Milestone 2 picks up. (2026-11-13)
+3. Reconcile the bank (Reconcile in `memory-bank/README.md`), then write the milestone's plan beside
    its brief and confirm it with mae before building. (2026-11-13)
 
 ## Known problems
