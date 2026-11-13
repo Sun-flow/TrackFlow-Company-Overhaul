@@ -86,9 +86,11 @@ The safe way through a Hard rule, where it doesn't fit in `AGENTS.md`.
 - Publishing (Hard rule 4). A merge that changes `uis/website/` is live in about a minute, with no
   staging step. Before opening the pull request, run the browser check (Gotchas give its cloud form) and
   look at the screenshots it saves in .site-check/, which git ignores. (2026-11-13)
-- Tests (testing kit). Editing an existing test asks mae first, and when Claude finishes a turn that
-  changed something the form's tests run. Never weaken a test to get past either; a test that looks
-  wrong goes to mae. (2026-11-13)
+- Tests (testing kit). Never weaken a test to get past the kit; a test that looks wrong goes to mae. Its
+  hooks, which ask before an existing test is edited and run the form's tests when a turn changed
+  something, don't run in project threads (Known problems in `memory-bank/status.md`). There a session
+  follows `.claude/rules/testing.md` by itself and runs the smoke command before finishing; the CI test
+  guard on the pull request is the backstop. (2026-11-13)
 - Shared history (Hard rule 5). A Claude thread keeps its branch name after its pull request merges.
   Restarting that branch from `origin/production` before new work is not a rewrite of shared history.
   (2026-11-13)
