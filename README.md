@@ -1,32 +1,47 @@
-# AI Engineering Company Project — Student Template
+# TrackFlow Company Overhaul
 
 [![4Geeks Academy](https://img.shields.io/badge/4Geeks-Academy-blue)](https://4geeksacademy.com)
 [![AI Engineering](https://img.shields.io/badge/track-AI%20Engineering-green)](https://4geeksacademy.com/es/programas-de-carrera/ingenieria-ia)
 
-_Base template for transversal projects in the AI Engineering Career Program — 4Geeks Academy._
+_A student project for the 4Geeks Academy AI Engineering Career Program, built on the course's company project template._
 
 _Estas instrucciones tambien estan disponibles en [espanol](./README.es.md)._
 
 ---
 
-## Purpose
+## About this project
 
-This repository is the **starter template** for transversal projects. You will work on real company scenarios (Brasaland, TrackFlow, Nexova), building deliverables that map to course milestones (Web, Programming, Backend, Telemetry, RAG, Agents, Workflows, Real-time).
+TrackFlow is a fictional last-mile delivery and warehouse company in the United States and Spain; its briefing is [`CONTEXT.md`](./CONTEXT.md), and [`company-choice.md`](./company-choice.md) says why it was chosen. This repository does the work of TrackFlow's internal tech unit: it rebuilds the company's business systems one course milestone at a time. Each milestone is built to its brief in [`docs/milestones/`](./docs/milestones/README.md) and judged against it.
 
-- Create a template from this repository.
-- Replace the placeholder `CONTEXT.md` with your assigned company context.
-- Use `skills/` and the directory-level `README.md` files as working guidance.
+| Milestone | What it delivers | Status |
+| --------- | ---------------- | ------ |
+| 1 | The public website in `uis/website/`: landing page, About page, information-request form | Finished; live on GitHub Pages |
+| 2 | Not known yet: its brief is not in the repo | Waiting for the brief |
+
+The other top-level folders came with the course template and hold only its READMEs and samples until a milestone needs them; the folder guide below says what belongs in each.
 
 ---
 
-## How to start
+## Working on this repo
 
-1. **Use this repository as a template** and create your own project repo.
-2. **Clone** your repository (or open it in Codespaces).
-3. **Replace** `CONTEXT.md` with the full context for your assigned company.
-4. **Read this folder guide** and open the `README.md` of the folder you are working in.
-5. **Start implementing** in the right folder — do not dump everything in the root.
-6. **Document** what you add: each new app, service, agent, or pipeline gets a subfolder + README.
+- **AI coding agents** start at [`AGENTS.md`](./AGENTS.md): the project's rules, and the memory in `memory-bank/` that carries state between sessions.
+- **Decisions** and their reasons are in [`docs/decisions.md`](./docs/decisions.md); ideas for later milestones are parked in [`docs/FUTURE_WORK.md`](./docs/FUTURE_WORK.md).
+- **Changes** go on a branch and a pull request into `production`, which the owner reviews and merges. A merge that changes `uis/website/` republishes the site.
+- **Tests**: `(cd uis/website && pnpm test)` runs the form's tests. The testing kit in `.claude/` sets the testing rules, and its workflow runs the tests on every pull request ([`docs/testing/KIT-GUIDE.md`](./docs/testing/KIT-GUIDE.md)).
+
+---
+
+## Run the website
+
+The Milestone 1 website is static, so any file server will do. From the repo root:
+
+```bash
+npx --yes http-server uis/website -p 3000 -c-1
+```
+
+Open <http://localhost:3000>. Details are in [`uis/website/README.md`](./uis/website/README.md#run-locally).
+
+The site's only hosting is GitHub Pages. A public copy is published at <https://sun-flow.github.io/TrackFlow-Company-Overhaul/> on every push to `production` that touches `uis/website/` ([`.github/workflows/pages.yml`](./.github/workflows/pages.yml); details in [`uis/website/README.md`](./uis/website/README.md#public-copy-on-github-pages)).
 
 ---
 
@@ -36,7 +51,7 @@ You are building **one company** across many milestones and projects. Each top-l
 
 | Layer               | Folders                           | What lives here                                                  |
 | ------------------- | --------------------------------- | ---------------------------------------------------------------- |
-| **Company context** | `CONTEXT.md`                      | Domain facts, field names, constraints for your assigned company |
+| **Company context** | `CONTEXT.md`                      | Domain facts, field names, constraints for TrackFlow             |
 | **User-facing**     | `uis/`, `services/`               | Frontends and backends users (or operators) interact with        |
 | **Data**            | `data/`                           | Raw files, pipelines, processed datasets, evaluation sets        |
 | **AI**              | `agents/`, `skills/`, `mcps/`     | Agents, reusable agent capabilities, MCP tool servers            |
@@ -49,31 +64,6 @@ You are building **one company** across many milestones and projects. Each top-l
 
 ---
 
-## Current status of the template
-
-> 💡 This repository started from the course's **base folder structure and documentation skeleton**. Its first runnable app is the public website in `uis/website/`, built in Milestone 1.
->
-> - `CONTEXT.md` holds the TrackFlow company briefing (in English only).
-> - `scripts/` has two global helper scripts, `check-memory.py` and `site-check.py` (see [`scripts/README.md`](./scripts/README.md)).
-> - The root `AGENTS.md` is the entry point for AI coding agents; it holds the rules every session follows and leads to `memory-bank/` (agent memory).
-> - Shared package metadata exists in `packages/shared/package.json` (`@repo/shared-types`), but no workspace runner is configured at root.
-
----
-
-## Run the website
-
-The Milestone 1 website is static, so any file server will do. From the repo root, locally or in Codespaces:
-
-```bash
-npx --yes http-server uis/website -p 3000 -c-1
-```
-
-Open <http://localhost:3000>; in Codespaces, use the forwarded port 3000 ("Website" in the Ports tab). To share it outside your GitHub account, set that port to Public; the steps are in [`uis/website/README.md`](./uis/website/README.md#run-locally).
-
-A public copy is published to GitHub Pages at <https://sun-flow.github.io/TrackFlow-Company-Overhaul/> on every push to `production` that touches `uis/website/` ([`.github/workflows/pages.yml`](./.github/workflows/pages.yml); details in [`uis/website/README.md`](./uis/website/README.md#public-copy-on-github-pages)).
-
----
-
 ## Folder guide — what goes where
 
 Read the linked `README.md` inside each folder before you start coding there.
@@ -82,8 +72,8 @@ Read the linked `README.md` inside each folder before you start coding there.
 
 | Path                         | Purpose                                                                   | What you do here                                                                                              |
 | ---------------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| [`CONTEXT.md`](./CONTEXT.md) | Single source of truth for your company (Brasaland, TrackFlow, or Nexova) | **First step:** copy your assigned company briefing here so every app, agent, and prompt uses the same domain |
-| `docker-compose.yml`         | Local dev orchestration for the whole stack                               | Keep at repo root — wires `services/`, databases, and other containers from one place                         |
+| [`CONTEXT.md`](./CONTEXT.md) | Single source of truth for TrackFlow                                      | Read it before building anything: every app, agent and prompt uses its facts                                  |
+| `docker-compose.yml`         | Local dev orchestration for the whole stack (not created yet)             | Add it at the repo root once `services/` or a database needs containers                                       |
 | `README.md` / `README.es.md` | This guide                                                                | Orientation — you are here                                                                                    |
 | [`AGENTS.md`](./AGENTS.md)   | Entry point for AI coding agents                                          | Agents read it first; `CLAUDE.md` and `.github/copilot-instructions.md` point to it                           |
 | [`company-choice.md`](./company-choice.md) | Why TrackFlow was chosen, and the first agent idea          | Background reading                                                                                            |
@@ -261,8 +251,9 @@ Read the linked `README.md` inside each folder before you start coding there.
 | Path | What lives here |
 | ---- | --------------- |
 | [`memory-bank/`](./memory-bank/README.md) | Working memory for AI coding agents: context, status, notes, a log of merged work and a work file per branch in flight. Read through `AGENTS.md`. |
-| `.devcontainer/` | The dev container for Codespaces: Python 3.12, Node 22 with pnpm. |
-| `.github/` | GitHub configuration, including the Copilot pointer to `AGENTS.md`. |
+| `.devcontainer/` | The dev container for Codespaces: Python 3.12, Node 22 with pnpm. Unused since 2026-11-13: the project's work happens in Claude Code cloud sessions. |
+| `.claude/` | The testing kit: testing rules, hooks, skills and the test commands in `.claude/testing-kit.json`. [`docs/testing/KIT-GUIDE.md`](./docs/testing/KIT-GUIDE.md) explains it. |
+| `.github/` | GitHub configuration: the Pages deploy and testing kit workflows, and the Copilot pointer to `AGENTS.md`. |
 
 ---
 
@@ -294,10 +285,12 @@ Is it a CLI tool with its own package?     → internal/
 ## Repository structure (tree)
 
 ```text
-ai-engineering-company-project-monorepo/
+TrackFlow-Company-Overhaul/
 ├── README.md / README.es.md   # This guide
-├── CONTEXT.md                 # ← Replace with your company briefing
-├── docker-compose.yml         # ← Local dev orchestration (repo root)
+├── AGENTS.md                  # Entry point for AI coding agents
+├── CONTEXT.md                 # The TrackFlow company briefing
+├── company-choice.md          # Why TrackFlow was chosen
+├── memory-bank/               # Agent memory: context, status, notes, log
 ├── uis/                       # Frontends (website, backoffice, dashboards)
 ├── services/                  # Centralized FastAPI company API
 ├── data/
@@ -326,9 +319,9 @@ ai-engineering-company-project-monorepo/
 
 ---
 
-## Contributors
+## Credits
 
-This template was built as part of the 4Geeks Academy AI Engineering Career Program by [@marcogonzalo](https://www.linkedin.com/in/marcogonzalo) and [@alesanchezr](https://x.com/alesanchezr) and many other contributors. Find out more about our [AI Engineering Course](https://4geeksacademy.com/en/career-programs/ai-engineering), and [other courses](https://4geeksacademy.com/en/program-comparison).
+The template this project started from was built as part of the 4Geeks Academy AI Engineering Career Program by [@marcogonzalo](https://www.linkedin.com/in/marcogonzalo) and [@alesanchezr](https://x.com/alesanchezr) and many other contributors. Find out more about our [AI Engineering Course](https://4geeksacademy.com/en/career-programs/ai-engineering), and [other courses](https://4geeksacademy.com/en/program-comparison).
 
 You can find other templates and resources like this at the [4Geeks Academy GitHub page](https://github.com/4geeksacademy).
 

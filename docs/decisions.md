@@ -27,6 +27,16 @@ Entry format:
 - **Decision**: A ruleset on `production` requires the `all-green` check from `.github/workflows/testing-kit.yml` before a pull request can merge. mae set it up on 2026-11-13.
 - **Rationale**: Without it the kit's CI only reported, and a merge with failing or weakened tests would still deploy the site to GitHub Pages. The kit's hooks don't run in project threads (Known problems in `memory-bank/status.md`), so CI is the one check every change passes.
 - **Alternatives considered**: leaving CI as a report only, which is how it was installed.
+### [2026-11-13] Decisions stay in one file
+- **Decision**: `docs/decisions.md` stays one list, newest first, rather than one file per decision.
+- **Rationale**: mae said one file makes the decisions easier to learn from later (2026-11-13), since they read as one history. This confirms "Decisions live in `docs/`, not in the memory bank" after the memory bank rebuild raised the question.
+- **Alternatives considered**: one file per decision under `docs/` or in the bank, which the memory bank design prefers because parallel branches can't conflict on separate files. Two branches that each add an entry can still conflict at the top of this file.
+- **Status**: Accepted (2026-11-13).
+
+### [2026-11-13] Claude cloud sessions are the only environment; GitHub Pages the only hosting
+- **Decision**: All work on the project happens in Claude Code cloud sessions, and the website is hosted only on GitHub Pages, by `.github/workflows/pages.yml`. The Codespace is no longer used: the bank and the READMEs stop describing it as an environment, and the Codespaces port steps leave `uis/website/README.md`. `.devcontainer/devcontainer.json` stays, marked unused in the root READMEs, because it came with the course template.
+- **Rationale**: mae said so (2026-11-13). mae's Codespaces credits ran out on 2026-10-26, and Pages has served the site since then.
+- **Alternatives considered**: deleting `.devcontainer/`; mae chose to keep it for now (2026-11-13).
 - **Status**: Accepted (2026-11-13).
 
 ### [2026-11-13] Testing kit installed: test rules, edit guards and CI on pull requests
@@ -111,7 +121,7 @@ Entry format:
 - **Decision**: `uis/website/dist/styles.css` is committed. Anyone who changes classes rebuilds it with `pnpm build` and commits it in the same change; WP5 checks it is up to date.
 - **Rationale**: There is no CI or hosting yet, so a committed file means the site opens straight from the repo and `scripts/site-check.py` runs without a build.
 - **Alternatives considered**: ignoring `dist/` and building in CI or at deploy (no CI or hosting exists yet; revisit when one does).
-- **Status**: Accepted (2026-10-22).
+- **Status**: Accepted (2026-10-22). Revisited once GitHub Pages and the testing kit's CI existed: mae kept it (2026-11-13). The file is only the compiled form of the pages' Tailwind classes and `uis/website/src/input.css`, not a style guide, so a later style change rebuilds it rather than being held back by it.
 
 ### [2026-10-22] Draft website in the project files is reference only
 - **Decision**: The untested website draft kept outside the repo (project shared files, `drafts/website-draft`) is reference material. Milestone 1 packages may borrow from it but are built and checked to `docs/milestones/milestone-1/plan.md`.

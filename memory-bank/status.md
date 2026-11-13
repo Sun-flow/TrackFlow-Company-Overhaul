@@ -18,7 +18,7 @@ Current milestone: Milestone 2. Its brief is not in the repo yet, so nothing is 
 - The committed stylesheet matches its source: `(cd uis/website && pnpm build)` changes nothing.
   (2026-11-13)
 - The live site at https://sun-flow.github.io/TrackFlow-Company-Overhaul/ serves the same home page as
-  `production`; its last deploy, for pull request #23, succeeded. (2026-11-13)
+  `production`; its last deploy, for pull request #25, succeeded. (2026-11-13)
 - The testing kit (0.4.1) is installed: its files match `.claude/testing-kit/manifest.json` except the
   workflow's Node step and two patched scripts (`docs/decisions.md`), and its CI passed on pull
   requests #26 and #27. (2026-11-13)
@@ -32,19 +32,20 @@ Current milestone: Milestone 2. Its brief is not in the repo yet, so nothing is 
 1. mae provides the Milestone 2 brief. It goes in a new folder under `docs/milestones/`, kept as
    received, with a row in `docs/milestones/README.md`. (2026-11-13)
 2. Review `docs/FUTURE_WORK.md` for entries Milestone 2 picks up. (2026-11-13)
-3. Write the milestone's plan beside its brief and confirm it with mae before building. (2026-11-13)
+3. Reconcile the bank (Reconcile in `memory-bank/README.md`), then write the milestone's plan beside
+   its brief and confirm it with mae before building. (2026-11-13)
 
 ## Known problems
 
 - `pnpm install` in `uis/website/` exits 1 under pnpm 12, which no longer reads the build-script setting
-  in `uis/website/package.json`; pnpm 10 works. The dev container installs the latest pnpm, so a new
-  Codespace is likely to hit this ❓ (not run there). (2026-11-13)
+  in `uis/website/package.json`; pnpm 10 works. A session that gets pnpm through corepack hits it
+  (Gotchas in `memory-bank/notes.md`). (2026-11-13)
 - The testing kit's hooks run in a project thread only on the TrackFlow-Company-Overhaul cloud
   environment, whose setup script runs `scripts/wire-cloud-hooks.py`; on Default none run. Seen working
   in one thread after running the script by hand; not yet in a fresh one. (2026-11-13)
 
 ## Open questions
 
-- Is the Codespace with GitHub Copilot still in use? `memory-bank/context.md` marks it ❓. (2026-11-13)
-- What is the `Milestone-1` branch on GitHub for? It stops at pull request #14, before the later
-  Milestone 1 work. (2026-11-13)
+- May the `Milestone-1` branch on GitHub be deleted, or replaced by a `milestone-1` tag? It holds
+  nothing `production` lacks, and is probably the old Codespace branch renamed (log entry
+  `memory-bank/log/2026-11-13-1918-codespace-retired-and-bank-integration-checked.md`). (2026-11-13)
