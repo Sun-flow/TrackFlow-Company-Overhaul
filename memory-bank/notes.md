@@ -39,7 +39,8 @@ goes in `memory-bank/website.md`.
   `production`. Until `git remote set-head origin --auto` has run, the check can't tell what is merged or
   in flight. (2026-11-13)
 - The check's "Merged with no log entry" warning lists pull requests #2 to #24. They were logged while
-  the log was still one file, so nothing is missing; the warning looks back 50 merges. (2026-11-13)
+  the log was still one file, so nothing is missing; the warning looks back 50 merges. Their entries
+  left the log in the Milestone 2 reconcile; git keeps them. (2026-11-13)
 - The cloud proxy refuses schema.org, validator.schema.org, pagespeed.web.dev and the live site on
   github.io. To check JSON-LD, fetch the vocabulary from raw.githubusercontent.com/schemaorg/schemaorg.
   A session's web fetch tool can still read the live site's text. For a PageSpeed report, ask mae for a

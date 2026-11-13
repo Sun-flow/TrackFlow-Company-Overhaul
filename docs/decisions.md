@@ -39,6 +39,8 @@ Entry format:
 - **Decision**: A ruleset on `production` requires the `all-green` check from `.github/workflows/testing-kit.yml` before a pull request can merge. mae set it up on 2026-11-13.
 - **Rationale**: Without it the kit's CI only reported, and a merge with failing or weakened tests would still deploy the site to GitHub Pages. The kit's hooks don't run in project threads (Known problems in `memory-bank/status.md`), so CI is the one check every change passes.
 - **Alternatives considered**: leaving CI as a report only, which is how it was installed.
+- **Status**: Accepted (2026-11-13).
+
 ### [2026-11-13] Decisions stay in one file
 - **Decision**: `docs/decisions.md` stays one list, newest first, rather than one file per decision.
 - **Rationale**: mae said one file makes the decisions easier to learn from later (2026-11-13), since they read as one history. This confirms "Decisions live in `docs/`, not in the memory bank" after the memory bank rebuild raised the question.
