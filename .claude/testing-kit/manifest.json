@@ -1,5 +1,5 @@
 {
-  "version": "0.4.0",
+  "version": "0.4.1",
   "options": {
     "profile": "standard",
     "ci": true,
@@ -18,11 +18,11 @@
     ".claude/testing-kit/bash_audit.py": "c3d7882ee20aee94fbd7d98c6199661b357bd89b17f23541ca51577a3bce5608",
     ".claude/testing-kit/config_guard.py": "254f976f6ce8b58a8be02ac89c0e8ecc11982cf3bdf90a68d96b5de0c5190f1b",
     ".claude/testing-kit/guard_bash.py": "d5ccfd6beefa82ca4c476566e9f2021d84309c576c77b4e6fa74d5c0d0b72799",
-    ".claude/testing-kit/guard_test_edits.py": "a91b362c501d396cb8d896eac01c2fe4c9a4f84eace30838d0fa59f952473010",
-    ".claude/testing-kit/kitlib.py": "c48f52daeb61f1474503d2ffb68f843dd792a23a68ce9376939245fe3121bf40",
+    ".claude/testing-kit/guard_test_edits.py": "fb9a0c3f31fa0906a276a0d569ff7e49c61246f06348cb96744e0a237d31bffd",
+    ".claude/testing-kit/kitlib.py": "750732b21ee5109904a68722c08209332d9af1e75cc6d5ffab2629ee599f8308",
     ".claude/testing-kit/no_src_access.py": "9491e431adf48620ae416568955abe92223c69bc23dea0c087c4aa0c0632bbc8",
     ".claude/testing-kit/protect_tests.py": "54d7b44bf3ac864aaba44300fc0af3d7be641c8252dafa76e1ffe8b84522723d",
-    ".claude/testing-kit/test_diff_guard.py": "e9fc5fb6010632dc508dc844cea85d2f5a72b9cd043d1ad18db0cf76ed80b1ea",
+    ".claude/testing-kit/test_diff_guard.py": "91701471d2addccceeb675cc79c74d564bbe2c00040160ecc34e7313aca9a318",
     ".claude/testing-kit/test_report.py": "b02e1909448940788d25c2e8889599696fa2a69fac586d2ab2af048f4e02e551",
     ".claude/testing-kit/tests_on_stop.py": "363e2d6a891e05491ff28fd98367ef7015eb0b63fbeb5474488219d9b78f8d6d",
     ".github/workflows/testing-kit.yml": "6f590238d3a6fad3d44c1e58a3e0be0ea683175a15360f83407d77f34e67d791",
