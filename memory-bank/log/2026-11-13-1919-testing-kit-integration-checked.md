@@ -12,4 +12,6 @@
   files match its manifest except the workflow's Node step; CI on pull requests #26 and #27 failed only
   at the test guard, by design, and passed once labelled. The browser check, the stylesheet check and
   the bank check pass.
-- Open: how the hooks should run in threads, and branch protection, both in `memory-bank/status.md`.
+- Also recorded: mae's ruleset on `production` requiring the `all-green` check, in `AGENTS.md`,
+  `memory-bank/status.md` and `docs/decisions.md`.
+- Open: how the hooks should run in threads (Open questions in `memory-bank/status.md`).

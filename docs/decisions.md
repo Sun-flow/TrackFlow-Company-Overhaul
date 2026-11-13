@@ -17,6 +17,12 @@ Entry format:
 
 ---
 
+### [2026-11-13] `production` requires the testing kit's `all-green` check
+- **Decision**: A ruleset on `production` requires the `all-green` check from `.github/workflows/testing-kit.yml` before a pull request can merge. mae set it up on 2026-11-13.
+- **Rationale**: Without it the kit's CI only reported, and a merge with failing or weakened tests would still deploy the site to GitHub Pages. The kit's hooks don't run in project threads (Known problems in `memory-bank/status.md`), so CI is the one check every change passes.
+- **Alternatives considered**: leaving CI as a report only, which is how it was installed.
+- **Status**: Accepted (2026-11-13).
+
 ### [2026-11-13] Testing kit installed: test rules, edit guards and CI on pull requests
 - **Decision**: Install mae's testing kit (claude-testing-toolkit 0.4.0, standard profile, with CI). Its fast tier is the form's tests, run with Node's test runner writing a JUnit report; Markdown files under `tests/` are not treated as tests, and `uis/website/js/` is the source the spec-only test writer may not read.
 - **Rationale**: mae asked for it. It gives every session the same testing rules, asks before an existing test is edited, runs the tests when a session changes something, and adds CI that runs the tests and flags weakened ones on every pull request.
