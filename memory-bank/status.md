@@ -40,5 +40,3 @@ Current milestone: Milestone 2. Its brief is not in the repo yet, so nothing is 
 - Is the Codespace with GitHub Copilot still in use? `memory-bank/context.md` marks it ❓. (2026-11-13)
 - What is the `Milestone-1` branch on GitHub for? It stops at pull request #14, before the later
   Milestone 1 work. (2026-11-13)
-- Should the limits of `AGENTS.md` and `memory-bank/README.md` be raised? The check warns on both, and
-  neither can shrink without losing a rule or its reason. Recommended: 850 and 2,400 words. (2026-11-13)

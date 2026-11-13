@@ -9,12 +9,12 @@ Check the bank with `python3 scripts/check-memory.py`.
 
 | Path | Holds | Read | Change | Limit |
 |---|---|---|---|---|
-| `AGENTS.md` | The project in brief, Hard rules, session protocol. | Always. | When a rule or the protocol changes. | 700 words |
+| `AGENTS.md` | The project in brief, Hard rules, session protocol. | Always. | When a rule or the protocol changes. | 850 words |
 | `CLAUDE.md` | The line `@AGENTS.md`. `.github/copilot-instructions.md` is the same kind of pointer for GitHub Copilot. | By those tools. | Never: rules go in `AGENTS.md`. | — |
 | `memory-bank/context.md` | Purpose, Map, commands, workflow. | Always. | With the change it describes. | 700 words |
 | `memory-bank/status.md` | The state of `production`. | Always. | When that state changes. | 500 words |
 | `memory-bank/notes.md` | Preferences, gotchas, conventions, misleading code, hazards. | Always. | When something is learned. | 1,200 words |
-| `memory-bank/README.md` | This manual. | On demand. | When the bank's files or rules change. | 1,500 words |
+| `memory-bank/README.md` | This manual. | On demand. | When the bank's files or rules change. | 2,400 words |
 | `memory-bank/website.md` | The website's conventions and traps. | Before work on the website. | When one is learned or stops being true. | 300 words |
 | `memory-bank/work/` | A work file per branch in flight. | To resume a branch or check a collision. | While the branch is open. | 300 words |
 | `memory-bank/log/` | An entry per piece of merged work. | When its name touches the task. | Add entries; only a reconcile deletes one. | 200 words |
