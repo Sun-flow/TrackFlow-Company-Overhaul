@@ -19,7 +19,7 @@ Check the bank with `python3 scripts/check-memory.py`.
 | `memory-bank/work/` | A work file per branch in flight. | To resume a branch or check a collision. | While the branch is open. | 300 words |
 | `memory-bank/log/` | An entry per piece of merged work. | When its name touches the task. | Add entries; only a reconcile deletes one. | 200 words |
 | `uis/AGENTS.md` | Conventions for user interfaces; `uis/CLAUDE.md` points to it. | Before UI work. | When a convention changes. | 300 words |
-| `scripts/check-memory.py` | The check. | Run at session start and before merge. | Replace it whole; never edit it. | — |
+| `scripts/check-memory.py` | The check. Its own tests are `scripts/test_check.py`. | Run at session start and before merge. | Replace both whole, from the same release of the design; never edit them. | — |
 
 ## Terms
 

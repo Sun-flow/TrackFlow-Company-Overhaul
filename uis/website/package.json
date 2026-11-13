@@ -2,6 +2,7 @@
   "name": "@trackflow/website",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "pnpm@10.28.0",
   "description": "TrackFlow public website: landing page and information-request form",
   "scripts": {
     "build": "tailwindcss -i ./src/input.css -o ./dist/styles.css --minify",

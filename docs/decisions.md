@@ -17,6 +17,18 @@ Entry format:
 
 ---
 
+### [2026-11-13] A branch per milestone, for grading
+- **Decision**: Each milestone has its own branch on GitHub, named `Milestone-<N>`, which mae submits for grading. Work still goes through pull requests into `production`; nothing is built on a milestone branch.
+- **Rationale**: mae needs a unique branch per milestone for grading (2026-11-13). Milestone 1's branch was the Codespace branch that pull requests #1 to #14 merged into, renamed `Milestone-1`; mae deleted it on 2026-11-13 after a session suggested a tag instead, then asked for it back.
+- **Alternatives considered**: a `milestone-<N>` tag, which can't be mistaken for a place to branch from; mae needs branches for grading.
+- **Status**: Accepted (2026-11-13). `Milestone-1` points at the end of Milestone 1, the merge of pull request #24 (34e5069), not where the old branch stood (mae, 2026-11-13). mae creates these branches on github.com: GitHub declines a session's push of a branch whose tip is a commit of mae's, under email privacy restrictions (2026-11-13).
+
+### [2026-11-13] Checks on every pull request, and pnpm pinned
+- **Decision**: `.github/workflows/checks.yml` runs `scripts/suite.sh --no-browser` on every pull request into `production`: the form's tests, the stylesheet matching a fresh build, no existing brief changed (`scripts/check-briefs.py`), the checks' own tests and the memory bank check. `uis/website/package.json` pins pnpm 10.28.0, and `uis/website/src/input.css` keeps Markdown out of Tailwind's scan. The browser check stays a step a session runs before opening a pull request.
+- **Rationale**: mae approved them (2026-11-13). A stale stylesheet, an edited brief (Hard rule 1) or a broken bank would otherwise reach the live site unseen; pnpm 12 fails `pnpm install` in `uis/website/`; a document that named a class put it in the published stylesheet (the unused `.static` rule, now gone).
+- **Alternatives considered**: adding the steps to the testing kit's workflow, which its installer rewrites; running the browser check in CI, which needs a browser installed on every run and is left for later.
+- **Status**: Accepted (2026-11-13).
+
 ### [2026-11-13] Testing kit hooks run in project threads through a TrackFlow cloud environment
 - **Decision**: The project uses its own cloud environment, TrackFlow-Company-Overhaul, whose setup script runs `scripts/wire-cloud-hooks.py` before Claude starts. The script gives the folder above the clone a `.claude/settings.json` (the repo's, with permission paths pointed into the repo) and a `.claude/testing-kit` symlink to the repo's kit. Two local patches to the kit go with it: `kitlib.project_dir` finds the repo from the kit's own location before trusting `CLAUDE_PROJECT_DIR`, so the hooks and the `spec-test-writer` agent work when Claude starts above the repo, and the bash guard resolves relative paths from the shell's directory.
 - **Rationale**: A project thread starts Claude in the folder above the clone, so the repo's settings never loaded and none of the kit's hooks ran (found 2026-11-13). mae chose this (2026-11-13) and asked for the kit fixes too. The settings copy is made fresh in every new container, so it follows the repo.

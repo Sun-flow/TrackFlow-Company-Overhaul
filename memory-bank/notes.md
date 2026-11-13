@@ -40,9 +40,6 @@ goes in `memory-bank/website.md`.
   in flight. (2026-11-13)
 - The check's "Merged with no log entry" warning lists pull requests #2 to #24. They were logged while
   the log was still one file, so nothing is missing; the warning looks back 50 merges. (2026-11-13)
-- In a cloud session `corepack pnpm` downloads the latest pnpm (12.18.0), whose `pnpm install` fails here
-  (Known problems in `memory-bank/status.md`). The plain `pnpm` on the PATH is 10.28.0 and works.
-  (2026-11-13)
 - The cloud proxy refuses schema.org, validator.schema.org, pagespeed.web.dev and the live site on
   github.io. To check JSON-LD, fetch the vocabulary from raw.githubusercontent.com/schemaorg/schemaorg.
   A session's web fetch tool can still read the live site's text. For a PageSpeed report, ask mae for a
@@ -71,8 +68,7 @@ home: `uis/AGENTS.md` for every user interface, `memory-bank/website.md` for the
 
 Things not to copy, and names that no longer mean what they say.
 
-- The `Milestone-1` branch on GitHub is not the end of Milestone 1: it stops at pull request #14. Branch
-  from `origin/production`. (2026-11-13)
+- A `Milestone-<N>` branch is for grading, not for work: branch from `origin/production`. (2026-11-13)
 - `.claude/testing-kit/kitlib.py` and `.claude/testing-kit/guard_bash.py` carry local patches (`docs/decisions.md`).
   Re-running the kit's installer overwrites them unless the kit has taken the same change. (2026-11-13)
 - `docs/milestones/milestone-1/plan.md` is a record of a finished milestone. Its memory-bank steps
