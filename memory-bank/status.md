@@ -37,15 +37,12 @@ Current milestone: Milestone 2. Its brief is not in the repo yet, so nothing is 
 
 ## Known problems
 
-- `pnpm install` in `uis/website/` exits 1 under pnpm 12, which no longer reads the build-script setting
-  in `uis/website/package.json`; pnpm 10 works. A session that gets pnpm through corepack hits it
-  (Gotchas in `memory-bank/notes.md`). (2026-11-13)
 - The testing kit's hooks run in a project thread only on the TrackFlow-Company-Overhaul cloud
-  environment, whose setup script runs `scripts/wire-cloud-hooks.py`; on Default none run. Seen working
-  in one thread after running the script by hand; not yet in a fresh one. (2026-11-13)
+  environment, whose setup script runs `scripts/wire-cloud-hooks.py`; on Default none run. Confirmed in a
+  fresh thread on that environment. (2026-11-13)
 
 ## Open questions
 
-- May the `Milestone-1` branch on GitHub be deleted, or replaced by a `milestone-1` tag? It holds
-  nothing `production` lacks, and is probably the old Codespace branch renamed (log entry
-  `memory-bank/log/2026-11-13-1918-codespace-retired-and-bank-integration-checked.md`). (2026-11-13)
+- Where should the new `Milestone-1` grading branch point: pull request #14, where the old one stood,
+  or #24, the end of Milestone 1? Only mae can create it (`docs/decisions.md`).
+  (2026-11-13)

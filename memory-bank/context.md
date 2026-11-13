@@ -23,8 +23,7 @@ not a real company's system.
   the committed `uis/website/dist/styles.css`, plain JavaScript, and tests in `uis/website/tests/`.
   `uis/website/README.md` describes its files.
 - `uis/AGENTS.md` holds the conventions for every user interface; read it before any UI work.
-- `scripts/` holds repo-wide helpers: `scripts/check-memory.py` checks this bank and
-  `scripts/site-check.py` loads a static site in a browser.
+- `scripts/` holds repo-wide helpers, `scripts/suite.sh` among them; `scripts/README.md` lists them.
 - `.claude/` holds the testing kit: rules every session loads, hooks, skills such as `/write-tests`,
   and `.claude/testing-kit.json` with the test commands. `docs/testing/KIT-GUIDE.md` explains it.
 - The other top-level folders are the course template's homes for later milestones and hold only its
@@ -47,17 +46,16 @@ npx --yes http-server uis/website -p 3000 -c-1
 # One test file
 (cd uis/website && node --test tests/validation.test.js)
 
-# The suite: the smoke command, then
-(cd uis/website && pnpm build) && git status --short uis/website   # prints nothing if the CSS is current
-python3 scripts/site-check.py     # every page in a browser
-python3 scripts/check-memory.py   # this bank
+# The suite: tests, stylesheet, briefs, browser check and this bank; CI runs it with --no-browser
+scripts/suite.sh
 ```
 
 ## Workflow
 
 The default branch is `production` on `origin` (GitHub). Each piece of work gets its own branch and a
 pull request into `production`; mae reviews and merges it, and GitHub then deletes the branch. Work is
-finished when it is merged with the suite passing. The testing kit's workflow,
+finished when it is merged with the suite passing. `.github/workflows/checks.yml` runs the suite on every
+pull request without the browser check. The testing kit's workflow,
 `.github/workflows/testing-kit.yml`, runs the form's tests on every pull request and checks that no test
 was weakened; a pull request that changes tests needs mae's `allow-test-changes` label. A milestone
 starts when its brief is in `docs/milestones/`, is built from a plan mae has confirmed, and is finished

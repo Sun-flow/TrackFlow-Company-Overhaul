@@ -1,0 +1,35 @@
+# The suite on every pull request into production, without the browser check (scripts/suite.sh).
+# The testing kit's own workflow, testing-kit.yml, is separate: its installer rewrites that file.
+name: checks
+on:
+  pull_request:
+    branches: [production]
+permissions:
+  contents: read
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  suite:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+        with: {fetch-depth: 0}
+      # The memory bank check reads the default branch from origin/HEAD, which a checkout doesn't set.
+      - name: Point origin/HEAD at the base branch
+        env: {BASE_REF: "${{ github.base_ref }}"}
+        run: git remote set-head origin "$BASE_REF"
+      - uses: pnpm/action-setup@v4
+        with: {package_json_file: uis/website/package.json}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: uis/website/pnpm-lock.yaml
+      - name: Install the website's build tools
+        run: cd uis/website && pnpm install --frozen-lockfile
+      - name: Suite
+        env: {BASE_REF: "${{ github.base_ref }}"}
+        run: scripts/suite.sh --no-browser

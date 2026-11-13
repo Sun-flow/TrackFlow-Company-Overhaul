@@ -28,7 +28,7 @@ Every page repeats the same `<head>` (apart from title, description and canonica
 
 ## Build and check
 
-Run from this folder with Node 22 and pnpm 10 (`pnpm install` fails under pnpm 12; see Known problems in `memory-bank/status.md`):
+Run from this folder with Node 22 and pnpm 10. `package.json` pins pnpm 10.28.0, which corepack follows; pnpm 12 fails `pnpm install` here.
 
 ```bash
 pnpm install       # once

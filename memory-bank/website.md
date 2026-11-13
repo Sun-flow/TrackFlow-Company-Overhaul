@@ -15,9 +15,12 @@ there ends up in the compiled stylesheet. Date each item and remove it when it s
 
 ## Traps
 
-- Tailwind scans the JavaScript, comments included, and every document in the folder. A word such as
-  `ease-out` in any of them adds CSS to the compiled stylesheet, and because that file is scanned as
-  well, the CSS stays after the word is gone. Restore `uis/website/dist/styles.css` from git and rebuild.
-  (2026-11-13)
+- `uis/website/package.json` pins pnpm 10.28.0. Don't raise it to pnpm 12, whose `pnpm install` fails
+  here because it no longer reads that file's build-script setting. (2026-11-13)
+
+- Tailwind scans the pages and the JavaScript, comments included; `uis/website/src/input.css` keeps
+  Markdown out of the scan. A word such as `ease-out` in a script adds CSS to the compiled stylesheet,
+  and because that file is scanned as well, the CSS stays after the word is gone. Restore
+  `uis/website/dist/styles.css` from git and rebuild. (2026-11-13)
 - Tailwind 4's preflight sets `margin: 0` on everything, so a modal dialog needs `m-auto` to sit in the
   centre. (2026-10-22)

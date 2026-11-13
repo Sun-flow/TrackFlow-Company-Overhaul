@@ -1,7 +1,9 @@
 @import "tailwindcss";
 
-/* Only scan the site's own files */
+/* Only scan the site's own files: not dependencies, and not documents, whose words would otherwise
+   compile into classes (memory-bank/website.md) */
 @source not "../node_modules";
+@source not "../**/*.md";
 
 /* Self-hosted font (latin subset). Tailwind has no utility for declaring a font file, so this is hand-written. */
 @font-face {
