@@ -1,0 +1,35 @@
+{
+  "commands": {
+    "setup": "",
+    "fast": "mkdir -p .reports && cd uis/website && node --test --test-reporter=spec --test-reporter-destination=stdout --test-reporter=junit --test-reporter-destination=../../.reports/junit.xml \"tests/**/*.test.js\"",
+    "full": "mkdir -p .reports && cd uis/website && node --test --test-reporter=spec --test-reporter-destination=stdout --test-reporter=junit --test-reporter-destination=../../.reports/junit.xml \"tests/**/*.test.js\"",
+    "mutation": ""
+  },
+  "junit_path": ".reports/junit.xml",
+  "runner_files": [],
+  "extra_test_globs": [],
+  "not_test_globs": [
+    "**/*.md"
+  ],
+  "src_dirs": [
+    "uis/website/js"
+  ],
+  "default_tier": "low",
+  "high_paths": [],
+  "spec_readable": [
+    "docs/**",
+    "specs/**",
+    "spec/**",
+    "README*",
+    "*.md",
+    "**/*.pyi",
+    "**/*.d.ts",
+    "openapi.*",
+    "**/schema*.json"
+  ],
+  "enforcement": "ask",
+  "stop_hook": {
+    "enabled": true,
+    "timeout_s": 300
+  }
+}
