@@ -25,6 +25,8 @@ not a real company's system.
 - `uis/AGENTS.md` holds the conventions for every user interface; read it before any UI work.
 - `scripts/` holds repo-wide helpers: `scripts/check-memory.py` checks this bank and
   `scripts/site-check.py` loads a static site in a browser.
+- `.claude/` holds the testing kit: rules every session loads, hooks, skills such as `/write-tests`,
+  and `.claude/testing-kit.json` with the test commands. `docs/testing/KIT-GUIDE.md` explains it.
 - The other top-level folders are the course template's homes for later milestones and hold only its
   READMEs and samples; the root `README.md` says what belongs in each.
 
@@ -55,8 +57,11 @@ python3 scripts/check-memory.py   # this bank
 
 The default branch is `production` on `origin` (GitHub). Each piece of work gets its own branch and a
 pull request into `production`; mae reviews and merges it, and GitHub then deletes the branch. Work is
-finished when it is merged with the suite passing. A milestone starts when its brief is in
-`docs/milestones/`, is built from a plan mae has confirmed, and is finished when mae says so.
+finished when it is merged with the suite passing. The testing kit's workflow,
+`.github/workflows/testing-kit.yml`, runs the form's tests on every pull request and checks that no test
+was weakened; a pull request that changes tests needs mae's `allow-test-changes` label. A milestone
+starts when its brief is in `docs/milestones/`, is built from a plan mae has confirmed, and is finished
+when mae says so.
 
 ## Environments
 

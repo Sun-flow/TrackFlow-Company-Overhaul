@@ -19,7 +19,7 @@ problem to report.
 ## Hard rules
 
 mae approves every exception. Nothing but the session itself enforces these six: `production` has no
-branch protection and no CI (2026-11-13).
+branch protection, and its only CI is the testing kit's checks on tests (2026-11-13).
 
 1. **The brief is law.** Build what the current milestone's brief in `docs/milestones/` says and never
    edit a brief, because each milestone is judged against it. When a request departs from it, say so; if

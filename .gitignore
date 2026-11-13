@@ -2,3 +2,9 @@ __pycache__/
 *.pyc
 .DS_Store
 .site-check/
+# testing kit
+.claude/testing-kit/.state/
+.claude/testing-kit/__pycache__/
+.claude/allow-test-edits
+.reports/
+.claude/settings.local.json
