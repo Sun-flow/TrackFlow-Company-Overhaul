@@ -17,6 +17,12 @@ Entry format:
 
 ---
 
+### [2026-11-13] Testing kit hooks run in project threads through a TrackFlow cloud environment
+- **Decision**: The project uses its own cloud environment, TrackFlow-Company-Overhaul, whose setup script runs `scripts/wire-cloud-hooks.py` before Claude starts. The script gives the folder above the clone a `.claude/settings.json` (the repo's, with permission paths pointed into the repo) and a `.claude/testing-kit` symlink to the repo's kit. Two local patches to the kit go with it: `kitlib.project_dir` finds the repo from the kit's own location before trusting `CLAUDE_PROJECT_DIR`, so the hooks and the `spec-test-writer` agent work when Claude starts above the repo, and the bash guard resolves relative paths from the shell's directory.
+- **Rationale**: A project thread starts Claude in the folder above the clone, so the repo's settings never loaded and none of the kit's hooks ran (found 2026-11-13). mae chose this (2026-11-13) and asked for the kit fixes too. The settings copy is made fresh in every new container, so it follows the repo.
+- **Alternatives considered**: CI and the written rules only, which leaves threads unguarded until the pull request; a fix in the kit alone, which can't make Claude read the repo's settings.
+- **Status**: Accepted (2026-11-13). The same two patches belong in the kit itself, or re-running its installer undoes them.
+
 ### [2026-11-13] `production` requires the testing kit's `all-green` check
 - **Decision**: A ruleset on `production` requires the `all-green` check from `.github/workflows/testing-kit.yml` before a pull request can merge. mae set it up on 2026-11-13.
 - **Rationale**: Without it the kit's CI only reported, and a merge with failing or weakened tests would still deploy the site to GitHub Pages. The kit's hooks don't run in project threads (Known problems in `memory-bank/status.md`), so CI is the one check every change passes.

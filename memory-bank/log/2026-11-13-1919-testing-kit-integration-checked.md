@@ -14,4 +14,7 @@
   the bank check pass.
 - Also recorded: mae's ruleset on `production` requiring the `all-green` check, in `AGENTS.md`,
   `memory-bank/status.md` and `docs/decisions.md`.
-- Open: how the hooks should run in threads (Open questions in `memory-bank/status.md`).
+- Then, on mae's choice: `scripts/wire-cloud-hooks.py`, two kit patches and a TrackFlow cloud
+  environment that runs the script (`docs/decisions.md`). With the script run by hand, the hooks fired
+  in this thread; each hook also answered correctly through the symlink in a scratch copy.
+- Open: seeing the hooks in a fresh thread on the new environment once this merges.
