@@ -141,7 +141,7 @@ Entry format:
 - **Decision**: The untested website draft kept outside the repo (project shared files, `drafts/website-draft`) is reference material. Milestone 1 packages may borrow from it but are built and checked to `docs/milestones/milestone-1/plan.md`.
 - **Rationale**: It was never reviewed or run through the checks; mae was fine with reference or ignore.
 - **Alternatives considered**: using it as the scaffold's starting point (untested code would become everyone's base); ignoring it.
-- **Status**: Accepted (2026-10-22).
+- **Status**: Accepted (2026-10-22). mae had the draft deleted from the project files after Milestone 1 (2026-11-13).
 
 ### [2026-10-22] Placeholder privacy policy page for Milestone 1
 - **Decision**: The site gets a `privacy.html` page that says plainly it is a placeholder, and the form's privacy checkbox links to it. Writing the real policy is tracked in `docs/FUTURE_WORK.md`.

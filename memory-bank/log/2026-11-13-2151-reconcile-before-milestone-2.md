@@ -9,6 +9,8 @@
   `git show <this commit>^:memory-bank/log/` lists them. From `docs/FUTURE_WORK.md`, the CI entry, done
   by `.github/workflows/checks.yml`. From `memory-bank/context.md`, the Playwright install line no cloud
   session runs and two sentences `docs/decisions.md` already holds.
+- Removed outside the repo, on mae's word: the untested website draft in the project's shared files;
+  the manual and its decision now say so.
 - Moved: the two parts still open into `docs/FUTURE_WORK.md`, as "Browser check in CI" and "Hero map on
   phones". The over-limit entry "Testing kit integration checked" split in two, its text unchanged.
 - Fixed: the missing Status on the `all-green` decision; the Milestone 1 README's link to the website.

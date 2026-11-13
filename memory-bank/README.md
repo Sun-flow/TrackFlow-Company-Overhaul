@@ -167,7 +167,7 @@ what moved; git keeps the removed text.
 
 - GitHub holds pull requests, the Pages deploy runs and the repository's settings. Ask it; copy nothing.
 - mae's Claude project, reachable only from Claude cloud sessions, holds a short project memory, shared
-  files (palette screenshots, an untested website draft, a repo consistency report) and the documents
+  files (palette screenshots, a repo consistency report) and the documents
   written for mae's review.
 - Secrets: the project has none (2026-11-13). The first one needs a store chosen with mae and named
   here.
