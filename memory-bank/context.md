@@ -34,7 +34,7 @@ not a real company's system.
 # Setup in a fresh clone: only to rebuild the stylesheet or run the browser check
 (cd uis/website && pnpm install)
 pip3 install -r scripts/requirements.txt
-python3 -m playwright install chromium   # skip in a Claude cloud session (notes.md)
+python3 -m playwright install chromium   # ❓ not run: a Claude cloud session has its own Chromium (notes.md)
 
 # Run the project: the website at http://localhost:3000
 npx --yes http-server uis/website -p 3000 -c-1
@@ -69,5 +69,5 @@ finished when it is merged with the suite passing. A milestone starts when its b
 ## Outputs
 
 The website is published at https://sun-flow.github.io/TrackFlow-Company-Overhaul/ by
-`.github/workflows/pages.yml`. It runs by itself on every push to `production` that changes
-`uis/website/`, and by hand from the Actions tab. GitHub Pages caches pages for ten minutes.
+`.github/workflows/pages.yml`. It runs on every push to `production` that changes `uis/website/` or the
+workflow, and by hand from the Actions tab.

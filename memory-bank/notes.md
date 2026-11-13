@@ -32,6 +32,8 @@ This is mae's solo repo, so mae's preferences apply to every session.
 
 ## Gotchas
 
+Traps in tools and environments.
+
 - A fresh cloud clone doesn't record the remote's default branch, and the check doesn't guess
   `production`. Until `git remote set-head origin --auto` has run, the check can't tell what is merged or
   in flight. (2026-11-13)
@@ -44,31 +46,26 @@ This is mae's solo repo, so mae's preferences apply to every session.
   github.io. To check JSON-LD, fetch the vocabulary from raw.githubusercontent.com/schemaorg/schemaorg.
   A session's web fetch tool can still read the live site's text. For a PageSpeed report, ask mae for a
   screenshot. (2026-11-13)
+- GitHub Pages caches the live site for ten minutes, so a fresh deploy can look unchanged at first.
+  (2026-10-27)
 - The browser check in a cloud session needs the preinstalled Chromium:
   `PLAYWRIGHT_CHROMIUM_EXECUTABLE=/opt/pw-browsers/chromium python3 scripts/site-check.py`. Without the
   variable, Playwright looks for a newer browser build than the session has. (2026-11-13)
 - Lighthouse in a cloud session: serve the site, then run
   `CHROME_PATH=/opt/pw-browsers/chromium npx --yes lighthouse@12 http://localhost:3000/ --chrome-flags="--headless=new --no-sandbox"`
   (add `--preset=desktop` for desktop). (2026-11-13)
-- Tailwind scans the website's JavaScript too, comments included. A word such as `ease-out` in a comment
-  adds CSS to the compiled stylesheet, and because that file is scanned as well, the CSS stays after the
-  word is gone. Restore `uis/website/dist/styles.css` from git and rebuild. (2026-10-26)
-- Tailwind 4's preflight sets `margin: 0` on everything, so a modal dialog needs `m-auto` to sit in the
-  centre. (2026-10-22)
 
 ## Conventions
 
-- The website has no templating. The head, header and footer are repeated in all four pages of
-  `uis/website/`, so a change to a shared part goes into every page. (2026-11-13)
-- The Pages workflow finds each page's stylesheet by its exact tag,
-  `<link rel="stylesheet" href="dist/styles.css" />`, and the deploy fails unless a page has it exactly
-  once. (2026-11-13)
-- Tailwind 4's preflight hides any element that has the `hidden` attribute, even one with a display
-  class. The mobile menu and the form's hidden regions rely on that. (2026-10-22)
+What the code relies on that is written nowhere else. One that belongs to a single part has its own
+home: `uis/AGENTS.md` for every user interface, `memory-bank/website.md` for the website.
+
 - Each README that came with the course template has a Spanish twin, such as `README.es.md` beside
   `README.md`. Change both together. (2026-11-13)
 
 ## Where the code misleads
+
+Things not to copy, and names that no longer mean what they say.
 
 - The root `README.md` is still mostly the course template's text. Its title, "How to start" steps and
   tree describe the template, and it lists a docker-compose.yml that doesn't exist. Only its status box,
@@ -80,12 +77,14 @@ This is mae's solo repo, so mae's preferences apply to every session.
 
 ## Hazards
 
+The safe way through a Hard rule, where it doesn't fit in `AGENTS.md`.
+
 - Facts (Hard rule 2). When a page needs a value no source gives, such as a phone number, leave it out
   or use an obviously fake placeholder like 111-222-3333. Made-up values are fine only inside a clearly
   labelled mock dataset. (2026-10-26)
 - Publishing (Hard rule 4). A merge that changes `uis/website/` is live in about a minute, with no
-  staging step. Run `python3 scripts/site-check.py` and look at its screenshots before opening the pull
-  request. (2026-11-13)
+  staging step. Before opening the pull request, run the browser check (Gotchas give its cloud form) and
+  look at the screenshots it saves in .site-check/, which git ignores. (2026-11-13)
 - Shared history (Hard rule 5). A Claude thread keeps its branch name after its pull request merges.
   Restarting that branch from `origin/production` before new work is not a rewrite of shared history.
   (2026-11-13)

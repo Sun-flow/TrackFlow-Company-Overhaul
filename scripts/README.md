@@ -9,7 +9,7 @@ This folder contains **helper scripts** for the monorepo: development automation
 
 | Script | What it does |
 | ------ | ------------ |
-| `check-memory.py` | Checks the memory bank (`AGENTS.md` and `memory-bank/`) for missing files, broken paths, files over their word limit and undated status items, and lists the work in flight on other branches. `python3 scripts/check-memory.py` (needs only Python 3 and git). |
+| `check-memory.py` | Checks the memory bank (`AGENTS.md` and `memory-bank/`) for missing files, broken paths, files over their word limit and undated status items, and lists the work in flight on other branches. `python3 scripts/check-memory.py` (needs only Python 3 and git). Don't edit it: it comes with the memory bank's design and is replaced whole when that design changes (`memory-bank/README.md`). |
 | `site-check.py` | Serves a static site, screenshots every page at 375/768/1024/1440px, and fails on console errors, horizontal scroll or axe-core violations. `python3 scripts/site-check.py --help`. Needs `pip3 install -r scripts/requirements.txt`. |
 
 > _Spanish version: [README.es.md](./README.es.md)._

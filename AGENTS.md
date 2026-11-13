@@ -18,8 +18,8 @@ problem to report.
 
 ## Hard rules
 
-mae approves every exception. All six are advisory: `production` has no branch protection and no CI
-(2026-11-13).
+mae approves every exception. Nothing but the session itself enforces these six: `production` has no
+branch protection and no CI (2026-11-13).
 
 1. **The brief is law.** Build what the current milestone's brief in `docs/milestones/` says and never
    edit a brief, because each milestone is judged against it. When a request departs from it, say so; if
@@ -57,13 +57,13 @@ file near its limit, or before reorganising the bank, read `memory-bank/README.m
    - Collisions: if the check shows another branch on the same work or parts, read its work file and tell
      mae before starting.
 2. **Claim.** In the branch's first commit, add its work file under `memory-bank/work/` and push it;
-   `memory-bank/README.md` has the naming rule. Skip this only for a small change finished and handed
-   over in the same session.
+   `memory-bank/README.md` has the naming rule. Skip this only for a small change that reaches its pull
+   request in the same session.
 3. **While working.** Record what the next session needs in the turn it is learned. Keep the work file
    current and pushed.
 4. **Before merge.** Merge `origin/production` into the branch. Run the suite listed in
    `memory-bank/context.md`; never delete or weaken a test to pass. Put open questions to mae with a
-   recommendation. In the last commit, delete the work file, add a log entry, and update
-   `memory-bank/status.md`, `memory-bank/context.md`, `memory-bank/notes.md` and `docs/decisions.md`
-   where the work changed them. Run the check last, fix what the work caused, and open a pull request
-   into `production`.
+   recommendation. In a closing commit, delete the work file if there is one, add a log entry, and
+   update `memory-bank/status.md`, `memory-bank/context.md`, `memory-bank/notes.md` and
+   `docs/decisions.md` where the work changed them. Then run the check, fix what the work caused, and
+   open a pull request into `production`.

@@ -15,8 +15,9 @@ Check the bank with `python3 scripts/check-memory.py`.
 | `memory-bank/status.md` | The state of `production`. | Always. | When that state changes. | 500 words |
 | `memory-bank/notes.md` | Preferences, gotchas, conventions, misleading code, hazards. | Always. | When something is learned. | 1,200 words |
 | `memory-bank/README.md` | This manual. | On demand. | When the bank's files or rules change. | 1,500 words |
+| `memory-bank/website.md` | The website's conventions and traps. | Before work on the website. | When one is learned or stops being true. | 300 words |
 | `memory-bank/work/` | A work file per branch in flight. | To resume a branch or check a collision. | While the branch is open. | 300 words |
-| `memory-bank/log/` | An entry per piece of merged work. | When its name touches the task. | Add only. | 200 words |
+| `memory-bank/log/` | An entry per piece of merged work. | When its name touches the task. | Add entries; only a reconcile deletes one. | 200 words |
 | `uis/AGENTS.md` | Conventions for user interfaces; `uis/CLAUDE.md` points to it. | Before UI work. | When a convention changes. | 300 words |
 | `scripts/check-memory.py` | The check. | Run at session start and before merge. | Replace it whole; never edit it. | — |
 
@@ -27,7 +28,7 @@ Check the bank with `python3 scripts/check-memory.py`.
 - **session**: one run of an agent. mae is the user and the only maintainer.
 - **always-read file**: `AGENTS.md` and the three files it imports. Any other bank file is **on-demand**.
 - **limit**: a file's maximum size in words. Over it, the check fails an always-read file and warns on
-  any other.
+  any other. An always-read file is **near** its limit above 80% of it, where the check starts to warn.
 - **Hard rule**: a rule in `AGENTS.md` that holds until mae changes it.
 - **Map**: the list of the project's main parts in `memory-bank/context.md`.
 - **entry**: one file in `memory-bank/work/` or `memory-bank/log/`. A **work file** claims one branch's
@@ -47,7 +48,8 @@ Then come the parts of the project it changes; the current state and next step; 
 verify the work, its result and the date; what was tried and ruled out; what it waits on and which
 environment it runs in. A session stopping without merging records the state and next step, and says if
 no one will return. Another session's work file is that session's notes, not fact: check it against its
-branch.
+branch. A branch the check lists as unmerged with no work file is waiting for mae's review, since its
+closing commit removed the file, unless it was never claimed; its pull request tells which.
 
 **Log entry.** Named `<YYYY-MM-DD-HHMM>-<slug>.md`: the UTC time from `date -u +%Y-%m-%d-%H%M`, then
 lowercase words joined by dashes. It says what changed and why, how it was verified, what was left open,
@@ -70,10 +72,12 @@ so anything that must hold for a whole session goes in the root `AGENTS.md`.
 
 Which source wins:
 
-- After the code come the binding docs, then the bank. Correct the lower source in the same session, or
-  tell mae if it may not be edited: a memory that disagrees with its source is only out of date.
-- Hard rules, Accepted decisions and binding docs hold until mae changes them, because they record what
-  mae wants, which code can't show.
+- On what the project is and does, the code wins, then the binding docs, then the bank. Correct the
+  lower source in the same session, or tell mae if it may not be edited: a memory that disagrees with
+  its source is only out of date.
+- On what should be done, Hard rules, Accepted decisions and binding docs hold until mae changes them,
+  because they record what mae wants, which code can't show. Code that falls short of one is a problem
+  to report.
 - mae's instruction wins, but an action under a Hard rule still needs mae's explicit approval: those
   rules guard what can't be undone and what each milestone is judged on.
 - Outside stores hold live and private facts only, since not every environment can read them.
@@ -129,15 +133,15 @@ Changes and conflicts:
 - Edit item by item. A file rewritten from memory loses items.
 - In a merge conflict in a bank file, keep both sides' items, merge true duplicates, keep the newer
   date, then run the check: both sessions learned something.
-- A check finding your work caused is yours to fix. One inherited from `production` is reconcile work:
-  tell mae and fix it on its own branch, so a pull request holds one kind of change.
+- A check finding your work caused is yours to fix on your branch. One inherited from `production` is
+  reconcile work: tell mae and fix it on its own branch, so a pull request holds one kind of change.
 - Brief a subagent with the Hard rules, the bank files its task needs, what to return and what is out of
   scope, because it starts with none of this.
 
-Reconcile, when mae asks ("update the memory bank") or the check warns on size or old dates: go through
-every file and ask of each item whether it is still true, still needed and in the right place, then
-re-date, remove or move it. Do it on its own branch, run the check, and add a log entry saying what was
-removed and what moved.
+Reconcile, when mae asks ("update the memory bank") or `production` carries a size or old-date warning
+that isn't waiting on mae under Open questions in `memory-bank/status.md`: go through every file and ask
+of each item whether it is still true, still needed and in the right place, then re-date, remove or move
+it. Do it on its own branch, run the check, and add a log entry saying what was removed and what moved.
 
 ## Binding docs
 
@@ -148,7 +152,7 @@ removed and what moved.
 | A milestone's plan and definition of done, beside its briefs | Living until mae calls the milestone finished, then frozen; Milestone 1's are frozen | While living. The brief wins over the plan. |
 | `docs/decisions.md` | Living | Add entries and update a status; never delete an entry. |
 | `docs/FUTURE_WORK.md` | Living | Add entries; remove one when a milestone's plan picks it up or it is done. |
-| `docs/milestones/README.md`, the root `README.md` and each folder's README | Living | Yes, with their Spanish twins. |
+| `docs/milestones/README.md`, the root `README.md` and each folder's README | Living | Yes. Where one has a Spanish twin, change both. |
 | `company-choice.md`, why mae chose TrackFlow | Frozen | Never. |
 
 ## Outside stores
