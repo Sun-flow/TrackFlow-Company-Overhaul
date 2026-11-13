@@ -15,4 +15,4 @@
   23 against a check identical to `scripts/check-memory.py`; the bank check shows 0 failed; the form's
   481 tests pass; `pnpm build` leaves the stylesheet unchanged; the last Pages deploy (pull request
   #25) succeeded and the live home page matches `production`.
-- Open: mae's answers on the report's unapplied suggestions.
+- Open: mae's answers on the follow-up list; see the next entry.

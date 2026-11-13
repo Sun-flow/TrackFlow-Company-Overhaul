@@ -1,32 +1,47 @@
-# Proyecto de Compañía - Ingeniería de IA — Plantilla para estudiantes
+# TrackFlow Company Overhaul
 
 [![4Geeks Academy](https://img.shields.io/badge/4Geeks-Academy-blue)](https://4geeksacademy.com)
 [![AI Engineering](https://img.shields.io/badge/track-AI%20Engineering-green)](https://4geeksacademy.com/es/programas-de-carrera/ingenieria-ia)
 
-_Plantilla base para proyectos transversales del Programa de Carrera en Ingeniería de IA — 4Geeks Academy._
+_Proyecto de estudiante del Programa de Carrera en Ingeniería de IA de 4Geeks Academy, construido sobre la plantilla de proyecto de empresa del curso._
 
 _These instructions are also available in [English](./README.md)._
 
 ---
 
-## Propósito
+## Sobre este proyecto
 
-Este repositorio es la **plantilla de inicio** para los proyectos transversales. Trabajarás con escenarios de empresas reales (Brasaland, TrackFlow, Nexova) construyendo entregables que se corresponden con los hitos del curso (Web, Programación, Backend, Telemetría, RAG, Agentes, Workflows, Tiempo real).
+TrackFlow es una empresa ficticia de entregas de última milla y almacenes en Estados Unidos y España; su briefing es [`CONTEXT.md`](./CONTEXT.md), y [`company-choice.md`](./company-choice.md) explica por qué se eligió. Este repositorio hace el trabajo de la unidad tecnológica interna de TrackFlow: reconstruye los sistemas de la empresa hito a hito del curso. Cada hito se construye según su brief en [`docs/milestones/`](./docs/milestones/README.md) y se evalúa contra él.
 
-- Crea una plantilla a partir de este repositorio.
-- Reemplaza el `CONTEXT.md` placeholder por el contexto de tu empresa asignada.
-- Usa `skills/` y los `README.md` por carpeta como guía de trabajo.
+| Hito | Qué entrega | Estado |
+| ---- | ----------- | ------ |
+| 1 | El sitio web público en `uis/website/`: página de inicio, página "About" y formulario de solicitud de información | Terminado; publicado en GitHub Pages |
+| 2 | Aún no se sabe: su brief no está en el repo | Esperando el brief |
+
+Las demás carpetas de primer nivel vienen de la plantilla del curso y solo contienen sus README y ejemplos hasta que un hito las necesite; la guía de carpetas de abajo dice qué va en cada una.
 
 ---
 
-## Cómo empezar
+## Trabajar en este repo
 
-1. **Usa este repositorio como plantilla** y crea tu propio repo de proyecto.
-2. **Clona** tu repositorio (o ábrelo en Codespaces).
-3. **Reemplaza** `CONTEXT.md` con el contexto completo de tu empresa asignada.
-4. **Lee esta guía de carpetas** y abre el `README.md` de la carpeta en la que estés trabajando.
-5. **Empieza a implementar** en la carpeta correcta — no tires todo en la raíz.
-6. **Documenta** lo que añadas: cada app, servicio, agente o pipeline nuevo lleva subcarpeta + README.
+- **Los agentes de código** empiezan en [`AGENTS.md`](./AGENTS.md): las reglas del proyecto y la memoria en `memory-bank/` que conserva el estado entre sesiones.
+- **Las decisiones** y sus motivos están en [`docs/decisions.md`](./docs/decisions.md); las ideas para hitos posteriores se guardan en [`docs/FUTURE_WORK.md`](./docs/FUTURE_WORK.md).
+- **Los cambios** van en una rama y un pull request hacia `production`, que la persona responsable del repo revisa y fusiona. Una fusión que cambia `uis/website/` vuelve a publicar el sitio.
+- **Los tests**: `(cd uis/website && pnpm test)` ejecuta los tests del formulario. El kit de testing en `.claude/` fija las reglas de testing, y su workflow ejecuta los tests en cada pull request ([`docs/testing/KIT-GUIDE.md`](./docs/testing/KIT-GUIDE.md)).
+
+---
+
+## Ejecutar el sitio web
+
+El sitio web del Hito 1 es estático, así que sirve cualquier servidor de archivos. Desde la raíz del repo:
+
+```bash
+npx --yes http-server uis/website -p 3000 -c-1
+```
+
+Abre <http://localhost:3000>. Los detalles están en [`uis/website/README.md`](./uis/website/README.md#run-locally).
+
+El único alojamiento del sitio es GitHub Pages. Una copia pública se publica en <https://sun-flow.github.io/TrackFlow-Company-Overhaul/> en cada push a `production` que toca `uis/website/` ([`.github/workflows/pages.yml`](./.github/workflows/pages.yml); detalles en [`uis/website/README.md`](./uis/website/README.md#public-copy-on-github-pages)).
 
 ---
 
@@ -36,7 +51,7 @@ Estás construyendo **una sola empresa** a lo largo de muchos hitos y proyectos.
 
 | Capa                    | Carpetas                          | Qué vive aquí                                                               |
 | ----------------------- | --------------------------------- | --------------------------------------------------------------------------- |
-| **Contexto de empresa** | `CONTEXT.md`                      | Datos del dominio, nombres de campos y restricciones de tu empresa asignada |
+| **Contexto de empresa** | `CONTEXT.md`                      | Datos del dominio, nombres de campos y restricciones de TrackFlow           |
 | **Cara al usuario**     | `uis/`, `services/`               | Frontends y backends con los que interactúan usuarios u operadores          |
 | **Datos**               | `data/`                           | Archivos crudos, pipelines, datasets procesados y conjuntos de evaluación   |
 | **IA**                  | `agents/`, `skills/`, `mcps/`     | Agentes, capacidades reutilizables para agentes y servidores MCP            |
@@ -49,17 +64,6 @@ Estás construyendo **una sola empresa** a lo largo de muchos hitos y proyectos.
 
 ---
 
-## Estado actual de la plantilla
-
-> 💡 El repositorio partió de la **estructura base de carpetas y documentación** del curso. Su primera aplicación ejecutable es el sitio web público en `uis/website/`, construido en el Hito 1.
->
-> - `CONTEXT.md` contiene el briefing de la empresa TrackFlow (solo en inglés).
-> - `scripts/` tiene dos scripts auxiliares globales, `check-memory.py` y `site-check.py` (ver [`scripts/README.es.md`](./scripts/README.es.md)).
-> - El `AGENTS.md` de la raíz es el punto de entrada para los agentes de código; contiene las reglas que sigue cada sesión y lleva a `memory-bank/` (memoria de los agentes).
-> - Existe metadata del paquete compartido en `packages/shared/package.json` (`@repo/shared-types`), pero aún no hay runner de workspace en raíz.
-
----
-
 ## Guía de carpetas — qué va en cada una
 
 Lee el `README.md` enlazado dentro de cada carpeta antes de empezar a programar ahí.
@@ -68,8 +72,8 @@ Lee el `README.md` enlazado dentro de cada carpeta antes de empezar a programar 
 
 | Ruta                         | Propósito                                                            | Qué haces aquí                                                                                               |
 | ---------------------------- | -------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| [`CONTEXT.md`](./CONTEXT.md) | Fuente única de verdad de tu empresa (Brasaland, TrackFlow o Nexova) | **Primer paso:** copia aquí el briefing de tu empresa para que apps, agentes y prompts usen el mismo dominio |
-| `docker-compose.yml`         | Orquestación local de todo el stack                                  | Mantener en la raíz del repo — conecta `services/`, bases de datos y otros contenedores desde un solo lugar  |
+| [`CONTEXT.md`](./CONTEXT.md) | Fuente única de verdad sobre TrackFlow                               | Léelo antes de construir nada: cada app, agente y prompt usa sus datos                                       |
+| `docker-compose.yml`         | Orquestación local de todo el stack (aún no existe)                  | Créalo en la raíz del repo cuando `services/` o una base de datos necesiten contenedores                     |
 | `README.md` / `README.es.md` | Esta guía                                                            | Orientación — estás aquí                                                                                     |
 | [`AGENTS.md`](./AGENTS.md)   | Punto de entrada para los agentes de código                          | Los agentes lo leen primero; `CLAUDE.md` y `.github/copilot-instructions.md` apuntan a él                    |
 | [`company-choice.md`](./company-choice.md) | Por qué se eligió TrackFlow y la primera idea de agente | Lectura de contexto                                                                                          |
@@ -248,7 +252,8 @@ Lee el `README.md` enlazado dentro de cada carpeta antes de empezar a programar 
 | ---- | ------------ |
 | [`memory-bank/`](./memory-bank/README.md) | Memoria de trabajo de los agentes de código: contexto, estado, notas, un registro del trabajo fusionado y un archivo de trabajo por cada rama en curso. Se lee a través de `AGENTS.md`. |
 | `.devcontainer/` | El dev container de Codespaces: Python 3.12, Node 22 con pnpm. Sin uso desde el 2026-11-13: el trabajo del proyecto se hace en sesiones de Claude Code en la nube. |
-| `.github/` | Configuración de GitHub, incluido el puntero de Copilot a `AGENTS.md`. |
+| `.claude/` | El kit de testing: reglas de testing, hooks, skills y los comandos de test en `.claude/testing-kit.json`. [`docs/testing/KIT-GUIDE.md`](./docs/testing/KIT-GUIDE.md) lo explica. |
+| `.github/` | Configuración de GitHub: los workflows de despliegue en Pages y del kit de testing, y el puntero de Copilot a `AGENTS.md`. |
 
 ---
 
@@ -280,10 +285,12 @@ Guía rápida de decisión:
 ## Estructura del repositorio (árbol)
 
 ```text
-ai-engineering-company-project-monorepo/
+TrackFlow-Company-Overhaul/
 ├── README.md / README.es.md   # Esta guía
-├── CONTEXT.md                 # ← Reemplazar con el briefing de tu empresa
-├── docker-compose.yml         # ← Orquestación local (raíz del repo)
+├── AGENTS.md                  # Punto de entrada para los agentes de código
+├── CONTEXT.md                 # El briefing de la empresa TrackFlow
+├── company-choice.md          # Por qué se eligió TrackFlow
+├── memory-bank/               # Memoria de los agentes: contexto, estado, notas, registro
 ├── uis/                       # Frontends (website, backoffice, dashboards)
 ├── services/                  # API FastAPI centralizada de la empresa
 ├── data/
@@ -312,9 +319,9 @@ ai-engineering-company-project-monorepo/
 
 ---
 
-## Contribuidores
+## Créditos
 
-Esta plantilla fue creada como parte del Programa de Carrera de Ingeniería de IA de 4Geeks Academy por [@marcogonzalo](https://www.linkedin.com/in/marcogonzalo) y [@alezanchezr](https://x.com/alesanchezr), junto a otros muchos colaboradores. Descubre más sobre nuestro [Curso de Ingeniería de IA](https://4geeksacademy.com/es/programas-de-carrera/ingenieria-ia) y sobre [otros cursos](https://4geeksacademy.com/es/comparar-programas).
+La plantilla de la que partió este proyecto fue creada como parte del Programa de Carrera de Ingeniería de IA de 4Geeks Academy por [@marcogonzalo](https://www.linkedin.com/in/marcogonzalo) y [@alezanchezr](https://x.com/alesanchezr), junto a otros muchos colaboradores. Descubre más sobre nuestro [Curso de Ingeniería de IA](https://4geeksacademy.com/es/programas-de-carrera/ingenieria-ia) y sobre [otros cursos](https://4geeksacademy.com/es/comparar-programas).
 
 Puedes encontrar otras plantillas y recursos similares en la [página de GitHub de 4Geeks Academy](https://github.com/4geeksacademy).
 

@@ -142,10 +142,14 @@ Changes and conflicts:
 - Brief a subagent with the Hard rules, the bank files its task needs, what to return and what is out of
   scope, because it starts with none of this.
 
-Reconcile, when mae asks ("update the memory bank") or `production` carries a size or old-date warning
-that isn't waiting on mae under Open questions in `memory-bank/status.md`: go through every file and ask
-of each item whether it is still true, still needed and in the right place, then re-date, remove or move
-it. Do it on its own branch, run the check, and add a log entry saying what was removed and what moved.
+Reconcile, when mae asks ("update the memory bank"), at the start of each milestone before its plan is
+written, or when `production` carries a size or old-date warning that isn't waiting on mae under Open
+questions in `memory-bank/status.md`: go through every file and ask of each item whether it is still
+true, still needed and in the right place, then re-date, remove or move it. The bank drifts most while a
+milestone is built, and a plan built on a stale bank repeats its mistakes (mae, 2026-11-13). An item
+that is still true and needed moves to a better home rather than going, so nothing a later milestone
+needs is lost. Do it on its own branch, run the check, and add a log entry saying what was removed and
+what moved; git keeps the removed text.
 
 ## Binding docs
 
