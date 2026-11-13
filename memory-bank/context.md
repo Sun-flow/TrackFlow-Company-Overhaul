@@ -67,8 +67,9 @@ when mae says so.
 
 Claude Code cloud sessions, started as threads of mae's Claude project, are the only environment
 (mae, 2026-11-13). Each gets a fresh clone and its own branch, `claude/project-thread-<id>`. A proxy
-blocks many hosts, and a session can push only to its own branch. The Codespace that
-`.devcontainer/devcontainer.json` builds is no longer used.
+blocks many hosts, and a session can push only to its own branch. The project's cloud environment,
+TrackFlow-Company-Overhaul, runs `scripts/wire-cloud-hooks.py` so the testing kit's hooks load. The
+Codespace that `.devcontainer/devcontainer.json` builds is no longer used.
 
 ## Outputs
 

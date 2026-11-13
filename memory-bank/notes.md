@@ -52,6 +52,9 @@ goes in `memory-bank/website.md`.
 - The browser check in a cloud session needs the preinstalled Chromium:
   `PLAYWRIGHT_CHROMIUM_EXECUTABLE=/opt/pw-browsers/chromium python3 scripts/site-check.py`. Without the
   variable, Playwright looks for a newer browser build than the session has. (2026-11-13)
+- A project thread starts Claude in the folder above the clone, so the repo's `.claude/settings.json`
+  is never read there; `scripts/wire-cloud-hooks.py` gives that folder a copy. The kit's bash guard also
+  refuses any shell command that names the kit's state folder, even a listing. (2026-11-13)
 - Lighthouse in a cloud session: serve the site, then run
   `CHROME_PATH=/opt/pw-browsers/chromium npx --yes lighthouse@12 http://localhost:3000/ --chrome-flags="--headless=new --no-sandbox"`
   (add `--preset=desktop` for desktop). (2026-11-13)
@@ -70,6 +73,8 @@ Things not to copy, and names that no longer mean what they say.
 
 - The `Milestone-1` branch on GitHub is not the end of Milestone 1: it stops at pull request #14. Branch
   from `origin/production`. (2026-11-13)
+- `.claude/testing-kit/kitlib.py` and `.claude/testing-kit/guard_bash.py` carry local patches (`docs/decisions.md`).
+  Re-running the kit's installer overwrites them unless the kit has taken the same change. (2026-11-13)
 - `docs/milestones/milestone-1/plan.md` is a record of a finished milestone. Its memory-bank steps
   describe a layout that is gone, so don't copy them into a new plan. (2026-11-13)
 
@@ -83,9 +88,10 @@ The safe way through a Hard rule, where it doesn't fit in `AGENTS.md`.
 - Publishing (Hard rule 4). A merge that changes `uis/website/` is live in about a minute, with no
   staging step. Before opening the pull request, run the browser check (Gotchas give its cloud form) and
   look at the screenshots it saves in .site-check/, which git ignores. (2026-11-13)
-- Tests (testing kit). Editing an existing test asks mae first, and when Claude finishes a turn that
-  changed something the form's tests run. Never weaken a test to get past either; a test that looks
-  wrong goes to mae. (2026-11-13)
+- Tests (testing kit). Never weaken a test to get past the kit; a test that looks wrong goes to mae. Its
+  hooks ask before an existing test or kit file is edited and run the form's tests when a turn changed
+  something; an ask waits for mae. Where they don't run (Known problems in `memory-bank/status.md`),
+  follow `.claude/rules/testing.md` by hand and run the smoke command before finishing. (2026-11-13)
 - Shared history (Hard rule 5). A Claude thread keeps its branch name after its pull request merges.
   Restarting that branch from `origin/production` before new work is not a rewrite of shared history.
   (2026-11-13)

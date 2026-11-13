@@ -19,8 +19,11 @@ Current milestone: Milestone 2. Its brief is not in the repo yet, so nothing is 
   (2026-11-13)
 - The live site at https://sun-flow.github.io/TrackFlow-Company-Overhaul/ serves the same home page as
   `production`; its last deploy, for pull request #25, succeeded. (2026-11-13)
-- The testing kit (0.4.1) is installed: `python3 /path/to/claude-testing-toolkit/install.py --check .
-  --run` passes and counts the 481 tests. (2026-11-13)
+- The testing kit (0.4.1) is installed: its files match `.claude/testing-kit/manifest.json` except the
+  workflow's Node step and two patched scripts (`docs/decisions.md`), and its CI passed on pull
+  requests #26 and #27. (2026-11-13)
+- `production` is protected: a ruleset requires the testing kit's `all-green` check before a merge
+  (mae, 2026-11-13; GitHub lists the branch as protected). (2026-11-13)
 - All 39 items of Milestone 1's definition of done are rated done:
   `grep -A9 '^## Summary' docs/milestones/milestone-1/definition-of-done.md`. (2026-11-13)
 
@@ -37,11 +40,12 @@ Current milestone: Milestone 2. Its brief is not in the repo yet, so nothing is 
 - `pnpm install` in `uis/website/` exits 1 under pnpm 12, which no longer reads the build-script setting
   in `uis/website/package.json`; pnpm 10 works. A session that gets pnpm through corepack hits it
   (Gotchas in `memory-bank/notes.md`). (2026-11-13)
+- The testing kit's hooks run in a project thread only on the TrackFlow-Company-Overhaul cloud
+  environment, whose setup script runs `scripts/wire-cloud-hooks.py`; on Default none run. Seen working
+  in one thread after running the script by hand; not yet in a fresh one. (2026-11-13)
 
 ## Open questions
 
-- Should `production` get branch protection requiring the `all-green` check? Until then the testing
-  kit's CI only reports. (2026-11-13)
 - May the `Milestone-1` branch on GitHub be deleted, or replaced by a `milestone-1` tag? It holds
   nothing `production` lacks, and is probably the old Codespace branch renamed (log entry
   `memory-bank/log/2026-11-13-1918-codespace-retired-and-bank-integration-checked.md`). (2026-11-13)
