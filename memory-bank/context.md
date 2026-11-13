@@ -65,14 +65,13 @@ when mae says so.
 
 ## Environments
 
-- Claude Code cloud sessions, started as threads of mae's Claude project. Each gets a fresh clone and its
-  own branch, `claude/project-thread-<id>`. A proxy blocks many hosts, and a session can push only to its
-  own branch.
-- A GitHub Codespace built from `.devcontainer/devcontainer.json`, where mae has used GitHub Copilot.
-  ❓ Unused since mae's Codespaces credits ran out on 2026-10-26; mae can say whether it still counts.
+Claude Code cloud sessions, started as threads of mae's Claude project, are the only environment
+(mae, 2026-11-13). Each gets a fresh clone and its own branch, `claude/project-thread-<id>`. A proxy
+blocks many hosts, and a session can push only to its own branch. The Codespace that
+`.devcontainer/devcontainer.json` builds is no longer used.
 
 ## Outputs
 
 The website is published at https://sun-flow.github.io/TrackFlow-Company-Overhaul/ by
-`.github/workflows/pages.yml`. It runs on every push to `production` that changes `uis/website/` or the
+`.github/workflows/pages.yml`, its only hosting (mae, 2026-11-13). It runs on every push to `production` that changes `uis/website/` or the
 workflow, and by hand from the Actions tab.

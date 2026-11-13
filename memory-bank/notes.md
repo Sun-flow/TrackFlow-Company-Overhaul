@@ -68,9 +68,6 @@ home: `uis/AGENTS.md` for every user interface, `memory-bank/website.md` for the
 
 Things not to copy, and names that no longer mean what they say.
 
-- The root `README.md` is still mostly the course template's text. Its title, "How to start" steps and
-  tree describe the template, and it lists a docker-compose.yml that doesn't exist. Only its status box,
-  "Run the website" section and agent-folder table are this project's. (2026-11-13)
 - The `Milestone-1` branch on GitHub is not the end of Milestone 1: it stops at pull request #14. Branch
   from `origin/production`. (2026-11-13)
 - `docs/milestones/milestone-1/plan.md` is a record of a finished milestone. Its memory-bank steps
