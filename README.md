@@ -62,15 +62,15 @@ You are building **one company** across many milestones and projects. Each top-l
 
 ## Run the website
 
-The Milestone 1 website is static, so any file server will do. From the repo root, locally or in Codespaces:
+The Milestone 1 website is static, so any file server will do. From the repo root:
 
 ```bash
 npx --yes http-server uis/website -p 3000 -c-1
 ```
 
-Open <http://localhost:3000>; in Codespaces, use the forwarded port 3000 ("Website" in the Ports tab). To share it outside your GitHub account, set that port to Public; the steps are in [`uis/website/README.md`](./uis/website/README.md#run-locally).
+Open <http://localhost:3000>. Details are in [`uis/website/README.md`](./uis/website/README.md#run-locally).
 
-A public copy is published to GitHub Pages at <https://sun-flow.github.io/TrackFlow-Company-Overhaul/> on every push to `production` that touches `uis/website/` ([`.github/workflows/pages.yml`](./.github/workflows/pages.yml); details in [`uis/website/README.md`](./uis/website/README.md#public-copy-on-github-pages)).
+The site's only hosting is GitHub Pages. A public copy is published at <https://sun-flow.github.io/TrackFlow-Company-Overhaul/> on every push to `production` that touches `uis/website/` ([`.github/workflows/pages.yml`](./.github/workflows/pages.yml); details in [`uis/website/README.md`](./uis/website/README.md#public-copy-on-github-pages)).
 
 ---
 
@@ -261,7 +261,7 @@ Read the linked `README.md` inside each folder before you start coding there.
 | Path | What lives here |
 | ---- | --------------- |
 | [`memory-bank/`](./memory-bank/README.md) | Working memory for AI coding agents: context, status, notes, a log of merged work and a work file per branch in flight. Read through `AGENTS.md`. |
-| `.devcontainer/` | The dev container for Codespaces: Python 3.12, Node 22 with pnpm. |
+| `.devcontainer/` | The dev container for Codespaces: Python 3.12, Node 22 with pnpm. Unused since 2026-11-13: the project's work happens in Claude Code cloud sessions. |
 | `.github/` | GitHub configuration, including the Copilot pointer to `AGENTS.md`. |
 
 ---

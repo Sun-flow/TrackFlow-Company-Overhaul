@@ -247,7 +247,7 @@ Lee el `README.md` enlazado dentro de cada carpeta antes de empezar a programar 
 | Ruta | Qué hay aquí |
 | ---- | ------------ |
 | [`memory-bank/`](./memory-bank/README.md) | Memoria de trabajo de los agentes de código: contexto, estado, notas, un registro del trabajo fusionado y un archivo de trabajo por cada rama en curso. Se lee a través de `AGENTS.md`. |
-| `.devcontainer/` | El dev container de Codespaces: Python 3.12, Node 22 con pnpm. |
+| `.devcontainer/` | El dev container de Codespaces: Python 3.12, Node 22 con pnpm. Sin uso desde el 2026-11-13: el trabajo del proyecto se hace en sesiones de Claude Code en la nube. |
 | `.github/` | Configuración de GitHub, incluido el puntero de Copilot a `AGENTS.md`. |
 
 ---

@@ -17,6 +17,12 @@ Entry format:
 
 ---
 
+### [2026-11-13] Claude cloud sessions are the only environment; GitHub Pages the only hosting
+- **Decision**: All work on the project happens in Claude Code cloud sessions, and the website is hosted only on GitHub Pages, by `.github/workflows/pages.yml`. The Codespace is no longer used: the bank and the READMEs stop describing it as an environment, and the Codespaces port steps leave `uis/website/README.md`. `.devcontainer/devcontainer.json` stays, marked unused in the root READMEs, because it came with the course template.
+- **Rationale**: mae said so (2026-11-13). mae's Codespaces credits ran out on 2026-10-26, and Pages has served the site since then.
+- **Alternatives considered**: deleting `.devcontainer/` (left to mae, since it is part of the template the course supplied).
+- **Status**: Accepted (2026-11-13).
+
 ### [2026-11-13] Testing kit installed: test rules, edit guards and CI on pull requests
 - **Decision**: Install mae's testing kit (claude-testing-toolkit 0.4.0, standard profile, with CI). Its fast tier is the form's tests, run with Node's test runner writing a JUnit report; Markdown files under `tests/` are not treated as tests, and `uis/website/js/` is the source the spec-only test writer may not read.
 - **Rationale**: mae asked for it. It gives every session the same testing rules, asks before an existing test is edited, runs the tests when a session changes something, and adds CI that runs the tests and flags weakened ones on every pull request.

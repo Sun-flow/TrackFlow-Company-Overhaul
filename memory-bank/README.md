@@ -10,7 +10,7 @@ Check the bank with `python3 scripts/check-memory.py`.
 | Path | Holds | Read | Change | Limit |
 |---|---|---|---|---|
 | `AGENTS.md` | The project in brief, Hard rules, session protocol. | Always. | When a rule or the protocol changes. | 850 words |
-| `CLAUDE.md` | The line `@AGENTS.md`. `.github/copilot-instructions.md` is the same kind of pointer for GitHub Copilot. | By those tools. | Never: rules go in `AGENTS.md`. | — |
+| `CLAUDE.md` | The line `@AGENTS.md`, then the testing kit's `## Testing` block between `testing-kit` markers, which the kit's installer writes from `.claude/testing-kit.json`. `.github/copilot-instructions.md` is a pointer to `AGENTS.md` for GitHub Copilot. | By those tools. | Never by hand: rules go in `AGENTS.md`, and the block changes only by re-running the installer (`docs/testing/KIT-GUIDE.md`). | — |
 | `memory-bank/context.md` | Purpose, Map, commands, workflow. | Always. | With the change it describes. | 700 words |
 | `memory-bank/status.md` | The state of `production`. | Always. | When that state changes. | 500 words |
 | `memory-bank/notes.md` | Preferences, gotchas, conventions, misleading code, hazards. | Always. | When something is learned. | 1,200 words |

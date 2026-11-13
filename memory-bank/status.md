@@ -18,7 +18,7 @@ Current milestone: Milestone 2. Its brief is not in the repo yet, so nothing is 
 - The committed stylesheet matches its source: `(cd uis/website && pnpm build)` changes nothing.
   (2026-11-13)
 - The live site at https://sun-flow.github.io/TrackFlow-Company-Overhaul/ serves the same home page as
-  `production`; its last deploy, for pull request #23, succeeded. (2026-11-13)
+  `production`; its last deploy, for pull request #25, succeeded. (2026-11-13)
 - The testing kit (0.4.1) is installed: `python3 /path/to/claude-testing-toolkit/install.py --check .
   --run` passes and counts the 481 tests. (2026-11-13)
 - All 39 items of Milestone 1's definition of done are rated done:
@@ -34,13 +34,13 @@ Current milestone: Milestone 2. Its brief is not in the repo yet, so nothing is 
 ## Known problems
 
 - `pnpm install` in `uis/website/` exits 1 under pnpm 12, which no longer reads the build-script setting
-  in `uis/website/package.json`; pnpm 10 works. The dev container installs the latest pnpm, so a new
-  Codespace is likely to hit this ❓ (not run there). (2026-11-13)
+  in `uis/website/package.json`; pnpm 10 works. A session that gets pnpm through corepack hits it
+  (Gotchas in `memory-bank/notes.md`). (2026-11-13)
 
 ## Open questions
 
 - Should `production` get branch protection requiring the `all-green` check? Until then the testing
   kit's CI only reports. (2026-11-13)
-- Is the Codespace with GitHub Copilot still in use? `memory-bank/context.md` marks it ❓. (2026-11-13)
-- What is the `Milestone-1` branch on GitHub for? It stops at pull request #14, before the later
-  Milestone 1 work. (2026-11-13)
+- May the `Milestone-1` branch on GitHub be deleted, or replaced by a `milestone-1` tag? It holds
+  nothing `production` lacks, and is probably the old Codespace branch renamed (log entry
+  `memory-bank/log/2026-11-13-1918-codespace-retired-and-bank-integration-checked.md`). (2026-11-13)
