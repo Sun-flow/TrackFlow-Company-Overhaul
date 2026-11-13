@@ -51,11 +51,11 @@ You are building **one company** across many milestones and projects. Each top-l
 
 ## Current status of the template
 
-> 💡 This repository started from the course's **base folder structure and documentation skeleton**. It has no runnable apps yet; Milestone 1 adds the public website in `uis/website/`.
+> 💡 This repository started from the course's **base folder structure and documentation skeleton**. Its first runnable app is the public website in `uis/website/`, built in Milestone 1.
 >
 > - `CONTEXT.md` holds the TrackFlow company briefing (in English only).
 > - `scripts/` has two global helper scripts, `check-memory.py` and `site-check.py` (see [`scripts/README.md`](./scripts/README.md)).
-> - The root `AGENTS.md` is the entry point for AI coding agents; it leads to `memory-bank/` (agent memory) and `.agents/rules/`.
+> - The root `AGENTS.md` is the entry point for AI coding agents; it holds the rules every session follows and leads to `memory-bank/` (agent memory).
 > - Shared package metadata exists in `packages/shared/package.json` (`@repo/shared-types`), but no workspace runner is configured at root.
 
 ---
@@ -260,8 +260,7 @@ Read the linked `README.md` inside each folder before you start coding there.
 
 | Path | What lives here |
 | ---- | --------------- |
-| [`memory-bank/`](./memory-bank/README.md) | Working memory for AI coding agents: status, session log, notes. Read through `AGENTS.md`. |
-| `.agents/` | The memory bank prompt (`prompts/`) and the rules coding agents follow (`rules/`). Not to be confused with `agents/`, which holds the company's own AI agents. |
+| [`memory-bank/`](./memory-bank/README.md) | Working memory for AI coding agents: context, status, notes, a log of merged work and a work file per branch in flight. Read through `AGENTS.md`. |
 | `.devcontainer/` | The dev container for Codespaces: Python 3.12, Node 22 with pnpm. |
 | `.github/` | GitHub configuration, including the Copilot pointer to `AGENTS.md`. |
 

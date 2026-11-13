@@ -1,44 +1,42 @@
 # Status
 
-> **Last updated**: 2026-10-27
+The state of `production`. Each item ends with the date it was last seen true or, for a question, the
+date asked; re-date an item only after checking it. Edit when what works, what is next, a known problem
+or an open question changes, or when an item is checked and found wrong. Work on a branch belongs in its
+work file, not here.
 
-**Current milestone**: Milestone 1, public website: **done, waiting for mae's review** (2026-10-22). Brief: `docs/milestones/milestone-1/` (landing page + information-request form; Tailwind CSS; responsive, accessible, SEO with Schema.org, full JavaScript validation). Code goes in `uis/website/`.
+Current milestone: Milestone 2. Its brief is not in the repo yet, so nothing is being built
+(2026-11-13). Milestone 1, the public website, is finished.
 
 ## Works
 
-- Milestone 1 briefs are in the repo (`docs/milestones/milestone-1/`).
-- `docs/FUTURE_WORK.md` holds ideas parked for later milestones (PR #2).
-- Agent setup: `AGENTS.md` entry point, `.agents/rules/`, this memory bank, `docs/decisions.md`.
-- Tooling: `scripts/check-memory.py` (memory drift) and `scripts/site-check.py` (screenshots, console errors, horizontal scroll, axe-core).
-- Website scaffold (WP1, PR #7): `uis/website/` builds with `pnpm build`; `uis/website/index.html`, `uis/website/application.html` and `uis/website/privacy.html` (placeholder) share head, header, mobile menu and footer, with empty `<main>`s for WP2 and WP3; all pass `scripts/site-check.py` and keyboard checks. Look: teal and coral, Plus Jakarta Sans (`docs/decisions.md`).
-- Landing page (WP2, PR #9): `uis/website/index.html` has the brief's Hero, Services, Coverage, Why TrackFlow and Contact sections with its exact copy; passes `scripts/site-check.py`.
-- Form markup (WP3, PR #10): `uis/website/application.html` has the 12-field form, error summary, low-volume dialog and success message per the plan's form contract.
-- Form validation (WP4, PR #11): `uis/website/js/validation.js` (pure rules, brief's messages), `uis/website/js/form.js` (contract wiring, D3 dialog), `pnpm test` (96 `node:test` cases). Checked end to end against the merged form markup.
-- Integration and QA (WP5, branch `claude/project-thread-6goo5h`, PR #13): every acceptance item in `docs/milestones/milestone-1/plan.md` is ticked with how it was checked. WP5 removed the font preload (no console errors from the file system now; `docs/decisions.md`), stopped the contact email splitting mid-word, and, after mae's preview review, raised the landing-page card text a step and centred the bullets on the first line.
-- Validation edge cases and stricter rules (follow-up to WP4 and WP5, PR #12): `uis/website/tests/validation-edge-cases.test.js` plus the clean-ups mae approved in `uis/website/js/validation.js` and `uis/website/js/form.js` (decision "Form validation rules" in `docs/decisions.md`); `pnpm test` runs 458 cases, none left as todo.
-- Website copy pass (2026-10-26, PR #19): new `uis/website/about.html` (Our story, Meet the team) with "About" in every menu; Coverage, Contact, footer and form intro copy added around the brief's unchanged text (`docs/decisions.md`). C2 and C4 in the definition of done are rated done against it.
-- Full-screen hero with snap to Services (2026-10-26, branch `claude/project-thread-rb8nep`): `uis/website/js/hero-snap.js`; merged in PR #20, with the lockout fix (300 ms glide, fresh input takes over in its last 30%, only dying momentum held after landing) in PR #21.
-- PageSpeed fixes (2026-10-27, branch `claude/project-thread-wqxbug`): mae's live PageSpeed mobile run scored 100 in all four categories; size-matched fallback font removes the hero's font-swap shift, and the Pages workflow inlines the stylesheet so nothing blocks the first paint and minifies the scripts; PR #23 (`docs/decisions.md`).
-- Milestone 1 checklist fixes (PRs #15, #16, #17): footer contact details, logo and hero map as `<img>`, `role="list"`, `<article>` cards; form page renamed to `uis/website/application.html` with "Clear form", validation from first edit and field names and values in the brief's wording (`docs/decisions.md`); npx run command in the READMEs. `pnpm test` runs 481 cases.
-
-- Definition of done (2026-10-26): `docs/milestones/milestone-1/definition-of-done.md` merges the course rubric and deliverables checklists into 39 rated items; all 39 done (R7 from mae's PageSpeed run on the live GitHub Pages site: 100 in all four categories, mobile). The public Codespaces URL item was dropped (`docs/decisions.md`).
-
-## In progress
-
-Format: `- what — branch, PR, environment (started date)`. Remove the line when it merges or is dropped.
-
+- The public website serves its four pages (landing, About, information-request form, placeholder
+  privacy policy): `npx --yes http-server uis/website -p 3000 -c-1`. (2026-11-13)
+- The form's rules pass 481 tests: `(cd uis/website && pnpm test)`. (2026-11-13)
+- Every page is clean in a browser at four widths, with no console errors, sideways scroll or axe-core
+  violations: `python3 scripts/site-check.py`. (2026-11-13)
+- The committed stylesheet matches its source: `(cd uis/website && pnpm build)` changes nothing.
+  (2026-11-13)
+- The live site at https://sun-flow.github.io/TrackFlow-Company-Overhaul/ serves the same home page as
+  `production`; its last deploy, for pull request #23, succeeded. (2026-11-13)
+- All 39 items of Milestone 1's definition of done are rated done:
+  `grep -A9 '^## Summary' docs/milestones/milestone-1/definition-of-done.md`. (2026-11-13)
 
 ## Next
 
-1. Optional: after the PageSpeed fixes (PR #23) deploy, mae can rerun PageSpeed Insights on https://sun-flow.github.io/TrackFlow-Company-Overhaul/ to confirm the gains; definition of done R7 is already settled by the first run (100 in all four categories).
-2. mae reviews Milestone 1 as a whole, using `docs/milestones/milestone-1/definition-of-done.md`.
-3. When mae calls Milestone 1 finished, move this file to the next milestone and review `docs/FUTURE_WORK.md` for entries it picks up.
-
-## Open questions
-
-- None.
+1. mae provides the Milestone 2 brief. It goes in a new folder under `docs/milestones/`, kept as
+   received, with a row in `docs/milestones/README.md`. (2026-11-13)
+2. Review `docs/FUTURE_WORK.md` for entries Milestone 2 picks up. (2026-11-13)
+3. Write the milestone's plan beside its brief and confirm it with mae before building. (2026-11-13)
 
 ## Known problems
 
-- `docs/milestones/milestone-1/trackflow-BRIEFING.en.md` links to a Spanish brief that was never provided; logged in `docs/FUTURE_WORK.md`.
-- A stale `main` branch on GitHub sits at the initial commit; see `memory-bank/context.md`, "Repo facts".
+- `pnpm install` in `uis/website/` exits 1 under pnpm 12, which no longer reads the build-script setting
+  in `uis/website/package.json`; pnpm 10 works. The dev container installs the latest pnpm, so a new
+  Codespace is likely to hit this ❓ (not run there). (2026-11-13)
+
+## Open questions
+
+- Is the Codespace with GitHub Copilot still in use? `memory-bank/context.md` marks it ❓. (2026-11-13)
+- What is the `Milestone-1` branch on GitHub for? It stops at pull request #14, before the later
+  Milestone 1 work. (2026-11-13)

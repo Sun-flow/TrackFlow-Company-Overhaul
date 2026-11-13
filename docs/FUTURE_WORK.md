@@ -2,7 +2,7 @@
 
 Ideas and follow-ups that are **out of scope for the current milestone** but worth keeping for later ones. Development focuses on the current milestone only; anything else gets parked here.
 
-**Current milestone:** [Milestone 1 — Public website](./milestones/milestone-1/README.md)
+**Current milestone:** named at the top of [`memory-bank/status.md`](../memory-bank/status.md).
 
 ## How to use this file
 
@@ -97,14 +97,7 @@ The briefing specifies "© 2025 TrackFlow"; consider showing the current year (o
 
 ### Continuous integration for the website
 
-The website's checks (`pnpm build` leaving `dist/styles.css` unchanged, `pnpm test`, `scripts/site-check.py`) only run when someone runs them. A CI workflow on pull requests would catch a stale stylesheet or a failing check before merge.
+The website's checks (`pnpm build` leaving `dist/styles.css` unchanged, `pnpm test`, `scripts/site-check.py`) and the memory bank check (`scripts/check-memory.py`) only run when someone runs them. A CI workflow on pull requests would catch a stale stylesheet or a failing check before merge. It is also the moment to revisit the decision "Commit the compiled website CSS" in `docs/decisions.md`: it was taken because no CI or hosting existed, and the site has been hosted on GitHub Pages since Milestone 1.
 
 - **Source:** Milestone 1 WP5 (integration and QA)
 - **Target:** ?
-
-### Repository default branch
-
-The repo's default branch is a Codespaces branch (`codespace-curly-engine-…`) rather than `main`. Consider making `main` the default.
-
-- **Source:** Repo review
-- **Target:** Any

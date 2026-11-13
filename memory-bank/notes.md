@@ -1,27 +1,91 @@
 # Notes
 
-> **Last updated**: 2026-10-27
-> Things learned the hard way. Add to this as soon as you learn something the next session would otherwise rediscover. Keep each note to a line or two, keep only what is highly relevant, and remove notes that stop being true.
+What a session could not learn from the code, git or a command. Write an item in the turn it is learned;
+sessions end without warning. Date each item (YYYY-MM-DD) with the day it was learned or last checked,
+and remove it when it stops being true. A preference stated a second time is marked as repeated, and the
+session proposes to mae that it become a Hard rule.
 
-## Working with mae
+## Preferences
 
-- mae makes the design calls. When a choice changes what users see, offer two or three options with a recommendation instead of picking silently, then log the outcome in `docs/decisions.md`.
-- Confirm a plan with mae before building anything. Answering a question or settling a decision is not a go-ahead to start building.
-- Never invent numbers or statistics (delivery times, rates, counts) in copy or docs: use only figures from `CONTEXT.md`, the briefs or mae. A placeholder that must exist is obviously fake, such as 111-222-3333. The one exception is a clearly labelled mock dataset.
-- mae likes rule changes proposed first with concrete before/after examples, then approves them in one go.
-- Website copy: keep the brief's text word for word and add supplementary content around it, drafted per domain in a doc for mae to review first, with improvements to existing sections marked as such. Voice is warm, people-first and down-to-earth, so farmers, truckers, mid-size local businesses and online stores all feel it is for them. The brief is law and mae interprets it; remind mae when a plan drifts from it. Copy must stay relatable to the brief's fashion, electronics and cosmetics brands. Farmers may be clients; truckers are logistics staff or partners such as local carriers.
-- mae works in more than one environment (Claude Code in the cloud, and GitHub Copilot in a Codespace). Nothing outside the repo carries over between them, so anything worth keeping goes in this folder or `docs/`.
+This is mae's solo repo, so mae's preferences apply to every session.
 
-## Environment and tools
+- mae makes the design calls. When a choice changes what users see, or the brief is silent or unclear,
+  offer two or three options with a recommendation instead of picking silently, then log the outcome in
+  `docs/decisions.md`. (2026-10-21)
+- Confirm a plan with mae before building anything. Answering a question or settling a decision is not a
+  go-ahead to start building. (2026-10-22)
+- mae likes rule changes proposed first with concrete before/after examples, then approves them in one
+  go. (2026-10-22)
+- Read before editing: the brief, the relevant part of `CONTEXT.md`, then the files being changed. Keep
+  diffs small and on the task, and put files where the folder READMEs say they go. (2026-10-21)
+- Verify before saying "done": run the checks the task has, and if one can't be run, say so and why.
+  (2026-10-21)
+- Website copy keeps the brief's text word for word. New copy goes around it, drafted per topic in a doc
+  for mae to review first, with any improvement to an existing section marked as such. (2026-10-26)
+- The voice is warm, people-first and down-to-earth, and reads like an established operator going
+  digital. The audience is the brief's e-commerce brands (fashion, electronics, cosmetics) plus mid-size
+  local and online businesses. Farmers may be clients; truckers are partners or logistics staff, not
+  clients. (2026-10-26)
+- When work turns up a problem, a concern about the application or an idea, tell mae. Don't fix it
+  unasked and don't stay quiet. (2026-11-13)
+- A commit message is a plain imperative sentence with a short reason. (2026-11-13)
 
-- The website has no templating: header, footer and `<head>` are copied in each page in `uis/website/`, so change all of them together.
-- Tailwind 4 preflight hides any element with the `hidden` attribute, even one with a display class; the mobile menu and the form's hidden regions rely on that.
-- In Claude Code cloud sessions `corepack pnpm` fails (missing cached pnpm); the plain `pnpm` on the PATH works.
-- Don't add a font `<link rel="preload">` to the website pages: it logs CORS errors when a page opens from the file system (`docs/decisions.md`).
-- `validator.schema.org` and `schema.org` are blocked by the cloud proxy; the schema.org vocabulary file can be fetched from `raw.githubusercontent.com/schemaorg/schemaorg` to check JSON-LD offline.
-- Lighthouse runs in cloud sessions with `CHROME_PATH=/opt/pw-browsers/chromium npx --yes lighthouse@12 <url> --chrome-flags="--headless=new --no-sandbox"` against a local `http-server`.
-- Tailwind scans the website's JS too, comments included: a word like `ease-out` in a comment adds CSS to `uis/website/dist/styles.css`, and because the compiled file is then scanned it stays after the word is gone. Restore `uis/website/dist/styles.css` from git and rebuild.
-- Tailwind 4 preflight sets `margin: 0` on everything, so a modal `<dialog>` needs `m-auto` to sit in the centre.
-- Lighthouse runs in cloud sessions: serve with the npx command, then `CHROME_PATH=/opt/pw-browsers/chromium npx --yes lighthouse@12 <url> --chrome-flags="--headless=new --no-sandbox"` (add `--preset=desktop` for desktop).
-- `scripts/site-check.py` in cloud sessions: the Python Playwright expects a newer headless shell than `/opt/pw-browsers` has; run it with `PLAYWRIGHT_CHROMIUM_EXECUTABLE=/opt/pw-browsers/chromium-1243/chrome-linux64/chrome` (check the folder name with `ls /opt/pw-browsers`).
-- Cloud sessions can't open pagespeed.web.dev or the github.io site (proxy), and the keyless PageSpeed API is often over quota; ask mae for screenshots of the report.
+## Gotchas
+
+Traps in tools and environments. A trap met while changing the website's code, Tailwind's included,
+goes in `memory-bank/website.md`.
+
+- A fresh cloud clone doesn't record the remote's default branch, and the check doesn't guess
+  `production`. Until `git remote set-head origin --auto` has run, the check can't tell what is merged or
+  in flight. (2026-11-13)
+- The check's "Merged with no log entry" warning lists pull requests #2 to #24. They were logged while
+  the log was still one file, so nothing is missing; the warning looks back 50 merges. (2026-11-13)
+- In a cloud session `corepack pnpm` downloads the latest pnpm (12.18.0), whose `pnpm install` fails here
+  (Known problems in `memory-bank/status.md`). The plain `pnpm` on the PATH is 10.28.0 and works.
+  (2026-11-13)
+- The cloud proxy refuses schema.org, validator.schema.org, pagespeed.web.dev and the live site on
+  github.io. To check JSON-LD, fetch the vocabulary from raw.githubusercontent.com/schemaorg/schemaorg.
+  A session's web fetch tool can still read the live site's text. For a PageSpeed report, ask mae for a
+  screenshot. (2026-11-13)
+- GitHub Pages caches the live site for ten minutes, so a fresh deploy can look unchanged at first.
+  (2026-10-27)
+- The browser check in a cloud session needs the preinstalled Chromium:
+  `PLAYWRIGHT_CHROMIUM_EXECUTABLE=/opt/pw-browsers/chromium python3 scripts/site-check.py`. Without the
+  variable, Playwright looks for a newer browser build than the session has. (2026-11-13)
+- Lighthouse in a cloud session: serve the site, then run
+  `CHROME_PATH=/opt/pw-browsers/chromium npx --yes lighthouse@12 http://localhost:3000/ --chrome-flags="--headless=new --no-sandbox"`
+  (add `--preset=desktop` for desktop). (2026-11-13)
+
+## Conventions
+
+What the code relies on that is written nowhere else. One that belongs to a single part has its own
+home: `uis/AGENTS.md` for every user interface, `memory-bank/website.md` for the website.
+
+- Each README that came with the course template has a Spanish twin, such as `README.es.md` beside
+  `README.md`. Change both together. (2026-11-13)
+
+## Where the code misleads
+
+Things not to copy, and names that no longer mean what they say.
+
+- The root `README.md` is still mostly the course template's text. Its title, "How to start" steps and
+  tree describe the template, and it lists a docker-compose.yml that doesn't exist. Only its status box,
+  "Run the website" section and agent-folder table are this project's. (2026-11-13)
+- The `Milestone-1` branch on GitHub is not the end of Milestone 1: it stops at pull request #14. Branch
+  from `origin/production`. (2026-11-13)
+- `docs/milestones/milestone-1/plan.md` is a record of a finished milestone. Its memory-bank steps
+  describe a layout that is gone, so don't copy them into a new plan. (2026-11-13)
+
+## Hazards
+
+The safe way through a Hard rule, where it doesn't fit in `AGENTS.md`.
+
+- Facts (Hard rule 2). When a page needs a value no source gives, such as a phone number, leave it out
+  or use an obviously fake placeholder like 111-222-3333. Made-up values are fine only inside a clearly
+  labelled mock dataset. (2026-10-26)
+- Publishing (Hard rule 4). A merge that changes `uis/website/` is live in about a minute, with no
+  staging step. Before opening the pull request, run the browser check (Gotchas give its cloud form) and
+  look at the screenshots it saves in .site-check/, which git ignores. (2026-11-13)
+- Shared history (Hard rule 5). A Claude thread keeps its branch name after its pull request merges.
+  Restarting that branch from `origin/production` before new work is not a rewrite of shared history.
+  (2026-11-13)

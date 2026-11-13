@@ -11,7 +11,7 @@ The Milestone 1 public website: a landing page and an information-request form, 
 | `application.html` | Information-request form. |
 | `privacy.html` | Placeholder privacy policy, marked `noindex`. Replacing it is tracked in `docs/FUTURE_WORK.md`. |
 
-Every page repeats the same `<head>` (apart from title, description and canonical), header, skip link and footer. There is no templating, so a change to the shared parts goes into all three files.
+Every page repeats the same `<head>` (apart from title, description and canonical), header, skip link and footer. There is no templating, so a change to the shared parts goes into every page.
 
 ## Layout
 
@@ -28,7 +28,7 @@ Every page repeats the same `<head>` (apart from title, description and canonica
 
 ## Build and check
 
-Run from this folder (Node 22 and pnpm via corepack):
+Run from this folder with Node 22 and pnpm 10 (`pnpm install` fails under pnpm 12; see Known problems in `memory-bank/status.md`):
 
 ```bash
 pnpm install       # once
@@ -61,7 +61,7 @@ The link works only while the codespace is running and the server is up; a codes
 
 ## Public copy on GitHub Pages
 
-`.github/workflows/pages.yml` publishes the site to <https://sun-flow.github.io/TrackFlow-Company-Overhaul/> whenever a push to `production` changes `uis/website/` (or the workflow), and it can also be run by hand from the Actions tab ("Deploy website to GitHub Pages", Run workflow). It copies only the pages, `assets/`, `dist/` and `js/`; nothing is built, since `dist/styles.css` is committed. Use that link for PageSpeed Insights and for anyone outside the repo.
+`.github/workflows/pages.yml` publishes the site to <https://sun-flow.github.io/TrackFlow-Company-Overhaul/> whenever a push to `production` changes `uis/website/` (or the workflow), and it can also be run by hand from the Actions tab ("Deploy website to GitHub Pages", Run workflow). It copies only the pages, `assets/`, `dist/` and `js/`, then minifies the published scripts and puts the stylesheet inside each published page; the files in the repo stay as they are (`docs/decisions.md`). The CSS itself isn't built there, since `dist/styles.css` is committed. Use that link for PageSpeed Insights and for anyone outside the repo.
 
 One-time setup, by a repo admin: **Settings → Pages → Build and deployment → Source: GitHub Actions**. Until then the workflow fails at its deploy step. GitHub Pages is free here because the repo is public.
 
