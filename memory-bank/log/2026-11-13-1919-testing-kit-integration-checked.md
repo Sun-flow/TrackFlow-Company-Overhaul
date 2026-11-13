@@ -1,6 +1,6 @@
 # Testing kit integration checked
 
-2026-11-13, Claude Code in the cloud. Branch `claude/project-thread-hy1bio`.
+2026-11-13, Claude Code in the cloud. Pull request #29, branch `claude/project-thread-hy1bio`.
 
 - Changed: corrected the bank where it said more than is true. The kit's hooks don't run in project
   threads: the session's project folder is the one above the clone, so Claude Code never reads the
