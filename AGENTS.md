@@ -1,36 +1,69 @@
-# AGENTS.md — Agent Entry Point
+# TrackFlow Company Overhaul
 
-> **For AI coding agents.** Start here every session, whatever tool or environment you run in. `CLAUDE.md` and `.github/copilot-instructions.md` point here; keep instructions in this file only.
+A milestone-by-milestone rebuild of the business systems of TrackFlow, a fictional last-mile delivery and
+warehouse company. It is mae's AI Engineering course project, judged against each milestone's brief.
 
-## Project: TrackFlow Company Overhaul
+Read these three files in full before acting:
 
-A monorepo for rebuilding the business infrastructure of TrackFlow, a last-mile delivery and warehouse company (see `CONTEXT.md`). The work is split into milestones, one at a time; each milestone's folder in `docs/milestones/` holds its brief and its plan.
+@memory-bank/context.md
+@memory-bank/status.md
+@memory-bank/notes.md
 
-Two folders with similar names do different jobs: `agents/` holds the AI agents the company's products use, while `.agents/` holds the prompt and rules for coding agents working on this repo.
+## Code wins
 
-## Start of every session
+If the bank disagrees with the code, the tests or git history, follow the code, tell mae, and fix the
+bank before finishing. Never change working code to match the bank. Hard rules and accepted decisions in
+`docs/decisions.md` are the exception: they hold until mae changes them, and code that breaks one is a
+problem to report.
 
-Your memory doesn't carry over between sessions, so this repo keeps it for you in `memory-bank/`.
+## Hard rules
 
-1. Open `memory-bank/README.md` and follow its start-of-session steps. They tell you what the project is, how to run things, which milestone is current, where things stand and what the last session left open.
-2. Read `.agents/rules/core-rules.md`: what is binding, how to stay inside the current milestone, and how to work here.
-3. Before UI work, read `.agents/rules/semantic-html.md` and `.agents/rules/accessibility.md`.
+mae approves every exception. All six are advisory: `production` has no branch protection and no CI
+(2026-11-13).
 
-## End of every session
+1. **The brief is law.** Build what the current milestone's brief in `docs/milestones/` says and never
+   edit a brief, because each milestone is judged against it. When a request departs from it, say so; if
+   mae confirms, log the departure in `docs/decisions.md`.
+2. **Invent no facts.** Numbers, names and contact details in copy, data and docs come only from
+   `CONTEXT.md`, the briefs or mae: an unsourced figure reads as the company's own claim.
+3. **One milestone at a time.** Build only what the current milestone asks, park other ideas in
+   `docs/FUTURE_WORK.md`, and ask before starting a request that seems outside it: building ahead blurs
+   what each milestone delivers.
+4. **mae merges.** Never push to `production` or merge a pull request: a merge is the release, and one
+   that changes `uis/website/` publishes the public site within minutes.
+5. **Leave shared history alone.** Never force-push `production` or another session's branch, or delete a
+   branch you did not create: other work builds on them.
+6. **Commit nothing private.** The repository is public and a pushed commit can't be taken back, so
+   secrets, tokens and personal details stay out of every commit.
 
-Before you finish or hand work back, update the memory bank as `memory-bank/README.md` describes: `status.md`, a new entry at the top of `log.md`, anything learned in `notes.md`. Then run `python3 scripts/check-memory.py` and commit the memory changes with the work. Write things down as you learn them; sessions can end without warning.
+## Where new facts go
 
-## Where things go
+A preference, gotcha or hazard goes in `memory-bank/notes.md`; a change to what works on `production` in
+`memory-bank/status.md`; progress on a branch in its work file; a choice and its reason in
+`docs/decisions.md`; an idea for a later milestone in `docs/FUTURE_WORK.md`. For anything else, for a
+file near its limit, or before reorganising the bank, read `memory-bank/README.md`.
 
-The root `README.md` describes every top-level folder, and each folder has its own `README.md`. Commands are in `memory-bank/context.md`, and its "Where facts live" table maps each kind of fact to its file.
+## Session protocol
 
-| Path | Purpose |
-|---|---|
-| `CONTEXT.md` | The company: departments, people, problems. |
-| `docs/milestones/` | One folder per milestone with its briefs and its plan (a plan.md in the milestone's folder; see `docs/milestones/README.md`). |
-| `docs/decisions.md` | Decisions with lasting consequences, and why. |
-| `docs/FUTURE_WORK.md` | Ideas parked for later milestones. |
-| `uis/website/` | Milestone 1: the public website (static HTML + Tailwind CSS). |
-| `scripts/check-memory.py` | Checks the memory bank and lists commits it hasn't caught up with. |
-| `scripts/site-check.py` | Screenshots a static site at four widths and fails on console errors, horizontal scroll or axe-core violations. |
-| `.agents/prompts/memory-bank.md` | The project-agnostic prompt that builds and maintains `memory-bank/`. |
+1. **Start.**
+   - Branch: run `git fetch --prune && git remote set-head origin --auto`. New work: branch from
+     `origin/production` in a clone no other session uses; a Claude thread uses the branch it was given.
+     Resumed work: check out its branch and read its work file.
+   - Orient: run `python3 scripts/check-memory.py` and read its output (if the script is missing, tell
+     mae and continue). Run the smoke command, `(cd uis/website && pnpm test)`, which needs no setup; if
+     it fails and the failure isn't under Known problems in `memory-bank/status.md`, record it there and
+     tell mae. Open the log entries (`ls memory-bank/log/`) and decisions
+     (`grep '^### ' docs/decisions.md`) whose titles touch the task.
+   - Collisions: if the check shows another branch on the same work or parts, read its work file and tell
+     mae before starting.
+2. **Claim.** In the branch's first commit, add its work file under `memory-bank/work/` and push it;
+   `memory-bank/README.md` has the naming rule. Skip this only for a small change finished and handed
+   over in the same session.
+3. **While working.** Record what the next session needs in the turn it is learned. Keep the work file
+   current and pushed.
+4. **Before merge.** Merge `origin/production` into the branch. Run the suite listed in
+   `memory-bank/context.md`; never delete or weaken a test to pass. Put open questions to mae with a
+   recommendation. In the last commit, delete the work file, add a log entry, and update
+   `memory-bank/status.md`, `memory-bank/context.md`, `memory-bank/notes.md` and `docs/decisions.md`
+   where the work changed them. Run the check last, fix what the work caused, and open a pull request
+   into `production`.
