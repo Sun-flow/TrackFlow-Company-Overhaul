@@ -19,7 +19,7 @@ Current milestone: Milestone 2. Its brief is not in the repo yet, so nothing is 
   (2026-11-13)
 - The live site at https://sun-flow.github.io/TrackFlow-Company-Overhaul/ serves the same home page as
   `production`; its last deploy, for pull request #23, succeeded. (2026-11-13)
-- The testing kit (0.4.0) is installed: `python3 /path/to/claude-testing-toolkit/install.py --check .
+- The testing kit (0.4.1) is installed: `python3 /path/to/claude-testing-toolkit/install.py --check .
   --run` passes and counts the 481 tests. (2026-11-13)
 - All 39 items of Milestone 1's definition of done are rated done:
   `grep -A9 '^## Summary' docs/milestones/milestone-1/definition-of-done.md`. (2026-11-13)
