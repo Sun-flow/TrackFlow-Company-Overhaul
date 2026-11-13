@@ -39,6 +39,8 @@ Entry format:
 - **Decision**: A ruleset on `production` requires the `all-green` check from `.github/workflows/testing-kit.yml` before a pull request can merge. mae set it up on 2026-11-13.
 - **Rationale**: Without it the kit's CI only reported, and a merge with failing or weakened tests would still deploy the site to GitHub Pages. The kit's hooks don't run in project threads (Known problems in `memory-bank/status.md`), so CI is the one check every change passes.
 - **Alternatives considered**: leaving CI as a report only, which is how it was installed.
+- **Status**: Accepted (2026-11-13).
+
 ### [2026-11-13] Decisions stay in one file
 - **Decision**: `docs/decisions.md` stays one list, newest first, rather than one file per decision.
 - **Rationale**: mae said one file makes the decisions easier to learn from later (2026-11-13), since they read as one history. This confirms "Decisions live in `docs/`, not in the memory bank" after the memory bank rebuild raised the question.
@@ -139,7 +141,7 @@ Entry format:
 - **Decision**: The untested website draft kept outside the repo (project shared files, `drafts/website-draft`) is reference material. Milestone 1 packages may borrow from it but are built and checked to `docs/milestones/milestone-1/plan.md`.
 - **Rationale**: It was never reviewed or run through the checks; mae was fine with reference or ignore.
 - **Alternatives considered**: using it as the scaffold's starting point (untested code would become everyone's base); ignoring it.
-- **Status**: Accepted (2026-10-22).
+- **Status**: Accepted (2026-10-22). mae had the draft deleted from the project files after Milestone 1 (2026-11-13).
 
 ### [2026-10-22] Placeholder privacy policy page for Milestone 1
 - **Decision**: The site gets a `privacy.html` page that says plainly it is a placeholder, and the form's privacy checkbox links to it. Writing the real policy is tracked in `docs/FUTURE_WORK.md`.

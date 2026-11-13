@@ -12,4 +12,4 @@ Source briefings for Milestone 1, kept as received, and the plan for building it
 
 The email refers to the company briefing as `BRIEFING.md`; that is `trackflow-BRIEFING.en.md` here.
 
-The implementation lives in [`uis/website/`](../../../uis/README.md).
+The implementation lives in [`uis/website/`](../../../uis/website/README.md).

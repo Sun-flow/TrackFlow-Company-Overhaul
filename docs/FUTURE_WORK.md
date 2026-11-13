@@ -70,6 +70,13 @@ Milestone 1 ships `uis/website/privacy.html` as a clearly marked placeholder so 
 - **Source:** Milestone 1 briefing, form fields; mae's decision of 2026-10-22 (`docs/decisions.md`)
 - **Target:** ?
 
+### Hero map on phones
+
+The home hero's map (`uis/website/assets/hero-map.svg`) shows only from the `lg` width up, so phones and tablets don't see it. Showing it on small screens was left as mae's call when the full-screen hero was built.
+
+- **Source:** full-screen hero thread, 2026-10-26 (log entry removed in the Milestone 2 reconcile; git keeps it)
+- **Target:** ?
+
 ## AI and agents
 
 ### Orchestrator agent
@@ -95,9 +102,9 @@ The briefing specifies "© 2025 TrackFlow"; consider showing the current year (o
 - **Source:** Milestone 1 briefing, "Footer"
 - **Target:** Any
 
-### Continuous integration for the website
+### Browser check in CI
 
-The website's checks (`pnpm build` leaving `dist/styles.css` unchanged, `pnpm test`, `scripts/site-check.py`) and the memory bank check (`scripts/check-memory.py`) only run when someone runs them. A CI workflow on pull requests would catch a stale stylesheet or a failing check before merge. It is also the moment to revisit the decision "Commit the compiled website CSS" in `docs/decisions.md`: it was taken because no CI or hosting existed, and the site has been hosted on GitHub Pages since Milestone 1.
+`.github/workflows/checks.yml` runs the suite on every pull request but skips the browser check (`scripts/site-check.py`), which needs a browser installed on every run. Until CI runs it, a session runs it before opening a pull request that changes the site.
 
-- **Source:** Milestone 1 WP5 (integration and QA)
+- **Source:** decision "Checks on every pull request, and pnpm pinned" in `docs/decisions.md` (2026-11-13), which replaced the wider CI entry parked here since Milestone 1 WP5
 - **Target:** ?
