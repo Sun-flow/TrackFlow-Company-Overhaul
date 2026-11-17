@@ -9,8 +9,7 @@ session gets, and a reconcile never removes them.
 TrackFlow is a fictional last-mile delivery and warehouse company in the United States and Spain. This
 project does the work of its internal tech unit: it builds, one milestone at a time, the systems
 TrackFlow's teams and client brands need, starting with the public website. It is mae's project for the
-4Geeks Academy AI Engineering course, so each milestone is built to a brief and judged against it. It is
-not a real company's system.
+4Geeks Academy AI Engineering course, so each milestone is built to a brief and judged against it.
 
 ## Map
 
@@ -35,7 +34,6 @@ not a real company's system.
 # Setup in a fresh clone: only to rebuild the stylesheet or run the browser check
 (cd uis/website && pnpm install)
 pip3 install -r scripts/requirements.txt
-python3 -m playwright install chromium   # ❓ not run: cloud sessions skip it and use their own Chromium (notes.md)
 
 # Run the project: the website at http://localhost:3000
 npx --yes http-server uis/website -p 3000 -c-1
@@ -46,7 +44,7 @@ npx --yes http-server uis/website -p 3000 -c-1
 # One test file
 (cd uis/website && node --test tests/validation.test.js)
 
-# The suite: tests, stylesheet, briefs, browser check and this bank; CI runs it with --no-browser
+# The suite: tests, stylesheet, briefs, browser check and this bank
 scripts/suite.sh
 ```
 
@@ -65,12 +63,11 @@ when mae says so.
 
 Claude Code cloud sessions, started as threads of mae's Claude project, are the only environment
 (mae, 2026-11-13). Each gets a fresh clone and its own branch, `claude/project-thread-<id>`. A proxy
-blocks many hosts, and a session can push only to its own branch. The project's cloud environment,
-TrackFlow-Company-Overhaul, runs `scripts/wire-cloud-hooks.py` so the testing kit's hooks load. The
-Codespace that `.devcontainer/devcontainer.json` builds is no longer used.
+blocks many hosts, and a session can push only to its own branch. The project's own cloud environment
+and the retired Codespace are in `docs/decisions.md`.
 
 ## Outputs
 
 The website is published at https://sun-flow.github.io/TrackFlow-Company-Overhaul/ by
-`.github/workflows/pages.yml`, its only hosting (mae, 2026-11-13). It runs on every push to `production` that changes `uis/website/` or the
-workflow, and by hand from the Actions tab.
+`.github/workflows/pages.yml`, its only hosting (mae, 2026-11-13). It runs on every push
+to `production` that changes `uis/website/` or the workflow, and by hand from the Actions tab.
