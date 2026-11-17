@@ -32,8 +32,8 @@ public website, is finished.
 
 ## Next
 
-1. mae answers D3 from the ERD (`packages/warehouse-logic/docs/erd.md`) and agrees to the ERD; then
-   WP1's scaffold in `docs/milestones/milestone-2/plan.md`. (2026-11-17)
+1. mae agrees to the ERD (`packages/warehouse-logic/docs/erd.md`); then WP1's scaffold in
+   `docs/milestones/milestone-2/plan.md`. (2026-11-17)
 2. mae picks the plan's extras X1 to X5. (2026-11-17)
 
 ## Known problems
@@ -44,4 +44,3 @@ public website, is finished.
 
 ## Open questions
 
-- Gaps the Milestone 2 brief leaves open: `docs/open-questions.md`, Q1 to Q10. (2026-11-17)

@@ -18,10 +18,10 @@ To re-check, update the rating and evidence in place and the "Last checked" line
 |---|---|
 | ✅ Completely done | 0 |
 | 🟡 Partially done | 0 |
-| ⬜ Not done | 60 |
+| ⬜ Not done | 61 |
 | 🙋 Needs mae | 0 |
 | ❔ Not verifiable here | 0 |
-| **Total** | **60** |
+| **Total** | **61** |
 
 The extras proposed in the plan (X1 to X5) join this list once mae picks them.
 
@@ -98,22 +98,23 @@ The extras proposed in the plan (X1 to X5) join this list once mae picks them.
 
 | ID | Item | Source | Rating | Evidence |
 |---|---|---|---|---|
-| Q1 | Files are organized by responsibility as `src/types/models.ts` and `src/utils/collections.ts`, `search.ts`, `transformations.ts`, `validations.ts`, each function in the file the briefing names | S, B-A5, E-SO1 | ⬜ | |
-| Q2 | Every parameter and return value has an explicit type, and `any` is not used | L8, E-CQ3, B-A1 | ⬜ | |
-| Q3 | No TypeScript compilation errors in any file | E-TC8 | ⬜ | |
-| Q4 | A documented command typechecks the code, and another runs it, during development | G, L10, E-TC9 | ⬜ | |
-| Q5 | TypeScript only, and the code runs both in the browser and in a development environment | G | ⬜ | |
-| Q6 | Each function has one clearly identifiable responsibility | T, G, L9, E-SO2 | ⬜ | |
-| Q7 | Any repeated task has its own function | G | ⬜ | |
-| Q8 | Descriptive names: camelCase variables and functions, PascalCase interfaces and types | T, G-Q, B-A6, E-SO3 | ⬜ | |
-| Q9 | Functions are pure: they use only their parameters and change no global state | G-Q, B-A8, E-CQ1 | ⬜ | |
-| Q10 | Sorting and filtering never modify the original array | B-F, B-A7 | ⬜ | |
-| Q11 | Edge cases handled: empty arrays, elements not found, `null` values | T1, G-Q, B-A3, E-CQ2 | ⬜ | |
-| Q12 | `const` by default, `let` only for values that change | G-Q, E-CQ3 | ⬜ | |
-| Q13 | Comments only where logic needs explaining, and consistent indentation and formatting | G-Q | ⬜ | |
-| Q14 | Field names, entity types and literal values match the briefing exactly, with nothing generic in their place | L's "IMPORTANT" note, E-CA1 | ⬜ | |
-| Q15 | A generic, typed toolkit (filter, sort, group, search, count, sum, average, extremes, rule checks) underneath, with the briefing's functions built from it under their exact names | mae (D6) | ⬜ | |
-| Q16 | Every open question the code relies on is in `docs/open-questions.md`, and the tests that follow a recommendation name it | mae (D5) | ⬜ | |
+| ST1 | Files are organized by responsibility as `src/types/models.ts` and `src/utils/collections.ts`, `search.ts`, `transformations.ts`, `validations.ts`, each function in the file the briefing names | S, B-A5, E-SO1 | ⬜ | |
+| ST2 | Every parameter and return value has an explicit type, and `any` is not used | L8, E-CQ3, B-A1 | ⬜ | |
+| ST3 | No TypeScript compilation errors in any file | E-TC8 | ⬜ | |
+| ST4 | A documented command typechecks the code, and another runs it, during development | G, L10, E-TC9 | ⬜ | |
+| ST5 | TypeScript only, and the code runs both in the browser and in a development environment | G | ⬜ | |
+| ST6 | Each function has one clearly identifiable responsibility | T, G, L9, E-SO2 | ⬜ | |
+| ST7 | Any repeated task has its own function | G | ⬜ | |
+| ST8 | Descriptive names: camelCase variables and functions, PascalCase interfaces and types | T, G-Q, B-A6, E-SO3 | ⬜ | |
+| ST9 | Functions are pure: they use only their parameters and change no global state | G-Q, B-A8, E-CQ1 | ⬜ | |
+| ST10 | Sorting and filtering never modify the original array | B-F, B-A7 | ⬜ | |
+| ST11 | Edge cases handled: empty arrays, elements not found, `null` values | T1, G-Q, B-A3, E-CQ2 | ⬜ | |
+| ST12 | `const` by default, `let` only for values that change | G-Q, E-CQ3 | ⬜ | |
+| ST13 | Comments only where logic needs explaining, and consistent indentation and formatting | G-Q | ⬜ | |
+| ST14 | Field names, entity types and literal values match the briefing exactly, with nothing generic in their place | L's "IMPORTANT" note, E-CA1 | ⬜ | |
+| ST15 | A generic, typed toolkit (filter, sort, group, search, count, sum, average, extremes, rule checks) underneath, with the briefing's functions built from it under their exact names | mae (D6) | ⬜ | |
+| ST16 | Every gap the briefing leaves open was asked in `docs/open-questions.md`, its answer is in `docs/decisions.md`, and the tests that depend on an answer name it (for example `Q2`) | mae (D5) | ⬜ | |
+| ST17 | The improvements mae asked to track (plan, "Tracked improvements") are written up, and built where mae approves | mae (Q1, Q9, Q10) | ⬜ | |
 
 ## Delivery
 

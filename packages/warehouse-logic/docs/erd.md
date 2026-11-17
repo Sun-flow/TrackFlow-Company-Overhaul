@@ -1,7 +1,7 @@
 # Warehouse logic: entity relationship diagram
 
-> **Status**: Draft for mae's agreement (plan WP1). Nothing in `src/` is written until mae agrees.
-> **Source**: `docs/milestones/milestone-2/trackflow-BRIEFING.en.md`, "Business Entities". Every entity, field, type and value below is copied from it. Where the briefing leaves something open, the diagram marks it and points to `docs/open-questions.md`.
+> **Status**: Draft for mae's agreement (plan WP1), updated with mae's answers to Q1 and Q10 (2026-11-17). Nothing in `src/` is written until mae agrees.
+> **Source**: `docs/milestones/milestone-2/trackflow-BRIEFING.en.md`, "Business Entities". Every entity, field, type and value below is copied from it. Where the briefing left something open, the diagram follows mae's answer (`docs/decisions.md`, "Milestone 2's open questions answered").
 
 ## The diagram
 
@@ -10,12 +10,12 @@ Each box is one interface from the briefing. The boxes list the fields in the br
 ```mermaid
 erDiagram
     PRODUCT {
-        string sku PK "e.g. SHOE-BLK-42 (unique per warehouse? Q10)"
+        string sku PK "e.g. SHOE-BLK-42; with warehouse, Q10"
         string name
         ProductCategory category
         number weightKg
         Dimensions dimensions "embedded"
-        WarehouseLocation warehouse PK "with sku, if Q10 (b)"
+        WarehouseLocation warehouse PK "with sku, Q10"
         number stockQuantity
         number minStockThreshold
         number unitCostUSD
@@ -35,7 +35,7 @@ erDiagram
         Destination destination "embedded"
         ShipmentPriority priority
         number declaredValueUSD
-        string carrier FK "null until assigned; name or id? Q1"
+        string carrier FK "carrier name, null until assigned (Q1)"
         ShipmentStatus status
         Date createdAt
     }
@@ -70,27 +70,27 @@ erDiagram
 
     PRODUCT ||--|| DIMENSIONS : "has (stored inside the product)"
     SHIPMENT ||--|| DESTINATION : "goes to (stored inside the shipment)"
-    PRODUCT ||--o{ SHIPMENT : "is shipped in"
-    PRODUCT ||--o{ INVENTORY_MOVEMENT : "has stock changed by"
-    CARRIER |o--o{ SHIPMENT : "is assigned"
+    PRODUCT ||--o{ SHIPMENT : "is shipped in (sku + origin)"
+    PRODUCT ||--o{ INVENTORY_MOVEMENT : "has stock changed by (sku + warehouse)"
+    CARRIER |o--o{ SHIPMENT : "is assigned (by name)"
 ```
 
 How to read the lines: `||` means exactly one, `o{` means zero or more, and `|o` means zero or one. So a product appears in zero or more shipments, and a shipment has zero carriers (`carrier: null`, not assigned yet) or one.
 
 `DIMENSIONS` and `DESTINATION` are not separate records. They are objects stored inside a product or a shipment, drawn as boxes only so their fields can be seen.
 
-## Q1 (was D3): what does `Shipment.carrier` hold?
+## Q1 (was D3): `Shipment.carrier` holds the carrier's name
 
 The briefing gives a carrier two strings, `id` (`"CAR-UPS"`) and `name` (`"UPS"`), and gives a shipment a single `carrier: string | null`. Both options are drawn below, with the briefing's sample carrier.
 
 ```mermaid
 flowchart LR
-    subgraph A["Option (a): the carrier's name (recommended)"]
+    subgraph A["Option (a): the carrier's name (chosen)"]
         direction LR
         SA["Shipment SH-2024-8821<br/>carrier: &quot;UPS&quot;"] -->|matches name| CA["Carrier<br/>id: CAR-UPS<br/>name: UPS"]
         SA -.-> TA["findTopCarriers gives<br/>{ carrier: &quot;UPS&quot;, count: 1 }<br/>a name, as the briefing asks"]
     end
-    subgraph B["Option (b): the carrier's id"]
+    subgraph B["Option (b): the carrier's id (improvement I1)"]
         direction LR
         SB["Shipment SH-2024-8821<br/>carrier: &quot;CAR-UPS&quot;"] -->|matches id| CB["Carrier<br/>id: CAR-UPS<br/>name: UPS"]
         SB -.-> TB["findTopCarriers gives<br/>{ carrier: &quot;CAR-UPS&quot;, count: 1 }<br/>an id, not the name the briefing asks for"]
@@ -105,11 +105,11 @@ flowchart LR
 | If a carrier is renamed | old shipments keep the old name | nothing changes |
 | Readable in raw data | yes | less |
 
-The recommendation is (a), because it is the only option under which the briefing's function works as written. The weakness on renames can go into the improvement reviews later.
+mae chose (a) on 2026-11-17, because it is the only option under which the briefing's function works as written. Moving to (b) is tracked as improvement I1 in the plan: a renamed carrier would otherwise show up as two carriers in `findTopCarriers`, with its old shipments under the old name. That improvement would keep ids in shipments and look names up from the carriers list.
 
-## Q10 (new): what identifies a product?
+## Q10: a product is identified by its SKU and warehouse
 
-The briefing gives each product one `warehouse`, and TrackFlow keeps stock in both Los Angeles and Zaragoza (`CONTEXT.md`, Warehouse Operations). The same SKU stocked in both warehouses is therefore two product records with the same `sku`. A shipment names both `sku` and `origin`, and an inventory movement names both `sku` and `warehouse`. Those pairs only point at one product if a product is identified by its SKU and warehouse together. `findProductBySKU`, though, returns a single product for a SKU. The question is in `docs/open-questions.md`, Q10.
+The briefing gives each product one `warehouse`, and TrackFlow keeps stock in both Los Angeles and Zaragoza (`CONTEXT.md`, Warehouse Operations). The same SKU stocked in both warehouses is therefore two product records with the same `sku`. A shipment names both `sku` and `origin`, and an inventory movement names both `sku` and `warehouse`. Those pairs only point at one product if a product is identified by its SKU and warehouse together, which is what mae chose on 2026-11-17. `findProductBySKU` keeps the briefing's signature and returns the first match. A lookup that returns a SKU's record in every warehouse is tracked as improvement I3.
 
 ## Allowed values
 
@@ -150,4 +150,4 @@ The briefing's 14 rules. These are the only rules built first (plan D7). Propose
 
 ## What the diagram does not decide
 
-The open questions about function behaviour are in `docs/open-questions.md`. Nothing the briefing lacks has been added here: there are no new fields, no new entities and no warehouse or client records.
+The answers about function behaviour (Q2 to Q9) are in `docs/decisions.md`. Nothing the briefing lacks has been added here: there are no new fields, no new entities and no warehouse or client records.

@@ -17,6 +17,22 @@ Entry format:
 
 ---
 
+### [2026-11-17] Milestone 2's open questions answered
+- **Decision**: mae's answers to Q1 to Q10, the gaps the Milestone 2 briefing leaves open. They were asked in `docs/open-questions.md`, which keeps the reasoning in its git history.
+  - Q1: `Shipment.carrier` holds the carrier's `name`. A move to `id`, which survives a rename, is tracked as improvement I1 in the plan.
+  - Q2: the average distance of no shipments is 0.
+  - Q3: `countProductsByCategory` and `groupShipmentsByStatus` return every key, with 0 or `[]`.
+  - Q4: the priority surcharge applies to base, weight and distance together.
+  - Q5: amounts round half up to 2 decimals through one shared helper that is safe against floating-point error.
+  - Q6: a tie on cost in `selectBestCarrier` goes to the higher score, then to the carrier listed first.
+  - Q7: shipment IDs match exactly; only SKUs ignore case.
+  - Q8: `findTopCarriers` returns `[]` for a `topN` of 0 or less, and equal counts keep first-seen order.
+  - Q9: `binarySearchProductByWeight` returns any matching index. Always returning the first is tracked as I2.
+  - Q10: a product is identified by its SKU and warehouse together; `findProductBySKU` returns the first match. A lookup of a SKU in every warehouse is tracked as I3.
+- **Rationale**: mae (2026-11-17). Each is the plainest reading of the briefing; Q3 is what its `Record` return types require; Q10 matches TrackFlow stocking the same SKU in both warehouses (`CONTEXT.md`), which mae called a tough dilemma.
+- **Alternatives considered**: listed per question in `docs/open-questions.md` as of this entry's commit.
+- **Status**: Accepted (2026-11-17).
+
 ### [2026-11-17] Milestone 2 code lives in `packages/warehouse-logic/`
 - **Decision**: The Milestone 2 logic layer is the package `@trackflow/warehouse-logic` in `packages/warehouse-logic/`. It keeps the brief's `src/` tree exactly (`src/types/models.ts`, `src/utils/*.ts`, `src/index.html`) and adds `tests/` and `docs/`.
 - **Rationale**: mae chose it (2026-11-17, plan D1). The root `README.md` puts code reused by several apps in `packages/`, and later milestones will import this layer.

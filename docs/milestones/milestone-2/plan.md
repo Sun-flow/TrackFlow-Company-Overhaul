@@ -1,7 +1,7 @@
 # Milestone 2 execution plan
 
 > **Date created**: 2026-11-17
-> **Status**: mae answered the Phase 0 decisions on 2026-11-17, except D3, which waits on the ERD. WP1 starts with that ERD. The extras X1 to X5 wait for mae to pick.
+> **Status**: mae answered the Phase 0 decisions and open questions Q1 to Q10 on 2026-11-17. WP1 starts once mae agrees to the ERD, now updated with those answers. The extras X1 to X5 wait for mae to pick.
 > **Brief**: every file in this folder except `README.md`, this plan and `definition-of-done.md`. The company briefing (`trackflow-BRIEFING.en.md`, the checklists' `BRIEFING.md`) is the most specific and wins where the others are general. The brief wins over this plan; if they disagree, fix the plan.
 
 Milestone 2 is TrackFlow's first logic layer: typed, pure TypeScript functions that model, filter, search, sort, transform and validate the warehouse and carrier data in the company briefing. It is not an interface and not an AI system; later milestones' scripts and services will import it (`guidelines.md`). This plan splits it into work packages. Each package is one branch, one pull request and one thread. Packages in the same phase can run at the same time because they touch different files; phases run in order.
@@ -26,7 +26,7 @@ Consolidated from the brief files, so every package works from the same list. `d
 
 - **Brief first, then improve.** Each part is first built exactly as the brief asks, tested and documented. Weak spots are then written up with research and evidence, discussed with mae, and only then improved, each improvement as a logged departure in `docs/decisions.md`. This applies to carrier selection (D4) and validations (D7), and to anything else the work turns up.
 - **Optional counts as required.** The optional test page is part of done, and the extras below are proposed in the same spirit, kept to the scope of that page and its tooling.
-- **One question at a time.** Questions the brief leaves open go in `docs/open-questions.md`, one per heading, and not into this plan.
+- **One question at a time.** Questions the brief leaves open go in `docs/open-questions.md`, one per heading, and not into this plan. Answers move to `docs/decisions.md`.
 
 ## Phase 0: decisions
 
@@ -36,9 +36,9 @@ mae answered these on 2026-11-17. Each answered row is logged in `docs/decisions
 |---|---|---|
 | D1 | Where does the code live? | `packages/warehouse-logic/` (`@trackflow/warehouse-logic`), holding the briefing's `src/` tree exactly (`src/types/models.ts`, `src/utils/*.ts`, `src/index.html`), plus `tests/` and `docs/`. |
 | D2 | Tooling | As recommended. TypeScript is the only dependency (pinned, pnpm like the website). `pnpm typecheck` runs `tsc --noEmit`; `pnpm test` runs Node's built-in test runner on `.ts` files directly; `pnpm demo` runs `src/demo.ts` with Node; `pnpm build` compiles browser modules. The suite (so CI too) gains the typecheck and tests, and the testing kit's config gains the package. Changing the kit's config is a guarded change, so mae adds the `allow-test-changes` label. |
-| D3 | What does `Shipment.carrier` hold, the carrier's name or its id? | **Open.** mae decides from the ERD, which shows both options. Now `docs/open-questions.md`, Q1. |
+| D3 | What does `Shipment.carrier` hold, the carrier's name or its id? | The name, as `findTopCarriers` needs, with a move to ids tracked as improvement I1 because names break on a rename (open question Q1, answered from the ERD). |
 | D4 | The briefing's scoring lets a carrier win a country it doesn't serve | Build it exactly as written and show in the tests that every rule is followed and the result is still wrong (the sample shipment to Madrid goes to UPS, which serves only the United States: score 76.4, $30.89, against SEUR's 97.6 and $46.22). Then write up other ways the scoring can fail, in similar and different cases, and discuss them with mae (WP7). Only then build the departure, which makes country and weight must-haves. |
-| D5 | Gaps the briefing leaves open | Split into separate questions in `docs/open-questions.md`, Q2 to Q9, so each can be discussed on its own. Until mae answers, code follows each question's recommendation, and its tests name the question. |
+| D5 | Gaps the briefing leaves open | Split into separate questions, Q2 to Q9 (with Q1 and Q10), so each could be discussed on its own. mae answered all ten on 2026-11-17; the answers are in `docs/decisions.md`, "Milestone 2's open questions answered", and the tests that depend on one name it. |
 | D6 | Functions the briefing doesn't name | Yes, and wider. The aim is a full, efficient toolkit for managing data that can grow with later milestones. Generic, typed building blocks sit underneath, and the briefing's 19 functions are built from them, keeping their exact names and signatures. The proposed set is under "The toolkit" below. |
 | D7 | How far do validations go? | First exactly the briefing's 14 rules, documented. Then improvements, such as the Tech Lead's examples (required fields, coherent dates) and checking that literal values are on their lists, are proposed with research and experience and planned ahead (WP8). They are added only once mae approves them, each as a justified and documented change. |
 | D8 | Build the optional test page? | Yes. Optional work counts as required. Other extras in the same scope are proposed below for mae to pick. |
@@ -94,7 +94,7 @@ Rules for all four threads:
 - Branch from `origin/production` after WP1 merges. Edit only the files listed for your package, plus `docs/open-questions.md` when the work turns up a new question. Report your branch, PR and state to the Milestone 2 plan thread, which keeps the Progress table; don't edit this plan.
 - Tests first, from the brief: write the tests, run them, see them fail for the expected reason, then write the code (`.claude/rules/testing.md`). Expected values come from the briefing's formulas worked by hand, never from running the code. Cover the empty array, not found and every rule's failing side, and assert that no input array was changed.
 - Import types only from `src/types/models.ts`. Build each briefing function from the generic blocks in "The toolkit". A shared helper another package also needs (such as rounding) goes in WP4's file, `src/utils/transformations.ts`, exported; a package that needs it before WP4 merges says so in its PR instead of writing its own copy.
-- Where code follows a recommendation in `docs/open-questions.md`, its test names the question (for example `Q2`).
+- Where code depends on an answered question (`docs/decisions.md`, "Milestone 2's open questions answered"), its test names it (for example `Q2`).
 - Before the PR: `pnpm typecheck`, `pnpm test` and the suite pass.
 
 ### WP2 Search
@@ -106,13 +106,13 @@ Rules for all four threads:
 ### WP3 Collections
 
 - **Files**: `src/utils/collections.ts`, `tests/collections.test.ts`.
-- **Scope**: the generic blocks for `collections.ts` (D6), the briefing's five filter and sort functions, `groupShipmentsByStatus` (Q3), `filterProducts` and `sortProductsBy`. Sorts copy before sorting and keep equal items in their original order.
+- **Scope**: the generic blocks for `collections.ts` (D6), the briefing's five filter and sort functions, `groupShipmentsByStatus` (every status a key, Q3), `filterProducts` and `sortProductsBy`. Sorts copy before sorting and keep equal items in their original order.
 - **Done when**: tests cover each warehouse and category, the low-stock boundary (`stockQuantity` equal to `minStockThreshold` counts as low), both sort directions, several fields at once, empty input, and the inputs left unchanged.
 
 ### WP4 Carrier cost, scoring and reports
 
 - **Files**: `src/utils/transformations.ts`, `tests/transformations.test.ts`. Risk tier medium (D9).
-- **Scope**: the generic blocks for `transformations.ts` (D6), `calculateShippingCost`, `scoreCarrierForShipment` and `selectBestCarrier` exactly as the briefing writes them (D4), the report functions except `groupShipmentsByStatus`, the max and min reports, and the shared helpers. Q2 to Q6 and Q8 as recommended until mae answers.
+- **Scope**: the generic blocks for `transformations.ts` (D6), `calculateShippingCost`, `scoreCarrierForShipment` and `selectBestCarrier` exactly as the briefing writes them (D4), the report functions except `groupShipmentsByStatus`, the max and min reports, and the shared helpers. Q2 to Q6 and Q8 as mae answered them.
 - **Done when**: a test shows the sample shipment going to UPS with every scoring rule applied as written, labelled as the briefing's known failure (D4); tests reproduce the hand-worked sample figures in D4 and the briefing's own example (90% on time is 27 points), each scoring rule on both sides, the surcharge for each priority, the cut-off at exactly 50, no suitable carrier (`null`), ties, empty inputs for every report, null carriers ignored by `findTopCarriers`, and the total inventory value of the samples (45 × 35 + 8 × 650 + 120 × 85 = $16,975.00).
 
 ### WP5 Validations
@@ -145,6 +145,16 @@ Each step here follows the same order: the brief's version is merged and documen
 - **Scope**: proposed improvements to the 14 rules, each backed by research or experience, with a before/after example for each. These include the Tech Lead's examples (required fields not empty, `createdAt` a real date), literal values on their lists for data that arrives untyped, whole-number quantities, `Shipment.origin` matching the product's warehouse, and rules for `InventoryMovement`, which has none yet. mae picks which ones go in, and only those are built.
 - **Done when**: mae has picked, and the picked rules are built and tested.
 
+### Tracked improvements
+
+mae asked for these to be tracked when answering the open questions (2026-11-17). Each one goes the same way as WP7 and WP8: the briefing's behaviour is built first, then a short write-up with a before and after example goes to mae, and only an approved change is built, beside the briefing's version.
+
+| # | Improvement | From | Changes |
+|---|---|---|---|
+| I1 | Shipments refer to carriers by `id`, which never changes, with the name looked up from the carriers list, so a renamed carrier doesn't split its history | Q1 | `Shipment.carrier` and `findTopCarriers` (a variant that is given the carriers) |
+| I2 | A binary search that always returns the first matching index, so it can find every product of a weight, or a weight range | Q9 | `search.ts`, after WP2 |
+| I3 | A lookup that returns a SKU's record in every warehouse, since a product is identified by SKU and warehouse together | Q10 | `search.ts`, after WP2 |
+
 ### WP9 Integration and QA
 
 - **Scope**: merge-check everything; run the suite; read every file against `guidelines.md` and the briefing's names; rate every row of `definition-of-done.md` with evidence; update `memory-bank/status.md` to "Milestone 2 done, waiting for review"; review `docs/FUTURE_WORK.md`; ask mae to create the `Milestone-2` branch at the merge.
@@ -153,7 +163,7 @@ Each step here follows the same order: the brief's version is merged and documen
 ## Order
 
 ```
-D3 + ERD ──> WP1 scaffold ──┬──> WP2 Search ───────────┐
+ERD agreed ─> WP1 scaffold ──┬──> WP2 Search ───────────┐
                              ├──> WP3 Collections ──────┼──> WP6 Demo and page ──┬──> WP7 Carrier review ──────┐
                              ├──> WP4 Cost and reports ─┤                        └──> WP8 Validation review ───┴──> WP9 QA
                              └──> WP5 Validations ──────┘
@@ -166,7 +176,7 @@ Update this table as packages start and merge.
 | Package | Thread | Branch / PR | State |
 |---|---|---|---|
 | Plan and definition of done | Plan Milestone 2 and its definition of done | `claude/project-thread-rky24u`, PR #33 | waiting for mae's merge |
-| D1 to D9 | Plan Milestone 2 and its definition of done | `claude/project-thread-rky24u` | answered by mae 2026-11-17, D3 waits on the ERD |
+| D1 to D9 | Plan Milestone 2 and its definition of done | `claude/project-thread-rky24u` | answered by mae 2026-11-17, with Q1 to Q10 |
 | WP1 Package scaffold and data model | | | not started |
 | WP2 Search | | | not started |
 | WP3 Collections | | | not started |
