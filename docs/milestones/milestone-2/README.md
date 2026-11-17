@@ -11,5 +11,7 @@ Source briefings and guidelines for Milestone 2, kept as received.
 | [`frontend-testing-checklist.md`](./frontend-testing-checklist.md) | Optional frontend / testing page checklist |
 | [`evaluation-checklist.md`](./evaluation-checklist.md) | The checklist the milestone is evaluated against |
 | [`guidelines.md`](./guidelines.md) | mae's guidelines and code quality rules for the milestone, to be expanded as the work goes |
+| [`plan.md`](./plan.md) | How the milestone gets built: decisions for mae, work packages, order and progress |
+| [`definition-of-done.md`](./definition-of-done.md) | Every checklist above merged into one list, with a rating and evidence per item |
 
 The email refers to the company briefing as `BRIEFING.md`; that is `trackflow-BRIEFING.en.md` here.
