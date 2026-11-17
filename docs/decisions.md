@@ -17,6 +17,12 @@ Entry format:
 
 ---
 
+### [2026-11-17] Milestone 2's `guidelines.md` is guarded like a brief
+- **Decision**: `docs/milestones/milestone-2/guidelines.md` stays under `scripts/check-briefs.py` like any brief. mae approves each later edit to it as an exception to Hard rule 1, and the check's failure on that pull request is expected.
+- **Rationale**: mae will expand the guidelines as the milestone goes, but chose to approve each edit rather than change the check (2026-11-17).
+- **Alternatives considered**: adding `guidelines.md` to the check's living files; mae will do this later if the approvals cause friction.
+- **Status**: Accepted (2026-11-17).
+
 ### [2026-11-13] A branch per milestone, for grading
 - **Decision**: Each milestone has its own branch on GitHub, named `Milestone-<N>`, which mae submits for grading. Work still goes through pull requests into `production`; nothing is built on a milestone branch.
 - **Rationale**: mae needs a unique branch per milestone for grading (2026-11-13). Milestone 1's branch was the Codespace branch that pull requests #1 to #14 merged into, renamed `Milestone-1`; mae deleted it on 2026-11-13 after a session suggested a tag instead, then asked for it back.
