@@ -17,6 +17,54 @@ Entry format:
 
 ---
 
+### [2026-11-17] Milestone 2 code lives in `packages/warehouse-logic/`
+- **Decision**: The Milestone 2 logic layer is the package `@trackflow/warehouse-logic` in `packages/warehouse-logic/`. It keeps the brief's `src/` tree exactly (`src/types/models.ts`, `src/utils/*.ts`, `src/index.html`) and adds `tests/` and `docs/`.
+- **Rationale**: mae chose it (2026-11-17, plan D1). The root `README.md` puts code reused by several apps in `packages/`, and later milestones will import this layer.
+- **Alternatives considered**: `src/` at the repo root, which matches `expected-structure.md` literally but mixes one milestone into the monorepo's top level.
+- **Status**: Accepted (2026-11-17).
+
+### [2026-11-17] Milestone 2 tooling: TypeScript only, Node's own test runner
+- **Decision**: TypeScript is the package's only dependency, pinned and installed with pnpm. `pnpm typecheck` runs `tsc --noEmit`, `pnpm test` runs Node's built-in runner on `.ts` files, `pnpm demo` runs `src/demo.ts` with Node, and `pnpm build` compiles browser modules. The suite and CI run the typecheck and tests, and the testing kit's config gains the package. That last change is guarded by the kit, so it needs mae's `allow-test-changes` label.
+- **Rationale**: mae approved it (2026-11-17, plan D2). It gives the guidelines' typecheck and run commands with the fewest moving parts, and the website's tests already use the same runner.
+- **Alternatives considered**: Vitest or Jest, and `tsx`, which add dependencies for no gain here.
+- **Status**: Accepted (2026-11-17).
+
+### [2026-11-17] Build the brief as written, then improve through documented departures
+- **Decision**: Each part of a milestone is first built exactly as its brief says, then tested and documented. Weak spots are written up with research and worked examples and discussed with mae. Only then is an improvement built, logged here as a departure, beside the brief's version and not in place of it. In Milestone 2 this covers carrier selection (plan WP7) and validations (WP8). Validations start with exactly the briefing's 14 rules.
+- **Rationale**: mae's answers to plan D4 and D7 (2026-11-17). The milestone is judged against the brief (Hard rule 1), and a failure the brief causes should be shown, not hidden, before it is fixed.
+- **Alternatives considered**: departing from the brief straight away; adding the Tech Lead's example validations from the start.
+- **Status**: Accepted (2026-11-17).
+
+### [2026-11-17] Carrier selection: the briefing's version first, then country and weight as must-haves
+- **Decision**: `scoreCarrierForShipment` and `selectBestCarrier` follow the briefing exactly. Their tests show its known failure: the sample shipment to Madrid goes to UPS, which serves only the United States (score 76.4, $30.89; SEUR scores 97.6 at $46.22). A review of other ways the scoring can fail comes next. After mae has discussed it, a departure is built that makes the destination country and the weight limit must-haves.
+- **Rationale**: mae's answer to plan D4 (2026-11-17).
+- **Alternatives considered**: building only the briefing's version and parking the fix; building only the fixed version.
+- **Status**: Accepted (2026-11-17). The departure is built only after the review (plan WP7).
+
+### [2026-11-17] A generic toolkit under the briefing's Milestone 2 functions
+- **Decision**: Generic, pure, typed functions (filter by predicates or criteria, multi-field sort, group, partition, linear and binary search, index by key, count, sum, average, max, min, rounding, rule checks) sit underneath. The briefing's 19 functions are built from them, under their exact names and signatures. Functions the brief doesn't name are welcome.
+- **Rationale**: mae wants a full, efficient data toolkit that can grow with later milestones (2026-11-17, plan D6). The checklists also ask for multi-criteria filters, multi-field sorts and max/min reports, which the briefing's list lacks.
+- **Alternatives considered**: only the briefing's functions plus the few the checklists need.
+- **Status**: Accepted (2026-11-17).
+
+### [2026-11-17] Optional milestone work counts as required
+- **Decision**: Whatever a milestone's brief marks optional is built and counted in its definition of done, starting with Milestone 2's test page. Further extras in the same scope are proposed for mae to pick.
+- **Rationale**: mae (2026-11-17, plan D8).
+- **Alternatives considered**: building optional work only if time allows.
+- **Status**: Accepted (2026-11-17).
+
+### [2026-11-17] Medium testing risk tier for Milestone 2's cost and scoring
+- **Decision**: Milestone 2's shipping cost, carrier scoring and reports (plan WP4) use the testing kit's medium tier. That adds tests written from the briefing in a separate context, and a fresh-context review. The other packages use the default low tier.
+- **Rationale**: mae approved it (2026-11-17, plan D9). These are the money paths, and Ana's brief says the code goes into production.
+- **Alternatives considered**: low everywhere.
+- **Status**: Accepted (2026-11-17).
+
+### [2026-11-17] Open questions about a brief go in `docs/open-questions.md`, one per heading
+- **Decision**: Gaps a brief leaves open are written in `docs/open-questions.md` as separate questions, each with what the brief says, the options and a recommendation. Code follows the recommendation until mae answers, and its tests name the question. An answer moves here or into the plan.
+- **Rationale**: mae found several questions bundled into one plan row hard to answer (2026-11-17, plan D5). The file sits in `docs/`, not in `docs/milestones/milestone-2/`, where the brief check would freeze it, and not in the memory bank, which holds memory, not discussions.
+- **Alternatives considered**: the Open questions list in `memory-bank/status.md`, which is limited to a few lines per item.
+- **Status**: Accepted (2026-11-17).
+
 ### [2026-11-17] Milestone 2's `guidelines.md` is guarded like a brief
 - **Decision**: `docs/milestones/milestone-2/guidelines.md` stays under `scripts/check-briefs.py` like any brief. mae approves each later edit to it as an exception to Hard rule 1, and the check's failure on that pull request is expected.
 - **Rationale**: mae will expand the guidelines as the milestone goes, but chose to approve each edit rather than change the check (2026-11-17).

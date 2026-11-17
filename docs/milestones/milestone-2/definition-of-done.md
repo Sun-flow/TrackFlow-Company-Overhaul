@@ -1,27 +1,29 @@
 # Milestone 2 definition of done
 
 > **Date created**: 2026-11-17
-> **Last checked**: 2026-11-17, against `production` at `77f7b0d` (the Milestone 2 brief files, PR #32). Nothing is built yet, so every required item is ⬜.
+> **Last checked**: 2026-11-17, against `production` at `77f7b0d` (the Milestone 2 brief files, PR #32). Nothing is built yet, so every item is ⬜. Revised the same day with mae's answers to the plan's decisions.
 > **Sources**: every checklist and requirement in this folder, merged and de-duplicated. The company briefing (`trackflow-BRIEFING.en.md`, called `BRIEFING.md` in the checklists) still wins where it is more specific.
 
-Milestone 2 is done when every required item below is rated ✅. Optional items (O) don't count toward it. Where several sources ask for the same thing, they are one item and the Source column lists each. `plan.md` says which package delivers each item; the D numbers point to its Phase 0 decisions.
+Milestone 2 is done when every item below is rated ✅. The test page (O) is optional in its checklist but required here: mae counts optional work as required (2026-11-17, plan D8). Items marked "after review" are built only once mae has approved the analysis that comes before them (plan, "How this milestone works"). Where several sources ask for the same thing, they are one item and the Source column lists each. `plan.md` says which package delivers each item; the D numbers point to its Phase 0 decisions.
 
-**Sources**: **B** = `trackflow-BRIEFING.en.md` (**B-F** its Required Functions, **B-A** its Acceptance Criteria, by position), **T** = `milestone2-briefing.md` (the Tech Lead's email, by numbered point), **L** = `backend-logic-checklist.md`, **E** = `evaluation-checklist.md` (counted within each section: TC technical correctness, SO structure and organization, CA context adaptation, CQ code quality), **S** = `expected-structure.md`, **G** = `guidelines.md` (**G-Q** its Code quality list), **FT** = `frontend-testing-checklist.md`.
+**Sources**: **B** = `trackflow-BRIEFING.en.md` (**B-F** its Required Functions, **B-A** its Acceptance Criteria, by position), **T** = `milestone2-briefing.md` (the Tech Lead's email, by numbered point), **L** = `backend-logic-checklist.md`, **E** = `evaluation-checklist.md` (counted within each section: TC technical correctness, SO structure and organization, CA context adaptation, CQ code quality), **S** = `expected-structure.md`, **G** = `guidelines.md` (**G-Q** its Code quality list), **FT** = `frontend-testing-checklist.md`, **mae** = mae's answers to the plan's Phase 0 decisions (2026-11-17).
 
-**Ratings**: ✅ Completely done · 🟡 Partially done · ⬜ Not done · 🙋 Needs mae (only mae can do it) · ❔ Not verifiable here · ➖ Optional, not taken up
+**Ratings**: ✅ Completely done · 🟡 Partially done · ⬜ Not done · 🙋 Needs mae (only mae can do it) · ❔ Not verifiable here
 
 To re-check, update the rating and evidence in place and the "Last checked" line above.
 
 ## Summary
 
-| Rating | Required | Optional |
-|---|---|---|
-| ✅ Completely done | 0 | 0 |
-| 🟡 Partially done | 0 | 0 |
-| ⬜ Not done | 50 | 3 |
-| 🙋 Needs mae | 0 | 0 |
-| ❔ Not verifiable here | 0 | 0 |
-| **Total** | **50** | **3** |
+| Rating | Items |
+|---|---|
+| ✅ Completely done | 0 |
+| 🟡 Partially done | 0 |
+| ⬜ Not done | 60 |
+| 🙋 Needs mae | 0 |
+| ❔ Not verifiable here | 0 |
+| **Total** | **60** |
+
+The extras proposed in the plan (X1 to X5) join this list once mae picks them.
 
 ## Data model
 
@@ -64,7 +66,10 @@ To re-check, update the rating and evidence in place and the "Last checked" line
 |---|---|---|---|---|
 | K1 | `calculateShippingCost` adds base, weight and distance cost, applies the priority surcharge (0%, 30%, 60%) and rounds to 2 decimals | B-F, B-A2 | ⬜ | |
 | K2 | `scoreCarrierForShipment` gives 20, 20, 15, 15 and up to 30 points by the briefing's five rules and rounds to 2 decimals | B-F, B-A2 | ⬜ | |
-| K3 | `selectBestCarrier` drops carriers scoring under 50, picks the cheapest of the rest, returns its carrier, score and cost, or `null` (D4) | B-F, B-A2 | ⬜ | |
+| K3 | `selectBestCarrier` drops carriers scoring under 50, picks the cheapest of the rest, returns its carrier, score and cost, or `null`, exactly as the briefing writes it | B-F, B-A2 | ⬜ | |
+| K4 | Tests show the briefing's selection following every rule and still sending the sample Madrid shipment with UPS, which doesn't serve Spain, labelled as a known failure | mae (D4) | ⬜ | |
+| K5 | A written review of other ways the scoring can fail, discussed with mae | mae (D4) | ⬜ | |
+| K6 | After review: the departure that makes country and weight must-haves, beside the briefing's version, logged in `docs/decisions.md` | mae (D4) | ⬜ | |
 
 ## Reports
 
@@ -85,7 +90,9 @@ To re-check, update the rating and evidence in place and the "Last checked" line
 | V2 | `validateShipment` enforces the briefing's 3 shipment rules | B-F, B-A4, L7, E-TC7, E-CA2 | ⬜ | |
 | V3 | `validateCarrier` enforces the briefing's 5 carrier rules | B-F, B-A4, L7, E-TC7, E-CA2 | ⬜ | |
 | V4 | Each validator returns `{ valid, errors }`, with a message for every rule that fails and `valid` false whenever there is one | B-F | ⬜ | |
-| V5 | Required fields are present and dates are coherent (D7) | T4 | ⬜ | |
+| V5 | The 14 rules and their error messages documented in the package README | mae (D7) | ⬜ | |
+| V6 | A written proposal of validation improvements, each backed by research or experience, with the Tech Lead's examples (required fields present, dates coherent) among them | T4, mae (D7) | ⬜ | |
+| V7 | After review: the improvements mae picks, built and tested | T4, mae (D7) | ⬜ | |
 
 ## Structure, types and tooling
 
@@ -105,6 +112,8 @@ To re-check, update the rating and evidence in place and the "Last checked" line
 | Q12 | `const` by default, `let` only for values that change | G-Q, E-CQ3 | ⬜ | |
 | Q13 | Comments only where logic needs explaining, and consistent indentation and formatting | G-Q | ⬜ | |
 | Q14 | Field names, entity types and literal values match the briefing exactly, with nothing generic in their place | L's "IMPORTANT" note, E-CA1 | ⬜ | |
+| Q15 | A generic, typed toolkit (filter, sort, group, search, count, sum, average, extremes, rule checks) underneath, with the briefing's functions built from it under their exact names | mae (D6) | ⬜ | |
+| Q16 | Every open question the code relies on is in `docs/open-questions.md`, and the tests that follow a recommendation name it | mae (D5) | ⬜ | |
 
 ## Delivery
 
@@ -113,7 +122,7 @@ To re-check, update the rating and evidence in place and the "Last checked" line
 | P1 | Every function has tests whose expected values come from the briefing worked by hand, including empty and failing cases, and they pass | B's "What Ana Expects", B-A2 | ⬜ | |
 | P2 | A `Milestone-2` branch at the end of the milestone, for grading | `docs/decisions.md` | ⬜ | |
 
-## Optional: test page
+## Test page (optional in its checklist, required here)
 
 | ID | Item | Source | Rating | Evidence |
 |---|---|---|---|---|
