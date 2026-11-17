@@ -20,3 +20,12 @@ will be expanded as we go, but to start, here are a few guidelines:
    * npx tsx src/demo.ts
 * each function has a single responsibility
 * any repeated task should have a function associated with it
+
+## Code quality
+
+* Use **descriptive names** for variables, functions, and interfaces (camelCase for variables and functions, PascalCase for interfaces)
+* Each function must be **pure**: works only with what it receives as parameters, without modifying global variables
+* Write **comments** only when necessary to explain complex logic, not to describe obvious code
+* Handle **empty cases** correctly: empty arrays, elements not found, null values
+* Use **const** by default and **let** only when the value will change
+* Maintain consistent **indentation** and formatting throughout the code
