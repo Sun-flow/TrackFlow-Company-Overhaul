@@ -16,3 +16,4 @@ Decisions made while planning or building go in [`../decisions.md`](../decisions
 | Milestone | Folder |
 | --------- | ------ |
 | 1 — Public website | [`milestone-1/`](./milestone-1/README.md) |
+| 2 — Programming fundamentals | [`milestone-2/`](./milestone-2/README.md) |
