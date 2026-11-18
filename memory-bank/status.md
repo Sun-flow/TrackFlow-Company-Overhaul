@@ -44,5 +44,4 @@ public website, is finished.
 
 ## Open questions
 
-- The id formats for warehouses and stock records: `docs/open-questions.md`, Q13. (2026-11-17)
 

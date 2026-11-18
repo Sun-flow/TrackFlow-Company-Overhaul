@@ -84,7 +84,7 @@ A product's key has two parts, `sku` and `warehouse`, because the same SKU can b
 
 `Dimensions` and `Destination` are not separate records. They are objects stored inside a product or a shipment, drawn as boxes only so their fields can be seen.
 
-The `ProductKey` box, with no lines, is a type, not a stored record: the pair `{ sku, warehouse }` the code reads from a product (`sku`, `warehouse`), a shipment (`sku`, `origin`) or an inventory movement (`sku`, `warehouse`). `toProductCode` turns a key into one string, in the format of open question Q13 (for example `SHOE-BLK-42@WH-ZGZ`), and `parseProductCode` turns the string back. The code is always derived and never stored, so it can't drift from the fields it comes from. The brief's interfaces stay exactly as written.
+The `ProductKey` box, with no lines, is a type, not a stored record: the pair `{ sku, warehouse }` the code reads from a product (`sku`, `warehouse`), a shipment (`sku`, `origin`) or an inventory movement (`sku`, `warehouse`). `toProductCode` turns a key into one string, in the format mae chose for Q13: the SKU, a hyphen, then the warehouse id (for example `SHOE-BLK-42-WH-ZGZ`), and `parseProductCode` turns the string back. The code is always derived and never stored, so it can't drift from the fields it comes from. The brief's interfaces stay exactly as written.
 
 ### Editing the diagrams
 
@@ -110,12 +110,12 @@ erDiagram
         number heightCm
     }
     Warehouse {
-        string id PK "e.g. WH-ZGZ (Q13)"
+        string id PK "WH-LA or WH-ZGZ (Q13)"
         WarehouseLocation name "Zaragoza"
         Country country "Spain"
     }
     StockRecord {
-        string id PK "e.g. SHOE-BLK-42@WH-ZGZ (Q13)"
+        string id PK "e.g. SHOE-BLK-42-WH-ZGZ (Q13)"
         string itemSku FK "which item"
         string warehouseId FK "which warehouse"
         number stockQuantity
@@ -176,7 +176,7 @@ This is mae's design (2026-11-17), built after the brief's model as improvement 
 - **`StockRecord`**: one record per item per warehouse, with its own `id`. It points at its item (`itemSku`) and its warehouse (`warehouseId`), and holds the stock: `stockQuantity` and `minStockThreshold`. This is the ProductId mae described: one code that names a SKU in one warehouse.
 - **`Shipment`** points at the stock it ships with one `stockRecordId`, in place of `sku` and `origin`. **`InventoryMovement`** does the same in place of `sku` and `warehouse`. A shipment also points at its carrier by `carrierId` (improvement I1).
 
-Every link is one id pointing at one id. Items and warehouses meet only through `StockRecord`, so the model has no many-to-many link. A rule keeps one stock record per item per warehouse. If the stock record's id is built from the SKU and the warehouse id (Q13), that rule holds by construction.
+Every link is one id pointing at one id. Items and warehouses meet only through `StockRecord`, so the model has no many-to-many link. A rule keeps one stock record per item per warehouse. The stock record's id is the SKU, a hyphen, then the warehouse id (`SHOE-BLK-42-WH-ZGZ`; mae, Q13), so that rule holds by construction. Warehouse ids follow the carriers' style: `WH-LA` and `WH-ZGZ`. SKUs contain hyphens too, so the code is split by matching the known warehouse id at its end, never by splitting on the last hyphen.
 
 The briefing's interfaces and functions still work: functions rebuild the brief's `Product` (one item, plus one stock record, plus its warehouse's name) and `Shipment` (its `sku` and `origin` read through the stock record) from these records.
 

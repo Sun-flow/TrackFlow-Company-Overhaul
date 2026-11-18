@@ -142,7 +142,7 @@ Each step here follows the same order: the brief's version is merged and documen
 ### WP8 Validation improvements
 
 - **Files**: `packages/warehouse-logic/docs/validation-review.md`, then `src/utils/validations.ts` and its tests.
-- **Scope**: proposed improvements to the 14 rules, each backed by research or experience, with a before/after example for each. These include the Tech Lead's examples (required fields not empty, `createdAt` a real date), literal values on their lists for data that arrives untyped, whole-number quantities, `Shipment.origin` matching the product's warehouse, records of one SKU agreeing on everything but stock (Q11, Q12), no `@` in a SKU if Q13 goes that way, and rules for `InventoryMovement`, which has none yet. mae picks which ones go in, and only those are built.
+- **Scope**: proposed improvements to the 14 rules, each backed by research or experience, with a before/after example for each. These include the Tech Lead's examples (required fields not empty, `createdAt` a real date), literal values on their lists for data that arrives untyped, whole-number quantities, `Shipment.origin` matching the product's warehouse, records of one SKU agreeing on everything but stock (Q11, Q12), no SKU that itself ends in a warehouse id such as `-WH-ZGZ` (Q13), and rules for `InventoryMovement`, which has none yet. mae picks which ones go in, and only those are built.
 - **Done when**: mae has picked, and the picked rules are built and tested.
 
 ### Tracked improvements
