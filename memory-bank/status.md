@@ -32,11 +32,10 @@ nothing is built yet (2026-11-18). Milestone 1, the public website, is finished.
 
 ## Next
 
-1. mae answers the questions WP1 needs: Q16, Q17, Q19, Q20 and Q22 in `docs/open-questions.md`.
-   (2026-11-18)
-2. WP1's scaffold in `docs/milestones/milestone-2/plan.md`, in its own thread. mae agreed to the ERD
-   (`packages/warehouse-logic/docs/erd.md`), stored records with the brief's interfaces as views.
-   (2026-11-18)
+1. WP1's scaffold in `docs/milestones/milestone-2/plan.md`, in its own thread, when mae gives the
+   go-ahead. Its data model is agreed: `packages/warehouse-logic/docs/erd.md`, stored records with the
+   brief's interfaces as views, a movement being one warehouse's record of a change to its own stock
+   (Q19). (2026-11-18)
 
 ## Known problems
 
@@ -46,5 +45,4 @@ nothing is built yet (2026-11-18). Milestone 1, the public website, is finished.
 
 ## Open questions
 
-- Q16 to Q24 about Milestone 2, each with options and a recommendation, are in
-  `docs/open-questions.md`. (2026-11-18)
+- None. Q1 to Q25 are answered in `docs/decisions.md`. (2026-11-18)

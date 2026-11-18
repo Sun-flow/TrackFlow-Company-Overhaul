@@ -35,9 +35,9 @@ The plan's extras X1 to X5 joined this list when mae picked all five (2026-11-18
 | M4 | `Carrier` with every field, name and type in the briefing | B, B-A1, L1, E-TC1, E-CA1 | WP1 | ⬜ | |
 | M5 | `InventoryMovement` with every field, name and type in the briefing | B, B-A1, L1, E-TC1, E-CA1 | WP1 | ⬜ | |
 | M6 | The literal types `ProductCategory`, `WarehouseLocation`, `ProductStatus`, `Country`, `ShipmentPriority`, `ShipmentStatus`, `MovementType` with exactly the briefing's values | B, E-CA1 | WP1 | ⬜ | |
-| M7 | Concrete instances as typed literal objects: the briefing's sample products, carriers and shipment, and one mock movement for each shape in `erd.md`, labelled as mock, since the briefing has no sample movement | T2, B | WP1 | ⬜ | |
-| M8 | Auxiliary functions to work with each entity's data (D6): `isLowStock` and the stock value for `Product`, the total weight for `Shipment`, one check per scoring rule for `Carrier`, and for `InventoryMovement` what Q23 settles | T2 | WP3, WP4 | ⬜ | |
-| M9 | The stored single-id records of the ERD, and functions that build the brief's interfaces from them, giving back the briefing's samples exactly and the right view for each movement shape, with a link that matches no record handled as Q16 says | mae (departure, 2026-11-18) | WP1 | ⬜ | |
+| M7 | Concrete instances as typed literal objects: the briefing's sample products, carriers and shipment, and one mock movement for each row of `erd.md`'s movement table, labelled as mock, since the briefing has no sample movement | T2, B | WP1 | ⬜ | |
+| M8 | Auxiliary functions to work with each entity's data (D6): `isLowStock` and the stock value for `Product`, the total weight for `Shipment`, one check per scoring rule for `Carrier`, and for `InventoryMovement` the movement totals per warehouse, type and direction, read from the stored movements (Q23, Q25) | T2 | WP3, WP4 | ⬜ | |
+| M9 | The stored single-id records of the ERD, and functions that build the brief's interfaces from them, giving back the briefing's samples exactly and each mock movement's view at its own stock record's warehouse (Q19), with `null` for a link that matches no record (Q16) and stored keys in upper case (Q17) | mae (departure, 2026-11-18) | WP1 | ⬜ | |
 
 ## Collections
 
@@ -81,7 +81,7 @@ The plan's extras X1 to X5 joined this list when mae picked all five (2026-11-18
 | R3 | `calculateAverageShipmentDistance` averages distance, rounded to 2 decimals | B-F, L6, E-TC6, T3 | WP4 | ⬜ | |
 | R4 | `findTopCarriers` returns the N most used carriers with their counts, highest first, ignoring unassigned shipments | B-F, B-A2 | WP4 | ⬜ | |
 | R5 | Maximum and minimum reports (D6): the heaviest product, the longest shipment and the cheapest carrier for a shipment | L6, E-TC6, T3 | WP4 | ⬜ | |
-| R6 | The reports answer the briefing's needs: warehouse metrics, carrier use and inventory value, with the warehouse reports Q23 settles | E-CA3 | WP4 | ⬜ | |
+| R6 | The reports answer the briefing's needs: warehouse metrics, carrier use and inventory value, with a summary per warehouse (Q23) and movement totals per warehouse, type and direction, read from the stored movements (Q23, Q25) | E-CA3 | WP4 | ⬜ | |
 
 ## Validations
 

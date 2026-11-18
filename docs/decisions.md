@@ -17,23 +17,49 @@ Entry format:
 
 ---
 
+### [2026-11-18] The movement totals report splits by direction
+- **Decision**: mae's answer to Q25. The movement totals report mae picked in Q23 gives totals per warehouse, type and direction. It reads stored `MovementRecord`s, since only they hold a `direction`, and so it can also give the net change in a warehouse's stock. It says in its documentation that it works on stored records, where the other reports work on the brief's views.
+- **Rationale**: mae (2026-11-18), on the recommendation: a total that adds units in to units out says nothing about a warehouse's stock. Q23's wording, "per warehouse and type", was written before Q19 gave a movement a direction.
+- **Alternatives considered**: totals per warehouse and type on the brief's `InventoryMovement` views, as first answered, where a Transfer total adds units sent to units received; both reports.
+- **Status**: Accepted (mae, 2026-11-18).
+
+### [2026-11-18] A movement is one warehouse's record of a change to its own stock
+- **Decision**: mae's answer to Q19. `MovementRecord` is `movementId`, `stockRecordId` (the one stock record it changes), `direction` (`"In"` or `"Out"`), an optional `shipmentId`, and the brief's `type`, `quantity`, `reason` and `timestamp`. These replace `fromStockRecordId`, `toStockRecordId` and `transferId`. Each warehouse writes its own movements, and a movement does not say where units came from or where they are headed. An Inbound is always In and an Outbound always Out; a Transfer or an Adjustment can be either. A shipment stays a delivery to a customer, and a transfer is not a shipment. A customer shipment's Outbound holds its `shipmentId`, so every shipment that has left can be matched to one Outbound, and a movement can exist with no shipment. A transfer is two movements, an Out and an In, with nothing linking them.
+- **Rationale**: mae (2026-11-18) went back to the briefing's own shape, an `InventoryMovement` that "tracks inventory changes (inbound or outbound)" with one `warehouse`: a marker of stock changes, written from the facility's own point of view. Every movement touches one stock record, so its warehouse is always the warehouse that wrote it, held by the structure. `direction` is a field because `type` can't tell a transfer out from a transfer in. `shipmentId` sits on the movement because the movement is written once, when the units leave, and points at a record that already exists.
+- **Alternatives considered**: the `from`, `to` and `transferId` model agreed earlier the same day; a transfer as a shipment with two movements, which mae turned down because shipments are for customers and transfers stay inside the organization; this model without `shipmentId`, where a shipment's Outbound can be matched only by SKU, warehouse, quantity and time; this model with a link from a transfer's receipt to its send. mae asked that such a link, a `transferId`, be kept as a future improvement, and it is in `docs/FUTURE_WORK.md`.
+- **Status**: Accepted (mae, 2026-11-18). It replaces the storage part (Q15) of "A transfer shows as a send and a receipt"; that entry's two views (Q14) hold.
+
+### [2026-11-18] Milestone 2's review questions answered
+- **Decision**: mae's answers to the questions a review of the planning docs raised. They were asked in `docs/open-questions.md`, which keeps the options in its git history.
+  - Q16: a view builder returns `null` for a link that matches no record, a builder of many leaves that record out, and none throws. Listing, logging and repairing broken links, and broken datasets to test that, are parked in `docs/FUTURE_WORK.md`.
+  - Q17: stored keys are upper case. Building a stock record id upper-cases the SKU, so keys compare exactly. mae found this and "compare ignoring case everywhere" both good, asked which is cheaper and more reliable, and chose this one on the answer: the case is settled once, when a key is built, and every later comparison and `Map` lookup is exact, where the other needs every comparison to remember to ignore case.
+  - Q18: the test page gets Tailwind from its CLI, a second development dependency of the package, with the compiled stylesheet committed.
+  - Q20: the function that builds a stock record id is `buildStockRecordId`. When mae chose it, the other name, `toStockRecordId`, was also a field of a movement; Q19 has since removed that field, and the name stays.
+  - Q21: the shared rounding helper is `roundToTwoDecimals`.
+  - Q22: the stored records' types stay in `src/types/models.ts`, beside the brief's interfaces.
+  - Q23: two reports join the briefing's five: a summary per warehouse (products, units, inventory value, low-stock count) and movement totals per warehouse and type. Q25 later split those totals by direction too ("The movement totals report splits by direction").
+  - Q24: the test page's compiled modules are committed, with a suite step that fails when they are stale.
+- **Rationale**: mae (2026-11-18). On Q16: this milestone is about the functions that manipulate data; generating broken datasets and enforcing repair comes later.
+- **Alternatives considered**: listed per question in `docs/open-questions.md` as of the commit before this entry's.
+- **Status**: Accepted (mae, 2026-11-18). Q19 was answered the same day ("A movement is one warehouse's record of a change to its own stock").
+
 ### [2026-11-18] Milestone 2's plan corrected after a review
 - **Decision**: A review of the merged planning docs was applied in one docs-only pull request. Its choices: `groupShipmentsByStatus` is built by WP4 in `transformations.ts`, where the briefing puts it, on WP3's `groupBy`; the stored carrier is `CarrierRecord`; WP1 also changes the test step in `.github/workflows/testing-kit.yml`, so the required `all-green` check runs the package's tests; the package README is WP6's, and the parallel packages write their notes under the package's `docs/`; the tracked improvements I2, I3 and I5 are package WP8b; the mutation check aims for 70% or more; WP7 uses the medium tier. Nine choices the review could not settle are Q16 to Q24 in `docs/open-questions.md`.
 - **Rationale**: mae asked for the review and chose to apply all of its fixes (2026-11-18). Each one removes a place where the plan disagreed with the brief or with itself, before any package copies it.
 - **Alternatives considered**: applying only the four fixes WP1 needs; leaving the docs until mae had marked up the review.
-- **Status**: Accepted (mae, 2026-11-18). Q16 to Q24 are open.
+- **Status**: Accepted (mae, 2026-11-18). Q16 to Q24 were answered the same day ("Milestone 2's review questions answered" and "A movement is one warehouse's record of a change to its own stock").
 
 ### [2026-11-18] A transfer shows as a send and a receipt
 - **Decision**: In the brief's `InventoryMovement` view, a Transfer appears twice: once at the sending warehouse when it is sent, and once at the receiving warehouse when it is received (Q14, option c). Each is its own `MovementRecord`, made by its warehouse (Q15, option b). The send has a `from` and the `to` it is headed for; the receipt has only the `to` and a `transferId`, the `movementId` of its send.
 - **Rationale**: mae (2026-11-18): it works as a sent-and-received check, since every send should have a matching receipt. Two records let each warehouse record what it actually sent or received, so a shortfall shows as a difference in `quantity`.
 - **Alternatives considered**: one view at the sending warehouse only (the recommendation), or at the receiving warehouse only. For storage, one record with a `receivedAt` time (the recommendation), which can't hold a different received quantity.
-- **Status**: Accepted (mae, 2026-11-18).
+- **Status**: Accepted (mae, 2026-11-18). Its storage part (Q15: the `from`, the `to` and the `transferId`) is superseded by "A movement is one warehouse's record of a change to its own stock". The two views (Q14) hold, each warehouse still writes its own record, and the link between them is a future improvement.
 
 ### [2026-11-18] Milestone 2 stores single-id records, with the brief's interfaces as views
 - **Decision**: A departure from the brief. The stored data is the model in `packages/warehouse-logic/docs/erd.md`: `Item` (one per SKU, the SKU is its id), `Warehouse` (`WH-LA`, `WH-ZGZ`, in the carriers' `CAR-UPS` style), `StockRecord` (one per item per warehouse, keyed by the SKU, a hyphen and the warehouse id, such as `SHOE-BLK-42-WH-ZGZ`, split by matching the known warehouse id at its end because SKUs contain hyphens too), `ShipmentRecord` (`stockRecordId`, `carrierId`), `MovementRecord` (`fromStockRecordId`, `toStockRecordId`) and `CarrierRecord`. Every record has one key, named for what it identifies (`warehouseId`, `stockRecordId`, `shipmentId`, `movementId`, `carrierId`, and the item's `sku`), and a link has the name of the key it holds. `unitCostUSD` and `status` are the same in every warehouse and belong to `Item` (Q11, Q12); a status per warehouse is improvement I5. The brief's `Product`, `Shipment`, `InventoryMovement`, `Carrier`, `Dimensions` and `Destination` stay in `src/types/models.ts` exactly as written, are built from the records by functions in `src/utils/views.ts`, which fill their `id` fields from these keys, and are what the briefing's functions take, unchanged. This makes I1 (carriers by id) and I4 (single ids) part of the stored model.
 - **Rationale**: mae proposed a ProductId for SKU and warehouse pairs (2026-11-17) with these constraints: no many-to-many links (use a step in between); unique SKUs that can sit in two warehouses; products told apart by warehouse; alignment with the brief. mae then made one key per record, with no two-part keys, the goal, chose the id formats (Q13), and chose to store this model from the start rather than after the brief's version (2026-11-18). Keeping the brief's interfaces as views keeps every graded field, name and function signature, and building the views from the stored samples must give back the briefing's samples exactly, which is WP1's check.
 - **Alternatives considered**: the brief's interfaces as the stored data, with a derived `ProductKey` (`{ sku, warehouse }`) now and the split as improvement I4 after WP1 to WP5, which mae first picked on 2026-11-17; a stored `productId` field on the brief's `Product` and `Shipment`, which breaks their graded fields and can drift from `sku` and `warehouse`; both models drawn side by side in `erd.md`.
-- **Status**: Accepted (mae, 2026-11-18). A transfer's views: the entry above. The stored carrier was written here as `Carrier` until a review the same day named it `CarrierRecord`, because the brief's `Carrier` interface keeps that name.
+- **Status**: Accepted (mae, 2026-11-18). A transfer's views: the entry above. `MovementRecord`'s `fromStockRecordId` and `toStockRecordId` became one `stockRecordId` and a `direction` the same day (Q19, "A movement is one warehouse's record of a change to its own stock"). The stored carrier was written here as `Carrier` until a review the same day named it `CarrierRecord`, because the brief's `Carrier` interface keeps that name.
 
 ### [2026-11-18] The Milestone 2 ERD is Mermaid in `erd.md`
 - **Decision**: The Milestone 2 ERD is Mermaid code in `packages/warehouse-logic/docs/erd.md`. GitHub draws it, and a session edits them as text. mermaid.live gives a live preview.
@@ -58,7 +84,7 @@ Entry format:
   - Q12: `status` is the same in every warehouse too, on `Item`; a status per warehouse is tracked as I5 (same entry).
   - Q13: warehouse ids are `WH-LA` and `WH-ZGZ`, and a stock record's id is the SKU, a hyphen and the warehouse id (same entry).
   - Q14: a Transfer shows twice in the brief's `InventoryMovement`, as a send and as a receipt ("A transfer shows as a send and a receipt").
-  - Q15: it is stored as two records, the receipt pointing at its send (same entry).
+  - Q15: it is stored as two records, one written by each warehouse (same entry). The receipt's link to its send was removed by Q19 ("A movement is one warehouse's record of a change to its own stock").
 - **Rationale**: mae (2026-11-17). Each is the plainest reading of the briefing; Q3 is what its `Record` return types require; Q10 matches TrackFlow stocking the same SKU in both warehouses (`CONTEXT.md`), which mae called a tough dilemma.
 - **Alternatives considered**: listed per question in `docs/open-questions.md` as of this entry's commit.
 - **Status**: Accepted (2026-11-17).
@@ -73,7 +99,7 @@ Entry format:
 - **Decision**: TypeScript is the package's only dependency, pinned and installed with pnpm. `pnpm typecheck` runs `tsc --noEmit`, `pnpm test` runs Node's built-in runner on `.ts` files, `pnpm demo` runs `src/demo.ts` with Node, and `pnpm build` compiles browser modules. The suite and CI run the typecheck and tests, and the testing kit's config gains the package. That last change is guarded by the kit, so it needs mae's `allow-test-changes` label.
 - **Rationale**: mae approved it (2026-11-17, plan D2). It gives the guidelines' typecheck and run commands with the fewest moving parts, and the website's tests already use the same runner.
 - **Alternatives considered**: Vitest or Jest, and `tsx`, which add dependencies for no gain here.
-- **Status**: Accepted (2026-11-17).
+- **Status**: Accepted (2026-11-17). Since 2026-11-18 Tailwind's CLI is a second dependency, for the test page alone, and the page's compiled output is committed (Q18 and Q24, "Milestone 2's review questions answered").
 
 ### [2026-11-17] Build the brief as written, then improve through documented departures
 - **Decision**: Each part of a milestone is first built exactly as its brief says, then tested and documented. Weak spots are written up with research and worked examples and discussed with mae. Only then is an improvement built, logged here as a departure, beside the brief's version and not in place of it. In Milestone 2 this covers carrier selection (plan WP7) and validations (WP8). Validations start with exactly the briefing's 14 rules.
