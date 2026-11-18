@@ -22,7 +22,7 @@ Entry format:
 Q1 to Q12 were answered by mae on 2026-11-17 (`docs/decisions.md`, "Milestone 2's open questions answered" and "SKU and warehouse: a ProductKey now, an Item and StockRecord split later"). The next new question is Q14.
 
 ### Q13. What do warehouse and stock record ids look like?
-- **Where it comes from**: mae's improved model (`packages/warehouse-logic/docs/erd-improved.drawio.svg`) gives every record a single id. `Warehouse` and `StockRecord` are new records, so the briefing gives no format for their ids. The brief's model needs the same format for its derived product code (`toProductCode`).
+- **Where it comes from**: mae's improved model (`packages/warehouse-logic/docs/erd.md`, "Improved model") gives every record a single id. `Warehouse` and `StockRecord` are new records, so the briefing gives no format for their ids. The brief's model needs the same format for its derived product code (`toProductCode`).
 - **What the brief says**: existing ids look like `"SHOE-BLK-42"` (a SKU), `"SH-2024-8821"` (a shipment) and `"CAR-UPS"` (a carrier): capital letters, digits and hyphens. Warehouses are named `"Los Angeles"` and `"Zaragoza"`. Nothing restricts which characters a SKU may contain.
 - **Options**:
   - (a) Short warehouse ids such as `WH-LA` and `WH-ZGZ`, in the style of `CAR-UPS`. A stock record's id is the SKU, a `@`, then the warehouse id: `SHOE-BLK-42@WH-ZGZ`. Readable, and the same SKU in the same warehouse always gets the same id, so a duplicate is impossible. The short codes are our own system ids, not company facts.
