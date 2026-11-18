@@ -13,7 +13,7 @@ A product's key has two parts, `sku` and `warehouse`, because the same SKU can b
 
 `Dimensions` and `Destination` are not separate records. They are objects stored inside a product or a shipment, drawn as boxes only so their fields can be seen.
 
-The dashed `ProductKey` box is a type, not a stored record: the pair `{ sku, warehouse }` the code reads from a product (`sku`, `warehouse`), a shipment (`sku`, `origin`) or an inventory movement (`sku`, `warehouse`). `toProductCode` turns a key into one string, such as `SHOE-BLK-42|Zaragoza`, and `parseProductCode` turns the string back. The code is always derived and never stored, so it can't drift from the fields it comes from. Its format is open question Q13. The brief's interfaces stay exactly as written.
+The dashed `ProductKey` box is a type, not a stored record: the pair `{ sku, warehouse }` the code reads from a product (`sku`, `warehouse`), a shipment (`sku`, `origin`) or an inventory movement (`sku`, `warehouse`). `toProductCode` turns a key into one string, in the format of open question Q13 (for example `SHOE-BLK-42@WH-ZGZ`), and `parseProductCode` turns the string back. The code is always derived and never stored, so it can't drift from the fields it comes from. The brief's interfaces stay exactly as written.
 
 ### Editing the diagram
 
@@ -28,13 +28,18 @@ When the diagram changes, the tables below change with it in the same commit.
 
 ## Improved model (planned)
 
-![Improved model: Item and StockRecord](./erd-improved.drawio.svg)
+![Improved model: Item, Warehouse and StockRecord, each with a single id](./erd-improved.drawio.svg)
 
-mae's design (2026-11-17), built after the brief's model as improvement I4 in the plan. The brief's `Product` holds two kinds of data:
-- **The item itself**, the same in every warehouse: `sku`, `name`, `category`, `weightKg`, `dimensions`, `isFragile`, and, by mae's answers to Q11 and Q12, `unitCostUSD` and `status`.
-- **Its stock in one warehouse**: `stockQuantity` and `minStockThreshold`.
+This is mae's design (2026-11-17), built after the brief's model as improvement I4 in the plan. Its goal is a system of single ids with no two-part keys. The brief's `Product` mixes the item with its stock in one warehouse, so the model splits them:
 
-Splitting them makes the SKU unique on `Item`. A SKU can be in both warehouses through one `StockRecord` per SKU per warehouse, keyed by the `ProductKey`. Items and warehouses only meet through `StockRecord`, so the model has no many-to-many link. Shipments and inventory movements keep the brief's fields and point at a stock record through `sku` with `origin` or `warehouse`. The brief's `Product` becomes one `Item` joined with one `StockRecord` by a function, so every briefing function still works on it.
+- **`Item`**: one record per SKU, so the SKU is unique and serves as the item's id. It holds everything that is the same in every warehouse, which includes `unitCostUSD` and `status` by mae's answers to Q11 and Q12.
+- **`Warehouse`**: one record per warehouse with its own `id`, its `name` (the briefing's `WarehouseLocation`) and its `country`.
+- **`StockRecord`**: one record per item per warehouse, with its own `id`. It points at its item (`itemSku`) and its warehouse (`warehouseId`), and holds the stock: `stockQuantity` and `minStockThreshold`. This is the ProductId mae described: one code that names a SKU in one warehouse.
+- **`Shipment`** points at the stock it ships with one `stockRecordId`, in place of `sku` and `origin`. **`InventoryMovement`** does the same in place of `sku` and `warehouse`. A shipment also points at its carrier by `carrierId` (improvement I1).
+
+Every link is one id pointing at one id. Items and warehouses meet only through `StockRecord`, so the model has no many-to-many link. A rule keeps one stock record per item per warehouse. If the stock record's id is built from the SKU and the warehouse id (Q13), that rule holds by construction.
+
+The briefing's interfaces and functions still work: functions rebuild the brief's `Product` (one item, plus one stock record, plus its warehouse's name) and `Shipment` (its `sku` and `origin` read through the stock record) from these records.
 
 `Carrier.operatesIn` and `Carrier.acceptsPriority` are many-to-many in principle, linking carriers to countries and to priorities. Both are lists of fixed values that the briefing requires inside the carrier, so they stay as lists, marked "value list" in both diagrams.
 
