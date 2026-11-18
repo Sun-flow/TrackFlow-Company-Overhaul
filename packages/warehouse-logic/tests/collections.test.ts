@@ -1,7 +1,7 @@
 // Tests for src/utils/collections.ts (plan WP3): the generic filter, sort and group blocks, and the
 // briefing's five collection functions built on them ("Required Functions", 1). Every expected value
 // is worked out by hand from the briefing's rules and the data below, never by running the code. A
-// test that depends on one of mae's answers names it (Q3, Q28; docs/decisions.md and
+// test that depends on one of mae's answers names it (Q3, Q29; docs/decisions.md and
 // docs/open-questions.md).
 import { describe, test } from "node:test";
 import assert from "node:assert/strict";
@@ -644,7 +644,7 @@ describe("groupBy: entries by key, each group in input order", () => {
     });
   });
 
-  test("an entry whose key is not on the list is kept, after the listed keys (Q28)", () => {
+  test("an entry whose key is not on the list is kept, after the listed keys (Q29)", () => {
     const grouped = groupBy(rows, flagKey, ["yes"]);
     assert.deepStrictEqual(Object.keys(grouped), ["yes", "no"]);
     assert.deepStrictEqual(grouped, { yes: [rowB, rowCapitalB], no: [rowA, rowC] });

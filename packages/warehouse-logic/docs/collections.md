@@ -64,7 +64,7 @@ code.
   `false` before `true` and dates by time. `NaN` and an invalid date sort after every number.
 - `groupBy` with `allKeys` holds every listed key, in the list's order, with `[]` for a key no entry
   has (Q3), and its type is then `Record<Key, Entry[]>`. An entry whose key is not on the list is kept,
-  under its own key after the listed ones (Q28, the recommendation until mae answers). Without
+  under its own key after the listed ones (Q29, the recommendation until mae answers). Without
   `allKeys`, the result holds the keys seen, in the order first seen, typed `Partial<Record<Key,
   Entry[]>>`. A key such as `"__proto__"` is an ordinary group.
 

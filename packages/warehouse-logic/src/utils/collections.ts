@@ -164,7 +164,7 @@ export function sortBy<Entry>(entries: readonly Entry[], keys: readonly SortKey<
 /**
  * The entries grouped by `keyOf`, each group in input order. With `allKeys`, every key listed is in
  * the result, in the list's order, with [] for a key no entry has (Q3); an entry whose key is not
- * listed is kept, under its own key after the listed ones (Q28). Without `allKeys`, the result holds
+ * listed is kept, under its own key after the listed ones (Q29). Without `allKeys`, the result holds
  * the keys the entries have, in the order first seen.
  */
 export function groupBy<Entry, Key extends string>(

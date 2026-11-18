@@ -50,5 +50,5 @@ WP1 of its plan, the package scaffold and data model, is built; the briefing's f
 
 ## Open questions
 
-- Q28, where `groupBy` puts an entry whose key is not listed, in `docs/open-questions.md`. Q1 to Q27
+- Q29, where `groupBy` puts an entry whose key is not listed, in `docs/open-questions.md`. Q1 to Q28
   are answered in `docs/decisions.md`. (2026-11-18)
