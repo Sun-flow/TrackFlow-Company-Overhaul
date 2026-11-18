@@ -62,7 +62,7 @@ erDiagram
     }
     INVENTORY_MOVEMENT {
         string id PK
-        string sku FK
+        string sku FK "Product link part 1 of 2"
         WarehouseLocation warehouse FK "Product link part 2 of 2"
         MovementType type
         number quantity
