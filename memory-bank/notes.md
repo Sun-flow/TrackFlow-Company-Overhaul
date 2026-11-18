@@ -30,7 +30,8 @@ This is mae's solo repo, so mae's preferences apply to every session.
   unasked and don't stay quiet. (2026-11-13)
 - A commit message is a plain imperative sentence with a short reason. (2026-11-13)
 - Ask one question at a time: a decision row that bundles several questions is hard for mae to answer.
-  Questions a brief leaves open go in `docs/open-questions.md`. (2026-11-17)
+  Questions a brief leaves open go in `docs/open-questions.md`, and any other choice waiting on mae gets a
+  pointer there, so every open item can be found in one place. (2026-11-17, pointer 2026-11-18)
 
 ## Gotchas
 

@@ -1,7 +1,7 @@
 # Milestone 2 definition of done
 
 > **Date created**: 2026-11-17
-> **Last checked**: 2026-11-17, against `production` at `77f7b0d` (the Milestone 2 brief files, PR #32). Nothing is built yet, so every item is ⬜. Revised the same day with mae's answers to the plan's decisions, and on 2026-11-18 with M9 for the stored model.
+> **Last checked**: 2026-11-17, against `production` at `77f7b0d` (the Milestone 2 brief files, PR #32). Nothing is built yet, so every item is ⬜. Revised the same day with mae's answers to the plan's decisions, and on 2026-11-18 with M9 for the stored model and X1 to X5 for the extras.
 > **Sources**: every checklist and requirement in this folder, merged and de-duplicated. The company briefing (`trackflow-BRIEFING.en.md`, called `BRIEFING.md` in the checklists) still wins where it is more specific.
 
 Milestone 2 is done when every item below is rated ✅. The test page (O) is optional in its checklist but required here: mae counts optional work as required (2026-11-17, plan D8). Items marked "after review" are built only once mae has approved the analysis that comes before them (plan, "How this milestone works"). Where several sources ask for the same thing, they are one item and the Source column lists each. `plan.md` says which package delivers each item; the D numbers point to its Phase 0 decisions.
@@ -18,12 +18,12 @@ To re-check, update the rating and evidence in place and the "Last checked" line
 |---|---|
 | ✅ Completely done | 0 |
 | 🟡 Partially done | 0 |
-| ⬜ Not done | 62 |
+| ⬜ Not done | 67 |
 | 🙋 Needs mae | 0 |
 | ❔ Not verifiable here | 0 |
-| **Total** | **62** |
+| **Total** | **67** |
 
-The extras proposed in the plan (X1 to X5) join this list once mae picks them.
+The plan's extras X1 to X5 joined this list when mae picked all five (2026-11-18).
 
 ## Data model
 
@@ -131,3 +131,13 @@ The extras proposed in the plan (X1 to X5) join this list once mae picks them.
 | O1 | A simple HTML page with Tailwind CSS to try the functions by hand, served with a documented command (D8) | FT1, S | ⬜ | |
 | O2 | Buttons or controls to run the operations: filter, search, sort, reports | FT2 | ⬜ | |
 | O3 | Results shown clearly on the page | FT3 | ⬜ | |
+
+## Extras (picked by mae, 2026-11-18)
+
+| ID | Item | Source | Rating | Evidence |
+|---|---|---|---|---|
+| X1 | An API reference in the package README: every exported function, its signature, what it returns for empty input, and an example | mae (D8, plan X1) | ⬜ | |
+| X2 | A seeded mock data generator, clearly labelled as mock, for larger test arrays and the search timing | mae (D8, plan X2) | ⬜ | |
+| X3 | The test page in the browser check: screenshots, no console errors, axe clean | mae (D8, plan X3) | ⬜ | |
+| X4 | A mutation check on cost, scoring and validations, with its score reported | mae (D8, plan X4) | ⬜ | |
+| X5 | A search comparison panel on the test page: linear, binary and `Map` lookup timed on the mock data | mae (D8, plan X5) | ⬜ | |

@@ -1,7 +1,7 @@
 # Milestone 2 execution plan
 
 > **Date created**: 2026-11-17
-> **Status**: mae answered the Phase 0 decisions and open questions Q1 to Q10 on 2026-11-17. mae agreed to the ERD on 2026-11-18: single-id stored records, with the brief's interfaces as views (a logged departure). WP1 starts in its own thread once this plan merges. The extras X1 to X5 wait for mae to pick.
+> **Status**: mae answered the Phase 0 decisions and open questions Q1 to Q10 on 2026-11-17. mae agreed to the ERD on 2026-11-18: single-id stored records, with the brief's interfaces as views (a logged departure). WP1 starts in its own thread once this plan merges. mae picked all five extras, X1 to X5, on 2026-11-18.
 > **Brief**: every file in this folder except `README.md`, this plan and `definition-of-done.md`. The company briefing (`trackflow-BRIEFING.en.md`, the checklists' `BRIEFING.md`) is the most specific and wins where the others are general. The brief wins over this plan; if they disagree, fix the plan.
 
 Milestone 2 is TrackFlow's first logic layer: typed, pure TypeScript functions that model, filter, search, sort, transform and validate the warehouse and carrier data in the company briefing. It is not an interface and not an AI system; later milestones' scripts and services will import it (`guidelines.md`). This plan splits it into work packages. Each package is one branch, one pull request and one thread. Packages in the same phase can run at the same time because they touch different files; phases run in order.
@@ -60,15 +60,15 @@ Names may still change while a package is built. Any change goes in its pull req
 
 ## Proposed extras (D8, for mae to pick)
 
-These stay within the scope of the test page and its tooling. Each one is worth doing because it makes the toolkit easier to trust or to reuse.
+These stay within the scope of the test page and its tooling. Each one is worth doing because it makes the toolkit easier to trust or to reuse. mae picked all five (2026-11-18), so each is required and is rated in `definition-of-done.md`.
 
-| # | Extra | Why |
-|---|---|---|
-| X1 | API reference in the package README: every exported function with its signature, what it returns for empty input, and an example | Later milestones will import this layer, and the reference lets them do that without reading the code. |
-| X2 | A seeded mock data generator (clearly labelled as mock) for larger test arrays and the search timing | Gives repeatable data in the thousands, matching Ana's "2,000+ shipments per week", without inventing company facts. |
-| X3 | The test page in the browser check (`scripts/site-check.py`): screenshots, no console errors, axe clean | The same bar the website meets. |
-| X4 | A mutation check on cost, scoring and validations (the kit's `/mutation-check`) | Shows that the tests on the money and safety paths can actually fail. |
-| X5 | A search comparison panel on the test page: linear, binary and `Map` lookup timed on the mock data | Shows WP2's research live, not only in a document. |
+| # | Extra | Why | Package |
+|---|---|---|---|
+| X1 | API reference in the package README: every exported function with its signature, what it returns for empty input, and an example | Later milestones will import this layer, and the reference lets them do that without reading the code. | WP6, once every function exists |
+| X2 | A seeded mock data generator (clearly labelled as mock) for larger test arrays and the search timing | Gives repeatable data in the thousands, matching Ana's "2,000+ shipments per week", without inventing company facts. | WP2, for its timing run; WP6 reuses it |
+| X3 | The test page in the browser check (`scripts/site-check.py`): screenshots, no console errors, axe clean | The same bar the website meets. | WP6 |
+| X4 | A mutation check on cost, scoring and validations (the kit's `/mutation-check`) | Shows that the tests on the money and safety paths can actually fail. | WP9, once WP4 and WP5 merge |
+| X5 | A search comparison panel on the test page: linear, binary and `Map` lookup timed on the mock data | Shows WP2's research live, not only in a document. | WP6 |
 
 ## Phase 1
 
@@ -101,8 +101,8 @@ Rules for all four threads:
 
 ### WP2 Search
 
-- **Files**: `packages/warehouse-logic/docs/search-research.md`, `src/utils/search.ts`, `tests/search.test.ts`.
-- **Scope**: first the research the guidelines ask for, written up before the code: linear search, binary search on a sorted array (and why it needs one), lookup through a `Map` built once, and the built-ins (`Array.prototype.find`, `findIndex`); the cost of each in steps, when each fits, and a small timing run on generated mock arrays (labelled as such) to test the claims rather than assume them. Then the generic blocks and the three briefing functions as the briefing specifies them (linear for the two finds, binary for weight), with the research's recommendation for later milestones noted in the README.
+- **Files**: `packages/warehouse-logic/docs/search-research.md`, `src/utils/search.ts`, `tests/search.test.ts`, and X2's mock data generator in `src/data/mock.ts`.
+- **Scope**: first the research the guidelines ask for, written up before the code: linear search, binary search on a sorted array (and why it needs one), lookup through a `Map` built once, and the built-ins (`Array.prototype.find`, `findIndex`); the cost of each in steps, when each fits, and a small timing run on mock arrays from X2's seeded generator (labelled as mock) to test the claims rather than assume them. Then the generic blocks and the three briefing functions as the briefing specifies them (linear for the two finds, binary for weight), with the research's recommendation for later milestones noted in the README.
 - **Done when**: the research note is in the PR, and the tests cover found, not found, empty, case-insensitive SKUs, the first and last positions, a one-item array, and repeated weights (Q9).
 
 ### WP3 Collections
@@ -127,9 +127,9 @@ Rules for all four threads:
 
 ### WP6 Demo and test page
 
-- **Files**: `src/demo.ts`, `src/index.html`, the page's script and its Tailwind setup, and the extras mae picks from X1 to X5.
+- **Files**: `src/demo.ts`, `src/index.html`, the page's script and its Tailwind setup, the package README's API reference (X1), the page in `scripts/site-check.py` (X3), and the search comparison panel (X5).
 - **Scope**: the demo prints each function's result on the briefing's samples, D4's case included. The page has controls to filter, sort, search, score carriers and run the reports and validations on the sample data, and shows the results clearly; it loads the compiled modules from `pnpm build` and is served with `npx --yes http-server packages/warehouse-logic -p 3000 -c-1`. It gets the website's browser check (screenshots, no console errors, axe clean).
-- **Done when**: `pnpm demo` runs clean, and the page passes the browser check.
+- **Done when**: `pnpm demo` runs clean, the page passes the browser check, the README lists every exported function, and the panel times the three searches on X2's mock data.
 
 ## Phase 4: improvements
 
@@ -161,7 +161,7 @@ mae asked for these to be tracked when answering the open questions (2026-11-17)
 
 ### WP9 Integration and QA
 
-- **Scope**: merge-check everything; run the suite; read every file against `guidelines.md` and the briefing's names; rate every row of `definition-of-done.md` with evidence; update `memory-bank/status.md` to "Milestone 2 done, waiting for review"; review `docs/FUTURE_WORK.md`; ask mae to create the `Milestone-2` branch at the merge.
+- **Scope**: merge-check everything; run the suite; run the kit's `/mutation-check` on cost, scoring and validations and report the score (X4); read every file against `guidelines.md` and the briefing's names; rate every row of `definition-of-done.md` with evidence; update `memory-bank/status.md` to "Milestone 2 done, waiting for review"; review `docs/FUTURE_WORK.md`; ask mae to create the `Milestone-2` branch at the merge.
 - **Done when**: every required row in the definition of done is ✅.
 
 ## Order

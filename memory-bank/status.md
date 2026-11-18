@@ -35,7 +35,6 @@ public website, is finished.
 1. WP1's scaffold in `docs/milestones/milestone-2/plan.md`, in its own thread. mae agreed to the ERD
    (`packages/warehouse-logic/docs/erd.md`), stored records with the brief's interfaces as views.
    (2026-11-18)
-2. mae picks the plan's extras X1 to X5. (2026-11-17)
 
 ## Known problems
 

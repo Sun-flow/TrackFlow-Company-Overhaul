@@ -91,7 +91,7 @@ Entry format:
 - **Decision**: Whatever a milestone's brief marks optional is built and counted in its definition of done, starting with Milestone 2's test page. Further extras in the same scope are proposed for mae to pick.
 - **Rationale**: mae (2026-11-17, plan D8).
 - **Alternatives considered**: building optional work only if time allows.
-- **Status**: Accepted (2026-11-17).
+- **Status**: Accepted (2026-11-17). mae picked all five proposed Milestone 2 extras, X1 to X5, on 2026-11-18; they are rated in its definition of done.
 
 ### [2026-11-17] Medium testing risk tier for Milestone 2's cost and scoring
 - **Decision**: Milestone 2's shipping cost, carrier scoring and reports (plan WP4) use the testing kit's medium tier. That adds tests written from the briefing in a separate context, and a fresh-context review. The other packages use the default low tier.
