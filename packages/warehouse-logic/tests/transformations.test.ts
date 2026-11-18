@@ -2,7 +2,7 @@
 // the reports. They were written from the briefing and docs/transformations.md before the code.
 // Every expected value is the briefing's formula worked by hand, with the arithmetic beside it; none
 // comes from running the code. A test that depends on one of mae's answers names it (Q2 to Q6, Q8,
-// Q16, Q23, Q25 in docs/decisions.md; Q29 is open in docs/open-questions.md). Mock data is in
+// Q16, Q23, Q25 in docs/decisions.md; Q30 is open in docs/open-questions.md). Mock data is in
 // tests/fixtures/ and is labelled there.
 import { describe, test } from "node:test";
 import assert from "node:assert/strict";
@@ -441,7 +441,7 @@ describe("calculateShipmentWeightKg: product.weightKg × shipment.quantity", () 
     assert.equal(calculateShipmentWeightKg(buildMockShipment({ quantity: 100 }), perfume), 30);
   });
 
-  test("twenty-five units of 0.28 kg weigh exactly 7 kg, not JavaScript's 7.000000000000001 (Q29)", () => {
+  test("twenty-five units of 0.28 kg weigh exactly 7 kg, not JavaScript's 7.000000000000001 (Q30)", () => {
     const product = buildMockProduct({ weightKg: 0.28 });
     assert.equal(calculateShipmentWeightKg(buildMockShipment({ quantity: 25 }), product), 7);
   });
@@ -705,7 +705,7 @@ describe("scoreCarrierForShipment: each rule, on both sides", () => {
     assert.equal(scoreCarrierForShipment(ups, order, perfume), 96.4);
   });
 
-  test("twenty-five units of 0.28 kg, exactly a 7 kg limit, pass the weight rule (Q29)", () => {
+  test("twenty-five units of 0.28 kg, exactly a 7 kg limit, pass the weight rule (Q30)", () => {
     // 0.28 × 25 = 7 kg by hand. JavaScript's 7.000000000000001 would fail the rule and score 77.
     assert.ok(0.28 * 25 > 7);
     const score = scoreCarrierForShipment(
@@ -716,7 +716,7 @@ describe("scoreCarrierForShipment: each rule, on both sides", () => {
     assert.equal(score, 97); // 20 + 20 + 15 + 15 + 27
   });
 
-  test("one more unit than the limit takes still fails it: 0.28 × 26 = 7.28 kg against 7 kg (Q29)", () => {
+  test("one more unit than the limit takes still fails it: 0.28 × 26 = 7.28 kg against 7 kg (Q30)", () => {
     const score = scoreCarrierForShipment(
       buildMockCarrier({ maxWeightKg: 7 }),
       buildMockShipment({ quantity: 26 }),

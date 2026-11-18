@@ -9,7 +9,7 @@
 //   Q23, Q25) and plan D4, the briefing's known failure;
 // - packages/warehouse-logic/docs/transformations.md, the only spec for the functions the briefing
 //   doesn't name;
-// - docs/open-questions.md Q29, still open: the code follows its recommendation, and the tests that
+// - docs/open-questions.md Q30, still open: the code follows its recommendation, and the tests that
 //   depend on it say so.
 // No expected value was taken from running the code.
 import { describe, test } from "node:test";
@@ -194,14 +194,14 @@ const mockPerfumeOrder: Shipment = {
   declaredValueUSD: 8500,
 };
 
-// Mock: the order of Q29 (docs/open-questions.md). Twenty-five units of a 0.28 kg product weigh
+// Mock: the order of Q30 (docs/open-questions.md). Twenty-five units of a 0.28 kg product weigh
 // 0.28 x 25 = 7 kg by hand, where JavaScript's 0.28 * 25 is 7.000000000000001.
-const mockQ29Product: Product = productWith({
+const mockQ30Product: Product = productWith({
   sku: "MOCK-BOX-280G",
   name: "Mock: a 0.28 kg box",
   weightKg: 0.28,
 });
-const mockQ29Order: Shipment = shipmentWith({
+const mockQ30Order: Shipment = shipmentWith({
   id: "MOCK-SH-1003",
   sku: "MOCK-BOX-280G",
   quantity: 25,
@@ -424,9 +424,9 @@ describe("removeFloatingPointNoise: the value to 15 significant digits", () => {
   // [what, value as JavaScript computes it, the value by hand]
   const rows: [string, number, number][] = [
     ["0.28 * 25, transformations.md's example, 7.000000000000001 in JavaScript", 0.28 * 25, 7],
-    ["0.14 * 50, a weight Q29 names", 0.14 * 50, 7],
-    ["0.56 * 25, a weight Q29 names", 0.56 * 25, 14],
-    ["1.1 * 3, a weight Q29 names", 1.1 * 3, 3.3],
+    ["0.14 * 50, a weight Q30 names", 0.14 * 50, 7],
+    ["0.56 * 25, a weight Q30 names", 0.56 * 25, 14],
+    ["1.1 * 3, a weight Q30 names", 1.1 * 3, 3.3],
     ["0.3 * 100, a product with no noise to remove", 0.3 * 100, 30],
     ["0.1 * 3", 0.1 * 3, 0.3],
     ["0.1 + 0.2", 0.1 + 0.2, 0.3],
@@ -688,11 +688,11 @@ describe("calculateShipmentWeightKg: product.weightKg x shipment.quantity, noise
     assert.equal(calculateShipmentWeightKg(mockPerfumeOrder, perfume), 30);
   });
 
-  test("25 units of a 0.28 kg product weigh exactly 7 kg, not JavaScript's 7.000000000000001 (Q29)", () => {
-    assert.equal(calculateShipmentWeightKg(mockQ29Order, mockQ29Product), 7);
+  test("25 units of a 0.28 kg product weigh exactly 7 kg, not JavaScript's 7.000000000000001 (Q30)", () => {
+    assert.equal(calculateShipmentWeightKg(mockQ30Order, mockQ30Product), 7);
   });
 
-  // The other weights Q29 names: by hand 0.14 x 50 = 7, 0.56 x 25 = 14 and 1.1 x 3 = 3.3.
+  // The other weights Q30 names: by hand 0.14 x 50 = 7, 0.56 x 25 = 14 and 1.1 x 3 = 3.3.
   // [weightKg, quantity, the weight by hand]
   const q29Rows: [number, number, number][] = [
     [0.14, 50, 7],
@@ -700,7 +700,7 @@ describe("calculateShipmentWeightKg: product.weightKg x shipment.quantity, noise
     [1.1, 3, 3.3],
   ];
   for (const [weightKg, quantity, expected] of q29Rows) {
-    test(`${quantity} units of ${weightKg} kg weigh exactly ${expected} kg (Q29)`, () => {
+    test(`${quantity} units of ${weightKg} kg weigh exactly ${expected} kg (Q30)`, () => {
       assert.equal(
         calculateShipmentWeightKg(shipmentWith({ quantity }), productWith({ weightKg })),
         expected,
@@ -1167,16 +1167,16 @@ describe("scoreCarrierForShipment: the weight rule counts the whole shipment, up
     assert.equal(scoreCarrierForShipment(ups, mockPerfumeOrder, perfume), 96.4);
   });
 
-  test("exactly at the limit by hand, a hair over in JavaScript: 25 x 0.28 kg against 7 kg keeps the 20 weight points, 94 and not 74 (Q29)", () => {
+  test("exactly at the limit by hand, a hair over in JavaScript: 25 x 0.28 kg against 7 kg keeps the 20 weight points, 94 and not 74 (Q30)", () => {
     // By hand 0.28 x 25 = 7 kg, and 7 kg <= 7 kg: 20 + 20 + 15 + 15 + 24 = 94. JavaScript's
     // 0.28 * 25 is 7.000000000000001, so the formula typed as written would give 0 + ... = 74.
     assert.equal(
-      scoreCarrierForShipment(carrierWith({ maxWeightKg: 7 }), mockQ29Order, mockQ29Product),
+      scoreCarrierForShipment(carrierWith({ maxWeightKg: 7 }), mockQ30Order, mockQ30Product),
       94,
     );
   });
 
-  // The other weights Q29 names, each exactly at the limit by hand: 20 + 20 + 15 + 15 + 24 = 94.
+  // The other weights Q30 names, each exactly at the limit by hand: 20 + 20 + 15 + 15 + 24 = 94.
   // [weightKg, quantity, carrier's maxWeightKg]
   const q29Rows: [number, number, number][] = [
     [0.14, 50, 7],
@@ -1184,7 +1184,7 @@ describe("scoreCarrierForShipment: the weight rule counts the whole shipment, up
     [1.1, 3, 3.3],
   ];
   for (const [weightKg, quantity, maxWeightKg] of q29Rows) {
-    test(`${quantity} x ${weightKg} kg against a limit of ${maxWeightKg} kg: at the limit by hand, so 94 (Q29)`, () => {
+    test(`${quantity} x ${weightKg} kg against a limit of ${maxWeightKg} kg: at the limit by hand, so 94 (Q30)`, () => {
       assert.equal(
         scoreCarrierForShipment(
           carrierWith({ maxWeightKg }),
@@ -1201,13 +1201,13 @@ describe("scoreCarrierForShipment: the weight rule counts the whole shipment, up
     assert.equal(
       scoreCarrierForShipment(
         carrierWith({ maxWeightKg: 7 }),
-        { ...mockQ29Order, quantity: 26 },
-        mockQ29Product,
+        { ...mockQ30Order, quantity: 26 },
+        mockQ30Product,
       ),
       74,
     );
     assert.equal(
-      scoreCarrierForShipment(carrierWith({ maxWeightKg: 6.99 }), mockQ29Order, mockQ29Product),
+      scoreCarrierForShipment(carrierWith({ maxWeightKg: 6.99 }), mockQ30Order, mockQ30Product),
       74,
     );
   });
@@ -1308,11 +1308,11 @@ describe("calculateCarrierScoreBreakdown: the points each rule gives", () => {
     assert.equal(calculateCarrierScoreBreakdown(ups, mockPerfumeOrder, perfume).canCarryWeight, 20);
   });
 
-  test("the weight points follow the weight with noise removed: 25 x 0.28 kg against 7 kg is 20 (Q29)", () => {
+  test("the weight points follow the weight with noise removed: 25 x 0.28 kg against 7 kg is 20 (Q30)", () => {
     const breakdown = calculateCarrierScoreBreakdown(
       carrierWith({ maxWeightKg: 7 }),
-      mockQ29Order,
-      mockQ29Product,
+      mockQ30Order,
+      mockQ30Product,
     );
     assert.equal(breakdown.canCarryWeight, 20);
   });

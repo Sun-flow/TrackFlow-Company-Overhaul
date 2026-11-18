@@ -21,7 +21,7 @@ are pushed; 200 tests pass. `groupShipmentsByStatus`, `summarizeWarehouse`, `sum
 `findTopCarriers` on WP3's `sortBy`, passes all 230 tests against WP3's branch and is kept in the
 project files as `milestone-2/wp4-transformations-full-draft.ts`. The separate-context test file,
 `tests/transformations.independent.test.ts`, is written but not committed until its writer finishes a
-correction. Q29 is open for mae (`docs/open-questions.md`).
+correction. Q30 is open for mae (`docs/open-questions.md`).
 
 Next: commit the independent tests and run them; when WP3 merges, merge `origin/production`, put the
 full draft in place, run `/test-review` or the `test-reviewer`, the suite, then the closing commit and
@@ -38,5 +38,5 @@ fail, the 30 being the four functions above.
 
 ## Ruled out
 
-The first Q29 example, `0.3 * 100`, was wrong: JavaScript gives exactly 30. A test's premise check
+The first Q30 example, `0.3 * 100`, was wrong: JavaScript gives exactly 30. A test's premise check
 caught it. The true case is `0.28 * 25`.

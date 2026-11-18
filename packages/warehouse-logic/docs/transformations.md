@@ -46,7 +46,7 @@ The Tech Lead's "auxiliary methods" (definition of done, M8).
 | Function | Returns |
 |---|---|
 | `calculateStockValue(product: Product): number` | `stockQuantity * unitCostUSD`, not rounded. The sample shoes: 45 × 35 = 1575. |
-| `calculateShipmentWeightKg(shipment: Shipment, product: Product): number` | `product.weightKg * shipment.quantity`, with floating-point noise removed (Q29). The sample shipment: 2.3 kg. Twenty-five units of a 0.28 kg product: exactly 7 kg, where JavaScript's `0.28 * 25` is `7.000000000000001`. |
+| `calculateShipmentWeightKg(shipment: Shipment, product: Product): number` | `product.weightKg * shipment.quantity`, with floating-point noise removed (Q30). The sample shipment: 2.3 kg. Twenty-five units of a 0.28 kg product: exactly 7 kg, where JavaScript's `0.28 * 25` is `7.000000000000001`. |
 | `getPrioritySurchargeRate(priority: ShipmentPriority): number` | The briefing's surcharge as a fraction: `0` for Standard, `0.3` for Express, `0.6` for Same-day. |
 | `carrierOperatesInCountry(carrier: Carrier, country: Country): boolean` | Whether `carrier.operatesIn` has the country. |
 | `carrierCanCarryWeight(carrier: Carrier, weightKg: number): boolean` | Whether `weightKg <= carrier.maxWeightKg`. A weight equal to the limit passes. |
@@ -200,4 +200,4 @@ With the six mock movements in `tests/fixtures/movements.ts`, the sample stock r
 
 ## Answers these functions follow
 
-Q2 to Q6 and Q8 are in `docs/decisions.md`, "Milestone 2's open questions answered"; Q16, Q21, Q23 and Q25 in "Milestone 2's review questions answered" and "The movement totals report splits by direction". Q29 is open in `docs/open-questions.md`: the code follows its recommendation, which is to remove floating-point noise from a shipment's weight before comparing it with a carrier's limit, and the tests that depend on it name it.
+Q2 to Q6 and Q8 are in `docs/decisions.md`, "Milestone 2's open questions answered"; Q16, Q21, Q23 and Q25 in "Milestone 2's review questions answered" and "The movement totals report splits by direction". Q30 is open in `docs/open-questions.md`: the code follows its recommendation, which is to remove floating-point noise from a shipment's weight before comparing it with a carrier's limit, and the tests that depend on it name it.

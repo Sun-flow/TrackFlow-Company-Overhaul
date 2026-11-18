@@ -223,7 +223,7 @@ export function calculateStockValue(product: Product): number {
 
 /**
  * What a shipment weighs: `product.weightKg * shipment.quantity`, with floating-point noise removed
- * so that a weight equal to a carrier's limit by hand is equal to it here (Q29).
+ * so that a weight equal to a carrier's limit by hand is equal to it here (Q30).
  */
 export function calculateShipmentWeightKg(shipment: Shipment, product: Product): number {
   return removeFloatingPointNoise(product.weightKg * shipment.quantity);
