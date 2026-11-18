@@ -1,7 +1,7 @@
 # Milestone 2 definition of done
 
 > **Date created**: 2026-11-17
-> **Last checked**: 2026-11-17, against `production` at `77f7b0d` (the Milestone 2 brief files, PR #32). Nothing is built yet, so every item is ⬜. Revised the same day with mae's answers to the plan's decisions, and on 2026-11-18 with M9 for the stored model and X1 to X5 for the extras.
+> **Last checked**: 2026-11-18, on PR #33's branch. Nothing is built yet; only M1, the agreed ERD, is done. Revised the same day with mae's answers to the plan's decisions, and on 2026-11-18 with M9 for the stored model and X1 to X5 for the extras.
 > **Sources**: every checklist and requirement in this folder, merged and de-duplicated. The company briefing (`trackflow-BRIEFING.en.md`, called `BRIEFING.md` in the checklists) still wins where it is more specific.
 
 Milestone 2 is done when every item below is rated ✅. The test page (O) is optional in its checklist but required here: mae counts optional work as required (2026-11-17, plan D8). Items marked "after review" are built only once mae has approved the analysis that comes before them (plan, "How this milestone works"). Where several sources ask for the same thing, they are one item and the Source column lists each. `plan.md` says which package delivers each item; the D numbers point to its Phase 0 decisions.
@@ -16,9 +16,9 @@ To re-check, update the rating and evidence in place and the "Last checked" line
 
 | Rating | Items |
 |---|---|
-| ✅ Completely done | 0 |
+| ✅ Completely done | 1 |
 | 🟡 Partially done | 0 |
-| ⬜ Not done | 67 |
+| ⬜ Not done | 66 |
 | 🙋 Needs mae | 0 |
 | ❔ Not verifiable here | 0 |
 | **Total** | **67** |
@@ -29,7 +29,7 @@ The plan's extras X1 to X5 joined this list when mae picked all five (2026-11-18
 
 | ID | Item | Source | Rating | Evidence |
 |---|---|---|---|---|
-| M1 | ERD documents of the entities, agreed with mae before the code that uses them | G | ⬜ | |
+| M1 | ERD documents of the entities, agreed with mae before the code that uses them | G | ✅ | `packages/warehouse-logic/docs/erd.md`, agreed by mae 2026-11-18, before any package code |
 | M2 | `Product` and `Dimensions` with every field, name and type in the briefing | B, B-A1, L1, E-TC1, E-CA1 | ⬜ | |
 | M3 | `Shipment` and `Destination` with every field, name and type in the briefing | B, B-A1, L1, E-TC1, E-CA1 | ⬜ | |
 | M4 | `Carrier` with every field, name and type in the briefing | B, B-A1, L1, E-TC1, E-CA1 | ⬜ | |
@@ -115,7 +115,7 @@ The plan's extras X1 to X5 joined this list when mae picked all five (2026-11-18
 | ST14 | Field names, entity types and literal values match the briefing exactly, with nothing generic in their place | L's "IMPORTANT" note, E-CA1 | ⬜ | |
 | ST15 | A generic, typed toolkit (filter, sort, group, search, count, sum, average, extremes, rule checks) underneath, with the briefing's functions built from it under their exact names | mae (D6) | ⬜ | |
 | ST16 | Every gap the briefing leaves open was asked in `docs/open-questions.md`, its answer is in `docs/decisions.md`, and the tests that depend on an answer name it (for example `Q2`) | mae (D5) | ⬜ | |
-| ST17 | The improvements mae asked to track (plan, "Tracked improvements") are written up, and built where mae approves | mae (Q1, Q9, Q10) | ⬜ | |
+| ST17 | The improvements mae asked to track (plan, "Tracked improvements") are written up, and built where mae approves | mae (Q9, Q10, Q12) | ⬜ | |
 
 ## Delivery
 

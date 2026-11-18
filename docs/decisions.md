@@ -36,10 +36,10 @@ Entry format:
 - **Status**: Superseded (2026-11-18) by [Milestone 2 stores single-id records, with the brief's interfaces as views]: the split is the stored model from WP1, and the `ProductKey` type is not built. Its id formats stand. Accepted (2026-11-17). Id formats (Q13, mae, 2026-11-18): warehouse ids follow the carriers' `CAR-UPS` style, `WH-LA` and `WH-ZGZ`; a stock record's id, and the derived product code, is the SKU, a hyphen, then the warehouse id, such as `SHOE-BLK-42-WH-ZGZ`. Because SKUs contain hyphens too, the code is split by matching a known warehouse id at its end.
 
 ### [2026-11-18] The Milestone 2 ERD is Mermaid in `erd.md`
-- **Decision**: Both Milestone 2 diagrams, the brief's model and the planned improved model, are Mermaid code in `packages/warehouse-logic/docs/erd.md`. GitHub draws them, and a session edits them as text. mermaid.live gives a live preview.
+- **Decision**: The Milestone 2 ERD is Mermaid code in `packages/warehouse-logic/docs/erd.md`. GitHub draws it, and a session edits them as text. mermaid.live gives a live preview.
 - **Rationale**: mae found draw.io the wrong interface and asked for whatever is easiest for Claude to edit and show (2026-11-18). Text diagrams are also readable in a pull request diff.
 - **Alternatives considered**: draw.io, tried the same evening (the entry below); dbdiagram.io.
-- **Status**: Accepted (2026-11-18). Since the departure above, `erd.md` holds one diagram, the stored model.
+- **Status**: Accepted (2026-11-18).
 
 ### [2026-11-17] The Milestone 2 ERD is a draw.io file
 - **Decision**: The entity relationship diagrams are packages/warehouse-logic/docs/erd.drawio.svg (the brief's model) and erd-improved.drawio.svg (the planned model), SVGs with the draw.io diagram embedded. GitHub shows it as an image, and draw.io (app.diagrams.net) opens it for drag-and-drop editing. Each is its diagram's only copy: `erd.md` shows them and holds the text around them, and the Mermaid version is gone. Save it back as an editable SVG, under the same name.

@@ -78,7 +78,6 @@ The foundation every other package builds on. Its ERD is the first thing mae see
 
 - **Scope**
   - `packages/warehouse-logic/docs/erd.md`: an entity relationship diagram (Mermaid, which GitHub draws) of the stored records, `Item`, `Warehouse`, `StockRecord`, `ShipmentRecord`, `MovementRecord` and `Carrier`, each with one id and every link one id to one id, plus a table of how each brief interface is built from them as a view. Under it, the literal types as allowed values, the briefing's validation rules (D7) and a pointer to `docs/open-questions.md`. Agreed by mae on 2026-11-18 (`docs/decisions.md`, "Milestone 2 stores single-id records, with the brief's interfaces as views"). Kept outside `docs/milestones/`, where `scripts/check-briefs.py` would freeze it as a brief.
-  - **Gate**: the PR opens as a draft with the ERD first. Code below is added only once mae agrees to the ERD.
   - `src/types/models.ts`: the brief's interfaces and types, copied field for field from the briefing and exported, and the stored records from the ERD.
   - `src/utils/views.ts`: `toStockRecordId`, `parseStockRecordId`, and the functions that build the brief's `Product`, `Shipment` and `InventoryMovement` from the stored records. A transfer is two stored movements, a send and its receipt, each shown at its own warehouse (Q14, Q15).
   - `src/data/samples.ts`: the briefing's sample products, carriers and shipment as typed literal objects, with a comment saying they are the briefing's own data, as the brief's interfaces exactly and as the stored records they come from. Any more fixtures the tests need live in `tests/fixtures/`, labelled as mock data (`memory-bank/notes.md`, Hazards).
@@ -86,7 +85,7 @@ The foundation every other package builds on. Its ERD is the first thing mae see
   - `packages/warehouse-logic/README.md`: what it is, the commands, the file map. A line for it in `packages/README.md` and its Spanish twin.
   - Wiring per D2: `scripts/suite.sh` and `.github/workflows/checks.yml` install the package and run its typecheck and tests; `.claude/testing-kit.json` gains the package's tests and `src` (kit-guarded: mae approves and labels).
   - Bank: `memory-bank/context.md` Map and Commands; D3's answer in `docs/decisions.md`.
-- **Done when**: mae has agreed to the ERD; `pnpm typecheck` passes; a test that type-checks the samples against the models passes; building the views from the stored samples gives back the briefing's samples exactly; the suite runs the new steps.
+- **Done when**: `pnpm typecheck` passes; a test that type-checks the samples against the models passes; building the views from the stored samples gives back the briefing's samples exactly; the suite runs the new steps.
 - **Outside its scope**: the briefing's functions and the toolkit in `src/utils/`.
 
 ## Phase 2 (parallel)
@@ -144,19 +143,17 @@ Each step here follows the same order: the brief's version is merged and documen
 ### WP8 Validation improvements
 
 - **Files**: `packages/warehouse-logic/docs/validation-review.md`, then `src/utils/validations.ts` and its tests.
-- **Scope**: proposed improvements to the 14 rules, each backed by research or experience, with a before/after example for each. These include the Tech Lead's examples (required fields not empty, `createdAt` a real date), literal values on their lists for data that arrives untyped, whole-number quantities, `Shipment.origin` matching the product's warehouse, records of one SKU agreeing on everything but stock (Q11, Q12), no SKU that itself ends in a warehouse id such as `-WH-ZGZ` (Q13), and in the stored model a movement's `from` and `to` fitting its type (Inbound only `to`, Outbound only `from`, a Transfer's send both, in different warehouses of the same item, and its receipt only `to` and a `transferId` pointing at a send headed for that stock, dated no earlier than the send), and rules for `InventoryMovement`, which has none yet. mae picks which ones go in, and only those are built.
+- **Scope**: proposed improvements to the 14 rules, each backed by research or experience, with a before/after example for each. These include the Tech Lead's examples (required fields not empty, `createdAt` a real date), literal values on their lists for data that arrives untyped, whole-number quantities, `Shipment.origin` matching the product's warehouse, records of one SKU agreeing on everything but stock (Q11, Q12), no SKU that itself ends in a warehouse id such as `-WH-ZGZ` (Q13), movements matching the shape `erd.md` gives each type (a transfer's receipt pointing at a send headed for its stock, and dated no earlier), and rules for `InventoryMovement`, which has none yet. mae picks which ones go in, and only those are built.
 - **Done when**: mae has picked, and the picked rules are built and tested.
 
 ### Tracked improvements
 
-mae asked for these to be tracked when answering the open questions (2026-11-17). Each one goes the same way as WP7 and WP8: the briefing's behaviour is built first, then a short write-up with a before and after example goes to mae, and only an approved change is built, beside the briefing's version.
+mae asked for these to be tracked when answering the open questions (2026-11-17). I1 (carriers by id) and I4 (single ids) became the stored model instead (`docs/decisions.md`, "Milestone 2 stores single-id records, with the brief's interfaces as views"). Each one goes the same way as WP7 and WP8: the briefing's behaviour is built first, then a short write-up with a before and after example goes to mae, and only an approved change is built, beside the briefing's version.
 
 | # | Improvement | From | Changes |
 |---|---|---|---|
-| I1 | Shipments refer to carriers by `id`, which never changes, with the name looked up from the carriers list, so a renamed carrier doesn't split its history | Q1 | Part of the stored model since 2026-11-18: `ShipmentRecord.carrierId`, with the `Shipment` view keeping the name |
 | I2 | A binary search that always returns the first matching index, so it can find every product of a weight, or a weight range | Q9 | `search.ts`, after WP2 |
 | I3 | A lookup that returns a SKU's record in every warehouse, since a product is identified by SKU and warehouse together | Q10 | `search.ts`, after WP2 |
-| I4 | Single ids, no two-part keys: `Item` (one per SKU, the SKU is its id), `Warehouse` and `StockRecord` (one per item per warehouse, its own id). Shipments and movements point at a stock record by one id, and shipments at carriers by id (I1). Functions build the brief's `Product`, `Shipment` and `InventoryMovement` as views. Drawn in `erd.md` | mae's ProductId design | Adopted as the stored model on 2026-11-18, built in WP1 |
 | I5 | A status per warehouse, for example "Low stock" in one warehouse only | Q12 | `StockRecord`, after WP1 to WP5 |
 
 ### WP9 Integration and QA

@@ -5,8 +5,9 @@ date asked; re-date an item only after checking it. Edit when what works, what i
 or an open question changes, or when an item is checked and found wrong. Work on a branch belongs in its
 work file, not here.
 
-Current milestone: Milestone 2, a TypeScript logic layer. Its brief is in `docs/milestones/milestone-2/`
-and its plan waits for mae's confirmation, so nothing is being built yet (2026-11-17). Milestone 1, the
+Current milestone: Milestone 2, a TypeScript logic layer. Its brief is in `docs/milestones/milestone-2/`.
+Its plan, definition of done and ERD are agreed and wait for mae's merge (PR #33); nothing is built
+yet (2026-11-18). Milestone 1, the
 public website, is finished.
 
 ## Works
