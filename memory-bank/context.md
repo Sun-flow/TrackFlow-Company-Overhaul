@@ -16,8 +16,10 @@ TrackFlow's teams and client brands need, starting with the public website. It i
 - `CONTEXT.md` is the company: its departments, people, problems and what each team needs.
 - `docs/milestones/` has one folder per milestone with its briefs as received, its plan and its
   definition of done; `docs/milestones/README.md` describes the layout.
-- `docs/decisions.md` records each decision and its reason; `docs/FUTURE_WORK.md` parks ideas for later
-  milestones.
+- `docs/decisions.md` records each decision and its reason; `docs/open-questions.md` holds the questions
+  waiting for mae; `docs/FUTURE_WORK.md` parks ideas for later milestones.
+- `packages/warehouse-logic/` is Milestone 2's logic layer. So far it holds only the agreed data model,
+  `packages/warehouse-logic/docs/erd.md`; the plan's WP1 adds the code.
 - `uis/website/` is the public website from Milestone 1: static HTML pages, Tailwind CSS 4 compiled into
   the committed `uis/website/dist/styles.css`, plain JavaScript, and tests in `uis/website/tests/`.
   `uis/website/README.md` describes its files.

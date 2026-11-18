@@ -17,6 +17,12 @@ Entry format:
 
 ---
 
+### [2026-11-18] Milestone 2's plan corrected after a review
+- **Decision**: A review of the merged planning docs was applied in one docs-only pull request. Its choices: `groupShipmentsByStatus` is built by WP4 in `transformations.ts`, where the briefing puts it, on WP3's `groupBy`; the stored carrier is `CarrierRecord`; WP1 also changes the test step in `.github/workflows/testing-kit.yml`, so the required `all-green` check runs the package's tests; the package README is WP6's, and the parallel packages write their notes under the package's `docs/`; the tracked improvements I2, I3 and I5 are package WP8b; the mutation check aims for 70% or more; WP7 uses the medium tier. Nine choices the review could not settle are Q16 to Q24 in `docs/open-questions.md`.
+- **Rationale**: mae asked for the review and chose to apply all of its fixes (2026-11-18). Each one removes a place where the plan disagreed with the brief or with itself, before any package copies it.
+- **Alternatives considered**: applying only the four fixes WP1 needs; leaving the docs until mae had marked up the review.
+- **Status**: Accepted (mae, 2026-11-18). Q16 to Q24 are open.
+
 ### [2026-11-18] A transfer shows as a send and a receipt
 - **Decision**: In the brief's `InventoryMovement` view, a Transfer appears twice: once at the sending warehouse when it is sent, and once at the receiving warehouse when it is received (Q14, option c). Each is its own `MovementRecord`, made by its warehouse (Q15, option b). The send has a `from` and the `to` it is headed for; the receipt has only the `to` and a `transferId`, the `movementId` of its send.
 - **Rationale**: mae (2026-11-18): it works as a sent-and-received check, since every send should have a matching receipt. Two records let each warehouse record what it actually sent or received, so a shortfall shows as a difference in `quantity`.
@@ -24,10 +30,10 @@ Entry format:
 - **Status**: Accepted (mae, 2026-11-18).
 
 ### [2026-11-18] Milestone 2 stores single-id records, with the brief's interfaces as views
-- **Decision**: A departure from the brief. The stored data is the model in `packages/warehouse-logic/docs/erd.md`: `Item` (one per SKU, the SKU is its id), `Warehouse` (`WH-LA`, `WH-ZGZ`, in the carriers' `CAR-UPS` style), `StockRecord` (one per item per warehouse, keyed by the SKU, a hyphen and the warehouse id, such as `SHOE-BLK-42-WH-ZGZ`, split by matching the known warehouse id at its end because SKUs contain hyphens too), `ShipmentRecord` (`stockRecordId`, `carrierId`), `MovementRecord` (`fromStockRecordId`, `toStockRecordId`) and `Carrier`. Every record has one key, named for what it identifies (`warehouseId`, `stockRecordId`, `shipmentId`, `movementId`, `carrierId`, and the item's `sku`), and a link has the name of the key it holds. `unitCostUSD` and `status` are the same in every warehouse and belong to `Item` (Q11, Q12); a status per warehouse is improvement I5. The brief's `Product`, `Shipment`, `InventoryMovement`, `Carrier`, `Dimensions` and `Destination` stay in `src/types/models.ts` exactly as written, are built from the records by functions in `src/utils/views.ts`, which fill their `id` fields from these keys, and are what the briefing's functions take, unchanged. This makes I1 (carriers by id) and I4 (single ids) part of the stored model.
+- **Decision**: A departure from the brief. The stored data is the model in `packages/warehouse-logic/docs/erd.md`: `Item` (one per SKU, the SKU is its id), `Warehouse` (`WH-LA`, `WH-ZGZ`, in the carriers' `CAR-UPS` style), `StockRecord` (one per item per warehouse, keyed by the SKU, a hyphen and the warehouse id, such as `SHOE-BLK-42-WH-ZGZ`, split by matching the known warehouse id at its end because SKUs contain hyphens too), `ShipmentRecord` (`stockRecordId`, `carrierId`), `MovementRecord` (`fromStockRecordId`, `toStockRecordId`) and `CarrierRecord`. Every record has one key, named for what it identifies (`warehouseId`, `stockRecordId`, `shipmentId`, `movementId`, `carrierId`, and the item's `sku`), and a link has the name of the key it holds. `unitCostUSD` and `status` are the same in every warehouse and belong to `Item` (Q11, Q12); a status per warehouse is improvement I5. The brief's `Product`, `Shipment`, `InventoryMovement`, `Carrier`, `Dimensions` and `Destination` stay in `src/types/models.ts` exactly as written, are built from the records by functions in `src/utils/views.ts`, which fill their `id` fields from these keys, and are what the briefing's functions take, unchanged. This makes I1 (carriers by id) and I4 (single ids) part of the stored model.
 - **Rationale**: mae proposed a ProductId for SKU and warehouse pairs (2026-11-17) with these constraints: no many-to-many links (use a step in between); unique SKUs that can sit in two warehouses; products told apart by warehouse; alignment with the brief. mae then made one key per record, with no two-part keys, the goal, chose the id formats (Q13), and chose to store this model from the start rather than after the brief's version (2026-11-18). Keeping the brief's interfaces as views keeps every graded field, name and function signature, and building the views from the stored samples must give back the briefing's samples exactly, which is WP1's check.
 - **Alternatives considered**: the brief's interfaces as the stored data, with a derived `ProductKey` (`{ sku, warehouse }`) now and the split as improvement I4 after WP1 to WP5, which mae first picked on 2026-11-17; a stored `productId` field on the brief's `Product` and `Shipment`, which breaks their graded fields and can drift from `sku` and `warehouse`; both models drawn side by side in `erd.md`.
-- **Status**: Accepted (mae, 2026-11-18). A transfer's views: the entry above.
+- **Status**: Accepted (mae, 2026-11-18). A transfer's views: the entry above. The stored carrier was written here as `Carrier` until a review the same day named it `CarrierRecord`, because the brief's `Carrier` interface keeps that name.
 
 ### [2026-11-18] The Milestone 2 ERD is Mermaid in `erd.md`
 - **Decision**: The Milestone 2 ERD is Mermaid code in `packages/warehouse-logic/docs/erd.md`. GitHub draws it, and a session edits them as text. mermaid.live gives a live preview.
@@ -37,7 +43,7 @@ Entry format:
 
 ### [2026-11-17] Milestone 2's open questions answered
 - **Decision**: mae's answers to Q1 to Q10, the gaps the Milestone 2 briefing leaves open. They were asked in `docs/open-questions.md`, which keeps the reasoning in its git history.
-  - Q1: `Shipment.carrier` holds the carrier's `name`. A move to `id`, which survives a rename, is tracked as improvement I1 in the plan.
+  - Q1: `Shipment.carrier` holds the carrier's `name`. The move to an id, which survives a rename, was first tracked as improvement I1 and is now part of the stored model: `ShipmentRecord.carrierId` ("Milestone 2 stores single-id records, with the brief's interfaces as views").
   - Q2: the average distance of no shipments is 0.
   - Q3: `countProductsByCategory` and `groupShipmentsByStatus` return every key, with 0 or `[]`.
   - Q4: the priority surcharge applies to base, weight and distance together.
@@ -47,6 +53,12 @@ Entry format:
   - Q8: `findTopCarriers` returns `[]` for a `topN` of 0 or less, and equal counts keep first-seen order.
   - Q9: `binarySearchProductByWeight` returns any matching index. Always returning the first is tracked as I2.
   - Q10: a product is identified by its SKU and warehouse together; `findProductBySKU` returns the first match. A lookup of a SKU in every warehouse is tracked as I3.
+  - Q11 to Q15 were answered on 2026-11-18, in the entries named here, and are listed so a test that cites one can be traced:
+  - Q11: `unitCostUSD` is the same in every warehouse, so it belongs to `Item` ("Milestone 2 stores single-id records, with the brief's interfaces as views").
+  - Q12: `status` is the same in every warehouse too, on `Item`; a status per warehouse is tracked as I5 (same entry).
+  - Q13: warehouse ids are `WH-LA` and `WH-ZGZ`, and a stock record's id is the SKU, a hyphen and the warehouse id (same entry).
+  - Q14: a Transfer shows twice in the brief's `InventoryMovement`, as a send and as a receipt ("A transfer shows as a send and a receipt").
+  - Q15: it is stored as two records, the receipt pointing at its send (same entry).
 - **Rationale**: mae (2026-11-17). Each is the plainest reading of the briefing; Q3 is what its `Record` return types require; Q10 matches TrackFlow stocking the same SKU in both warehouses (`CONTEXT.md`), which mae called a tough dilemma.
 - **Alternatives considered**: listed per question in `docs/open-questions.md` as of this entry's commit.
 - **Status**: Accepted (2026-11-17).
@@ -55,7 +67,7 @@ Entry format:
 - **Decision**: The Milestone 2 logic layer is the package `@trackflow/warehouse-logic` in `packages/warehouse-logic/`. It keeps the brief's `src/` tree exactly (`src/types/models.ts`, `src/utils/*.ts`, `src/index.html`) and adds `tests/` and `docs/`.
 - **Rationale**: mae chose it (2026-11-17, plan D1). The root `README.md` puts code reused by several apps in `packages/`, and later milestones will import this layer.
 - **Alternatives considered**: `src/` at the repo root, which matches `expected-structure.md` literally but mixes one milestone into the monorepo's top level.
-- **Status**: Accepted (2026-11-17).
+- **Status**: Accepted (2026-11-17). "Exactly" means the brief's files sit where it names them; the plan also adds `src/utils/views.ts`, `src/data/` and `src/demo.ts` beside them.
 
 ### [2026-11-17] Milestone 2 tooling: TypeScript only, Node's own test runner
 - **Decision**: TypeScript is the package's only dependency, pinned and installed with pnpm. `pnpm typecheck` runs `tsc --noEmit`, `pnpm test` runs Node's built-in runner on `.ts` files, `pnpm demo` runs `src/demo.ts` with Node, and `pnpm build` compiles browser modules. The suite and CI run the typecheck and tests, and the testing kit's config gains the package. That last change is guarded by the kit, so it needs mae's `allow-test-changes` label.
@@ -91,7 +103,7 @@ Entry format:
 - **Decision**: Milestone 2's shipping cost, carrier scoring and reports (plan WP4) use the testing kit's medium tier. That adds tests written from the briefing in a separate context, and a fresh-context review. The other packages use the default low tier.
 - **Rationale**: mae approved it (2026-11-17, plan D9). These are the money paths, and Ana's brief says the code goes into production.
 - **Alternatives considered**: low everywhere.
-- **Status**: Accepted (2026-11-17).
+- **Status**: Accepted (2026-11-17). WP7 changes the same paths, so it is medium too (review, 2026-11-18).
 
 ### [2026-11-17] Open questions about a brief go in `docs/open-questions.md`, one per heading
 - **Decision**: Gaps a brief leaves open are written in `docs/open-questions.md` as separate questions, each with what the brief says, the options and a recommendation. Code follows the recommendation until mae answers, and its tests name the question. An answer moves here or into the plan.
