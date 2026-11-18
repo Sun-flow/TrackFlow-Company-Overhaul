@@ -96,10 +96,11 @@ const largestAmountWithCents = 1e13;
 
 /**
  * The value rounded to 15 significant digits, which drops the noise binary arithmetic adds at the far
- * end: `0.28 * 25` is 7.000000000000001, and this gives back 7.
+ * end: `0.28 * 25` is 7.000000000000001, and this gives back 7. NaN and the infinities come back as
+ * they are.
  */
 export function removeFloatingPointNoise(value: number): number {
-  return Number.isFinite(value) ? Number(value.toPrecision(reliableDigits)) : value;
+  return Number(value.toPrecision(reliableDigits));
 }
 
 /**

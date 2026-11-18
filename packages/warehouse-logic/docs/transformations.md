@@ -21,7 +21,7 @@ They trust the data they are given, as the briefing's formulas do. A carrier wit
 
 - JavaScript holds 35.55 × 1.3, which is 46.215 by hand, as 46.214999999999996, and `toFixed(2)` turns that into 46.21. `roundToTwoDecimals` first reads the value to 15 significant digits (46.2150000000000), then rounds half up: `roundToTwoDecimals(35.55 * 1.3)` is `46.22`. In the same way `roundToTwoDecimals(1.005)` is `1.01`.
 - A half goes up, toward positive infinity: `roundToTwoDecimals(2.345)` is `2.35` and `roundToTwoDecimals(-2.345)` is `-2.34`.
-- A value with 2 decimals or fewer comes back unchanged. `NaN`, `Infinity` and `-Infinity` come back as they are. The result is never `-0`: `-0` and a tiny negative such as `-0.001` both give `0`.
+- A value with 2 decimals or fewer comes back unchanged. So does an amount of 10 trillion (`1e13`) or more: its 15 reliable digits are used up before the second decimal, so there are no cents to round. `NaN`, `Infinity` and `-Infinity` come back as they are. The result is never `-0`: `-0` and a tiny negative such as `-0.001` both give `0`.
 
 ## Generic blocks
 
