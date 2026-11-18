@@ -27,8 +27,8 @@ WP1 of its plan, the package scaffold and data model, is built; the briefing's f
   workflow, whose Node, Fast tier and typecheck steps are hand edits, and two patched scripts
   (`docs/decisions.md`). Its required check runs both test sets and the package's typecheck.
   (2026-11-18)
-- `production` is protected: a ruleset requires the testing kit's `all-green` check before a merge
-  (mae, 2026-11-13; GitHub lists the branch as protected). (2026-11-13)
+- `production` is protected: a ruleset requires the testing kit's `all-green` check and, since
+  2026-11-18, `checks / suite` before a merge (mae; not checked from a session). (2026-11-18)
 - The `Milestone-1` branch, for grading, points at the end of Milestone 1, the merge of pull request
   #24: `git ls-remote origin Milestone-1` prints 34e5069. (2026-11-13)
 - All 39 items of Milestone 1's definition of done are rated done:

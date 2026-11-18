@@ -17,10 +17,10 @@ Entry format:
 
 ---
 
-### [2026-11-18] The required check typechecks the warehouse logic
-- **Decision**: The `test` job of `.github/workflows/testing-kit.yml`, which the required `all-green` check waits on, installs the package's TypeScript and runs `pnpm typecheck` after the tests. The kit's fast command, which sessions' hooks run, stays tests only, so a session with nothing installed still passes it.
+### [2026-11-18] The required checks typecheck the warehouse logic
+- **Decision**: Two things. mae added `checks / suite` to the `production` ruleset beside `all-green` (2026-11-18), so the whole suite, typecheck included, must pass before a merge. And the `test` job of `.github/workflows/testing-kit.yml`, which the required `all-green` check waits on, installs the package's TypeScript and runs `pnpm typecheck` after the tests. The kit's fast command, which sessions' hooks run, stays tests only, so a session with nothing installed still passes it.
 - **Rationale**: mae (2026-11-18), on learning that the required check could not see a type error: Node runs TypeScript by dropping the types unchecked, and only `checks / suite`, which is not required, ran the typecheck. "No compilation errors" is one of the milestone's graded items.
-- **Alternatives considered**: mae adding `checks / suite` to the `production` ruleset, which also makes the stylesheet, brief and memory bank checks required and is still open to mae; a typecheck inside the fast command, which would fail in every session that has not installed the package.
+- **Alternatives considered**: only one of the two; the ruleset change alone leaves `all-green` blind to types, and the workflow step alone is lost if the kit's installer is re-run. A typecheck inside the fast command, which would fail in every session that has not installed the package.
 - **Status**: Accepted (mae, 2026-11-18). The step is a hand edit to a file the kit's installer rewrites, like the workflow's Node and Fast tier steps: re-running the installer removes it.
 
 ### [2026-11-18] A built stock record id is upper case throughout

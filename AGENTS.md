@@ -18,8 +18,9 @@ problem to report.
 
 ## Hard rules
 
-mae approves every exception. GitHub backs only part of them (mae, 2026-11-13): a ruleset on
-`production` requires the testing kit's `all-green` check, and push protection rejects known secrets.
+mae approves every exception. GitHub backs only part of them (mae, 2026-11-18): a ruleset on
+`production` requires the testing kit's `all-green` check and `checks / suite`, and push protection
+rejects known secrets.
 Everything else rests on the session.
 
 1. **The brief is law.** Build what the current milestone's brief in `docs/milestones/` says and never
