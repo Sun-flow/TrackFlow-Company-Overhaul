@@ -19,7 +19,7 @@ Entry format:
 
 ## Milestone 2
 
-Q1 to Q15 were answered by mae on 2026-11-17 and 2026-11-18 (`docs/decisions.md`, "Milestone 2's open questions answered", "SKU and warehouse: a ProductKey now, an Item and StockRecord split later" and "A transfer shows as a send and a receipt"). The next new question is Q16. No question is open right now.
+Q1 to Q15 were answered by mae on 2026-11-17 and 2026-11-18 (`docs/decisions.md`, "Milestone 2's open questions answered", "Milestone 2 stores single-id records, with the brief's interfaces as views" and "A transfer shows as a send and a receipt"). The next new question is Q16. No question is open right now.
 
 ## Waiting elsewhere
 
