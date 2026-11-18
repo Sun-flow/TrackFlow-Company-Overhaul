@@ -17,6 +17,12 @@ Entry format:
 
 ---
 
+### [2026-11-18] The movement totals report splits by direction
+- **Decision**: mae's answer to Q25. The movement totals report mae picked in Q23 gives totals per warehouse, type and direction. It reads stored `MovementRecord`s, since only they hold a `direction`, and so it can also give the net change in a warehouse's stock. It says in its documentation that it works on stored records, where the other reports work on the brief's views.
+- **Rationale**: mae (2026-11-18), on the recommendation: a total that adds units in to units out says nothing about a warehouse's stock. Q23's wording, "per warehouse and type", was written before Q19 gave a movement a direction.
+- **Alternatives considered**: totals per warehouse and type on the brief's `InventoryMovement` views, as first answered, where a Transfer total adds units sent to units received; both reports.
+- **Status**: Accepted (mae, 2026-11-18).
+
 ### [2026-11-18] A movement is one warehouse's record of a change to its own stock
 - **Decision**: mae's answer to Q19. `MovementRecord` is `movementId`, `stockRecordId` (the one stock record it changes), `direction` (`"In"` or `"Out"`), an optional `shipmentId`, and the brief's `type`, `quantity`, `reason` and `timestamp`. These replace `fromStockRecordId`, `toStockRecordId` and `transferId`. Each warehouse writes its own movements, and a movement does not say where units came from or where they are headed. An Inbound is always In and an Outbound always Out; a Transfer or an Adjustment can be either. A shipment stays a delivery to a customer, and a transfer is not a shipment. A customer shipment's Outbound holds its `shipmentId`, so every shipment that has left can be matched to one Outbound, and a movement can exist with no shipment. A transfer is two movements, an Out and an In, with nothing linking them.
 - **Rationale**: mae (2026-11-18) went back to the briefing's own shape, an `InventoryMovement` that "tracks inventory changes (inbound or outbound)" with one `warehouse`: a marker of stock changes, written from the facility's own point of view. Every movement touches one stock record, so its warehouse is always the warehouse that wrote it, held by the structure. `direction` is a field because `type` can't tell a transfer out from a transfer in. `shipmentId` sits on the movement because the movement is written once, when the units leave, and points at a record that already exists.
@@ -31,17 +37,17 @@ Entry format:
   - Q20: the function that builds a stock record id is `buildStockRecordId`. When mae chose it, the other name, `toStockRecordId`, was also a field of a movement; Q19 has since removed that field, and the name stays.
   - Q21: the shared rounding helper is `roundToTwoDecimals`.
   - Q22: the stored records' types stay in `src/types/models.ts`, beside the brief's interfaces.
-  - Q23: two reports join the briefing's five: a summary per warehouse (products, units, inventory value, low-stock count) and movement totals per warehouse and type.
+  - Q23: two reports join the briefing's five: a summary per warehouse (products, units, inventory value, low-stock count) and movement totals per warehouse and type. Q25 later split those totals by direction too ("The movement totals report splits by direction").
   - Q24: the test page's compiled modules are committed, with a suite step that fails when they are stale.
 - **Rationale**: mae (2026-11-18). On Q16: this milestone is about the functions that manipulate data; generating broken datasets and enforcing repair comes later.
 - **Alternatives considered**: listed per question in `docs/open-questions.md` as of the commit before this entry's.
-- **Status**: Accepted (mae, 2026-11-18). Q19 was answered the same day, in the entry above.
+- **Status**: Accepted (mae, 2026-11-18). Q19 was answered the same day ("A movement is one warehouse's record of a change to its own stock").
 
 ### [2026-11-18] Milestone 2's plan corrected after a review
 - **Decision**: A review of the merged planning docs was applied in one docs-only pull request. Its choices: `groupShipmentsByStatus` is built by WP4 in `transformations.ts`, where the briefing puts it, on WP3's `groupBy`; the stored carrier is `CarrierRecord`; WP1 also changes the test step in `.github/workflows/testing-kit.yml`, so the required `all-green` check runs the package's tests; the package README is WP6's, and the parallel packages write their notes under the package's `docs/`; the tracked improvements I2, I3 and I5 are package WP8b; the mutation check aims for 70% or more; WP7 uses the medium tier. Nine choices the review could not settle are Q16 to Q24 in `docs/open-questions.md`.
 - **Rationale**: mae asked for the review and chose to apply all of its fixes (2026-11-18). Each one removes a place where the plan disagreed with the brief or with itself, before any package copies it.
 - **Alternatives considered**: applying only the four fixes WP1 needs; leaving the docs until mae had marked up the review.
-- **Status**: Accepted (mae, 2026-11-18). Q16 to Q24 were answered the same day (the two entries above).
+- **Status**: Accepted (mae, 2026-11-18). Q16 to Q24 were answered the same day ("Milestone 2's review questions answered" and "A movement is one warehouse's record of a change to its own stock").
 
 ### [2026-11-18] A transfer shows as a send and a receipt
 - **Decision**: In the brief's `InventoryMovement` view, a Transfer appears twice: once at the sending warehouse when it is sent, and once at the receiving warehouse when it is received (Q14, option c). Each is its own `MovementRecord`, made by its warehouse (Q15, option b). The send has a `from` and the `to` it is headed for; the receipt has only the `to` and a `transferId`, the `movementId` of its send.

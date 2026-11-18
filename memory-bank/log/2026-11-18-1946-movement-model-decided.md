@@ -11,7 +11,7 @@
   done follow it.
 - Parked in `docs/FUTURE_WORK.md`, at mae's request: a `transferId` that links a transfer's two
   halves.
-- Open: Q25, whether the movement totals report splits by direction. It is WP4's, so WP1 can
-  start when mae gives the go-ahead.
+- Q25, raised by this and answered: the movement totals report splits by direction too, reading
+  stored movements. No question is open, and WP1 can start when mae gives the go-ahead.
 - Verified: the suite without the browser check; no code and no brief changed. The Mermaid
   diagram in `erd.md` was not rendered in the session.

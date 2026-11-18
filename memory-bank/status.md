@@ -45,5 +45,4 @@ nothing is built yet (2026-11-18). Milestone 1, the public website, is finished.
 
 ## Open questions
 
-- Q25, whether the movement totals split by direction, is in `docs/open-questions.md`. WP4 builds
-  that report, so WP1 does not wait on it. (2026-11-18)
+- None. Q1 to Q25 are answered in `docs/decisions.md`. (2026-11-18)
