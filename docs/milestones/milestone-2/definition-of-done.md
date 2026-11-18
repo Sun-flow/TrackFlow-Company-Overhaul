@@ -1,12 +1,12 @@
 # Milestone 2 definition of done
 
 > **Date created**: 2026-11-17
-> **Last checked**: 2026-11-18, on PR #33's branch. Nothing is built yet; only M1, the agreed ERD, is done. Revised the same day with mae's answers to the plan's decisions, and on 2026-11-18 with M9 for the stored model and X1 to X5 for the extras.
-> **Sources**: every checklist and requirement in this folder, merged and de-duplicated. The company briefing (`trackflow-BRIEFING.en.md`, called `BRIEFING.md` in the checklists) still wins where it is more specific.
+> **Last checked**: 2026-11-18, on `production` after PR #33. Nothing is built yet; only item M1, the agreed ERD, is done. Revised on 2026-11-17 with mae's answers to the plan's decisions, on 2026-11-18 with M9 for the stored model and X1 to X5 for the extras, and after a review that day with the Package column and clearer rows.
+> **Built from**: every checklist and requirement in this folder, merged and de-duplicated. The company briefing (`trackflow-BRIEFING.en.md`, called `BRIEFING.md` in the checklists) still wins where it is more specific.
 
-Milestone 2 is done when every item below is rated ✅. The test page (O) is optional in its checklist but required here: mae counts optional work as required (2026-11-17, plan D8). Items marked "after review" are built only once mae has approved the analysis that comes before them (plan, "How this milestone works"). Where several sources ask for the same thing, they are one item and the Source column lists each. `plan.md` says which package delivers each item; the D numbers point to its Phase 0 decisions.
+Milestone 2 is done when every item below is rated ✅. The test page (O) is optional in its checklist but required here: mae counts optional work as required (2026-11-17, plan D8). Items marked "after review" are built only once mae has approved the analysis that comes before them (plan, "How this milestone works"). Where several sources ask for the same thing, they are one item and the Source column lists each. The Package column names the package in `plan.md` that delivers each item; "all" means every package keeps to it and WP9 checks it. The D numbers point to the plan's Phase 0 decisions, and the Q numbers to `docs/open-questions.md` or, once answered, `docs/decisions.md`.
 
-**Sources**: **B** = `trackflow-BRIEFING.en.md` (**B-F** its Required Functions, **B-A** its Acceptance Criteria, by position), **T** = `milestone2-briefing.md` (the Tech Lead's email, by numbered point), **L** = `backend-logic-checklist.md`, **E** = `evaluation-checklist.md` (counted within each section: TC technical correctness, SO structure and organization, CA context adaptation, CQ code quality), **S** = `expected-structure.md`, **G** = `guidelines.md` (**G-Q** its Code quality list), **FT** = `frontend-testing-checklist.md`, **mae** = mae's answers to the plan's Phase 0 decisions (2026-11-17).
+**Sources**: **B** = `trackflow-BRIEFING.en.md` (**B-F** its Required Functions, **B-A** its Acceptance Criteria, by position), **T** = `milestone2-briefing.md` (the Tech Lead's email, by numbered point), **L** = `backend-logic-checklist.md`, **E** = `evaluation-checklist.md` (counted within each section: TC technical correctness, SO structure and organization, CA context adaptation, CQ code quality), **ES** = `expected-structure.md`, **G** = `guidelines.md` (**G-Q** its Code quality list), **FT** = `frontend-testing-checklist.md`, **mae** = mae's answers to the plan's Phase 0 decisions (2026-11-17).
 
 **Ratings**: ✅ Completely done · 🟡 Partially done · ⬜ Not done · 🙋 Needs mae (only mae can do it) · ❔ Not verifiable here
 
@@ -27,117 +27,117 @@ The plan's extras X1 to X5 joined this list when mae picked all five (2026-11-18
 
 ## Data model
 
-| ID | Item | Source | Rating | Evidence |
-|---|---|---|---|---|
-| M1 | ERD documents of the entities, agreed with mae before the code that uses them | G | ✅ | `packages/warehouse-logic/docs/erd.md`, agreed by mae 2026-11-18, before any package code |
-| M2 | `Product` and `Dimensions` with every field, name and type in the briefing | B, B-A1, L1, E-TC1, E-CA1 | ⬜ | |
-| M3 | `Shipment` and `Destination` with every field, name and type in the briefing | B, B-A1, L1, E-TC1, E-CA1 | ⬜ | |
-| M4 | `Carrier` with every field, name and type in the briefing | B, B-A1, L1, E-TC1, E-CA1 | ⬜ | |
-| M5 | `InventoryMovement` with every field, name and type in the briefing | B, B-A1, L1, E-TC1, E-CA1 | ⬜ | |
-| M6 | The literal types `ProductCategory`, `WarehouseLocation`, `ProductStatus`, `Country`, `ShipmentPriority`, `ShipmentStatus`, `MovementType` with exactly the briefing's values | B, E-CA1 | ⬜ | |
-| M7 | Concrete instances as typed literal objects: the briefing's sample products, carriers and shipment | T2, B | ⬜ | |
-| M8 | Auxiliary functions to work with each entity's data (D6) | T2 | ⬜ | |
-| M9 | The stored single-id records of the ERD, and functions that build the brief's interfaces from them, giving back the briefing's samples exactly | mae (departure, 2026-11-18) | ⬜ | |
+| ID | Item | Source | Package | Rating | Evidence |
+|---|---|---|---|---|---|
+| M1 | ERD documents of the entities, agreed with mae before the code that uses them | G | Plan | ✅ | `packages/warehouse-logic/docs/erd.md`, agreed by mae 2026-11-18, before any package code |
+| M2 | `Product` and `Dimensions` with every field, name and type in the briefing | B, B-A1, L1, E-TC1, E-CA1 | WP1 | ⬜ | |
+| M3 | `Shipment` and `Destination` with every field, name and type in the briefing | B, B-A1, L1, E-TC1, E-CA1 | WP1 | ⬜ | |
+| M4 | `Carrier` with every field, name and type in the briefing | B, B-A1, L1, E-TC1, E-CA1 | WP1 | ⬜ | |
+| M5 | `InventoryMovement` with every field, name and type in the briefing | B, B-A1, L1, E-TC1, E-CA1 | WP1 | ⬜ | |
+| M6 | The literal types `ProductCategory`, `WarehouseLocation`, `ProductStatus`, `Country`, `ShipmentPriority`, `ShipmentStatus`, `MovementType` with exactly the briefing's values | B, E-CA1 | WP1 | ⬜ | |
+| M7 | Concrete instances as typed literal objects: the briefing's sample products, carriers and shipment, and one mock movement for each shape in `erd.md`, labelled as mock, since the briefing has no sample movement | T2, B | WP1 | ⬜ | |
+| M8 | Auxiliary functions to work with each entity's data (D6): `isLowStock` and the stock value for `Product`, the total weight for `Shipment`, one check per scoring rule for `Carrier`, and for `InventoryMovement` what Q23 settles | T2 | WP3, WP4 | ⬜ | |
+| M9 | The stored single-id records of the ERD, and functions that build the brief's interfaces from them, giving back the briefing's samples exactly and the right view for each movement shape, with a link that matches no record handled as Q16 says | mae (departure, 2026-11-18) | WP1 | ⬜ | |
 
 ## Collections
 
-| ID | Item | Source | Rating | Evidence |
-|---|---|---|---|---|
-| C1 | `filterProductsByWarehouse` returns the products in that warehouse | B-F, L2, E-TC2 | ⬜ | |
-| C2 | `filterProductsByCategory` returns the products in that category | B-F, L2, E-TC2 | ⬜ | |
-| C3 | `filterLowStockProducts` returns the products with `stockQuantity <= minStockThreshold` | B-F, L2, E-TC2 | ⬜ | |
-| C4 | Filtering by more than one criterion at once (D6) | L2, T1 | ⬜ | |
-| C5 | `sortProductsByStock` sorts by stock, ascending and descending | B-F, L3, E-TC3 | ⬜ | |
-| C6 | `sortCarriersByReliability` sorts by on-time rate, ascending and descending | B-F, L3, E-TC3 | ⬜ | |
-| C7 | Sorting by more than one field (D6) | L3 | ⬜ | |
-| C8 | Grouping elements: `groupShipmentsByStatus` returns every status as a key with its shipments | B-F, T1 | ⬜ | |
+| ID | Item | Source | Package | Rating | Evidence |
+|---|---|---|---|---|---|
+| C1 | `filterProductsByWarehouse` returns the products in that warehouse | B-F, L2, E-TC2 | WP3 | ⬜ | |
+| C2 | `filterProductsByCategory` returns the products in that category | B-F, L2, E-TC2 | WP3 | ⬜ | |
+| C3 | `filterLowStockProducts` returns the products with `stockQuantity <= minStockThreshold` | B-F, L2, E-TC2 | WP3 | ⬜ | |
+| C4 | Filtering by more than one criterion at once (D6) | L2, T1 | WP3 | ⬜ | |
+| C5 | `sortProductsByStock` sorts by stock, ascending and descending | B-F, L3, E-TC3 | WP3 | ⬜ | |
+| C6 | `sortCarriersByReliability` sorts by on-time rate, ascending and descending | B-F, L3, E-TC3 | WP3 | ⬜ | |
+| C7 | Sorting by more than one field (D6) | L3 | WP3 | ⬜ | |
+| C8 | Grouping elements: `groupShipmentsByStatus` returns every status as a key with its shipments. It is in `transformations.ts`, where the briefing puts it, built on the generic `groupBy` in `collections.ts` | B-F, T1 | WP3, WP4 | ⬜ | |
 
 ## Search
 
-| ID | Item | Source | Rating | Evidence |
-|---|---|---|---|---|
-| S1 | Search methods researched and tested before search is implemented, with the findings written up | G | ⬜ | |
-| S2 | `findProductBySKU` is a linear search, ignores case, and returns the product or `null` | B-F, L4, E-TC4, T1 | ⬜ | |
-| S3 | `findShipmentById` is a linear search and returns the shipment or `null` | B-F, L4, E-TC4, T1 | ⬜ | |
-| S4 | `binarySearchProductByWeight` is a binary search on an array sorted by weight and returns the index or -1 | B-F, L5, E-TC5, T1 | ⬜ | |
+| ID | Item | Source | Package | Rating | Evidence |
+|---|---|---|---|---|---|
+| S1 | Search methods researched and tested before search is implemented, with the findings written up | G | WP2 | ⬜ | |
+| S2 | `findProductBySKU` is a linear search, ignores case, and returns the product or `null` | B-F, L4, E-TC4, T1 | WP2 | ⬜ | |
+| S3 | `findShipmentById` is a linear search and returns the shipment or `null` | B-F, L4, E-TC4, T1 | WP2 | ⬜ | |
+| S4 | `binarySearchProductByWeight` is a binary search on an array sorted by weight and returns the index or -1 | B-F, L5, E-TC5, T1 | WP2 | ⬜ | |
 
 ## Carrier scoring and cost
 
-| ID | Item | Source | Rating | Evidence |
-|---|---|---|---|---|
-| K1 | `calculateShippingCost` adds base, weight and distance cost, applies the priority surcharge (0%, 30%, 60%) and rounds to 2 decimals | B-F, B-A2 | ⬜ | |
-| K2 | `scoreCarrierForShipment` gives 20, 20, 15, 15 and up to 30 points by the briefing's five rules and rounds to 2 decimals | B-F, B-A2 | ⬜ | |
-| K3 | `selectBestCarrier` drops carriers scoring under 50, picks the cheapest of the rest, returns its carrier, score and cost, or `null`, exactly as the briefing writes it | B-F, B-A2 | ⬜ | |
-| K4 | Tests show the briefing's selection following every rule and still sending the sample Madrid shipment with UPS, which doesn't serve Spain, labelled as a known failure | mae (D4) | ⬜ | |
-| K5 | A written review of other ways the scoring can fail, discussed with mae | mae (D4) | ⬜ | |
-| K6 | After review: the departure that makes country and weight must-haves, beside the briefing's version, logged in `docs/decisions.md` | mae (D4) | ⬜ | |
+| ID | Item | Source | Package | Rating | Evidence |
+|---|---|---|---|---|---|
+| K1 | `calculateShippingCost` adds base, weight and distance cost, applies the priority surcharge (0%, 30%, 60%) and rounds to 2 decimals | B-F, B-A2 | WP4 | ⬜ | |
+| K2 | `scoreCarrierForShipment` gives 20, 20, 15, 15 and up to 30 points by the briefing's five rules and rounds to 2 decimals | B-F, B-A2 | WP4 | ⬜ | |
+| K3 | `selectBestCarrier` drops carriers scoring under 50, picks the cheapest of the rest, returns its carrier, score and cost, or `null`, exactly as the briefing writes it | B-F, B-A2 | WP4 | ⬜ | |
+| K4 | Tests show the briefing's selection following every rule and still sending the sample Madrid shipment with UPS, which doesn't serve Spain, labelled as a known failure | mae (D4) | WP4 | ⬜ | |
+| K5 | A written review of other ways the scoring can fail, discussed with mae | mae (D4) | WP7 | ⬜ | |
+| K6 | After review: the departure that makes country and weight must-haves, beside the briefing's version, logged in `docs/decisions.md` | mae (D4) | WP7 | ⬜ | |
 
 ## Reports
 
-| ID | Item | Source | Rating | Evidence |
-|---|---|---|---|---|
-| R1 | `countProductsByCategory` counts the products in every category | B-F, L6, E-TC6, T3 | ⬜ | |
-| R2 | `calculateTotalInventoryValue` sums `stockQuantity * unitCostUSD`, rounded to 2 decimals | B-F, L6, E-TC6, T3 | ⬜ | |
-| R3 | `calculateAverageShipmentDistance` averages distance, rounded to 2 decimals | B-F, L6, E-TC6, T3 | ⬜ | |
-| R4 | `findTopCarriers` returns the N most used carriers with their counts, highest first, ignoring unassigned shipments | B-F, B-A2 | ⬜ | |
-| R5 | Maximum and minimum reports (D6) | L6, E-TC6, T3 | ⬜ | |
-| R6 | The reports answer the briefing's needs: warehouse metrics, carrier use and inventory value | E-CA3 | ⬜ | |
+| ID | Item | Source | Package | Rating | Evidence |
+|---|---|---|---|---|---|
+| R1 | `countProductsByCategory` counts the products in every category | B-F, L6, E-TC6, T3 | WP4 | ⬜ | |
+| R2 | `calculateTotalInventoryValue` sums `stockQuantity * unitCostUSD`, rounded to 2 decimals | B-F, L6, E-TC6, T3 | WP4 | ⬜ | |
+| R3 | `calculateAverageShipmentDistance` averages distance, rounded to 2 decimals | B-F, L6, E-TC6, T3 | WP4 | ⬜ | |
+| R4 | `findTopCarriers` returns the N most used carriers with their counts, highest first, ignoring unassigned shipments | B-F, B-A2 | WP4 | ⬜ | |
+| R5 | Maximum and minimum reports (D6): the heaviest product, the longest shipment and the cheapest carrier for a shipment | L6, E-TC6, T3 | WP4 | ⬜ | |
+| R6 | The reports answer the briefing's needs: warehouse metrics, carrier use and inventory value, with the warehouse reports Q23 settles | E-CA3 | WP4 | ⬜ | |
 
 ## Validations
 
-| ID | Item | Source | Rating | Evidence |
-|---|---|---|---|---|
-| V1 | `validateProduct` enforces the briefing's 6 product rules | B-F, B-A4, L7, E-TC7, E-CA2 | ⬜ | |
-| V2 | `validateShipment` enforces the briefing's 3 shipment rules | B-F, B-A4, L7, E-TC7, E-CA2 | ⬜ | |
-| V3 | `validateCarrier` enforces the briefing's 5 carrier rules | B-F, B-A4, L7, E-TC7, E-CA2 | ⬜ | |
-| V4 | Each validator returns `{ valid, errors }`, with a message for every rule that fails and `valid` false whenever there is one | B-F | ⬜ | |
-| V5 | The 14 rules and their error messages documented in the package README | mae (D7) | ⬜ | |
-| V6 | A written proposal of validation improvements, each backed by research or experience, with the Tech Lead's examples (required fields present, dates coherent) among them | T4, mae (D7) | ⬜ | |
-| V7 | After review: the improvements mae picks, built and tested | T4, mae (D7) | ⬜ | |
+| ID | Item | Source | Package | Rating | Evidence |
+|---|---|---|---|---|---|
+| V1 | `validateProduct` enforces the briefing's 6 product rules | B-F, B-A4, L7, E-TC7, E-CA2 | WP5 | ⬜ | |
+| V2 | `validateShipment` enforces the briefing's 3 shipment rules | B-F, B-A4, L7, E-TC7, E-CA2 | WP5 | ⬜ | |
+| V3 | `validateCarrier` enforces the briefing's 5 carrier rules | B-F, B-A4, L7, E-TC7, E-CA2 | WP5 | ⬜ | |
+| V4 | Each validator returns `{ valid, errors }`, with a message for every rule that fails and `valid` false whenever there is one | B-F | WP5 | ⬜ | |
+| V5 | The 14 rules and their error messages documented in the package's `docs/validation-rules.md`, linked from its README | mae (D7) | WP5 | ⬜ | |
+| V6 | A written proposal of validation improvements, each backed by research or experience, with the Tech Lead's examples (required fields present, dates coherent) among them | T4, mae (D7) | WP8 | ⬜ | |
+| V7 | After review: the improvements mae picks, built and tested | T4, mae (D7) | WP8 | ⬜ | |
 
 ## Structure, types and tooling
 
-| ID | Item | Source | Rating | Evidence |
-|---|---|---|---|---|
-| ST1 | Files are organized by responsibility as `src/types/models.ts` and `src/utils/collections.ts`, `search.ts`, `transformations.ts`, `validations.ts`, each function in the file the briefing names | S, B-A5, E-SO1 | ⬜ | |
-| ST2 | Every parameter and return value has an explicit type, and `any` is not used | L8, E-CQ3, B-A1 | ⬜ | |
-| ST3 | No TypeScript compilation errors in any file | E-TC8 | ⬜ | |
-| ST4 | A documented command typechecks the code, and another runs it, during development | G, L10, E-TC9 | ⬜ | |
-| ST5 | TypeScript only, and the code runs both in the browser and in a development environment | G | ⬜ | |
-| ST6 | Each function has one clearly identifiable responsibility | T, G, L9, E-SO2 | ⬜ | |
-| ST7 | Any repeated task has its own function | G | ⬜ | |
-| ST8 | Descriptive names: camelCase variables and functions, PascalCase interfaces and types | T, G-Q, B-A6, E-SO3 | ⬜ | |
-| ST9 | Functions are pure: they use only their parameters and change no global state | G-Q, B-A8, E-CQ1 | ⬜ | |
-| ST10 | Sorting and filtering never modify the original array | B-F, B-A7 | ⬜ | |
-| ST11 | Edge cases handled: empty arrays, elements not found, `null` values | T1, G-Q, B-A3, E-CQ2 | ⬜ | |
-| ST12 | `const` by default, `let` only for values that change | G-Q, E-CQ3 | ⬜ | |
-| ST13 | Comments only where logic needs explaining, and consistent indentation and formatting | G-Q | ⬜ | |
-| ST14 | Field names, entity types and literal values match the briefing exactly, with nothing generic in their place | L's "IMPORTANT" note, E-CA1 | ⬜ | |
-| ST15 | A generic, typed toolkit (filter, sort, group, search, count, sum, average, extremes, rule checks) underneath, with the briefing's functions built from it under their exact names | mae (D6) | ⬜ | |
-| ST16 | Every gap the briefing leaves open was asked in `docs/open-questions.md`, its answer is in `docs/decisions.md`, and the tests that depend on an answer name it (for example `Q2`) | mae (D5) | ⬜ | |
-| ST17 | The improvements mae asked to track (plan, "Tracked improvements") are written up, and built where mae approves | mae (Q9, Q10, Q12) | ⬜ | |
+| ID | Item | Source | Package | Rating | Evidence |
+|---|---|---|---|---|---|
+| ST1 | Files are organized by responsibility as `src/types/models.ts` and `src/utils/collections.ts`, `search.ts`, `transformations.ts`, `validations.ts`, each function in the file the briefing names | ES, B-A5, E-SO1 | WP1, all | ⬜ | |
+| ST2 | Every parameter and return value has an explicit type, and `any` is not used | L8, E-CQ3, B-A1 | all | ⬜ | |
+| ST3 | No TypeScript compilation errors in any file | E-TC8 | all | ⬜ | |
+| ST4 | A documented command typechecks the code, and another runs it, during development | G, L10, E-TC9 | WP1, WP6 | ⬜ | |
+| ST5 | TypeScript only, and the code runs both in the browser and in a development environment | G | WP1, WP6 | ⬜ | |
+| ST6 | Each function has one clearly identifiable responsibility | T, G, L9, E-SO2 | all | ⬜ | |
+| ST7 | Any repeated task has its own function | G | all | ⬜ | |
+| ST8 | Descriptive names: camelCase variables and functions, PascalCase interfaces and types | T, G-Q, B-A6, E-SO3 | all | ⬜ | |
+| ST9 | Functions are pure: they use only their parameters and change no global state | G-Q, B-A8, E-CQ1 | all | ⬜ | |
+| ST10 | Sorting and filtering never modify the original array | B-F, B-A7 | WP3, all | ⬜ | |
+| ST11 | Edge cases handled: empty arrays, elements not found, `null` values | T1, G-Q, B-A3, E-CQ2 | all | ⬜ | |
+| ST12 | `const` by default, `let` only for values that change | G-Q, E-CQ3 | all | ⬜ | |
+| ST13 | Comments only where logic needs explaining, and consistent indentation and formatting | G-Q | all | ⬜ | |
+| ST14 | Field names, entity types and literal values match the briefing exactly, with nothing generic in their place | L's "IMPORTANT" note, E-CA1 | WP1, all | ⬜ | |
+| ST15 | A generic, typed toolkit (filter, sort, group, search, count, sum, average, extremes, rule checks) underneath, with the briefing's functions built from it under their exact names | mae (D6) | WP2 to WP5 | ⬜ | |
+| ST16 | Every gap the briefing leaves open was asked in `docs/open-questions.md`, its answer is in `docs/decisions.md`, and the tests that depend on an answer name it (for example `Q2`) | mae (D5) | all | ⬜ | |
+| ST17 | The improvements mae asked to track (plan, WP8b) are written up, and built where mae approves | mae (Q9, Q10, Q12) | WP8b | ⬜ | |
 
 ## Delivery
 
-| ID | Item | Source | Rating | Evidence |
-|---|---|---|---|---|
-| P1 | Every function has tests whose expected values come from the briefing worked by hand, including empty and failing cases, and they pass | B's "What Ana Expects", B-A2 | ⬜ | |
-| P2 | A `Milestone-2` branch at the end of the milestone, for grading | `docs/decisions.md` | ⬜ | |
+| ID | Item | Source | Package | Rating | Evidence |
+|---|---|---|---|---|---|
+| P1 | Every function has tests whose expected values come from the briefing worked by hand, including empty and failing cases, and they pass | B's "What Ana Expects", B-A2 | WP2 to WP8b | ⬜ | |
+| P2 | A `Milestone-2` branch at the end of the milestone, for grading | `docs/decisions.md` | mae, at WP9 | ⬜ | |
 
 ## Test page (optional in its checklist, required here)
 
-| ID | Item | Source | Rating | Evidence |
-|---|---|---|---|---|
-| O1 | A simple HTML page with Tailwind CSS to try the functions by hand, served with a documented command (D8) | FT1, S | ⬜ | |
-| O2 | Buttons or controls to run the operations: filter, search, sort, reports | FT2 | ⬜ | |
-| O3 | Results shown clearly on the page | FT3 | ⬜ | |
+| ID | Item | Source | Package | Rating | Evidence |
+|---|---|---|---|---|---|
+| O1 | A simple HTML page with Tailwind CSS to try the functions by hand, served with a documented command (D8) | FT1, ES | WP6 | ⬜ | |
+| O2 | Buttons or controls to run the operations: filter, search, sort, reports | FT2 | WP6 | ⬜ | |
+| O3 | Results shown clearly on the page | FT3 | WP6 | ⬜ | |
 
 ## Extras (picked by mae, 2026-11-18)
 
-| ID | Item | Source | Rating | Evidence |
-|---|---|---|---|---|
-| X1 | An API reference in the package README: every exported function, its signature, what it returns for empty input, and an example | mae (D8, plan X1) | ⬜ | |
-| X2 | A seeded mock data generator, clearly labelled as mock, for larger test arrays and the search timing | mae (D8, plan X2) | ⬜ | |
-| X3 | The test page in the browser check: screenshots, no console errors, axe clean | mae (D8, plan X3) | ⬜ | |
-| X4 | A mutation check on cost, scoring and validations, with its score reported | mae (D8, plan X4) | ⬜ | |
-| X5 | A search comparison panel on the test page: linear, binary and `Map` lookup timed on the mock data | mae (D8, plan X5) | ⬜ | |
+| ID | Item | Source | Package | Rating | Evidence |
+|---|---|---|---|---|---|
+| X1 | An API reference in the package README: every exported function, its signature, what it returns for empty input, and an example | mae (D8, plan X1) | WP6, then Phase 4 | ⬜ | |
+| X2 | A seeded mock data generator, clearly labelled as mock, for larger test arrays and the search timing, which makes stored records and builds the views from them | mae (D8, plan X2) | WP2 | ⬜ | |
+| X3 | The test page in the browser check: screenshots, no console errors, axe clean | mae (D8, plan X3) | WP6 | ⬜ | |
+| X4 | A mutation check on cost, scoring and validations, with its score reported against a target of 70% or more | mae (D8, plan X4) | WP9 | ⬜ | |
+| X5 | A search comparison panel on the test page: linear, binary and `Map` lookup timed on the mock data | mae (D8, plan X5) | WP6 | ⬜ | |
