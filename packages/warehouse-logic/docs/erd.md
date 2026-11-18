@@ -5,104 +5,34 @@
 
 ## The diagram
 
-Each box is one interface from the briefing. The boxes list the fields in the briefing's order. `PK` (primary key) marks the field or fields that identify a record: no two records share them. `FK` (foreign key) marks a field that points to another record's key. Lines show how records refer to each other.
+![Entity relationship diagram of Product, Dimensions, Shipment, Destination, Carrier and InventoryMovement](./erd.drawio.svg)
+
+Each box is one interface from the briefing, listing its fields in the briefing's order. `PK` (primary key) marks the field or fields that identify a record: no two records share them. `FK` (foreign key) marks a field that points to another record's key. Lines show how records refer to each other, and the legend in the diagram explains their ends.
 
 A product's key has two parts, `sku` and `warehouse`, because the same SKU can be stocked in both warehouses (Q10). So a shipment needs two fields to point at one product, its `sku` and its `origin`, and an inventory movement needs its `sku` and its `warehouse`. The notes "part 1 of 2" and "part 2 of 2" mark those pairs.
 
-```mermaid
-erDiagram
-    PRODUCT {
-        string sku PK "e.g. SHOE-BLK-42. Key part 1 of 2"
-        string name
-        ProductCategory category
-        number weightKg
-        Dimensions dimensions "embedded"
-        WarehouseLocation warehouse PK "Key part 2 of 2. sku + warehouse is unique"
-        number stockQuantity
-        number minStockThreshold
-        number unitCostUSD
-        boolean isFragile
-        ProductStatus status
-    }
-    DIMENSIONS {
-        number lengthCm
-        number widthCm
-        number heightCm
-    }
-    SHIPMENT {
-        string id PK "e.g. SH-2024-8821"
-        string sku FK "Product link part 1 of 2"
-        number quantity
-        WarehouseLocation origin FK "Product link part 2 of 2"
-        Destination destination "embedded"
-        ShipmentPriority priority
-        number declaredValueUSD
-        string carrier FK "carrier name, null until assigned (Q1)"
-        ShipmentStatus status
-        Date createdAt
-    }
-    DESTINATION {
-        string city
-        Country country
-        string postalCode
-        number distanceKm "from the origin warehouse"
-    }
-    CARRIER {
-        string id PK "e.g. CAR-UPS"
-        string name "e.g. UPS"
-        Country[] operatesIn
-        number baseRateUSD
-        number ratePerKgUSD
-        number ratePerKmUSD
-        number avgDeliveryDays
-        number onTimeRate "0 to 100"
-        number maxWeightKg
-        boolean handlesFragile
-        ShipmentPriority[] acceptsPriority
-    }
-    INVENTORY_MOVEMENT {
-        string id PK
-        string sku FK "Product link part 1 of 2"
-        WarehouseLocation warehouse FK "Product link part 2 of 2"
-        MovementType type
-        number quantity
-        string reason
-        Date timestamp
-    }
+`Dimensions` and `Destination` are not separate records. They are objects stored inside a product or a shipment, drawn as boxes only so their fields can be seen.
 
-    PRODUCT ||--|| DIMENSIONS : "has (stored inside the product)"
-    SHIPMENT ||--|| DESTINATION : "goes to (stored inside the shipment)"
-    PRODUCT ||--o{ SHIPMENT : "is shipped in (sku + origin)"
-    PRODUCT ||--o{ INVENTORY_MOVEMENT : "has stock changed by (sku + warehouse)"
-    CARRIER |o--o{ SHIPMENT : "is assigned (by name)"
-```
+### Editing the diagram
 
-How to read the lines: `||` means exactly one, `o{` means zero or more, and `|o` means zero or one. So a product appears in zero or more shipments, and a shipment has zero carriers (`carrier: null`, not assigned yet) or one.
+`erd.drawio.svg` is the diagram's only copy (`docs/decisions.md`, "The Milestone 2 ERD is a draw.io file"). It is an image GitHub shows as it is, and it is also a draw.io file:
 
-`DIMENSIONS` and `DESTINATION` are not separate records. They are objects stored inside a product or a shipment, drawn as boxes only so their fields can be seen.
+1. Open https://app.diagrams.net, choose **Open Existing Diagram**, and pick `erd.drawio.svg` (download it from GitHub first, or connect draw.io to GitHub and open it from the branch).
+2. Drag, edit and add as needed.
+3. Save it back under the same name and format (**File > Save**, or **File > Export as > SVG** with **Include a copy of my diagram** ticked), so it stays editable.
+4. Commit it to a branch, never to `production`, or send it to a Claude thread to commit.
+
+When the diagram changes, the tables below change with it in the same commit.
 
 ## Q1 (was D3): `Shipment.carrier` holds the carrier's name
 
-The briefing gives a carrier two strings, `id` (`"CAR-UPS"`) and `name` (`"UPS"`), and gives a shipment a single `carrier: string | null`. Both options are drawn below, with the briefing's sample carrier.
-
-```mermaid
-flowchart LR
-    subgraph A["Option (a): the carrier's name (chosen)"]
-        direction LR
-        SA["Shipment SH-2024-8821<br/>carrier: &quot;UPS&quot;"] -->|matches name| CA["Carrier<br/>id: CAR-UPS<br/>name: UPS"]
-        SA -.-> TA["findTopCarriers gives<br/>{ carrier: &quot;UPS&quot;, count: 1 }<br/>a name, as the briefing asks"]
-    end
-    subgraph B["Option (b): the carrier's id (improvement I1)"]
-        direction LR
-        SB["Shipment SH-2024-8821<br/>carrier: &quot;CAR-UPS&quot;"] -->|matches id| CB["Carrier<br/>id: CAR-UPS<br/>name: UPS"]
-        SB -.-> TB["findTopCarriers gives<br/>{ carrier: &quot;CAR-UPS&quot;, count: 1 }<br/>an id, not the name the briefing asks for"]
-    end
-```
+The briefing gives a carrier two strings, `id` (`"CAR-UPS"`) and `name` (`"UPS"`), and gives a shipment a single `carrier: string | null`. Here are both options, with the briefing's sample carrier `UPS` (id `CAR-UPS`) and shipment `SH-2024-8821`.
 
 `findTopCarriers(shipments, topN)` is given only shipments, so it can return only what the shipments hold. Under (b) it has no way to look up a name.
 
 | | (a) name | (b) id |
 |---|---|---|
+| The shipment stores | `carrier: "UPS"` | `carrier: "CAR-UPS"` |
 | `findTopCarriers` returns | names, as the briefing says | ids |
 | If a carrier is renamed | old shipments keep the old name | nothing changes |
 | Readable in raw data | yes | less |

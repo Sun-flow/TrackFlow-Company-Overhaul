@@ -17,6 +17,12 @@ Entry format:
 
 ---
 
+### [2026-11-17] The Milestone 2 ERD is a draw.io file
+- **Decision**: The entity relationship diagram is `packages/warehouse-logic/docs/erd.drawio.svg`, an SVG with the draw.io diagram embedded. GitHub shows it as an image, and draw.io (app.diagrams.net) opens it for drag-and-drop editing. It is the diagram's only copy: `erd.md` shows it and holds the text around it, and the Mermaid version is gone. Save it back as an editable SVG, under the same name.
+- **Rationale**: mae wants to edit the ERD directly through an interface (2026-11-17). draw.io was the only fully drag-and-drop option that also renders on GitHub.
+- **Alternatives considered**: keeping Mermaid and editing it on mermaid.live, which is text, not shapes; dbdiagram.io, which is mostly text with movable tables. Keeping both a Mermaid and a draw.io copy was ruled out, because two copies drift.
+- **Status**: Accepted (2026-11-17). Its trade-off: a change to the file shows in a pull request as drawing data, not readable text, so whoever changes it says what changed.
+
 ### [2026-11-17] Milestone 2's open questions answered
 - **Decision**: mae's answers to Q1 to Q10, the gaps the Milestone 2 briefing leaves open. They were asked in `docs/open-questions.md`, which keeps the reasoning in its git history.
   - Q1: `Shipment.carrier` holds the carrier's `name`. A move to `id`, which survives a rename, is tracked as improvement I1 in the plan.
