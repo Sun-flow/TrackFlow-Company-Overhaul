@@ -19,7 +19,14 @@ Entry format:
 
 ## Milestone 2
 
-Q1 to Q25 were answered by mae on 2026-11-17 and 2026-11-18 (`docs/decisions.md`, "Milestone 2's open questions answered", "Milestone 2 stores single-id records, with the brief's interfaces as views", "A transfer shows as a send and a receipt", "Milestone 2's review questions answered", "A movement is one warehouse's record of a change to its own stock" and "The movement totals report splits by direction"). Q26 and Q27 came out of building WP1, and mae answered both on 2026-11-18 ("Each literal type is derived from a list of its values in `models.ts`" and "A built stock record id is upper case throughout"). None is open right now. The next new question is Q28.
+Q1 to Q25 were answered by mae on 2026-11-17 and 2026-11-18 (`docs/decisions.md`, "Milestone 2's open questions answered", "Milestone 2 stores single-id records, with the brief's interfaces as views", "A transfer shows as a send and a receipt", "Milestone 2's review questions answered", "A movement is one warehouse's record of a change to its own stock" and "The movement totals report splits by direction"). Q26 and Q27 came out of building WP1, and mae answered both on 2026-11-18 ("Each literal type is derived from a list of its values in `models.ts`" and "A built stock record id is upper case throughout"). Q28 is open, from WP5. The next new question is Q29.
+
+### Q28. When one briefing rule covers several fields, does a failure give one error message or one per field?
+- **Where it comes from**: the briefing's validation rules for `Product` and `Carrier`; plan WP5.
+- **What the brief says**: "All dimensions must be > 0 and <= 200" and "`baseRateUSD`, `ratePerKgUSD`, `ratePerKmUSD` must all be >= 0", each one rule over three fields, and that a validator returns "errors: array of error messages". It doesn't say what a message says or how many a rule gives.
+- **Options**: (a) One message per field that fails, naming it, such as `dimensions.heightCm must be > 0 and <= 200 (got 0)`, so a product with two bad dimensions gets two messages. (b) One message per rule, such as `All dimensions must be > 0 and <= 200`, however many fields fail.
+- **Recommendation**: (a). The message says exactly which value to fix, every rule's messages read the same way, and `valid` is the same under both. WP5 is built this way, and its tests name Q28 (`packages/warehouse-logic/tests/validations.test.ts`).
+- **Asked**: 2026-11-18
 
 ## Waiting elsewhere
 
