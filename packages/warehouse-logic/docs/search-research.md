@@ -8,7 +8,22 @@ for code written after them.
 
 ## Recommendation for later milestones
 
-TIMING PENDING: the recommendation is written after the timing run below.
+- **One lookup, or a few, in a list: linear search.** `linearSearch` with a test, or the briefing's
+  `findProductBySKU` and `findShipmentById`. It needs no preparation and no order. In the timing run it
+  found a SKU among 10,000 products in about 33 µs.
+- **Many lookups by one exact key in the same list: build a `Map` once with `indexBy`.** Building it
+  cost as much as 20 to 40 linear lookups in the timing run, and every lookup after that took under
+  0.1 µs whatever the list's size. The views already work this way.
+- **Binary search only on data already kept sorted by the key, and for questions about order.**
+  Ranges and nearest values ("every product from 1 to 5 kg") are where it beats both others. Never
+  sort a list just to search it once: one sort cost as much as 10 to 20 linear lookups.
+- **A key that two records share needs a rule.** Linear search and `indexBy` give the first listed;
+  binary search gives any of them (Q9, Q10). Search by the full key (a stock record id) where one
+  exists.
+- **Normalize keys once, when they are stored, not on every comparison.** `findProductBySKU`
+  upper-cases each SKU it compares, as the briefing's case-insensitive search needs, and that made it
+  2.5 to 3.5 times slower than an exact linear search. Stored keys are already upper case (Q17), so
+  code that looks up stored records can normalize the wanted key alone and compare exactly.
 
 ## What the briefing asks
 
@@ -73,9 +88,9 @@ Go through the list once, putting each record in a `Map` under its key; then eac
 `Map` for the key.
 
 - **Cost**: building it takes `n` insertions, and each lookup after that takes about the same time
-  however many records there are. JavaScript engines implement `Map` as a hash table; the language
-  standard requires lookups that are on average faster than linear in `n` (ECMAScript, "Map
-  Objects"). It keeps a second structure the size of the list in memory.
+  however many records there are. The language standard requires a `Map` to give access times that
+  are, on average, sublinear in the number of entries, which engines meet with hash tables
+  (ECMAScript, "Map Objects"). It keeps a second structure the size of the list in memory.
 - **Needs**: an exact key. A case-insensitive SKU lookup works only if the key is normalized when the
   `Map` is built and again for each lookup. A key held by two records needs a rule; `indexBy` keeps
   the first listed, as linear search would find it and as the views already do (`src/utils/views.ts`).
@@ -103,7 +118,88 @@ return the briefing's `null`, and `find`'s `undefined` cannot tell "not found" f
 
 ## Timing run
 
-TIMING PENDING.
+`scripts/time-search.ts` (`pnpm time:search`) makes MOCK products with the seeded generator in
+`src/data/mock.ts` (plan X2), picks 1,000 of their SKUs at random, and finds each one with every method.
+It checks that all the methods found the same SKUs, then prints the table. It was run on 2026-11-18 in
+a Claude Code cloud session (4 cores of an Intel Xeon at 2.10 GHz). Times differ from machine to
+machine and a little from run to run, so read the rows against each other, not as figures to quote.
+"Lookups before `Map` wins" is how many lookups it takes for building the `Map` and then using it to
+cost less than linear search.
+
+Node 22.23.5, seed 20261118, 1,000 lookups of SKUs in the list, median of 7 runs. Times in microseconds (µs).
+
+| Products | `findProductBySKU` per lookup | `linearSearch` per lookup | `find` per lookup | `linearSearch`, SKU missing | `binarySearchBy` per lookup | Sort once | `Map` per lookup | Build `Map` once | Lookups before `Map` wins |
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| 1,000 | 8.91 | 2.48 | 2.47 | 1.79 | 0.25 | 47.11 | 0.06 | 88.16 | 37 |
+| 10,000 | 90.58 | 32.82 | 31.40 | 32.78 | 0.37 | 312.10 | 0.06 | 691.71 | 22 |
+| 100,000 | 1060.31 | 409.17 | 410.57 | 572.61 | 0.97 | 3826.20 | 0.08 | 13862.88 | 34 |
+
+What the numbers show, against the claims above:
+
+- **Linear search grows with `n`.** Ten times the products took ten to thirteen times as long per lookup
+  (2.5, 33, 409 µs). `find` costs the same as `linearSearch`, as the standard's definition says.
+- **A miss costs more than a hit, though not the full double here.** A hit stops halfway through on
+  average and a miss reads every product; at 100,000 products the miss took 1.4 times as long. The
+  steps are as counted, but a step's time is not fixed: the missing SKU differs from every mock SKU
+  at its sixth character, while the mock SKUs all share their first ten (`MOCK-ITEM-`), so each failed comparison of
+  the miss ends sooner. At 1,000 products that made the miss faster than a hit.
+- **Binary search barely grows.** A hundred times the products took about four times as long per
+  lookup (0.25 to 0.97 µs), for 10 to 17 steps. The rest of the growth is memory: a large array no
+  longer fits in the processor's caches.
+- **A `Map` lookup does not grow at all** (0.06 to 0.08 µs), but building the `Map` cost more than
+  sorting at every size, about 14 ms for 100,000 products.
+- **Preparation decides the choice.** Sorting cost as much as 10 to 20 linear lookups and building the
+  `Map` 20 to 40, so linear search is the right choice for a handful of lookups and the wrong one for
+  thousands. At Ana's 2,000+ shipments a week, a year holds about 100,000 shipments: a `Map` built
+  once answers each lookup in a fraction of a microsecond, where a linear search takes about 0.4 ms.
+- **Case-insensitive search costs.** `findProductBySKU` took 2.5 to 3.5 times as long as an exact
+  linear search, because it upper-cases every SKU it compares.
+- **Binary search found the other warehouse's product.** A SKU stocked in both warehouses is two
+  products side by side in a list sorted by SKU, and binary search landed on either, where the linear
+  searches and the `Map` gave the first listed. The run compares the methods' answers by SKU for this
+  reason. It is Q9's "any matching index" in practice, and the case for improvement I2.
+
+## Proposals for mae
+
+Neither is built. Each waits for mae's yes, and `docs/open-questions.md` points here.
+
+- **P1. One `indexBy`.** `src/utils/views.ts` has a private `indexByKey` that does what `indexBy` now
+  does, first listed kept included. The views could import `indexBy` instead, so the rule lives in
+  one place (mae's one-source-of-truth preference). No behaviour changes and the views' tests stay as
+  they are; it edits WP1's file, so it was left out of WP2.
+- **P2. `isSortedBy(items, keyOf)`.** Binary search trusts that its list is sorted and gives a wrong
+  `-1` when it is not. A helper that checks the order (`n - 1` comparisons) would let a caller, or the
+  test page, check it once before many searches. Added beside the briefing's function, which keeps
+  its signature.
+
+Improvements I2 (always the first matching index, and weight ranges) and I3 (a SKU's product in every
+warehouse) are already tracked in the plan, WP8b; the timing run's last finding is the case for I2.
+
+## Reference (for the package README, WP6)
+
+`src/utils/search.ts`:
+
+| Function | Returns | Empty list |
+|---|---|---|
+| `linearSearch(items, passes)` | the first item for which `passes` is true, or `null` | `null` |
+| `binarySearchBy(sortedItems, target, keyOf)` | an index whose key equals `target` in a list sorted by `keyOf`, ascending, or `-1`; keys are numbers or text | `-1` |
+| `indexBy(items, keyOf)` | a `Map` from each key to its item, the first listed kept | an empty `Map` |
+| `findProductBySKU(products, sku)` | the first product whose SKU matches, case ignored, or `null` (Q10) | `null` |
+| `findShipmentById(shipments, id)` | the shipment whose id matches exactly, or `null` (Q7) | `null` |
+| `binarySearchProductByWeight(sortedProducts, targetWeight)` | an index of a product of that weight, or `-1` (Q9) | `-1` |
+
+Example: `findProductBySKU(sampleProducts, "laptop-dell-15")` gives the briefing's Dell laptop, and
+`binarySearchProductByWeight(samplesSortedByWeight, 0.8)` gives 1, the shoes, between the perfume
+(0.3 kg) and the laptop (2.3 kg).
+
+`src/data/mock.ts` (MOCK data, plan X2):
+
+| Function | Returns |
+|---|---|
+| `createSeededRandom(seed)` | a function giving a repeatable stream of numbers from 0 up to 1 |
+| `createMockData({ seed, itemCount, shipmentCount })` | MOCK stored records (`items`, `stockRecords`, `shipmentRecords`), the briefing's `warehouses` and `carrierRecords`, and the `products` and `shipments` built from them by `views.ts`. The same options always give the same data. |
+
+`pnpm time:search` runs the timing run above.
 
 ## Sources
 
