@@ -694,12 +694,12 @@ describe("calculateShipmentWeightKg: product.weightKg x shipment.quantity, noise
 
   // The other weights Q30 names: by hand 0.14 x 50 = 7, 0.56 x 25 = 14 and 1.1 x 3 = 3.3.
   // [weightKg, quantity, the weight by hand]
-  const q29Rows: [number, number, number][] = [
+  const q30Rows: [number, number, number][] = [
     [0.14, 50, 7],
     [0.56, 25, 14],
     [1.1, 3, 3.3],
   ];
-  for (const [weightKg, quantity, expected] of q29Rows) {
+  for (const [weightKg, quantity, expected] of q30Rows) {
     test(`${quantity} units of ${weightKg} kg weigh exactly ${expected} kg (Q30)`, () => {
       assert.equal(
         calculateShipmentWeightKg(shipmentWith({ quantity }), productWith({ weightKg })),
@@ -804,7 +804,7 @@ describe("calculateReliabilityPoints: onTimeRate x 0.3, not rounded", () => {
     [95, 28.5, "DHL Express"],
     [0, 0, "never on time"],
     [100, 30, "always on time, the most the rule gives"],
-    [150, 45, "an invalid rate is not checked here (transformations.md)"],
+    [150, 45, "an invalid rate is not checked here (transformations.md, Q32)"],
   ];
   for (const [onTimeRate, points, source] of rows) {
     test(`${onTimeRate}% on time is ${points} points: ${source}`, () => {
@@ -965,7 +965,7 @@ describe("calculateShippingCost: the total is rounded half up to 2 decimals (Q5)
   });
 });
 
-describe("calculateShippingCost: it trusts its data and never throws (transformations.md)", () => {
+describe("calculateShippingCost: it trusts its data and never throws (transformations.md, Q32)", () => {
   test("a negative rate gives a negative cost: a base rate of -5 alone is -5", () => {
     const negative = carrierWith({ baseRateUSD: -5, ratePerKgUSD: 0, ratePerKmUSD: 0 });
     assert.equal(calculateShippingCost(mockShipment, mockProduct, negative), -5);
@@ -1178,12 +1178,12 @@ describe("scoreCarrierForShipment: the weight rule counts the whole shipment, up
 
   // The other weights Q30 names, each exactly at the limit by hand: 20 + 20 + 15 + 15 + 24 = 94.
   // [weightKg, quantity, carrier's maxWeightKg]
-  const q29Rows: [number, number, number][] = [
+  const q30Rows: [number, number, number][] = [
     [0.14, 50, 7],
     [0.56, 25, 14],
     [1.1, 3, 3.3],
   ];
-  for (const [weightKg, quantity, maxWeightKg] of q29Rows) {
+  for (const [weightKg, quantity, maxWeightKg] of q30Rows) {
     test(`${quantity} x ${weightKg} kg against a limit of ${maxWeightKg} kg: at the limit by hand, so 94 (Q30)`, () => {
       assert.equal(
         scoreCarrierForShipment(
@@ -1559,7 +1559,7 @@ describe("selectBestCarrier: the cut-off at 50", () => {
     [50.1, 50.03, true, "35 + 15.03 = 50.03: just over"],
     [49.9, 49.97, false, "35 + 14.97 = 49.97: just under"],
     [49.98, 49.99, false, "35 + 14.994 = 49.994, which rounds to 49.99: just under"],
-    [49.99, 50, true, "35 + 14.997 = 49.997, which rounds to 50: the rounded score is compared"],
+    [49.99, 50, true, "35 + 14.997 = 49.997, which rounds to 50: the rounded score is compared (Q33)"],
     [0, 35, false, "35 + 0 = 35: far under"],
   ];
   for (const [onTimeRate, score, suitable, arithmetic] of rows) {
@@ -2023,7 +2023,7 @@ describe("findTopCarriers: the most used carriers, the highest count first", () 
     );
   });
 
-  test("every shipment with a carrier counts, whatever its status: \"assigned\" is not the status Assigned", () => {
+  test("every shipment with a carrier counts, whatever its status: \"assigned\" is not the status Assigned (Q31)", () => {
     // UPS on one shipment in each of the five statuses, SEUR on two Assigned ones: UPS 5, SEUR 2.
     // Counting only the status Assigned would give SEUR 2, UPS 1.
     const shipments = [
@@ -2039,7 +2039,7 @@ describe("findTopCarriers: the most used carriers, the highest count first", () 
     ]);
   });
 
-  test("a shipment with no carrier is ignored whatever its status, Assigned included", () => {
+  test("a shipment with no carrier is ignored whatever its status, Assigned included (Q31)", () => {
     const shipments = [
       reportShipment("MOCK-SH-4601", "Assigned", null, 10),
       reportShipment("MOCK-SH-4602", "Delivered", null, 10),
