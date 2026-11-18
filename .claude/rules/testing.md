@@ -20,5 +20,10 @@ Always loaded. The long form, with reasons and sources, is `docs/testing/GUIDELI
 - Production code never checks whether it runs under a test (TG-16).
 - If you're stuck after a few honest attempts, stop and write a report starting with `BLOCKED:` (TG-19). That is always an acceptable outcome; gaming the tests never is.
 
+**Tests in progress**
+- "Existing" means on `production`. The edit hook asks before a line that `production` has is changed or removed. A test file that is new on your branch, and tests you added to a file from `production`, are yours to rework with the Edit tool, without a prompt. Rework them to match the spec, never to fit the code: red before green and expected values from the spec still hold (TG-04, TG-05).
+- To change tests that are on `production`, work in a draft: `cat tests/x.test.ts > tests/x.test.draft.ts` (same folder, `.draft` before the extension; `cp` would ask the user). The kit doesn't guard a draft and the suite doesn't run it, so run it by path (`node --test tests/x.test.draft.ts`). Commit drafts so a lost session loses nothing; `scripts/suite.sh` fails while one is tracked.
+- Promote once, when the draft passes. Point its imports at the real file names. Tell the user each test you changed or removed: what it expected, what it expects now and why (TG-14). Then move every draft over its test in ONE shell command (`mv tests/a.test.draft.ts tests/a.test.ts && mv ...`), which asks the user once, and run the tests again. The pull request needs the user's `allow-test-changes` label.
+
 **Reporting**
 - Show evidence: the exact command, the number of tests collected, the result. Say what you did NOT run (other tiers, skipped tests, configurations) and anything odd (TG-13, TG-49). `python3 .claude/testing-kit/test_report.py` summarises the last run.
