@@ -23,6 +23,9 @@ WP1 of its plan, the package scaffold and data model, is built; the briefing's f
   `production`; its last deploy, for pull request #25, succeeded. (2026-11-13)
 - The warehouse logic's types check and its 84 tests pass, the views giving back the briefing's samples:
   `(cd packages/warehouse-logic && pnpm typecheck && pnpm test)`. (2026-11-18)
+- WP2's searches and mock data generator pass their tests, 98 of the package's tests, and the
+  timing run behind `packages/warehouse-logic/docs/search-research.md` runs:
+  `(cd packages/warehouse-logic && pnpm test && pnpm time:search)`. (2026-11-18)
 - The testing kit (0.4.1) is installed: its files match `.claude/testing-kit/manifest.json` except the
   workflow, whose Node, Fast tier and typecheck steps are hand edits, and two patched scripts
   (`docs/decisions.md`). Its required check runs both test sets and the package's typecheck.
@@ -33,6 +36,8 @@ WP1 of its plan, the package scaffold and data model, is built; the briefing's f
   #24: `git ls-remote origin Milestone-1` prints 34e5069. (2026-11-13)
 - All 39 items of Milestone 1's definition of done are rated done:
   `grep -A9 '^## Summary' docs/milestones/milestone-1/definition-of-done.md`. (2026-11-13)
+- The briefing's three validators enforce its 14 rules, every failing rule's message returned:
+  `(cd packages/warehouse-logic && node --test tests/validations.test.ts)`, 129 tests. (2026-11-18)
 
 ## Next
 
@@ -48,4 +53,4 @@ WP1 of its plan, the package scaffold and data model, is built; the briefing's f
 
 ## Open questions
 
-- None. Q1 to Q27 are answered in `docs/decisions.md`. (2026-11-18)
+- None. Q1 to Q28 are answered in `docs/decisions.md`. (2026-11-18)

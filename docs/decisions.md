@@ -17,6 +17,12 @@ Entry format:
 
 ---
 
+### [2026-11-18] A validation rule over several fields gives one message per field that fails
+- **Decision**: mae's answer to Q28. The briefing's two rules that cover three fields, "All dimensions must be > 0 and <= 200" and "`baseRateUSD`, `ratePerKgUSD`, `ratePerKmUSD` must all be >= 0", give one error message for each field that fails, naming it, such as `dimensions.heightCm must be > 0 and <= 200 (got 0)`. A product with two bad dimensions has two messages. `packages/warehouse-logic/docs/validation-rules.md` tables every message.
+- **Rationale**: mae (2026-11-18), on the recommendation: the message says exactly which value to fix, and every rule's messages read the same way. `valid` is the same under either choice.
+- **Alternatives considered**: one message per rule, such as `All dimensions must be > 0 and <= 200`, however many fields fail.
+- **Status**: Accepted (mae, 2026-11-18).
+
 ### [2026-11-18] The required checks typecheck the warehouse logic
 - **Decision**: Two things. mae added `checks / suite` to the `production` ruleset beside `all-green` (2026-11-18), so the whole suite, typecheck included, must pass before a merge. And the `test` job of `.github/workflows/testing-kit.yml`, which the required `all-green` check waits on, installs the package's TypeScript and runs `pnpm typecheck` after the tests. The kit's fast command, which sessions' hooks run, stays tests only, so a session with nothing installed still passes it.
 - **Rationale**: mae (2026-11-18), on learning that the required check could not see a type error: Node runs TypeScript by dropping the types unchecked, and only `checks / suite`, which is not required, ran the typecheck. "No compilation errors" is one of the milestone's graded items.
