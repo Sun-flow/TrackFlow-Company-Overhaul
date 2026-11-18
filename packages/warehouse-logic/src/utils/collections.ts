@@ -164,8 +164,8 @@ export function sortBy<Entry>(entries: readonly Entry[], keys: readonly SortKey<
 /**
  * The entries grouped by `keyOf`, each group in input order. With `allKeys`, every key listed is in
  * the result, in the list's order, with [] for a key no entry has (Q3); an entry whose key is not
- * listed is kept, under its own key after the listed ones (Q29). Without `allKeys`, the result holds
- * the keys the entries have, in the order first seen.
+ * listed is kept, under its own key after the listed ones (Q29), and groupByListedKeys also flags
+ * it. Without `allKeys`, the result holds the keys the entries have, in the order first seen.
  */
 export function groupBy<Entry, Key extends string>(
   entries: readonly Entry[],
@@ -181,6 +181,16 @@ export function groupBy<Entry, Key extends string>(
   keyOf: (entry: Entry) => Key,
   allKeys: readonly Key[] = [],
 ): Partial<Record<Key, Entry[]>> {
+  // fromEntries defines each key as an own property, so a key such as "__proto__" is a plain group.
+  return Object.fromEntries(collectGroups(entries, keyOf, allKeys)) as Partial<Record<Key, Entry[]>>;
+}
+
+/** The groups in a Map: the listed keys first, in the list's order, then the others as first seen. */
+function collectGroups<Entry, Key extends string>(
+  entries: readonly Entry[],
+  keyOf: (entry: Entry) => Key,
+  allKeys: readonly Key[],
+): Map<Key, Entry[]> {
   const groups = new Map<Key, Entry[]>(allKeys.map((key) => [key, []]));
   for (const entry of entries) {
     const key = keyOf(entry);
@@ -191,8 +201,40 @@ export function groupBy<Entry, Key extends string>(
       group.push(entry);
     }
   }
-  // fromEntries defines each key as an own property, so a key such as "__proto__" is a plain group.
-  return Object.fromEntries(groups) as Partial<Record<Key, Entry[]>>;
+  return groups;
+}
+
+/** What groupByListedKeys returns: the groups, and a warning for each key not on the list. */
+export interface ListedGrouping<Key extends string, Entry> {
+  groups: Record<Key, Entry[]>;
+  warnings: string[];
+}
+
+/**
+ * groupBy with a list of keys, which also flags data that is off the list: the same groups, and a
+ * warning for each key not on the list, in the order first seen, saying how many entries were kept
+ * under it (Q29). Nothing is dropped and nothing throws, so a caller can go on and still show what
+ * was wrong. Clean data gives no warnings.
+ */
+export function groupByListedKeys<Entry, Key extends string>(
+  entries: readonly Entry[],
+  keyOf: (entry: Entry) => Key,
+  allKeys: readonly Key[],
+): ListedGrouping<Key, Entry> {
+  const groups = collectGroups(entries, keyOf, allKeys);
+  const listedKeys = new Set<string>(allKeys);
+  const warnings = [...groups]
+    .filter(([key]) => !listedKeys.has(key))
+    .map(([key, group]) => unlistedKeyWarning(key, group.length));
+  return {
+    groups: Object.fromEntries(groups) as Record<Key, Entry[]>,
+    warnings,
+  };
+}
+
+function unlistedKeyWarning(key: string, entryCount: number): string {
+  const entriesText = entryCount === 1 ? "1 entry" : `${entryCount} entries`;
+  return `Key ${JSON.stringify(key)} is not on the list of keys: ${entriesText} kept under it.`;
 }
 
 // ---------------------------------------------------------------------------------------------------

@@ -15,6 +15,7 @@ import {
   filterProductsByCategory,
   filterProductsByWarehouse,
   groupBy,
+  groupByListedKeys,
   isLowStock,
   matchesCriteria,
   partition,
@@ -105,6 +106,7 @@ export function typeChecks(): true[] {
   const groupedWithKeys = groupBy(rows, flagKey, ["yes", "no"]);
   const groupedWithoutKeys = groupBy(rows, flagKey);
   const shipmentsByStatus = groupBy([sampleShipment], (shipment) => shipment.status, shipmentStatuses);
+  const groupedAndChecked = groupByListedKeys(rows, flagKey, ["yes", "no"]);
 
   // @ts-expect-error a Date field is not matched by value
   matchesCriteria<Row>({ day: new Date("2024-03-01") });
@@ -125,8 +127,10 @@ export function typeChecks(): true[] {
     Expect<Equal<typeof groupedWithoutKeys, Partial<Record<"yes" | "no", Row[]>>>>,
     // What plan WP4's groupShipmentsByStatus needs.
     Expect<Equal<typeof shipmentsByStatus, Record<ShipmentStatus, Shipment[]>>>,
+    // The groups and a warning for each key not on the list (Q29).
+    Expect<Equal<typeof groupedAndChecked, { groups: Record<"yes" | "no", Row[]>; warnings: string[] }>>,
   ];
-  const checks: Checks = [true, true, true, true, true, true];
+  const checks: Checks = [true, true, true, true, true, true, true];
   return checks;
 }
 
@@ -665,5 +669,60 @@ describe("groupBy: entries by key, each group in input order", () => {
 
   test("the input array is left unchanged", () => {
     assertInputUnchanged([...rows], (input) => groupBy(input, flagKey, ["yes", "no"]));
+  });
+});
+
+describe("groupByListedKeys: groupBy's groups, and a warning for each key not on the list (Q29)", () => {
+  test("clean data: the same groups as groupBy, and no warnings", () => {
+    assert.deepStrictEqual(groupByListedKeys(rows, flagKey, ["yes", "no"]), {
+      groups: { yes: [rowB, rowCapitalB], no: [rowA, rowC] },
+      warnings: [],
+    });
+  });
+
+  test("an unlisted key: its entries are kept under it, and a warning says how many", () => {
+    const { groups, warnings } = groupByListedKeys(rows, flagKey, ["yes"]);
+    assert.deepStrictEqual(Object.keys(groups), ["yes", "no"]);
+    assert.deepStrictEqual(groups, { yes: [rowB, rowCapitalB], no: [rowA, rowC] });
+    assert.deepStrictEqual(warnings, ['Key "no" is not on the list of keys: 2 entries kept under it.']);
+  });
+
+  test("several unlisted keys: one warning each, in the order first seen, one entry in the singular", () => {
+    const { warnings } = groupByListedKeys(rows, (row) => row.label, ["a"]);
+    assert.deepStrictEqual(warnings, [
+      'Key "b" is not on the list of keys: 1 entry kept under it.',
+      'Key "c" is not on the list of keys: 1 entry kept under it.',
+      'Key "B" is not on the list of keys: 1 entry kept under it.',
+    ]);
+  });
+
+  test("a shipment whose status is off the briefing's list, as untyped data could hold", () => {
+    // MOCK: the briefing's shipment with an invented status, cast because the types forbid it.
+    const lostShipment = { ...sampleShipment, status: "Lost" } as unknown as Shipment;
+    const { groups, warnings } = groupByListedKeys(
+      [sampleShipment, lostShipment],
+      (shipment) => shipment.status,
+      shipmentStatuses,
+    );
+    assert.deepStrictEqual(groups, {
+      Pending: [sampleShipment],
+      Assigned: [],
+      "In transit": [],
+      Delivered: [],
+      Failed: [],
+      Lost: [lostShipment],
+    });
+    assert.deepStrictEqual(warnings, ['Key "Lost" is not on the list of keys: 1 entry kept under it.']);
+  });
+
+  test("an empty list gives [] for each listed key and no warnings", () => {
+    assert.deepStrictEqual(groupByListedKeys<Row, string>([], (row) => row.label, ["a", "b"]), {
+      groups: { a: [], b: [] },
+      warnings: [],
+    });
+  });
+
+  test("the input array is left unchanged", () => {
+    assertInputUnchanged([...rows], (input) => groupByListedKeys(input, flagKey, ["yes"]));
   });
 });

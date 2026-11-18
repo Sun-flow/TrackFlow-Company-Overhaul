@@ -20,7 +20,7 @@ WP1 to WP3 and WP5 of its plan are built; WP4 is next (2026-11-18). Milestone 1,
   (2026-11-13)
 - The live site at https://sun-flow.github.io/TrackFlow-Company-Overhaul/ serves the same home page as
   `production`; its last deploy, for pull request #25, succeeded. (2026-11-13)
-- The warehouse logic's types check and its 395 tests pass, the views giving back the briefing's samples:
+- The warehouse logic's types check and its 401 tests pass, the views giving back the briefing's samples:
   `(cd packages/warehouse-logic && pnpm typecheck && pnpm test)`. (2026-11-18)
 - WP3's collections filter, sort and group:
   `packages/warehouse-logic/tests/collections.test.ts`. (2026-11-18)
@@ -53,5 +53,4 @@ WP1 to WP3 and WP5 of its plan are built; WP4 is next (2026-11-18). Milestone 1,
 
 ## Open questions
 
-- Q29, where `groupBy` puts an entry whose key is not listed, in `docs/open-questions.md`. Q1 to Q28
-  are answered in `docs/decisions.md`. (2026-11-18)
+- None. Q1 to Q29 are answered in `docs/decisions.md`. (2026-11-18)

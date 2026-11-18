@@ -59,15 +59,25 @@ code.
 | `partition(entries, predicate)` | `{ matching, nonMatching }`, each in input order | `{ matching: [], nonMatching: [] }` |
 | `sortBy(entries, keys)` | A stable sorted copy by one or more `{ field, order }` keys | `[]` |
 | `groupBy(entries, keyOf, allKeys?)` | An object of groups, each in input order | `{}`, or `[]` for each listed key |
+| `groupByListedKeys(entries, keyOf, allKeys)` | `{ groups, warnings }`: `groupBy`'s groups, and a warning for each key not on the list (Q29) | `[]` for each listed key, no warnings |
 
 - `sortBy` orders text by character code (so capitals come before lower case), numbers by value,
   `false` before `true` and dates by time. `NaN` and an invalid date sort after every number.
 - `groupBy` with `allKeys` holds every listed key, in the list's order, with `[]` for a key no entry
   has (Q3), and its type is then `Record<Key, Entry[]>`. An entry whose key is not on the list is kept,
-  under its own key after the listed ones (Q29, the recommendation until mae answers). Without
+  under its own key after the listed ones (Q29). Without
   `allKeys`, the result holds the keys seen, in the order first seen, typed `Partial<Record<Key,
   Entry[]>>`. A key such as `"__proto__"` is an ordinary group.
 
 ```ts
 groupBy(shipments, (shipment) => shipment.status, shipmentStatuses); // Record<ShipmentStatus, Shipment[]>
+```
+
+`groupByListedKeys` is for data that may be off its list, such as a status read from a file: it never
+drops or throws, and says what was wrong.
+
+```ts
+groupByListedKeys(shipments, (shipment) => shipment.status, shipmentStatuses);
+// { groups: { Pending: [...], ..., Lost: [...] },
+//   warnings: ['Key "Lost" is not on the list of keys: 1 entry kept under it.'] }
 ```
