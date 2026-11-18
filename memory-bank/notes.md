@@ -42,8 +42,9 @@ This is mae's solo repo, so mae's preferences apply to every session.
 Traps in tools and environments. A trap met while changing the website's code, Tailwind's included,
 goes in `memory-bank/website.md`.
 
-- The kit's hook flags a shell command that changes a test file, even one written minutes before and
-  never committed. Change test files with the Edit tool. (2026-11-18)
+- The kit flags a shell command that changes any test file on disk, even a new one. Edit tests with the
+  Edit tool: it asks only before a line `production` has changes, and those changes go through a draft
+  ("Tests in progress", `.claude/rules/testing.md`). (2026-11-18)
 - A fresh cloud clone doesn't record the remote's default branch, and the check doesn't guess
   `production`. Until `git remote set-head origin --auto` has run, the check can't tell what is merged or
   in flight. (2026-11-13)
@@ -63,8 +64,6 @@ goes in `memory-bank/website.md`.
 - A project thread starts Claude in the folder above the clone, so the repo's `.claude/settings.json`
   is never read there; `scripts/wire-cloud-hooks.py` gives that folder a copy. The kit's bash guard also
   refuses any shell command that names the kit's state folder, even a listing. (2026-11-13)
-- The kit's hook flags a shell command that changes any test file, even a new, uncommitted one. Write
-  and edit tests with the editor tools instead. (2026-11-18)
 - Lighthouse in a cloud session: serve the site, then run
   `CHROME_PATH=/opt/pw-browsers/chromium npx --yes lighthouse@12 http://localhost:3000/ --chrome-flags="--headless=new --no-sandbox"`
   (add `--preset=desktop` for desktop). (2026-11-13)
@@ -82,8 +81,10 @@ home: `uis/AGENTS.md` for every user interface, `memory-bank/website.md` for the
 Things not to copy, and names that no longer mean what they say.
 
 - A `Milestone-<N>` branch is for grading, not for work: branch from `origin/production`. (2026-11-13)
-- `.claude/testing-kit/kitlib.py` and `.claude/testing-kit/guard_bash.py` carry local patches (`docs/decisions.md`).
-  Re-running the kit's installer overwrites them unless the kit has taken the same change. (2026-11-13)
+- `.claude/testing-kit/kitlib.py`, `.claude/testing-kit/guard_bash.py` and
+  `.claude/testing-kit/protect_tests.py` carry local patches, and `.claude/rules/testing.md` a hand edit
+  (`docs/decisions.md`). Re-running the kit's installer overwrites them unless the kit has taken the
+  same change. (2026-11-18)
 - `docs/milestones/milestone-1/plan.md` is a record of a finished milestone. Its memory-bank steps
   describe a layout that is gone, so don't copy them into a new plan. (2026-11-13)
 
@@ -98,9 +99,10 @@ The safe way through a Hard rule, where it doesn't fit in `AGENTS.md`.
   staging step. Before opening the pull request, run the browser check (Gotchas give its cloud form) and
   look at the screenshots it saves in .site-check/, which git ignores. (2026-11-13)
 - Tests (testing kit). Never weaken a test to get past the kit; a test that looks wrong goes to mae. Its
-  hooks ask before an existing test or kit file is edited and run the form's tests when a turn changed
-  something; an ask waits for mae. Where they don't run (Known problems in `memory-bank/status.md`),
-  follow `.claude/rules/testing.md` by hand and run the smoke command before finishing. (2026-11-13)
+  hooks ask before a test line `production` has, or a kit file, is edited and run the form's tests
+  when a turn changed something; an ask waits for mae. Where they don't run (Known problems in
+  `memory-bank/status.md`), follow `.claude/rules/testing.md` by hand and run the smoke command before
+  finishing. (2026-11-18)
 - Shared history (Hard rule 5). A Claude thread keeps its branch name after its pull request merges.
   Restarting that branch from `origin/production` before new work is not a rewrite of shared history.
   (2026-11-13)

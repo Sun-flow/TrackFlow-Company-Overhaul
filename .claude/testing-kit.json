@@ -9,8 +9,10 @@
   "runner_files": [],
   "extra_test_globs": [],
   "not_test_globs": [
-    "**/*.md"
+    "**/*.md",
+    "**/*.draft.*"
   ],
+  "base_branch": "origin/production",
   "src_dirs": [
     "uis/website/js",
     "packages/warehouse-logic/src"
