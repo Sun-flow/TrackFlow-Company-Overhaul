@@ -5,17 +5,19 @@
 
 ## The diagram
 
-Each box is one interface from the briefing. The boxes list the fields in the briefing's order. `PK` marks the field that identifies a record and `FK` marks a field that points to another record. Lines show how records refer to each other.
+Each box is one interface from the briefing. The boxes list the fields in the briefing's order. `PK` (primary key) marks the field or fields that identify a record: no two records share them. `FK` (foreign key) marks a field that points to another record's key. Lines show how records refer to each other.
+
+A product's key has two parts, `sku` and `warehouse`, because the same SKU can be stocked in both warehouses (Q10). So a shipment needs two fields to point at one product, its `sku` and its `origin`, and an inventory movement needs its `sku` and its `warehouse`. The notes "part 1 of 2" and "part 2 of 2" mark those pairs.
 
 ```mermaid
 erDiagram
     PRODUCT {
-        string sku PK "e.g. SHOE-BLK-42; with warehouse, Q10"
+        string sku PK "e.g. SHOE-BLK-42. Key part 1 of 2"
         string name
         ProductCategory category
         number weightKg
         Dimensions dimensions "embedded"
-        WarehouseLocation warehouse PK "with sku, Q10"
+        WarehouseLocation warehouse PK "Key part 2 of 2. sku + warehouse is unique"
         number stockQuantity
         number minStockThreshold
         number unitCostUSD
@@ -29,9 +31,9 @@ erDiagram
     }
     SHIPMENT {
         string id PK "e.g. SH-2024-8821"
-        string sku FK "the product shipped"
+        string sku FK "Product link part 1 of 2"
         number quantity
-        WarehouseLocation origin FK "with sku, the product's warehouse"
+        WarehouseLocation origin FK "Product link part 2 of 2"
         Destination destination "embedded"
         ShipmentPriority priority
         number declaredValueUSD
@@ -61,7 +63,7 @@ erDiagram
     INVENTORY_MOVEMENT {
         string id PK
         string sku FK
-        WarehouseLocation warehouse FK "with sku"
+        WarehouseLocation warehouse FK "Product link part 2 of 2"
         MovementType type
         number quantity
         string reason
