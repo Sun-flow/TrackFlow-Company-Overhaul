@@ -32,6 +32,16 @@ echo "== Warehouse logic: types and tests"
 [ -d packages/warehouse-logic/node_modules ] || (cd packages/warehouse-logic && pnpm install --frozen-lockfile)
 (cd packages/warehouse-logic && pnpm typecheck && pnpm test)
 
+echo "== No test drafts left"
+# A draft (x.test.draft.ts) is where a thread reworks a test that is on production before asking mae
+# once to promote it (.claude/rules/testing.md). The kit doesn't guard a draft, so none may merge.
+drafts=$(git ls-files -- '*.draft.*')
+if [ -n "$drafts" ]; then
+  echo "FAIL  Draft files are still tracked. Promote each over its test, or delete it:" >&2
+  echo "$drafts" >&2
+  exit 1
+fi
+
 echo "== Briefs unchanged"
 python3 scripts/check-briefs.py "origin/${BASE_REF:-production}"
 
