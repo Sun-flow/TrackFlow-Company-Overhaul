@@ -480,6 +480,31 @@ describe("toInventoryMovement: SKU and warehouse through the movement's one stoc
   });
 });
 
+describe("two records that share a key, which the model forbids: the first one listed is used", () => {
+  // The same rule as findProductBySKU, which returns the first match (Q10).
+  const secondLaptopRecord: StockRecord = {
+    ...laptopInZaragoza,
+    warehouseId: "WH-LA",
+    stockQuantity: 999,
+  };
+
+  test("toShipment reads the first stock record with the id", () => {
+    const shipment = toShipment(
+      sampleShipmentRecord,
+      [...sampleStockRecords, secondLaptopRecord],
+      sampleWarehouses,
+      sampleCarrierRecords,
+    );
+    assert.equal(shipment?.origin, "Zaragoza");
+  });
+
+  test("toProducts reads the first item with the SKU", () => {
+    const renamedShoes: Item = { ...shoes, name: "Mock: a second item with the shoes' SKU" };
+    const products = toProducts([...sampleItems, renamedShoes], sampleStockRecords, sampleWarehouses);
+    assert.deepStrictEqual(products, briefingProducts);
+  });
+});
+
 describe("the builders leave the records they read unchanged", () => {
   test("every builder, on the samples and the mock records", () => {
     const records = {

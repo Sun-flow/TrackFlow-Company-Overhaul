@@ -27,9 +27,13 @@ jobs:
         with:
           node-version: 22
           cache: pnpm
-          cache-dependency-path: uis/website/pnpm-lock.yaml
+          cache-dependency-path: |
+            uis/website/pnpm-lock.yaml
+            packages/warehouse-logic/pnpm-lock.yaml
       - name: Install the website's build tools
         run: cd uis/website && pnpm install --frozen-lockfile
+      - name: Install the warehouse logic's TypeScript
+        run: cd packages/warehouse-logic && pnpm install --frozen-lockfile
       - name: Suite
         env: {BASE_REF: "${{ github.base_ref }}"}
         run: scripts/suite.sh --no-browser

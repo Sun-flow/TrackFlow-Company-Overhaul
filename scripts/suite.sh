@@ -28,6 +28,10 @@ if [ "$before" != "$(git hash-object uis/website/dist/styles.css)" ]; then
   exit 1
 fi
 
+echo "== Warehouse logic: types and tests"
+[ -d packages/warehouse-logic/node_modules ] || (cd packages/warehouse-logic && pnpm install --frozen-lockfile)
+(cd packages/warehouse-logic && pnpm typecheck && pnpm test)
+
 echo "== Briefs unchanged"
 python3 scripts/check-briefs.py "origin/${BASE_REF:-production}"
 

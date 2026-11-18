@@ -1,8 +1,8 @@
 {
   "commands": {
     "setup": "",
-    "fast": "mkdir -p .reports && cd uis/website && node --test --test-reporter=spec --test-reporter-destination=stdout --test-reporter=junit --test-reporter-destination=../../.reports/junit.xml \"tests/**/*.test.js\"",
-    "full": "mkdir -p .reports && cd uis/website && node --test --test-reporter=spec --test-reporter-destination=stdout --test-reporter=junit --test-reporter-destination=../../.reports/junit.xml \"tests/**/*.test.js\"",
+    "fast": "mkdir -p .reports && node --test --test-reporter=spec --test-reporter-destination=stdout --test-reporter=junit --test-reporter-destination=.reports/junit.xml \"uis/website/tests/**/*.test.js\" \"packages/warehouse-logic/tests/**/*.test.ts\"",
+    "full": "mkdir -p .reports && node --test --test-reporter=spec --test-reporter-destination=stdout --test-reporter=junit --test-reporter-destination=.reports/junit.xml \"uis/website/tests/**/*.test.js\" \"packages/warehouse-logic/tests/**/*.test.ts\"",
     "mutation": ""
   },
   "junit_path": ".reports/junit.xml",
@@ -12,7 +12,8 @@
     "**/*.md"
   ],
   "src_dirs": [
-    "uis/website/js"
+    "uis/website/js",
+    "packages/warehouse-logic/src"
   ],
   "default_tier": "low",
   "high_paths": [],
