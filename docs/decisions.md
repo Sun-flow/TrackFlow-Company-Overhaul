@@ -18,10 +18,10 @@ Entry format:
 ---
 
 ### [2026-11-18] A transfer shows as a send and a receipt
-- **Decision**: In the brief's `InventoryMovement` view, a Transfer appears twice: once at the sending warehouse when it is sent, and once at the receiving warehouse when it is received (Q14, option c). How the two are stored is Q15; until mae answers, one `MovementRecord` holds both, with `receivedAt` empty while the stock is in transit.
-- **Rationale**: mae (2026-11-18): it works as a sent-and-received check, since every send should have a matching receipt.
-- **Alternatives considered**: one view at the sending warehouse only (the recommendation), or at the receiving warehouse only.
-- **Status**: Accepted (mae, 2026-11-18). Storage open (Q15).
+- **Decision**: In the brief's `InventoryMovement` view, a Transfer appears twice: once at the sending warehouse when it is sent, and once at the receiving warehouse when it is received (Q14, option c). Each is its own `MovementRecord`, made by its warehouse (Q15, option b). The send has a `from` and the `to` it is headed for; the receipt has only the `to` and a `transferId`, the id of its send.
+- **Rationale**: mae (2026-11-18): it works as a sent-and-received check, since every send should have a matching receipt. Two records let each warehouse record what it actually sent or received, so a shortfall shows as a difference in `quantity`.
+- **Alternatives considered**: one view at the sending warehouse only (the recommendation), or at the receiving warehouse only. For storage, one record with a `receivedAt` time (the recommendation), which can't hold a different received quantity.
+- **Status**: Accepted (mae, 2026-11-18).
 
 ### [2026-11-18] Milestone 2 stores single-id records, with the brief's interfaces as views
 - **Decision**: A departure from the brief. The stored data is the model in `packages/warehouse-logic/docs/erd.md`: `Item` (one per SKU, the SKU is its id), `Warehouse` (`WH-LA`, `WH-ZGZ`), `StockRecord` (one per item per warehouse, id `SHOE-BLK-42-WH-ZGZ`), `ShipmentRecord` (`stockRecordId`, `carrierId`), `MovementRecord` (`fromStockRecordId`, `toStockRecordId`) and `Carrier`. Every record has one id and every link is one id. The brief's `Product`, `Shipment`, `InventoryMovement`, `Carrier`, `Dimensions` and `Destination` stay in `src/types/models.ts` exactly as written, are built from the records by functions in `src/utils/views.ts`, and are what the briefing's functions take, unchanged. This replaces the plan to build the brief's model first and move to single ids later (I4), and makes I1 (carriers by id) part of the stored model. `erd.md` now shows only this model.

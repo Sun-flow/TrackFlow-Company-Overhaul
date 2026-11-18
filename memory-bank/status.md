@@ -44,7 +44,5 @@ public website, is finished.
 
 ## Open questions
 
-- Q15: how a transfer's send and receipt are stored, one record or two (`docs/open-questions.md`).
-  (2026-11-18)
 
 

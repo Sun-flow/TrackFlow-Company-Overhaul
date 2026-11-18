@@ -55,13 +55,13 @@ erDiagram
     }
     MovementRecord {
         string id PK
-        string fromStockRecordId FK "stock it left; null for Inbound"
-        string toStockRecordId FK "stock it joined; null for Outbound"
+        string fromStockRecordId FK "stock it left; null for Inbound or a receipt"
+        string toStockRecordId FK "stock it joined or is headed to; null for Outbound"
+        string transferId FK "a receipt only: its send's id"
         MovementType type
         number quantity
         string reason
-        Date timestamp "sent, for a Transfer"
-        Date receivedAt "Transfer only, null in transit (Q15)"
+        Date timestamp
     }
     Carrier {
         string id PK "e.g. CAR-UPS"
@@ -83,6 +83,7 @@ erDiagram
     StockRecord ||--o{ ShipmentRecord : "shipped from"
     StockRecord ||--o{ MovementRecord : "moved out of (from)"
     StockRecord ||--o{ MovementRecord : "moved into (to)"
+    MovementRecord |o--o| MovementRecord : "receipt of (transferId)"
     Carrier |o--o{ ShipmentRecord : "assigned to"
     ShipmentRecord ||--|| Destination : "goes to"
 ```
@@ -95,7 +96,7 @@ How to read it: `PK` (primary key) marks the field that identifies a record, so 
 - **`Warehouse`**: one per warehouse, with an id in the carriers' style (`WH-LA`, `WH-ZGZ`), its `name` (the briefing's `WarehouseLocation`) and its `country`.
 - **`StockRecord`**: one per item per warehouse. It holds the stock (`stockQuantity`, `minStockThreshold`). Its id is the SKU, a hyphen, then the warehouse id (Q13), so the same item can never have two records in one warehouse. SKUs contain hyphens too, so an id is split by matching the known warehouse id at its end. This is the ProductId mae described.
 - **`ShipmentRecord`**: a shipment, pointing at the stock it ships from (`stockRecordId`) and at its carrier by id (`carrierId`), so renaming a carrier changes nothing (improvement I1, now part of the design).
-- **`MovementRecord`**: an inventory movement, pointing at the stock it left (`fromStockRecordId`) and the stock it joined (`toStockRecordId`). An Inbound movement has only a `to`, an Outbound only a `from`, a Transfer both (the same item in two warehouses), and an Adjustment one of them. A Transfer's `timestamp` is when it was sent and its `receivedAt` when it arrived, empty while it is in transit; every other type leaves `receivedAt` empty. How a transfer is stored is open question Q15, and this follows its recommendation.
+- **`MovementRecord`**: an inventory movement, pointing at the stock it left (`fromStockRecordId`) and the stock it joined (`toStockRecordId`). An Inbound movement has only a `to`, an Outbound only a `from`, and an Adjustment one of them. A Transfer is two records, made by each warehouse (Q14, Q15). The send, made by the sending warehouse, has a `from` and the `to` it is headed for. The receipt, made by the receiving warehouse when the stock arrives, has only a `to` and a `transferId`, the id of its send. Each has its own `quantity` and `timestamp`, so a receipt short of what was sent shows, and a send with no receipt is still in transit.
 - **`Carrier`**: as in the briefing.
 
 Items and warehouses meet only through `StockRecord`, so there is no many-to-many link. `Carrier.operatesIn` and `Carrier.acceptsPriority` link carriers to countries and to priorities. Both are lists of fixed values that the briefing requires inside the carrier, so they stay as lists.
@@ -108,7 +109,7 @@ The briefing's interfaces are kept in `src/types/models.ts` exactly as written, 
 |---|---|
 | `Product` | An `Item`, plus one of its `StockRecord`s for `stockQuantity` and `minStockThreshold`, plus that record's `Warehouse` `name` for `warehouse`. One `Product` for each item in each warehouse. |
 | `Shipment` | A `ShipmentRecord`, with `sku` and `origin` read through its stock record (the item's SKU and the warehouse's name), and `carrier` the carrier's `name` (Q1) or `null`. |
-| `InventoryMovement` | A `MovementRecord`, with `sku` read through its stock record, and `warehouse` the name of the warehouse it describes. A Transfer gives two: a send at its `from` warehouse with its `timestamp`, and, once `receivedAt` is set, a receipt at its `to` warehouse with that time (Q14). |
+| `InventoryMovement` | A `MovementRecord`, with `sku` read through its stock record, and `warehouse` the name of the warehouse it describes: `from`'s for an Outbound movement, a Transfer's send or an Adjustment out, and `to`'s for the rest. A transfer therefore shows as a send at one warehouse and, once received, a receipt at the other (Q14). |
 | `Carrier`, `Dimensions`, `Destination` | Unchanged. |
 
 A product in the views is named by its SKU and warehouse together (Q10). `toStockRecordId` builds the matching stock record id from them, and `parseStockRecordId` turns an id back into the two.
