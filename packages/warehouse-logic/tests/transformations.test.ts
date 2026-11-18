@@ -2,7 +2,7 @@
 // the reports. They were written from the briefing and docs/transformations.md before the code.
 // Every expected value is the briefing's formula worked by hand, with the arithmetic beside it; none
 // comes from running the code. A test that depends on one of mae's answers names it (Q2 to Q6, Q8,
-// Q16, Q23, Q25 in docs/decisions.md; Q30 is open in docs/open-questions.md). Mock data is in
+// Q16, Q23, Q25 in docs/decisions.md; Q30 to Q33 are open in docs/open-questions.md). Mock data is in
 // tests/fixtures/ and is labelled there.
 import { describe, test } from "node:test";
 import assert from "node:assert/strict";
@@ -154,6 +154,21 @@ describe("roundToTwoDecimals: half up, by the decimal value (Q5, Q21)", () => {
     }
   });
 
+  test("large amounts keep their cents: up to 10 trillion the amount still rounds to 2 decimals", () => {
+    // 15 digits in all: twelve before the point leave three after it, so the half cent is still seen.
+    assert.equal(roundToTwoDecimals(123456789012.345), 123456789012.35);
+    assert.equal(roundToTwoDecimals(1234567890.125), 1234567890.13);
+    // Thirteen before the point leave two after it: the amount rounds to its nearest cent.
+    assert.equal(roundToTwoDecimals(1234567890123.456), 1234567890123.46);
+  });
+
+  test("from 10 trillion up the amount comes back as it is (transformations.md)", () => {
+    assert.equal(roundToTwoDecimals(1e13), 1e13);
+    assert.equal(roundToTwoDecimals(1e13 + 0.126), 1e13 + 0.126);
+    assert.equal(roundToTwoDecimals(1234567890123456), 1234567890123456);
+    assert.equal(roundToTwoDecimals(-(1e13 + 0.126)), -(1e13 + 0.126));
+  });
+
   test("a tiny negative rounds to 0, never to -0", () => {
     // node:assert/strict tells 0 from -0.
     assert.equal(roundToTwoDecimals(-0.001), 0);
@@ -168,9 +183,15 @@ describe("roundToTwoDecimals: half up, by the decimal value (Q5, Q21)", () => {
 });
 
 describe("removeFloatingPointNoise: 15 significant digits", () => {
-  test("the premise: JavaScript's 0.28 × 25 is not 7 but a hair over it", () => {
+  test("JavaScript's 0.28 × 25 is not 7 but a hair over it, and removing the noise gives 7", () => {
     assert.notEqual(0.28 * 25, 7);
     assert.ok(0.28 * 25 > 7);
+    assert.equal(removeFloatingPointNoise(0.28 * 25), 7);
+  });
+
+  test("a value that uses all 15 digits comes back unchanged", () => {
+    assert.equal(removeFloatingPointNoise(0.123456789012345), 0.123456789012345);
+    assert.equal(removeFloatingPointNoise(123456789012.345), 123456789012.345);
   });
 
   const rows: [string, number, number][] = [
@@ -571,6 +592,44 @@ describe("calculateShippingCost: the priority surcharge", () => {
       assert.equal(calculateShippingCost(express, product, distanceOnly), 65);
     });
   });
+
+  test("the surcharge is added before rounding (Q4, Q5): a base of 10.004 alone, Express, costs 13.01", () => {
+    // 10.004 × 1.3 = 13.0052, which rounds to 13.01. Rounding first would give 10.00 × 1.3 = 13.00.
+    const threeDecimals = buildMockCarrier({ baseRateUSD: 10.004, ratePerKgUSD: 0, ratePerKmUSD: 0 });
+    const express = buildMockShipment({ priority: "Express" });
+    assert.equal(calculateShippingCost(express, product, threeDecimals), 13.01);
+  });
+});
+
+describe("calculateShippingCost and selectBestCarrier: data that breaks a validation rule (Q32)", () => {
+  // Neither checks its data or throws (transformations.md, "What these functions do not check").
+  const product = buildMockProduct();
+  const notAPriority: string = "Mock priority";
+  const unknownPriority = buildMockShipment({ priority: notAPriority as Shipment["priority"] });
+
+  test("a priority that is not one of the three has no surcharge rate, so the cost is NaN", () => {
+    assert.equal(calculateShippingCost(unknownPriority, product, buildMockCarrier()), Number.NaN);
+  });
+
+  test("when every carrier's cost is NaN, selectBestCarrier gives null: no cost is the lowest", () => {
+    // Both score 20 + 20 + 0 + 15 + 27 = 82, so both are suitable; only the cost is missing.
+    const first = buildMockCarrier({ id: "MOCK-CAR-NAN-1" });
+    const second = buildMockCarrier({ id: "MOCK-CAR-NAN-2" });
+    assert.equal(scoreCarrierForShipment(first, unknownPriority, product), 82);
+    assert.equal(selectBestCarrier([first, second], unknownPriority, product), null);
+  });
+
+  test("a negative rate gives a negative cost: a base of -5 alone, Standard, costs -5", () => {
+    const negative = buildMockCarrier({ baseRateUSD: -5, ratePerKgUSD: 0, ratePerKmUSD: 0 });
+    assert.equal(calculateShippingCost(buildMockShipment(), product, negative), -5);
+  });
+
+  test("an on-time rate over 100 earns more than 30 points: 150% gives 45, and a score of 115", () => {
+    const overTheTop = buildMockCarrier({ onTimeRate: 150 });
+    assert.equal(calculateReliabilityPoints(overTheTop), 45);
+    // 20 + 20 + 15 + 15 + 45
+    assert.equal(scoreCarrierForShipment(overTheTop, buildMockShipment(), product), 115);
+  });
 });
 
 describe("calculateShippingCost: each part of the formula", () => {
@@ -734,7 +793,7 @@ describe("scoreCarrierForShipment: each rule, on both sides", () => {
 });
 
 describe("calculateCarrierScoreBreakdown: the points each rule gives", () => {
-  test("UPS for the sample shipment: nothing for the country, full points for the other must-haves", () => {
+  test("UPS for the sample shipment: nothing for the country, full points for the other three rules", () => {
     const breakdown = calculateCarrierScoreBreakdown(ups, sampleShipment, laptop);
     assert.equal(breakdown.operatesInCountry, 0);
     assert.equal(breakdown.canCarryWeight, 20);
@@ -774,7 +833,8 @@ describe("calculateCarrierScoreBreakdown: the points each rule gives", () => {
     );
   });
 
-  test("the score is the five added up and rounded", () => {
+  test("for the sample carriers the score is the five added up", () => {
+    // Their sums, 76.4, 97.6 and 98.5, have one decimal, so rounding changes nothing here.
     for (const carrier of sampleCarriers) {
       const breakdown = calculateCarrierScoreBreakdown(carrier, sampleShipment, laptop);
       const added =
@@ -785,6 +845,14 @@ describe("calculateCarrierScoreBreakdown: the points each rule gives", () => {
         breakdown.reliability;
       assertClose(scoreCarrierForShipment(carrier, sampleShipment, laptop), added);
     }
+  });
+
+  test("the breakdown is not rounded and the score is: 88.88% on time gives 26.664 and a score of 96.66", () => {
+    // 88.88 × 0.3 = 26.664; 20 + 20 + 15 + 15 + 26.664 = 96.664, which rounds to 96.66.
+    const carrier = buildMockCarrier({ onTimeRate: 88.88 });
+    const breakdown = calculateCarrierScoreBreakdown(carrier, buildMockShipment(), buildMockProduct());
+    assertClose(breakdown.reliability, 26.664);
+    assert.equal(scoreCarrierForShipment(carrier, buildMockShipment(), buildMockProduct()), 96.66);
   });
 });
 
@@ -909,7 +977,7 @@ describe("selectBestCarrier: the briefing's rules", () => {
       assert.equal(selectBestCarrier([justUnder], shipment, product), null);
     });
 
-    test("the score compared is the rounded one: 35 + 49.99 × 0.3 = 49.997 rounds to 50, so it is suitable", () => {
+    test("the score compared is the rounded one (Q33): 35 + 49.99 × 0.3 = 49.997 rounds to 50, so it is suitable", () => {
       const roundsToFifty = buildMockCarrier({ ...base, onTimeRate: 49.99 });
       assert.deepEqual(selectBestCarrier([roundsToFifty], shipment, product), {
         carrier: roundsToFifty,
@@ -1097,6 +1165,15 @@ describe("calculateTotalInventoryValue: the sum of stockQuantity × unitCostUSD"
     assert.equal(calculateTotalInventoryValue([...sampleProducts, soldOut]), 16975);
   });
 
+  test("a product's status does not matter: discontinued 2 × 3 and out of stock 1 × 4 still count, 6 + 4 = 10", () => {
+    // The briefing's sum has no condition on status.
+    const products: Product[] = [
+      buildMockProduct({ status: "Discontinued", stockQuantity: 2, unitCostUSD: 3 }),
+      buildMockProduct({ status: "Out of stock", stockQuantity: 1, unitCostUSD: 4 }),
+    ];
+    assert.equal(calculateTotalInventoryValue(products), 10);
+  });
+
   test("the total is rounded to 2 decimals, a half cent going up (Q5): 3 × 0.335 = 1.005 -> 1.01", () => {
     const product = buildMockProduct({ stockQuantity: 3, unitCostUSD: 0.335 });
     assert.equal(calculateTotalInventoryValue([product]), 1.01);
@@ -1220,7 +1297,7 @@ describe("findTopCarriers", () => {
   const withCarriers = (...carriers: (string | null)[]): Shipment[] =>
     carriers.map((carrier, index) => buildMockShipment({ id: `MOCK-SH-02${String(index)}`, carrier }));
 
-  test("the most used carriers, the highest count first", () => {
+  test("the most used carriers, the highest count first, whatever the shipments' status (Q31)", () => {
     assert.deepEqual(findTopCarriers(mockShipments, 3), [
       { carrier: "UPS", count: 3 },
       { carrier: "DHL Express", count: 2 },
@@ -1383,6 +1460,11 @@ describe("findLongestShipment", () => {
     assert.equal(findLongestShipment([third, second, sixth]), second);
     assert.equal(findLongestShipment([sixth, third, second]), sixth);
   });
+
+  test("it leaves the shipments unchanged", () => {
+    const shipments = structuredClone(mockShipments);
+    assertLeavesUnchanged(shipments, () => findLongestShipment(shipments));
+  });
 });
 
 // ---------------------------------------------------------------------------------------------------
@@ -1439,6 +1521,20 @@ describe("summarizeWarehouse: products, units, inventory value and low-stock cou
       totalUnits: 41,
       inventoryValueUSD: 41,
       lowStockCount: 2,
+    });
+  });
+
+  test("a product's status does not matter: discontinued 2 × 3 and out of stock 1 × 4 are both counted", () => {
+    // Thresholds of 0, so neither is low: 2 products, 2 + 1 = 3 units, 6 + 4 = 10.
+    const products: Product[] = [
+      buildMockProduct({ status: "Discontinued", stockQuantity: 2, unitCostUSD: 3, minStockThreshold: 0 }),
+      buildMockProduct({ status: "Out of stock", stockQuantity: 1, unitCostUSD: 4, minStockThreshold: 0 }),
+    ];
+    assert.deepEqual(summarizeWarehouse(products, "Zaragoza"), {
+      productCount: 2,
+      totalUnits: 3,
+      inventoryValueUSD: 10,
+      lowStockCount: 0,
     });
   });
 

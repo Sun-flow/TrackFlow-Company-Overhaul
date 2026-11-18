@@ -8,7 +8,7 @@ Every worked figure below is from the briefing's sample data, calculated by hand
 
 ## What these functions do not check
 
-They trust the data they are given, as the briefing's formulas do. A carrier with an `onTimeRate` of 150 earns 45 reliability points, a negative rate gives a negative cost, and a priority that is not one of the three gives a cost of `NaN`. Checking data is the validations' job (`src/utils/validations.ts`): validate first, then calculate.
+They trust the data they are given, as the briefing's formulas do. A carrier with an `onTimeRate` of 150 earns 45 reliability points, a negative rate gives a negative cost, and a priority that is not one of the three gives a cost of `NaN`. Checking data is the validations' job (`src/utils/validations.ts`): validate first, then calculate. Whether these functions should do more with such data is open (Q32).
 
 ## Rounding and floating-point noise
 
@@ -21,7 +21,9 @@ They trust the data they are given, as the briefing's formulas do. A carrier wit
 
 - JavaScript holds 35.55 × 1.3, which is 46.215 by hand, as 46.214999999999996, and `toFixed(2)` turns that into 46.21. `roundToTwoDecimals` first reads the value to 15 significant digits (46.2150000000000), then rounds half up: `roundToTwoDecimals(35.55 * 1.3)` is `46.22`. In the same way `roundToTwoDecimals(1.005)` is `1.01`.
 - A half goes up, toward positive infinity: `roundToTwoDecimals(2.345)` is `2.35` and `roundToTwoDecimals(-2.345)` is `-2.34`.
-- A value with 2 decimals or fewer comes back unchanged. So does an amount of 10 trillion (`1e13`) or more: its 15 reliable digits are used up before the second decimal, so there are no cents to round. `NaN`, `Infinity` and `-Infinity` come back as they are. The result is never `-0`: `-0` and a tiny negative such as `-0.001` both give `0`.
+- A value with 2 decimals or fewer comes back unchanged.
+- Large amounts. Under 1 trillion (`1e12`) the 15 reliable digits reach the third decimal, so the half cent is seen and goes up as above. From 1 trillion up to 10 trillion (`1e13`) they end at the second decimal: the amount comes back at its nearest cent, and a half cent there can no longer be told from its neighbours. From 10 trillion up the amount comes back as it is: its reliable digits are used up before the second decimal, so there are no cents to round.
+- `NaN`, `Infinity` and `-Infinity` come back as they are. The result is never `-0`: `-0` and a tiny negative such as `-0.001` both give `0`.
 
 ## Generic blocks
 
@@ -32,7 +34,7 @@ They work on a list of any kind of entry. `valueOf` reads a number from an entry
 | `sumBy<Entry>(entries: readonly Entry[], valueOf: (entry: Entry) => number): number` | The sum of `valueOf` over the entries, not rounded. | `0` |
 | `averageBy<Entry>(entries: readonly Entry[], valueOf: (entry: Entry) => number): number \| null` | The mean of `valueOf` over the entries, not rounded. | `null` |
 | `countOccurrences<Entry, Key>(entries: readonly Entry[], keyOf: (entry: Entry) => Key): Map<Key, number>` | How many entries have each key, as a `Map` whose keys are in the order first seen. A key can be any value. | An empty `Map` |
-| `countBy<Entry, Key extends string>(entries: readonly Entry[], keyOf: (entry: Entry) => Key, allKeys: readonly Key[]): Record<Key, number>` | How many entries have each key, as an object. Every key in `allKeys` is present, in that order, with `0` for a key no entry has (Q3). An entry whose key is not listed is still counted, under its own key after the listed ones, as `groupBy` in `collections.ts` keeps it. | Every listed key with `0` |
+| `countBy<Entry, Key extends string>(entries: readonly Entry[], keyOf: (entry: Entry) => Key, allKeys: readonly Key[]): Record<Key, number>` | How many entries have each key, as an object. Every key in `allKeys` is present, in that order, with `0` for a key no entry has (Q3). An entry whose key is not listed is still counted, under its own key after the listed ones, as `groupBy` in `collections.ts` keeps it (Q29). | Every listed key with `0` |
 | `countBy<Entry, Key extends string>(entries: readonly Entry[], keyOf: (entry: Entry) => Key): Partial<Record<Key, number>>` | The same without `allKeys`: only the keys the entries have, in the order first seen. | `{}` |
 | `findMaximumBy<Entry>(entries: readonly Entry[], valueOf: (entry: Entry) => number): Entry \| null` | The entry with the largest value. When several tie, the first listed. | `null` |
 | `findMinimumBy<Entry>(entries: readonly Entry[], valueOf: (entry: Entry) => number): Entry \| null` | The entry with the smallest value. When several tie, the first listed. | `null` |
@@ -122,7 +124,7 @@ interface CarrierEvaluation {
 
 ### `selectBestCarrier(carriers: Carrier[], shipment: Shipment, product: Product): { carrier: Carrier; score: number; cost: number } | null`
 
-The briefing's, exactly as written: score every carrier, drop those scoring under 50, and of the rest return the one with the lowest cost, with its score and cost. The score compared with 50 is the rounded one `scoreCarrierForShipment` returns, so exactly 50 stays in. When two carriers cost the same, the higher score wins, and when that ties too, the one listed first (Q6). It returns `null` when no carrier scores 50 or more, and for an empty list.
+The briefing's, exactly as written: score every carrier, drop those scoring under 50, and of the rest return the one with the lowest cost, with its score and cost. The score compared with 50 is the rounded one `scoreCarrierForShipment` returns, so exactly 50 stays in, and so does a raw 49.997, which rounds to 50 (Q33). When two carriers cost the same, the higher score wins, and when that ties too, the one listed first (Q6). It returns `null` when no carrier scores 50 or more, and for an empty list. It also returns `null` when no suitable carrier has a cost that can be compared: a shipment whose priority is not one of the three gives every carrier a cost of `NaN` (Q32). A carrier whose cost is `NaN` is passed over while another has a real cost.
 
 **The briefing's known failure (plan D4).** For the sample shipment every carrier scores 50 or more, so the cheapest wins: `selectBestCarrier` returns UPS, with a score of 76.4 and a cost of $30.89. UPS operates only in the United States and the shipment goes to Madrid. Every rule was applied as the briefing writes it. Losing the 20 points for the country still leaves UPS far above the cut-off, and price decides among the carriers above it. SEUR, which serves Spain, scores 97.6 and costs $46.22. The tests pin this result and label it as the known failure. The fix, which makes the country and the weight limit must-haves, is a later, separate change (plan WP7), built beside this function and not in place of it.
 
@@ -200,4 +202,4 @@ With the six mock movements in `tests/fixtures/movements.ts`, the sample stock r
 
 ## Answers these functions follow
 
-Q2 to Q6 and Q8 are in `docs/decisions.md`, "Milestone 2's open questions answered"; Q16, Q21, Q23 and Q25 in "Milestone 2's review questions answered" and "The movement totals report splits by direction". Q30 and Q31 are open in `docs/open-questions.md`, and the code follows each one's recommendation: Q30, remove floating-point noise from a shipment's weight before comparing it with a carrier's limit; Q31, `findTopCarriers` counts every shipment that has a carrier. The tests that depend on one name it.
+Q2 to Q6 and Q8 are in `docs/decisions.md`, "Milestone 2's open questions answered"; Q16, Q21, Q23 and Q25 in "Milestone 2's review questions answered" and "The movement totals report splits by direction". Q29 is in "`groupBy` keeps an entry whose key is not listed, and a checked version flags it". Q30 to Q33 are open in `docs/open-questions.md`, and the code follows each one's recommendation for now: Q30, remove floating-point noise from a shipment's weight before comparing it with a carrier's limit; Q31, `findTopCarriers` counts every shipment that has a carrier; Q32, calculate with the data as given and never throw; Q33, compare the rounded score with 50. The tests that depend on one name it.

@@ -35,6 +35,20 @@ Q1 to Q25 were answered by mae on 2026-11-17 and 2026-11-18 (`docs/decisions.md`
 - **Recommendation**: (a). The briefing's own next line defines what is left out, a null carrier, and "most used" is about every shipment a carrier has carried: under (b) a carrier's count would fall each time one of its shipments leaves the warehouse. WP4 is built on (a), and the tests that depend on it name Q31.
 - **Asked**: 2026-11-18
 
+### Q32. What should the cost and scoring functions do with data that breaks a validation rule?
+- **Where it comes from**: the briefing, `calculateShippingCost`, `scoreCarrierForShipment` and `selectBestCarrier`. Raised by the fresh-context review of WP4's tests.
+- **What the brief says**: it gives the formulas and says nothing about data outside its own validation rules. Typed as written, an `onTimeRate` of 150 earns 150 × 0.3 = 45 reliability points, so a carrier can score 115 where the rules add up to 100 at most. A negative rate gives a negative cost, which then wins "lowest cost". A priority that is not one of the three has no surcharge, so the cost is `NaN`, and `selectBestCarrier` gives `null` because no cost is the lowest. None of this can happen with data that passed `validateCarrier` and `validateShipment`.
+- **Options**: (a) Calculate with the data as given and never throw; checking is the validators' job, so validate first, then calculate. (b) Clamp or refuse inside the formulas, for example cap reliability at 30 points or throw on an unknown priority. This changes the briefing's formulas for data the briefing does not describe. (c) Keep (a) for the briefing's functions and add a checked version beside them that returns the result with a list of warnings, as `groupByListedKeys` does for Q29 ("grace, but flagged").
+- **Recommendation**: (a) now, which is how WP4 is built: the briefing's functions stay exactly its formulas, and the validators already name every broken rule. (c) fits your Q29 answer and could come with WP7's carrier fix, if you want it. The tests that pin (a) name Q32.
+- **Asked**: 2026-11-18
+
+### Q33. Is the cut-off of 50 in `selectBestCarrier` compared with the rounded score or the unrounded one?
+- **Where it comes from**: the briefing, `selectBestCarrier`, "Filters out carriers with score < 50 (unsuitable)". Raised by the fresh-context review of WP4's tests.
+- **What the brief says**: `scoreCarrierForShipment` "Returns score rounded to 2 decimal places", and `selectBestCarrier` "Filters out carriers with score < 50 (unsuitable)". A carrier that passes only the weight and fragile rules and is on time 49.99% of the time adds up to 35 + 14.997 = 49.997, which rounds to 50.00. It is in if the rounded score is compared, and out if the unrounded sum is.
+- **Options**: (a) Compare the rounded score, the number `scoreCarrierForShipment` returns and the one a person sees. (b) Compare the unrounded sum, so 49.997 is under 50.
+- **Recommendation**: (a). The briefing's "score" is the rounded number its own function returns, and a carrier shown with a score of 50 that failed a cut-off of 50 would be hard to explain. WP4 is built on (a), and the tests that depend on it name Q33. The difference is at most half a hundredth of a point.
+- **Asked**: 2026-11-18
+
 ## Waiting elsewhere
 
 mae picked all of Milestone 2's extras, X1 to X5, on 2026-11-18 (`docs/milestones/milestone-2/plan.md`, "Proposed extras").
