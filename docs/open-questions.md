@@ -23,4 +23,6 @@ Q1 to Q25 were answered by mae on 2026-11-17 and 2026-11-18 (`docs/decisions.md`
 
 ## Waiting elsewhere
 
-None right now. mae picked all of Milestone 2's extras, X1 to X5, on 2026-11-18 (`docs/milestones/milestone-2/plan.md`, "Proposed extras").
+mae picked all of Milestone 2's extras, X1 to X5, on 2026-11-18 (`docs/milestones/milestone-2/plan.md`, "Proposed extras").
+
+- WP2's proposals P1 (the views use `indexBy`) and P2 (`isSortedBy`): `packages/warehouse-logic/docs/search-research.md`, "Proposals for mae" (2026-11-18).
