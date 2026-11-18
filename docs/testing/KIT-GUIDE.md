@@ -144,7 +144,7 @@ the kit treats as a change to the suite itself:
 
 | Claude is about to | Why it asks |
 |---|---|
-| Change or remove lines in an existing test, or add `skip`, `xfail` or `.only` | A failing test is more often right than wrong. New test files and pure additions never ask |
+| Change or remove a line of a test the base branch has, or add `skip`, `xfail` or `.only` | A failing test is more often right than wrong. New test files, pure additions and reworking tests that are new on the current branch never ask |
 | Edit runner or coverage config, `conftest.py`, CI workflows, or the kit's own files and settings under `.claude/` | These decide what the tests check, and what checks the tests |
 | Regenerate a snapshot or golden file | Each changed hunk needs a human's eyes |
 | Run a shell command that writes, moves or deletes one of the above | The same change by another route |
@@ -152,6 +152,15 @@ the kit treats as a change to the suite itself:
 Approve when you agree with the change, decline when you don't. In the strict profile there is no prompt:
 make the change yourself, or run `touch .claude/allow-test-edits` to allow test edits for two hours
 (Claude cannot create that file).
+
+**Changing a test that is on `production` (this repo's addition, not part of the kit).** Claude works in a
+draft: a copy beside the test with `.draft` before the extension, such as `tests/views.test.draft.ts`. The
+kit does not treat a draft as a test (`not_test_globs`) and the suite does not run it, so Claude reworks it
+without prompts and runs it by path. When it passes, Claude tells you what each changed test expected, what
+it expects now and why, then moves every draft over its test in one shell command, which is one prompt.
+Drafts may be committed on a branch; `scripts/suite.sh` fails while one is tracked, so none merges. The
+pull request still needs the `allow-test-changes` label. The rules Claude follows are under "Tests in
+progress" in `.claude/rules/testing.md`.
 
 **At the end of a turn.** When Claude has changed something in the session and tries to finish, the kit
 runs the fast tier. If it fails, Claude is sent back once with the failures. If it still fails, Claude may
@@ -191,6 +200,7 @@ workflow show the same command (`--check` tells you when they don't).
 | `junit_path` | Where `commands.fast` writes JUnit XML. `""` means it writes none (see [Stacks](#stacks)) |
 | `extra_test_globs` | Patterns for test files the kit does not recognise by itself, for example `["checks/**"]` |
 | `not_test_globs` | Production files that only look like tests, for example `["src/**/test_runner.py"]` |
+| `base_branch` | The branch whose tests are the specification, for example `"origin/main"`. The edit hook protects the tests that branch had where the current branch left it; a test that is new on the current branch is free to rework. Without it the hook uses origin's default branch as the clone recorded it, and when it can tell neither it protects every test file on disk |
 | `extra_harness_globs` | More files that count as test harness (asked about locally, blocked in CI) |
 | `runner_files` | Files the test command goes through, such as a Makefile or `scripts/test.sh`. The base-tests gate takes them from the base branch, so a pull request cannot redefine what `make test` does. The installer fills this in from your commands |
 | `harness_sections` | Sections of shared files that are test config, for example `scripts.test` in `package.json` |
