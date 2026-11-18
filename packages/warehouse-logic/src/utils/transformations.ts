@@ -5,7 +5,13 @@
 // them in this file: rounding, generic blocks for any list, and helpers for one entity. Every function
 // reads only its parameters, changes none of them and never throws. None checks its data: that is the
 // validations' job (validations.ts), so validate first, then calculate.
-import { productCategories } from "../types/models.ts";
+import {
+  movementDirections,
+  movementTypes,
+  productCategories,
+  shipmentStatuses,
+  warehouseLocations,
+} from "../types/models.ts";
 import type {
   Carrier,
   Country,
@@ -21,6 +27,8 @@ import type {
   Warehouse,
   WarehouseLocation,
 } from "../types/models.ts";
+import { filterProductsByWarehouse, groupBy, isLowStock, sortBy } from "./collections.ts";
+import { indexBy } from "./search.ts";
 
 // ---------------------------------------------------------------------------------------------------
 // The briefing's figures
@@ -419,8 +427,8 @@ export function findTopCarriers(
   const usage = [...countOccurrences(assignedCarriers, (carrier) => carrier)].map(
     ([carrier, count]) => ({ carrier, count }),
   );
-  // The sort is stable, so carriers with the same count stay in the order first seen.
-  return usage.sort((first, second) => second.count - first.count).slice(0, topN);
+  // sortBy keeps entries that tie in their order, so equal counts stay in the order first seen.
+  return sortBy(usage, [{ field: "count", order: "desc" }]).slice(0, topN);
 }
 
 // ---------------------------------------------------------------------------------------------------
@@ -438,26 +446,102 @@ export function findLongestShipment(shipments: Shipment[]): Shipment | null {
 }
 
 // ---------------------------------------------------------------------------------------------------
-// NOT BUILT YET: these four are built on `groupBy` and `isLowStock` in collections.ts, which arrive
-// when plan WP3 merges. Until then each throws, and its tests fail.
+// Grouping and the warehouse reports
 // ---------------------------------------------------------------------------------------------------
 
-function notBuiltYet(): never {
-  throw new Error("Not built yet");
+/** An object with a value for every key listed, in the list's order. */
+function buildRecord<Key extends string, Value>(
+  keys: readonly Key[],
+  valueOf: (key: Key) => Value,
+): Record<Key, Value> {
+  return Object.fromEntries(keys.map((key) => [key, valueOf(key)])) as Record<Key, Value>;
 }
 
-export const groupShipmentsByStatus: (
-  shipments: Shipment[],
-) => Record<ShipmentStatus, Shipment[]> = notBuiltYet;
-export const summarizeWarehouse: (
+/** The briefing's: the shipments under their status, every status a key, [] where there are none (Q3). */
+export function groupShipmentsByStatus(shipments: Shipment[]): Record<ShipmentStatus, Shipment[]> {
+  return groupBy(shipments, (shipment) => shipment.status, shipmentStatuses);
+}
+
+/** The products stocked in one warehouse, in four figures (Q23). */
+export function summarizeWarehouse(
   products: Product[],
   warehouse: WarehouseLocation,
-) => WarehouseSummary = notBuiltYet;
-export const summarizeWarehouses: (
-  products: Product[],
-) => Record<WarehouseLocation, WarehouseSummary> = notBuiltYet;
-export const calculateMovementTotals: (
+): WarehouseSummary {
+  const stocked = filterProductsByWarehouse(products, warehouse);
+  return {
+    productCount: stocked.length,
+    totalUnits: sumBy(stocked, (product) => product.stockQuantity),
+    inventoryValueUSD: calculateTotalInventoryValue(stocked),
+    lowStockCount: stocked.filter(isLowStock).length,
+  };
+}
+
+/** A summary for every warehouse, in the briefing's order (Q3, Q23). */
+export function summarizeWarehouses(products: Product[]): Record<WarehouseLocation, WarehouseSummary> {
+  return buildRecord(warehouseLocations, (warehouse) => summarizeWarehouse(products, warehouse));
+}
+
+/** The units of the movements with the given direction, and type when one is given. */
+function sumMovementUnits(
+  movementRecords: readonly MovementRecord[],
+  direction: MovementDirection,
+  type?: MovementType,
+): number {
+  return sumBy(
+    movementRecords.filter(
+      (movement) => movement.direction === direction && (type === undefined || movement.type === type),
+    ),
+    (movement) => movement.quantity,
+  );
+}
+
+/** One warehouse's totals, from the movements that belong to it. */
+function totalWarehouseMovements(
+  warehouseId: string,
+  movementRecords: readonly MovementRecord[],
+): WarehouseMovementTotals {
+  const unitsIn = sumMovementUnits(movementRecords, "In");
+  const unitsOut = sumMovementUnits(movementRecords, "Out");
+  return {
+    warehouseId,
+    unitsIn,
+    unitsOut,
+    netChange: unitsIn - unitsOut,
+    byType: buildRecord(movementTypes, (type) =>
+      buildRecord(movementDirections, (direction) =>
+        sumMovementUnits(movementRecords, direction, type),
+      ),
+    ),
+  };
+}
+
+/**
+ * The units each warehouse's movements brought in and took out, in all and per movement type, one
+ * entry for each warehouse given, in their order (Q23, Q25).
+ *
+ * This report reads the stored records, where the others read the briefing's views: only a stored
+ * movement has a direction, and without it a total would add units coming in to units going out. A
+ * movement belongs to the warehouse of its stock record. One whose stock record or warehouse is not
+ * in the lists is left out (Q16).
+ */
+export function calculateMovementTotals(
   movementRecords: MovementRecord[],
   stockRecords: StockRecord[],
   warehouses: Warehouse[],
-) => WarehouseMovementTotals[] = notBuiltYet;
+): WarehouseMovementTotals[] {
+  const stockRecordsById = indexBy(stockRecords, (stockRecord) => stockRecord.stockRecordId);
+  const placedMovements = movementRecords.flatMap((movement) => {
+    const stockRecord = stockRecordsById.get(movement.stockRecordId);
+    return stockRecord === undefined ? [] : [{ warehouseId: stockRecord.warehouseId, movement }];
+  });
+  // Listing the warehouse ids makes each one a key of its own, whatever it is called.
+  const warehouseIds = warehouses.map((warehouse) => warehouse.warehouseId);
+  const movementsByWarehouseId = groupBy(placedMovements, (placed) => placed.warehouseId, warehouseIds);
+
+  return warehouseIds.map((warehouseId) =>
+    totalWarehouseMovements(
+      warehouseId,
+      (movementsByWarehouseId[warehouseId] ?? []).map((placed) => placed.movement),
+    ),
+  );
+}
