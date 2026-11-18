@@ -92,7 +92,7 @@ How to read it: `PK` (primary key) marks the field that identifies a record, so 
 
 ## The records
 
-- **`Item`**: one per SKU, so the SKU is unique and is the item's key (`sku`). It holds everything that is the same in every warehouse. By mae's answers that includes `unitCostUSD` (Q11) and `status` (Q12). A status per warehouse is improvement I5.
+- **`Item`**: one per SKU, so the SKU is unique and is the item's key (`sku`). SKUs are stored upper case, so keys compare exactly (Q17). It holds everything that is the same in every warehouse. By mae's answers that includes `unitCostUSD` (Q11) and `status` (Q12). A status per warehouse is improvement I5.
 - **`Warehouse`**: one per warehouse, with a `warehouseId` in the carriers' style (`WH-LA`, `WH-ZGZ`), its `name` (the briefing's `WarehouseLocation`) and its `country`.
 - **`StockRecord`**: one per item per warehouse. It holds the stock (`stockQuantity`, `minStockThreshold`). Its `stockRecordId` is the SKU, a hyphen, then the `warehouseId` (Q13), so the same item can never have two records in one warehouse. SKUs contain hyphens too, so an id is split by matching the known warehouse id at its end. This is the ProductId mae described.
 - **`ShipmentRecord`**: a shipment (`shipmentId`), pointing at the stock it ships from (`stockRecordId`) and at its carrier by id (`carrierId`), so renaming a carrier changes nothing (improvement I1, now part of the design).
@@ -128,7 +128,7 @@ The briefing's interfaces are kept in `src/types/models.ts` exactly as written, 
 
 The brief's `InventoryMovement` has no field for direction. A transfer's send and its receipt both read `"Transfer"`, and an adjustment in and an adjustment out both read `"Adjustment"`, so which way the stock moved can only be told from the stored record.
 
-A product in the views is named by its SKU and warehouse together (Q10). `toStockRecordId` builds the matching stock record id from them, and `parseStockRecordId` turns an id back into the two.
+A product in the views is named by its SKU and warehouse together (Q10). `buildStockRecordId` builds the matching stock record id from them (Q20), and `parseStockRecordId` turns an id back into the two.
 
 ### Editing the diagram
 
@@ -173,4 +173,4 @@ The briefing's 14 rules, checked on the brief's interfaces (the views above). Th
 
 ## What the diagram does not decide
 
-The answers about function behaviour (Q2 to Q9) are in `docs/decisions.md`, and open questions are in `docs/open-questions.md`. Five open ones touch this model: what a view does when a link matches no record (Q16), letter case in a SKU used as a key (Q17), the names `transferId` (Q19) and `toStockRecordId` as a function (Q20), and which file the stored records' types live in (Q22). Until mae answers a naming question, the name agreed here stays.
+The answers about function behaviour (Q2 to Q9) are in `docs/decisions.md`, and open questions are in `docs/open-questions.md`. One open question touches this model: Q19, how a movement is stored and tied to a shipment. Until mae answers it, `MovementRecord` stays as drawn here.

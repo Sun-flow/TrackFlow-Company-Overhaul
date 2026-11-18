@@ -17,11 +17,25 @@ Entry format:
 
 ---
 
+### [2026-11-18] Milestone 2's review questions answered
+- **Decision**: mae's answers to the questions a review of the planning docs raised. They were asked in `docs/open-questions.md`, which keeps the options in its git history.
+  - Q16: a view builder returns `null` for a link that matches no record, a builder of many leaves that record out, and none throws. Listing, logging and repairing broken links, and broken datasets to test that, are parked in `docs/FUTURE_WORK.md`.
+  - Q17: stored keys are upper case. Building a stock record id upper-cases the SKU, so keys compare exactly. Proposed, not yet confirmed: mae found this and "compare ignoring case everywhere" both good and asked which is cheaper and more reliable. This one is: the case is settled once, when a key is built, and every later comparison and `Map` lookup is exact, where the other needs every comparison to remember to ignore case.
+  - Q18: the test page gets Tailwind from its CLI, a second development dependency of the package, with the compiled stylesheet committed.
+  - Q20: the function that builds a stock record id is `buildStockRecordId`, so `toStockRecordId` names only the movement's field.
+  - Q21: the shared rounding helper is `roundToTwoDecimals`.
+  - Q22: the stored records' types stay in `src/types/models.ts`, beside the brief's interfaces.
+  - Q23: two reports join the briefing's five: a summary per warehouse (products, units, inventory value, low-stock count) and movement totals per warehouse and type.
+  - Q24: the test page's compiled modules are committed, with a suite step that fails when they are stale.
+- **Rationale**: mae (2026-11-18). On Q16: this milestone is about the functions that manipulate data; generating broken datasets and enforcing repair comes later.
+- **Alternatives considered**: listed per question in `docs/open-questions.md` as of the commit before this entry's.
+- **Status**: Accepted (mae, 2026-11-18), except Q17, which is Proposed until mae confirms it. Q19 stays open: mae asked to rethink how a movement is stored and tied to a shipment.
+
 ### [2026-11-18] Milestone 2's plan corrected after a review
 - **Decision**: A review of the merged planning docs was applied in one docs-only pull request. Its choices: `groupShipmentsByStatus` is built by WP4 in `transformations.ts`, where the briefing puts it, on WP3's `groupBy`; the stored carrier is `CarrierRecord`; WP1 also changes the test step in `.github/workflows/testing-kit.yml`, so the required `all-green` check runs the package's tests; the package README is WP6's, and the parallel packages write their notes under the package's `docs/`; the tracked improvements I2, I3 and I5 are package WP8b; the mutation check aims for 70% or more; WP7 uses the medium tier. Nine choices the review could not settle are Q16 to Q24 in `docs/open-questions.md`.
 - **Rationale**: mae asked for the review and chose to apply all of its fixes (2026-11-18). Each one removes a place where the plan disagreed with the brief or with itself, before any package copies it.
 - **Alternatives considered**: applying only the four fixes WP1 needs; leaving the docs until mae had marked up the review.
-- **Status**: Accepted (mae, 2026-11-18). Q16 to Q24 are open.
+- **Status**: Accepted (mae, 2026-11-18). Q16 to Q24 were answered the same day, except Q19 (the entry above).
 
 ### [2026-11-18] A transfer shows as a send and a receipt
 - **Decision**: In the brief's `InventoryMovement` view, a Transfer appears twice: once at the sending warehouse when it is sent, and once at the receiving warehouse when it is received (Q14, option c). Each is its own `MovementRecord`, made by its warehouse (Q15, option b). The send has a `from` and the `to` it is headed for; the receipt has only the `to` and a `transferId`, the `movementId` of its send.
@@ -73,7 +87,7 @@ Entry format:
 - **Decision**: TypeScript is the package's only dependency, pinned and installed with pnpm. `pnpm typecheck` runs `tsc --noEmit`, `pnpm test` runs Node's built-in runner on `.ts` files, `pnpm demo` runs `src/demo.ts` with Node, and `pnpm build` compiles browser modules. The suite and CI run the typecheck and tests, and the testing kit's config gains the package. That last change is guarded by the kit, so it needs mae's `allow-test-changes` label.
 - **Rationale**: mae approved it (2026-11-17, plan D2). It gives the guidelines' typecheck and run commands with the fewest moving parts, and the website's tests already use the same runner.
 - **Alternatives considered**: Vitest or Jest, and `tsx`, which add dependencies for no gain here.
-- **Status**: Accepted (2026-11-17).
+- **Status**: Accepted (2026-11-17). Since 2026-11-18 Tailwind's CLI is a second dependency, for the test page alone, and the page's compiled output is committed (Q18 and Q24, "Milestone 2's review questions answered").
 
 ### [2026-11-17] Build the brief as written, then improve through documented departures
 - **Decision**: Each part of a milestone is first built exactly as its brief says, then tested and documented. Weak spots are written up with research and worked examples and discussed with mae. Only then is an improvement built, logged here as a departure, beside the brief's version and not in place of it. In Milestone 2 this covers carrier selection (plan WP7) and validations (WP8). Validations start with exactly the briefing's 14 rules.

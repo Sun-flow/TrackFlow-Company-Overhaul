@@ -77,6 +77,22 @@ The home hero's map (`uis/website/assets/hero-map.svg`) shows only from the `lg`
 - **Source:** full-screen hero thread, 2026-10-26 (log entry removed in the Milestone 2 reconcile; git keeps it)
 - **Target:** ?
 
+## Warehouse logic (beyond Milestone 2)
+
+### Find, report and repair broken links between records
+
+In Milestone 2 a view builder returns `null` when a link matches no record, and moves on. Later work: a function that lists every broken link (which record, which field, which missing id), scripts that log it and notify someone, a way to repair the records, and generated broken datasets to test all of it.
+
+- **Source:** mae's answer to Q16, 2026-11-18 (`docs/decisions.md`, "Milestone 2's review questions answered")
+- **Target:** ?
+
+### Check stock against movements
+
+`StockRecord.stockQuantity` is a stored number. A later check could compare it with what the movements say (what came in less what went out) and count the units that are in transit between warehouses.
+
+- **Source:** the Q19 discussion of how movements are stored, 2026-11-18 (`docs/open-questions.md`)
+- **Target:** ?
+
 ## AI and agents
 
 ### Orchestrator agent
