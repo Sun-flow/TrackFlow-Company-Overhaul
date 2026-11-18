@@ -1,0 +1,10 @@
+{
+  // pnpm build: browser ES modules in dist/, with imports rewritten from .ts to .js.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "outDir": "dist",
+    "rootDir": "src"
+  },
+  "exclude": ["src/demo.ts"]
+}

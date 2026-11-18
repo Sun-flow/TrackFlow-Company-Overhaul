@@ -20,16 +20,25 @@ jobs:
     steps:
       - uses: actions/checkout@v5
         with: {fetch-depth: 0}
-      # The website's tests need only Node (22 for the test runner's file globs); no dependencies.
+      # The tests need only Node, no dependencies: 22 for the test runner's file globs, and 22.18 or
+      # newer to run the warehouse logic's .ts tests as they are.
       - uses: actions/setup-node@v4
         with: {node-version: 22}
       - name: Fast tier
         run: |
-          mkdir -p .reports && cd uis/website && node --test --test-reporter=spec --test-reporter-destination=stdout --test-reporter=junit --test-reporter-destination=../../.reports/junit.xml "tests/**/*.test.js"
+          mkdir -p .reports && node --test --test-reporter=spec --test-reporter-destination=stdout --test-reporter=junit --test-reporter-destination=.reports/junit.xml "uis/website/tests/**/*.test.js" "packages/warehouse-logic/tests/**/*.test.ts"
       - name: Test report
         # Reads the JUnit file named by junit_path in .claude/testing-kit.json, if the runner writes one.
         if: ${{ !cancelled() }}
         run: python3 .claude/testing-kit/test_report.py || true
+      # Node runs the .ts files without checking their types, so the tests above can't see a type
+      # error. This step can. It is the one place this workflow installs a dependency: TypeScript.
+      - uses: pnpm/action-setup@v4
+        if: ${{ !cancelled() }}
+        with: {package_json_file: packages/warehouse-logic/package.json}
+      - name: Typecheck the warehouse logic
+        if: ${{ !cancelled() }}
+        run: cd packages/warehouse-logic && pnpm install --frozen-lockfile && pnpm typecheck
       - name: Diff coverage (changed lines)
         # Runs only when the fast tier writes a coverage report (e.g. pytest --cov --cov-report=xml,
         # or vitest/jest --coverage with the cobertura reporter).
@@ -69,7 +78,8 @@ jobs:
     steps:
       - uses: actions/checkout@v5
         with: {fetch-depth: 0}
-      # The website's tests need only Node (22 for the test runner's file globs); no dependencies.
+      # The tests need only Node, no dependencies: 22 for the test runner's file globs, and 22.18 or
+      # newer to run the warehouse logic's .ts tests as they are.
       - uses: actions/setup-node@v4
         with: {node-version: 22}
       - env:

@@ -6,8 +6,9 @@ or an open question changes, or when an item is checked and found wrong. Work on
 work file, not here.
 
 Current milestone: Milestone 2, a TypeScript logic layer. Its brief, plan, definition of done and ERD
-are in `docs/milestones/milestone-2/` and `packages/warehouse-logic/docs/`, agreed by mae and reviewed;
-nothing is built yet (2026-11-18). Milestone 1, the public website, is finished.
+are in `docs/milestones/milestone-2/` and `packages/warehouse-logic/docs/`, agreed by mae and reviewed.
+WP1 of its plan, the package scaffold and data model, is built; the briefing's functions are not
+(2026-11-18). Milestone 1, the public website, is finished.
 
 ## Works
 
@@ -20,11 +21,14 @@ nothing is built yet (2026-11-18). Milestone 1, the public website, is finished.
   (2026-11-13)
 - The live site at https://sun-flow.github.io/TrackFlow-Company-Overhaul/ serves the same home page as
   `production`; its last deploy, for pull request #25, succeeded. (2026-11-13)
+- The warehouse logic's types check and its 84 tests pass, the views giving back the briefing's samples:
+  `(cd packages/warehouse-logic && pnpm typecheck && pnpm test)`. (2026-11-18)
 - The testing kit (0.4.1) is installed: its files match `.claude/testing-kit/manifest.json` except the
-  workflow's Node step and two patched scripts (`docs/decisions.md`), and its CI passed on pull
-  requests #26 and #27. (2026-11-13)
-- `production` is protected: a ruleset requires the testing kit's `all-green` check before a merge
-  (mae, 2026-11-13; GitHub lists the branch as protected). (2026-11-13)
+  workflow, whose Node, Fast tier and typecheck steps are hand edits, and two patched scripts
+  (`docs/decisions.md`). Its required check runs both test sets and the package's typecheck.
+  (2026-11-18)
+- `production` is protected: a ruleset requires the testing kit's `all-green` check and, since
+  2026-11-18, `checks / suite` before a merge (mae; not checked from a session). (2026-11-18)
 - The `Milestone-1` branch, for grading, points at the end of Milestone 1, the merge of pull request
   #24: `git ls-remote origin Milestone-1` prints 34e5069. (2026-11-13)
 - All 39 items of Milestone 1's definition of done are rated done:
@@ -32,10 +36,9 @@ nothing is built yet (2026-11-18). Milestone 1, the public website, is finished.
 
 ## Next
 
-1. WP1's scaffold in `docs/milestones/milestone-2/plan.md`, in its own thread, when mae gives the
-   go-ahead. Its data model is agreed: `packages/warehouse-logic/docs/erd.md`, stored records with the
-   brief's interfaces as views, a movement being one warehouse's record of a change to its own stock
-   (Q19). (2026-11-18)
+1. Phase 2 of `docs/milestones/milestone-2/plan.md`: WP2 to WP5, each in its own thread, branching
+   from `origin/production`, when mae gives the go-ahead. WP4's pull request opens after WP3 merges.
+   (2026-11-18)
 
 ## Known problems
 
@@ -45,4 +48,4 @@ nothing is built yet (2026-11-18). Milestone 1, the public website, is finished.
 
 ## Open questions
 
-- None. Q1 to Q25 are answered in `docs/decisions.md`. (2026-11-18)
+- None. Q1 to Q27 are answered in `docs/decisions.md`. (2026-11-18)

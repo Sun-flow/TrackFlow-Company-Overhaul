@@ -1,7 +1,7 @@
 # Milestone 2 definition of done
 
 > **Date created**: 2026-11-17
-> **Last checked**: 2026-11-18, on `production` after PR #33. Nothing is built yet; only item M1, the agreed ERD, is done. Revised on 2026-11-17 with mae's answers to the plan's decisions, on 2026-11-18 with M9 for the stored model and X1 to X5 for the extras, and after a review that day with the Package column and clearer rows.
+> **Last checked**: 2026-11-18, on WP1's branch. WP1, the package scaffold and data model, is built: M1 to M7 and M9 are done, and ST1, ST4, ST5 and ST14 are done as far as WP1 goes. Nothing else is built yet. Revised on 2026-11-17 with mae's answers to the plan's decisions, on 2026-11-18 with M9 for the stored model and X1 to X5 for the extras, and after a review that day with the Package column and clearer rows.
 > **Built from**: every checklist and requirement in this folder, merged and de-duplicated. The company briefing (`trackflow-BRIEFING.en.md`, called `BRIEFING.md` in the checklists) still wins where it is more specific.
 
 Milestone 2 is done when every item below is rated ✅. The test page (O) is optional in its checklist but required here: mae counts optional work as required (2026-11-17, plan D8). Items marked "after review" are built only once mae has approved the analysis that comes before them (plan, "How this milestone works"). Where several sources ask for the same thing, they are one item and the Source column lists each. The Package column names the package in `plan.md` that delivers each item; "all" means every package keeps to it and WP9 checks it. The D numbers point to the plan's Phase 0 decisions, and the Q numbers to `docs/open-questions.md` or, once answered, `docs/decisions.md`.
@@ -16,9 +16,9 @@ To re-check, update the rating and evidence in place and the "Last checked" line
 
 | Rating | Items |
 |---|---|
-| ✅ Completely done | 1 |
-| 🟡 Partially done | 0 |
-| ⬜ Not done | 66 |
+| ✅ Completely done | 8 |
+| 🟡 Partially done | 4 |
+| ⬜ Not done | 55 |
 | 🙋 Needs mae | 0 |
 | ❔ Not verifiable here | 0 |
 | **Total** | **67** |
@@ -30,14 +30,14 @@ The plan's extras X1 to X5 joined this list when mae picked all five (2026-11-18
 | ID | Item | Source | Package | Rating | Evidence |
 |---|---|---|---|---|---|
 | M1 | ERD documents of the entities, agreed with mae before the code that uses them | G | Plan | ✅ | `packages/warehouse-logic/docs/erd.md`, agreed by mae 2026-11-18, before any package code |
-| M2 | `Product` and `Dimensions` with every field, name and type in the briefing | B, B-A1, L1, E-TC1, E-CA1 | WP1 | ⬜ | |
-| M3 | `Shipment` and `Destination` with every field, name and type in the briefing | B, B-A1, L1, E-TC1, E-CA1 | WP1 | ⬜ | |
-| M4 | `Carrier` with every field, name and type in the briefing | B, B-A1, L1, E-TC1, E-CA1 | WP1 | ⬜ | |
-| M5 | `InventoryMovement` with every field, name and type in the briefing | B, B-A1, L1, E-TC1, E-CA1 | WP1 | ⬜ | |
-| M6 | The literal types `ProductCategory`, `WarehouseLocation`, `ProductStatus`, `Country`, `ShipmentPriority`, `ShipmentStatus`, `MovementType` with exactly the briefing's values | B, E-CA1 | WP1 | ⬜ | |
-| M7 | Concrete instances as typed literal objects: the briefing's sample products, carriers and shipment, and one mock movement for each row of `erd.md`'s movement table, labelled as mock, since the briefing has no sample movement | T2, B | WP1 | ⬜ | |
+| M2 | `Product` and `Dimensions` with every field, name and type in the briefing | B, B-A1, L1, E-TC1, E-CA1 | WP1 | ✅ | `src/types/models.ts`; `tests/models.test.ts` checks in `pnpm typecheck` that each is exactly the briefing's shape |
+| M3 | `Shipment` and `Destination` with every field, name and type in the briefing | B, B-A1, L1, E-TC1, E-CA1 | WP1 | ✅ | `src/types/models.ts`; the same type checks in `tests/models.test.ts` |
+| M4 | `Carrier` with every field, name and type in the briefing | B, B-A1, L1, E-TC1, E-CA1 | WP1 | ✅ | `src/types/models.ts`; the same type checks in `tests/models.test.ts` |
+| M5 | `InventoryMovement` with every field, name and type in the briefing | B, B-A1, L1, E-TC1, E-CA1 | WP1 | ✅ | `src/types/models.ts`; the same type checks in `tests/models.test.ts` |
+| M6 | The literal types `ProductCategory`, `WarehouseLocation`, `ProductStatus`, `Country`, `ShipmentPriority`, `ShipmentStatus`, `MovementType` with exactly the briefing's values | B, E-CA1 | WP1 | ✅ | `src/types/models.ts`; `tests/models.test.ts` checks each type against the briefing's list of values, and that an extra value fails. Each type is derived from a list of its values (Q26, a departure in form: `docs/decisions.md`) |
+| M7 | Concrete instances as typed literal objects: the briefing's sample products, carriers and shipment, and one mock movement for each row of `erd.md`'s movement table, labelled as mock, since the briefing has no sample movement | T2, B | WP1 | ✅ | `src/data/samples.ts`, which `tests/models.test.ts` compares with the samples read from the briefing file; `tests/fixtures/movements.ts` has the six mock movements, labelled as mock |
 | M8 | Auxiliary functions to work with each entity's data (D6): `isLowStock` and the stock value for `Product`, the total weight for `Shipment`, one check per scoring rule for `Carrier`, and for `InventoryMovement` the movement totals per warehouse, type and direction, read from the stored movements (Q23, Q25) | T2 | WP3, WP4 | ⬜ | |
-| M9 | The stored single-id records of the ERD, and functions that build the brief's interfaces from them, giving back the briefing's samples exactly and each mock movement's view at its own stock record's warehouse (Q19), with `null` for a link that matches no record (Q16) and stored keys in upper case (Q17) | mae (departure, 2026-11-18) | WP1 | ⬜ | |
+| M9 | The stored single-id records of the ERD, and functions that build the brief's interfaces from them, giving back the briefing's samples exactly and each mock movement's view at its own stock record's warehouse (Q19), with `null` for a link that matches no record (Q16) and stored keys in upper case (Q17) | mae (departure, 2026-11-18) | WP1 | ✅ | The records in `src/types/models.ts` and the builders in `src/utils/views.ts`; `tests/views.test.ts` (65 tests) covers each point named here |
 
 ## Collections
 
@@ -99,11 +99,11 @@ The plan's extras X1 to X5 joined this list when mae picked all five (2026-11-18
 
 | ID | Item | Source | Package | Rating | Evidence |
 |---|---|---|---|---|---|
-| ST1 | Files are organized by responsibility as `src/types/models.ts` and `src/utils/collections.ts`, `search.ts`, `transformations.ts`, `validations.ts`, each function in the file the briefing names | ES, B-A5, E-SO1 | WP1, all | ⬜ | |
+| ST1 | Files are organized by responsibility as `src/types/models.ts` and `src/utils/collections.ts`, `search.ts`, `transformations.ts`, `validations.ts`, each function in the file the briefing names | ES, B-A5, E-SO1 | WP1, all | 🟡 | WP1: the five files are where the briefing names them, with `views.ts` beside them. The four `src/utils/` files of the briefing export nothing until WP2 to WP5 |
 | ST2 | Every parameter and return value has an explicit type, and `any` is not used | L8, E-CQ3, B-A1 | all | ⬜ | |
 | ST3 | No TypeScript compilation errors in any file | E-TC8 | all | ⬜ | |
-| ST4 | A documented command typechecks the code, and another runs it, during development | G, L10, E-TC9 | WP1, WP6 | ⬜ | |
-| ST5 | TypeScript only, and the code runs both in the browser and in a development environment | G | WP1, WP6 | ⬜ | |
+| ST4 | A documented command typechecks the code, and another runs it, during development | G, L10, E-TC9 | WP1, WP6 | 🟡 | WP1: `pnpm typecheck` and `pnpm demo`, in the package README. The demo shows only the data model until WP6 |
+| ST5 | TypeScript only, and the code runs both in the browser and in a development environment | G | WP1, WP6 | 🟡 | WP1: TypeScript only; `src/` compiles with no Node types, and `pnpm build` writes browser ES modules. Shown in a browser by WP6's test page |
 | ST6 | Each function has one clearly identifiable responsibility | T, G, L9, E-SO2 | all | ⬜ | |
 | ST7 | Any repeated task has its own function | G | all | ⬜ | |
 | ST8 | Descriptive names: camelCase variables and functions, PascalCase interfaces and types | T, G-Q, B-A6, E-SO3 | all | ⬜ | |
@@ -112,7 +112,7 @@ The plan's extras X1 to X5 joined this list when mae picked all five (2026-11-18
 | ST11 | Edge cases handled: empty arrays, elements not found, `null` values | T1, G-Q, B-A3, E-CQ2 | all | ⬜ | |
 | ST12 | `const` by default, `let` only for values that change | G-Q, E-CQ3 | all | ⬜ | |
 | ST13 | Comments only where logic needs explaining, and consistent indentation and formatting | G-Q | all | ⬜ | |
-| ST14 | Field names, entity types and literal values match the briefing exactly, with nothing generic in their place | L's "IMPORTANT" note, E-CA1 | WP1, all | ⬜ | |
+| ST14 | Field names, entity types and literal values match the briefing exactly, with nothing generic in their place | L's "IMPORTANT" note, E-CA1 | WP1, all | 🟡 | WP1: the types are checked field for field against the briefing (`tests/models.test.ts`). Later packages keep to them |
 | ST15 | A generic, typed toolkit (filter, sort, group, search, count, sum, average, extremes, rule checks) underneath, with the briefing's functions built from it under their exact names | mae (D6) | WP2 to WP5 | ⬜ | |
 | ST16 | Every gap the briefing leaves open was asked in `docs/open-questions.md`, its answer is in `docs/decisions.md`, and the tests that depend on an answer name it (for example `Q2`) | mae (D5) | all | ⬜ | |
 | ST17 | The improvements mae asked to track (plan, WP8b) are written up, and built where mae approves | mae (Q9, Q10, Q12) | WP8b | ⬜ | |
