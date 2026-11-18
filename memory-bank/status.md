@@ -27,9 +27,9 @@ WP1 of its plan, the package scaffold and data model, is built; the briefing's f
   timing run behind `packages/warehouse-logic/docs/search-research.md` runs:
   `(cd packages/warehouse-logic && pnpm test && pnpm time:search)`. (2026-11-18)
 - The testing kit (0.4.1) is installed: its files match `.claude/testing-kit/manifest.json` except the
-  workflow, whose Node, Fast tier and typecheck steps are hand edits, and two patched scripts
-  (`docs/decisions.md`). Its required check runs both test sets and the package's typecheck.
-  (2026-11-18)
+  hand-edited workflow, rules and guide and three patched scripts (`docs/decisions.md`). Its required
+  check runs both test sets and the package's typecheck; its edit hook protects only tests
+  `production` has. (2026-11-18)
 - `production` is protected: a ruleset requires the testing kit's `all-green` check and, since
   2026-11-18, `checks / suite` before a merge (mae; not checked from a session). (2026-11-18)
 - The `Milestone-1` branch, for grading, points at the end of Milestone 1, the merge of pull request

@@ -100,6 +100,13 @@ In Milestone 2 a transfer is two movements with nothing linking them: an Out wri
 - **Source:** the Q19 discussion of how movements are stored, 2026-11-18 (`docs/decisions.md`, "A movement is one warehouse's record of a change to its own stock")
 - **Target:** ?
 
+### Manage inputs and parse them into valid formats
+
+The strict validators check data as it is stored, and `cleanText` and `cleanSku` only trim, upper-case and turn a blank into `null`. A fuller input layer would parse what people and files send into the stored formats, or say exactly what to fix: collapse repeated separators in a city name (`Los  Angeles`, `Winston--Salem`, which the approved city pattern still lets through), normalise postal codes and ids, and read numbers and dates that arrive as text.
+
+- **Source:** mae, 2026-11-18, while reviewing the strict validators (PR #40)
+- **Target:** ?
+
 ## AI and agents
 
 ### Orchestrator agent
