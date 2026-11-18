@@ -18,8 +18,9 @@ TrackFlow's teams and client brands need, starting with the public website. It i
   definition of done; `docs/milestones/README.md` describes the layout.
 - `docs/decisions.md` records each decision and its reason; `docs/open-questions.md` holds the questions
   waiting for mae; `docs/FUTURE_WORK.md` parks ideas for later milestones.
-- `packages/warehouse-logic/` is Milestone 2's logic layer. So far it holds only the agreed data model,
-  `packages/warehouse-logic/docs/erd.md`; the plan's WP1 adds the code.
+- `packages/warehouse-logic/` is Milestone 2's logic layer, in TypeScript: the types, the samples and
+  the views built from stored records. `packages/warehouse-logic/README.md` has its file map and the
+  rules for code in it; `packages/warehouse-logic/docs/erd.md` is the agreed data model.
 - `uis/website/` is the public website from Milestone 1: static HTML pages, Tailwind CSS 4 compiled into
   the committed `uis/website/dist/styles.css`, plain JavaScript, and tests in `uis/website/tests/`.
   `uis/website/README.md` describes its files.
@@ -33,8 +34,9 @@ TrackFlow's teams and client brands need, starting with the public website. It i
 ## Commands
 
 ```bash
-# Setup in a fresh clone: only to rebuild the stylesheet or run the browser check
+# Setup in a fresh clone: only to rebuild the stylesheet, typecheck or run the browser check
 (cd uis/website && pnpm install)
+(cd packages/warehouse-logic && pnpm install)
 pip3 install -r scripts/requirements.txt
 
 # Run the project: the website at http://localhost:3000
@@ -46,7 +48,10 @@ npx --yes http-server uis/website -p 3000 -c-1
 # One test file
 (cd uis/website && node --test tests/validation.test.js)
 
-# The suite: tests, stylesheet, briefs, browser check and this bank
+# The warehouse logic: types, tests (Node 22.18 or newer runs the .ts files), demo
+(cd packages/warehouse-logic && pnpm typecheck && pnpm test && pnpm demo)
+
+# The suite: both test sets, types, stylesheet, briefs, browser check and this bank
 scripts/suite.sh
 ```
 
@@ -56,10 +61,10 @@ The default branch is `production` on `origin` (GitHub). Each piece of work gets
 pull request into `production`; mae reviews and merges it, and GitHub then deletes the branch. Work is
 finished when it is merged with the suite passing. `.github/workflows/checks.yml` runs the suite on every
 pull request without the browser check. The testing kit's workflow,
-`.github/workflows/testing-kit.yml`, runs the form's tests on every pull request and checks that no test
-was weakened; a pull request that changes tests needs mae's `allow-test-changes` label. A milestone
-starts when its brief is in `docs/milestones/`, is built from a plan mae has confirmed, and is finished
-when mae says so.
+`.github/workflows/testing-kit.yml`, runs the form's and the package's tests on every pull request and
+checks that no test was weakened; a pull request that changes tests needs mae's `allow-test-changes`
+label. A milestone starts when its brief is in `docs/milestones/`, is built from a plan mae has
+confirmed, and is finished when mae says so.
 
 ## Environments
 

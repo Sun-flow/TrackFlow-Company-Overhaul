@@ -53,7 +53,7 @@ Every function in `src/utils/views.ts` takes each record it reads as a parameter
 | Function | Returns |
 |---|---|
 | `normalizeSku(sku)` | The SKU in upper case. Stored keys are upper case, so they compare exactly. |
-| `buildStockRecordId(sku, warehouseId)` | The stock record id: the normalized SKU, a hyphen, the warehouse id (`SHOE-BLK-42-WH-ZGZ`). |
+| `buildStockRecordId(sku, warehouseId)` | The stock record id: the SKU, a hyphen, the warehouse id, in upper case (`SHOE-BLK-42-WH-ZGZ`). |
 | `parseStockRecordId(stockRecordId, warehouses)` | `{ sku, warehouseId }`, split at the known warehouse id at the end, or `null`. |
 | `toProduct(item, stockRecord, warehouse)` | A `Product`. |
 | `toProducts(items, stockRecords, warehouses)` | A `Product` for each stock record: one for each item in each warehouse. |
@@ -66,7 +66,7 @@ Every function in `src/utils/views.ts` takes each record it reads as a parameter
 What they all keep to:
 
 - A builder of one view returns `null` when a link in its record matches no record. A builder of many leaves that record out. None throws.
-- Keys compare exactly, case included. Only `buildStockRecordId` changes case, and only the SKU's.
+- Keys compare exactly, case included. Only `normalizeSku` and `buildStockRecordId` change case; every other function takes a key as it is stored.
 - A view is a copy. Changing a view changes no stored record, and no builder changes what it is given.
 - When two records share a key, which the model forbids, the first one listed is used.
 - The builders of many look each record up through a `Map` built once, so their work grows with the number of records and not with its square. Use them, not a loop over the single builders, for long lists.

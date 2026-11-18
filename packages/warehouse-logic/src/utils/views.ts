@@ -27,9 +27,12 @@ export function normalizeSku(sku: string): string {
   return sku.toUpperCase();
 }
 
-/** The id of an item's stock record in one warehouse: the SKU, a hyphen, the warehouse id. */
+/**
+ * The id of an item's stock record in one warehouse: the SKU, a hyphen, the warehouse id, all in
+ * upper case, so whatever case the two were typed in, the result is a stored key.
+ */
 export function buildStockRecordId(sku: string, warehouseId: string): string {
-  return `${normalizeSku(sku)}-${warehouseId}`;
+  return `${normalizeSku(sku)}-${warehouseId.toUpperCase()}`;
 }
 
 /**

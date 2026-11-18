@@ -2,7 +2,7 @@
 # The suite: every check a change passes before it merges (memory-bank/context.md, Commands).
 # Usage: scripts/suite.sh [--no-browser]
 #   --no-browser skips the browser check, for CI, which has no browser set up for it.
-# Run from anywhere in the repo. Needs Node with pnpm 10, Python 3 and git; the browser check also
+# Run from anywhere in the repo. Needs Node 22.18 or newer with pnpm 10, Python 3 and git; the browser check also
 # needs `pip3 install -r scripts/requirements.txt`.
 set -euo pipefail
 

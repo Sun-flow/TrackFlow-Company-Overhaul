@@ -79,6 +79,11 @@ describe("buildStockRecordId: the SKU, a hyphen, the warehouse id (Q13, Q20)", (
     assert.equal(buildStockRecordId("Perfume-Coco-50", "WH-LA"), "PERFUME-COCO-50-WH-LA");
   });
 
+  test("a warehouse id typed in lower case builds the same key too (Q27, open)", () => {
+    assert.equal(buildStockRecordId("SHOE-BLK-42", "wh-zgz"), "SHOE-BLK-42-WH-ZGZ");
+    assert.equal(buildStockRecordId("shoe-blk-42", "Wh-La"), "SHOE-BLK-42-WH-LA");
+  });
+
   test("it builds the id of each stored sample from its SKU and warehouse", () => {
     assert.equal(buildStockRecordId("SHOE-BLK-42", "WH-LA"), shoesInLosAngeles.stockRecordId);
     assert.equal(buildStockRecordId("LAPTOP-DELL-15", "WH-ZGZ"), laptopInZaragoza.stockRecordId);
