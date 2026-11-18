@@ -12,3 +12,4 @@ Esta carpeta contiene la **documentación transversal** del monorepo: guías de 
 | [`milestones/`](./milestones/README.md) | Una carpeta por hito: sus briefings, tal como se recibieron, y su plan (`plan.md`). |
 | [`decisions.md`](./decisions.md) | Decisiones con consecuencias duraderas, y por qué se tomaron. |
 | [`FUTURE_WORK.md`](./FUTURE_WORK.md) | Ideas aparcadas para hitos futuros. |
+| [`open-questions.md`](./open-questions.md) | Preguntas que un briefing deja abiertas, una por encabezado, a la espera de la respuesta de mae. |

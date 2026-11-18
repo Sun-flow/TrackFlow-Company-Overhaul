@@ -12,5 +12,6 @@ This folder holds **cross-cutting documentation** for the monorepo: architecture
 | [`milestones/`](./milestones/README.md) | One folder per milestone: its briefs, kept as received, and its plan (`plan.md`). |
 | [`decisions.md`](./decisions.md) | Decisions with lasting consequences, and why. |
 | [`FUTURE_WORK.md`](./FUTURE_WORK.md) | Ideas parked for later milestones. |
+| [`open-questions.md`](./open-questions.md) | Questions a brief leaves open, one per heading, waiting for mae's answer. |
 
 > _Spanish version: [README.es.md](./README.es.md)._

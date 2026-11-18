@@ -5,8 +5,10 @@ date asked; re-date an item only after checking it. Edit when what works, what i
 or an open question changes, or when an item is checked and found wrong. Work on a branch belongs in its
 work file, not here.
 
-Current milestone: Milestone 2. Its brief is not in the repo yet, so nothing is being built
-(2026-11-13). Milestone 1, the public website, is finished.
+Current milestone: Milestone 2, a TypeScript logic layer. Its brief is in `docs/milestones/milestone-2/`.
+Its plan, definition of done and ERD are agreed and wait for mae's merge (PR #33); nothing is built
+yet (2026-11-18). Milestone 1, the
+public website, is finished.
 
 ## Works
 
@@ -31,12 +33,9 @@ Current milestone: Milestone 2. Its brief is not in the repo yet, so nothing is 
 
 ## Next
 
-1. mae provides the Milestone 2 brief. It goes in a new folder under `docs/milestones/`, kept as
-   received, with a row in `docs/milestones/README.md`. (2026-11-13)
-2. Review `docs/FUTURE_WORK.md` for entries Milestone 2 picks up. (2026-11-13)
-3. Reconcile what the brief changes: the brief-independent reconcile was done on 2026-11-13 (its log
-   entry names what moved). Then write the milestone's plan beside its brief and confirm it with mae
-   before building. (2026-11-13)
+1. WP1's scaffold in `docs/milestones/milestone-2/plan.md`, in its own thread. mae agreed to the ERD
+   (`packages/warehouse-logic/docs/erd.md`), stored records with the brief's interfaces as views.
+   (2026-11-18)
 
 ## Known problems
 
@@ -45,3 +44,6 @@ Current milestone: Milestone 2. Its brief is not in the repo yet, so nothing is 
   fresh thread on that environment. (2026-11-13)
 
 ## Open questions
+
+
+

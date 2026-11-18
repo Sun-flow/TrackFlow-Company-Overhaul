@@ -17,6 +17,88 @@ Entry format:
 
 ---
 
+### [2026-11-18] A transfer shows as a send and a receipt
+- **Decision**: In the brief's `InventoryMovement` view, a Transfer appears twice: once at the sending warehouse when it is sent, and once at the receiving warehouse when it is received (Q14, option c). Each is its own `MovementRecord`, made by its warehouse (Q15, option b). The send has a `from` and the `to` it is headed for; the receipt has only the `to` and a `transferId`, the `movementId` of its send.
+- **Rationale**: mae (2026-11-18): it works as a sent-and-received check, since every send should have a matching receipt. Two records let each warehouse record what it actually sent or received, so a shortfall shows as a difference in `quantity`.
+- **Alternatives considered**: one view at the sending warehouse only (the recommendation), or at the receiving warehouse only. For storage, one record with a `receivedAt` time (the recommendation), which can't hold a different received quantity.
+- **Status**: Accepted (mae, 2026-11-18).
+
+### [2026-11-18] Milestone 2 stores single-id records, with the brief's interfaces as views
+- **Decision**: A departure from the brief. The stored data is the model in `packages/warehouse-logic/docs/erd.md`: `Item` (one per SKU, the SKU is its id), `Warehouse` (`WH-LA`, `WH-ZGZ`, in the carriers' `CAR-UPS` style), `StockRecord` (one per item per warehouse, keyed by the SKU, a hyphen and the warehouse id, such as `SHOE-BLK-42-WH-ZGZ`, split by matching the known warehouse id at its end because SKUs contain hyphens too), `ShipmentRecord` (`stockRecordId`, `carrierId`), `MovementRecord` (`fromStockRecordId`, `toStockRecordId`) and `Carrier`. Every record has one key, named for what it identifies (`warehouseId`, `stockRecordId`, `shipmentId`, `movementId`, `carrierId`, and the item's `sku`), and a link has the name of the key it holds. `unitCostUSD` and `status` are the same in every warehouse and belong to `Item` (Q11, Q12); a status per warehouse is improvement I5. The brief's `Product`, `Shipment`, `InventoryMovement`, `Carrier`, `Dimensions` and `Destination` stay in `src/types/models.ts` exactly as written, are built from the records by functions in `src/utils/views.ts`, which fill their `id` fields from these keys, and are what the briefing's functions take, unchanged. This makes I1 (carriers by id) and I4 (single ids) part of the stored model.
+- **Rationale**: mae proposed a ProductId for SKU and warehouse pairs (2026-11-17) with these constraints: no many-to-many links (use a step in between); unique SKUs that can sit in two warehouses; products told apart by warehouse; alignment with the brief. mae then made one key per record, with no two-part keys, the goal, chose the id formats (Q13), and chose to store this model from the start rather than after the brief's version (2026-11-18). Keeping the brief's interfaces as views keeps every graded field, name and function signature, and building the views from the stored samples must give back the briefing's samples exactly, which is WP1's check.
+- **Alternatives considered**: the brief's interfaces as the stored data, with a derived `ProductKey` (`{ sku, warehouse }`) now and the split as improvement I4 after WP1 to WP5, which mae first picked on 2026-11-17; a stored `productId` field on the brief's `Product` and `Shipment`, which breaks their graded fields and can drift from `sku` and `warehouse`; both models drawn side by side in `erd.md`.
+- **Status**: Accepted (mae, 2026-11-18). A transfer's views: the entry above.
+
+### [2026-11-18] The Milestone 2 ERD is Mermaid in `erd.md`
+- **Decision**: The Milestone 2 ERD is Mermaid code in `packages/warehouse-logic/docs/erd.md`. GitHub draws it, and a session edits them as text. mermaid.live gives a live preview.
+- **Rationale**: mae found draw.io the wrong interface and asked for whatever is easiest for Claude to edit and show (2026-11-18). Text diagrams are also readable in a pull request diff.
+- **Alternatives considered**: draw.io, tried on 2026-11-17 so mae could edit by drag and drop, and dropped the next day as the wrong interface; dbdiagram.io, mostly text with movable tables.
+- **Status**: Accepted (2026-11-18).
+
+### [2026-11-17] Milestone 2's open questions answered
+- **Decision**: mae's answers to Q1 to Q10, the gaps the Milestone 2 briefing leaves open. They were asked in `docs/open-questions.md`, which keeps the reasoning in its git history.
+  - Q1: `Shipment.carrier` holds the carrier's `name`. A move to `id`, which survives a rename, is tracked as improvement I1 in the plan.
+  - Q2: the average distance of no shipments is 0.
+  - Q3: `countProductsByCategory` and `groupShipmentsByStatus` return every key, with 0 or `[]`.
+  - Q4: the priority surcharge applies to base, weight and distance together.
+  - Q5: amounts round half up to 2 decimals through one shared helper that is safe against floating-point error.
+  - Q6: a tie on cost in `selectBestCarrier` goes to the higher score, then to the carrier listed first.
+  - Q7: shipment IDs match exactly; only SKUs ignore case.
+  - Q8: `findTopCarriers` returns `[]` for a `topN` of 0 or less, and equal counts keep first-seen order.
+  - Q9: `binarySearchProductByWeight` returns any matching index. Always returning the first is tracked as I2.
+  - Q10: a product is identified by its SKU and warehouse together; `findProductBySKU` returns the first match. A lookup of a SKU in every warehouse is tracked as I3.
+- **Rationale**: mae (2026-11-17). Each is the plainest reading of the briefing; Q3 is what its `Record` return types require; Q10 matches TrackFlow stocking the same SKU in both warehouses (`CONTEXT.md`), which mae called a tough dilemma.
+- **Alternatives considered**: listed per question in `docs/open-questions.md` as of this entry's commit.
+- **Status**: Accepted (2026-11-17).
+
+### [2026-11-17] Milestone 2 code lives in `packages/warehouse-logic/`
+- **Decision**: The Milestone 2 logic layer is the package `@trackflow/warehouse-logic` in `packages/warehouse-logic/`. It keeps the brief's `src/` tree exactly (`src/types/models.ts`, `src/utils/*.ts`, `src/index.html`) and adds `tests/` and `docs/`.
+- **Rationale**: mae chose it (2026-11-17, plan D1). The root `README.md` puts code reused by several apps in `packages/`, and later milestones will import this layer.
+- **Alternatives considered**: `src/` at the repo root, which matches `expected-structure.md` literally but mixes one milestone into the monorepo's top level.
+- **Status**: Accepted (2026-11-17).
+
+### [2026-11-17] Milestone 2 tooling: TypeScript only, Node's own test runner
+- **Decision**: TypeScript is the package's only dependency, pinned and installed with pnpm. `pnpm typecheck` runs `tsc --noEmit`, `pnpm test` runs Node's built-in runner on `.ts` files, `pnpm demo` runs `src/demo.ts` with Node, and `pnpm build` compiles browser modules. The suite and CI run the typecheck and tests, and the testing kit's config gains the package. That last change is guarded by the kit, so it needs mae's `allow-test-changes` label.
+- **Rationale**: mae approved it (2026-11-17, plan D2). It gives the guidelines' typecheck and run commands with the fewest moving parts, and the website's tests already use the same runner.
+- **Alternatives considered**: Vitest or Jest, and `tsx`, which add dependencies for no gain here.
+- **Status**: Accepted (2026-11-17).
+
+### [2026-11-17] Build the brief as written, then improve through documented departures
+- **Decision**: Each part of a milestone is first built exactly as its brief says, then tested and documented. Weak spots are written up with research and worked examples and discussed with mae. Only then is an improvement built, logged here as a departure, beside the brief's version and not in place of it. In Milestone 2 this covers carrier selection (plan WP7) and validations (WP8). Validations start with exactly the briefing's 14 rules.
+- **Rationale**: mae's answers to plan D4 and D7 (2026-11-17). The milestone is judged against the brief (Hard rule 1), and a failure the brief causes should be shown, not hidden, before it is fixed.
+- **Alternatives considered**: departing from the brief straight away; adding the Tech Lead's example validations from the start.
+- **Status**: Accepted (2026-11-17).
+
+### [2026-11-17] Carrier selection: the briefing's version first, then country and weight as must-haves
+- **Decision**: `scoreCarrierForShipment` and `selectBestCarrier` follow the briefing exactly. Their tests show its known failure: the sample shipment to Madrid goes to UPS, which serves only the United States (score 76.4, $30.89; SEUR scores 97.6 at $46.22). A review of other ways the scoring can fail comes next. After mae has discussed it, a departure is built that makes the destination country and the weight limit must-haves.
+- **Rationale**: mae's answer to plan D4 (2026-11-17).
+- **Alternatives considered**: building only the briefing's version and parking the fix; building only the fixed version.
+- **Status**: Accepted (2026-11-17). The departure is built only after the review (plan WP7).
+
+### [2026-11-17] A generic toolkit under the briefing's Milestone 2 functions
+- **Decision**: Generic, pure, typed functions (filter by predicates or criteria, multi-field sort, group, partition, linear and binary search, index by key, count, sum, average, max, min, rounding, rule checks) sit underneath. The briefing's 19 functions are built from them, under their exact names and signatures. Functions the brief doesn't name are welcome.
+- **Rationale**: mae wants a full, efficient data toolkit that can grow with later milestones (2026-11-17, plan D6). The checklists also ask for multi-criteria filters, multi-field sorts and max/min reports, which the briefing's list lacks.
+- **Alternatives considered**: only the briefing's functions plus the few the checklists need.
+- **Status**: Accepted (2026-11-17).
+
+### [2026-11-17] Optional milestone work counts as required
+- **Decision**: Whatever a milestone's brief marks optional is built and counted in its definition of done, starting with Milestone 2's test page. Further extras in the same scope are proposed for mae to pick.
+- **Rationale**: mae (2026-11-17, plan D8).
+- **Alternatives considered**: building optional work only if time allows.
+- **Status**: Accepted (2026-11-17). mae picked all five proposed Milestone 2 extras, X1 to X5, on 2026-11-18; they are rated in its definition of done.
+
+### [2026-11-17] Medium testing risk tier for Milestone 2's cost and scoring
+- **Decision**: Milestone 2's shipping cost, carrier scoring and reports (plan WP4) use the testing kit's medium tier. That adds tests written from the briefing in a separate context, and a fresh-context review. The other packages use the default low tier.
+- **Rationale**: mae approved it (2026-11-17, plan D9). These are the money paths, and Ana's brief says the code goes into production.
+- **Alternatives considered**: low everywhere.
+- **Status**: Accepted (2026-11-17).
+
+### [2026-11-17] Open questions about a brief go in `docs/open-questions.md`, one per heading
+- **Decision**: Gaps a brief leaves open are written in `docs/open-questions.md` as separate questions, each with what the brief says, the options and a recommendation. Code follows the recommendation until mae answers, and its tests name the question. An answer moves here or into the plan.
+- **Rationale**: mae found several questions bundled into one plan row hard to answer (2026-11-17, plan D5). The file sits in `docs/`, not in `docs/milestones/milestone-2/`, where the brief check would freeze it, and not in the memory bank, which holds memory, not discussions.
+- **Alternatives considered**: the Open questions list in `memory-bank/status.md`, which is limited to a few lines per item.
+- **Status**: Accepted (2026-11-17).
+
 ### [2026-11-17] Milestone 2's `guidelines.md` is guarded like a brief
 - **Decision**: `docs/milestones/milestone-2/guidelines.md` stays under `scripts/check-briefs.py` like any brief. mae approves each later edit to it as an exception to Hard rule 1, and the check's failure on that pull request is expected.
 - **Rationale**: mae will expand the guidelines as the milestone goes, but chose to approve each edit rather than change the check (2026-11-17).
