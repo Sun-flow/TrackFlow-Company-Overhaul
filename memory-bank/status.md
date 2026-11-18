@@ -38,6 +38,9 @@ WP1 of its plan, the package scaffold and data model, is built; the briefing's f
   `grep -A9 '^## Summary' docs/milestones/milestone-1/definition-of-done.md`. (2026-11-13)
 - The briefing's three validators enforce its 14 rules, every failing rule's message returned:
   `(cd packages/warehouse-logic && node --test tests/validations.test.ts)`, 129 tests. (2026-11-18)
+- Strict validators and input cleaners sit beside the brief's (a departure mae approved): finite
+  numbers and text patterns, `node --test tests/validations-strict.test.ts` in the package, 151 tests.
+  (2026-11-18)
 
 ## Next
 
