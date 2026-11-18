@@ -17,8 +17,14 @@ Entry format:
 
 ---
 
+### [2026-11-17] SKU and warehouse: a ProductKey now, an Item and StockRecord split later
+- **Decision**: The brief's interfaces stay exactly as written. A `ProductKey` type (`{ sku, warehouse }`) names a product in one warehouse. The code reads it from a product, a shipment (`sku`, `origin`) or an inventory movement, and `toProductCode` and `parseProductCode` turn it into one string and back. The string is always derived, never stored. After the brief's version is built, improvement I4 splits `Product` into `Item`, one per SKU so the SKU is unique, and `StockRecord`, one per SKU per warehouse, with the brief's `Product` as a joined view. `unitCostUSD` and `status` are the same in every warehouse and belong to `Item` (Q11, Q12). A status per warehouse is improvement I5. The improved model is drawn in `packages/warehouse-logic/docs/erd-improved.drawio.svg`.
+- **Rationale**: mae proposed the ProductId idea with these constraints (2026-11-17): no many-to-many links (use a step in between); unique SKUs that can sit in two warehouses; products told apart by warehouse; alignment with the brief. mae picked this way of meeting them, and answered cost and status the same day. Graders check the brief's exact fields, so a stored `productId` on `Shipment` or `Product` would break alignment and could drift from `sku` and `warehouse`.
+- **Alternatives considered**: building on `Item` and `StockRecord` from the start, which departs from the brief before its version exists; a stored `productId` field on each record.
+- **Status**: Accepted (2026-11-17). The code's format is open question Q13.
+
 ### [2026-11-17] The Milestone 2 ERD is a draw.io file
-- **Decision**: The entity relationship diagram is `packages/warehouse-logic/docs/erd.drawio.svg`, an SVG with the draw.io diagram embedded. GitHub shows it as an image, and draw.io (app.diagrams.net) opens it for drag-and-drop editing. It is the diagram's only copy: `erd.md` shows it and holds the text around it, and the Mermaid version is gone. Save it back as an editable SVG, under the same name.
+- **Decision**: The entity relationship diagrams are `packages/warehouse-logic/docs/erd.drawio.svg` (the brief's model) and `erd-improved.drawio.svg` (the planned model), SVGs with the draw.io diagram embedded. GitHub shows it as an image, and draw.io (app.diagrams.net) opens it for drag-and-drop editing. Each is its diagram's only copy: `erd.md` shows them and holds the text around them, and the Mermaid version is gone. Save it back as an editable SVG, under the same name.
 - **Rationale**: mae wants to edit the ERD directly through an interface (2026-11-17). draw.io was the only fully drag-and-drop option that also renders on GitHub.
 - **Alternatives considered**: keeping Mermaid and editing it on mermaid.live, which is text, not shapes; dbdiagram.io, which is mostly text with movable tables. Keeping both a Mermaid and a draw.io copy was ruled out, because two copies drift.
 - **Status**: Accepted (2026-11-17). Its trade-off: a change to the file shows in a pull request as drawing data, not readable text, so whoever changes it says what changed.

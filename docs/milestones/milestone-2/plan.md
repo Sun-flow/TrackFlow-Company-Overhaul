@@ -52,7 +52,7 @@ These are generic, pure, typed functions that each do one job, in the briefing's
 |---|---|---|
 | `collections.ts` | `filterBy(items, predicates)` keeps items that pass every predicate; `matchesCriteria` turns a criteria object (equal values, numeric ranges) into a predicate; `sortBy(items, keys)` makes a stable copy sorted by several fields and directions; `groupBy(items, keyOf, allKeys?)`; `partition(items, predicate)` | `filterProductsByWarehouse`, `filterProductsByCategory`, `filterLowStockProducts`, `sortProductsByStock`, `sortCarriersByReliability`, `groupShipmentsByStatus`, plus `filterProducts(products, criteria)` and `sortProductsBy(products, keys)` |
 | `search.ts` | `linearSearch(items, predicate)` returns the first match or `null`; `binarySearchBy(sortedItems, target, keyOf)` returns an index or -1; `indexBy(items, keyOf)` builds a `Map` for repeated lookups (from WP2's research) | `findProductBySKU`, `findShipmentById`, `binarySearchProductByWeight` |
-| `transformations.ts` | `countBy`, `sumBy`, `averageBy`, `findMaximumBy`, `findMinimumBy` (with a numeric selector, `null` for an empty list), `roundToCents`, and per-entity helpers such as a shipment's total weight | `countProductsByCategory`, `calculateTotalInventoryValue`, `calculateAverageShipmentDistance`, `findTopCarriers`, `calculateShippingCost`, `scoreCarrierForShipment`, `selectBestCarrier`, plus max and min reports (heaviest product, longest shipment, cheapest carrier for a shipment) |
+| `transformations.ts` | `countBy`, `sumBy`, `averageBy`, `findMaximumBy`, `findMinimumBy` (with a numeric selector, `null` for an empty list), `roundToCents`, the product key helpers (`toProductCode`, `parseProductCode`, and a shipment's or movement's `ProductKey`), and per-entity helpers such as a shipment's total weight | `countProductsByCategory`, `calculateTotalInventoryValue`, `calculateAverageShipmentDistance`, `findTopCarriers`, `calculateShippingCost`, `scoreCarrierForShipment`, `selectBestCarrier`, plus max and min reports (heaviest product, longest shipment, cheapest carrier for a shipment) |
 | `validations.ts` | One small rule function per rule (`isPositive`, `isWithinRange`, `isNotEmpty`, ...) and `collectErrors(rules)` to run them | `validateProduct`, `validateShipment`, `validateCarrier` |
 
 Names may still change while a package is built. Any change goes in its pull request.
@@ -78,7 +78,7 @@ The foundation every other package builds on. Its ERD is the first thing mae see
 - **Scope**
   - `packages/warehouse-logic/docs/erd.md` and `erd.drawio.svg`: an entity relationship diagram (a draw.io file mae can edit by dragging, which GitHub shows as an image) of the six interfaces, with every field and type from the briefing, the literal types as allowed values, and the links between entities: a shipment's `sku` and an inventory movement's `sku` to a product, a shipment's `carrier` to a carrier (by name, Q1), `origin` and `warehouse` to a warehouse location, `destination` and `dimensions` as embedded values. Under it, a short table per entity of the briefing's validation rules (D7) and a pointer to `docs/open-questions.md`. Kept outside `docs/milestones/`, where `scripts/check-briefs.py` would freeze it as a brief.
   - **Gate**: the PR opens as a draft with the ERD first. Code below is added only once mae agrees to the ERD.
-  - `src/types/models.ts`: the interfaces and types, copied field for field from the briefing and exported.
+  - `src/types/models.ts`: the interfaces and types, copied field for field from the briefing and exported, plus the `ProductKey` type.
   - `src/data/samples.ts`: the briefing's sample products, carriers and shipment as typed literal objects, with a comment saying they are the briefing's own data. Any more fixtures the tests need live in `tests/fixtures/`, labelled as mock data (`memory-bank/notes.md`, Hazards).
   - Tooling per D2: `package.json` (pnpm pinned like the website), lockfile, `tsconfig.json` (strict, no emit, type-only syntax so Node can run it, browser-friendly ES modules), `.gitignore`, and the `typecheck`, `test`, `demo` and `build` scripts, with empty `src/utils/*.ts` files that export nothing yet.
   - `packages/warehouse-logic/README.md`: what it is, the commands, the file map. A line for it in `packages/README.md` and its Spanish twin.
@@ -142,7 +142,7 @@ Each step here follows the same order: the brief's version is merged and documen
 ### WP8 Validation improvements
 
 - **Files**: `packages/warehouse-logic/docs/validation-review.md`, then `src/utils/validations.ts` and its tests.
-- **Scope**: proposed improvements to the 14 rules, each backed by research or experience, with a before/after example for each. These include the Tech Lead's examples (required fields not empty, `createdAt` a real date), literal values on their lists for data that arrives untyped, whole-number quantities, `Shipment.origin` matching the product's warehouse, and rules for `InventoryMovement`, which has none yet. mae picks which ones go in, and only those are built.
+- **Scope**: proposed improvements to the 14 rules, each backed by research or experience, with a before/after example for each. These include the Tech Lead's examples (required fields not empty, `createdAt` a real date), literal values on their lists for data that arrives untyped, whole-number quantities, `Shipment.origin` matching the product's warehouse, records of one SKU agreeing on everything but stock (Q11, Q12), no `|` in a SKU if Q13 goes that way, and rules for `InventoryMovement`, which has none yet. mae picks which ones go in, and only those are built.
 - **Done when**: mae has picked, and the picked rules are built and tested.
 
 ### Tracked improvements
@@ -154,6 +154,8 @@ mae asked for these to be tracked when answering the open questions (2026-11-17)
 | I1 | Shipments refer to carriers by `id`, which never changes, with the name looked up from the carriers list, so a renamed carrier doesn't split its history | Q1 | `Shipment.carrier` and `findTopCarriers` (a variant that is given the carriers) |
 | I2 | A binary search that always returns the first matching index, so it can find every product of a weight, or a weight range | Q9 | `search.ts`, after WP2 |
 | I3 | A lookup that returns a SKU's record in every warehouse, since a product is identified by SKU and warehouse together | Q10 | `search.ts`, after WP2 |
+| I4 | Split `Product` into `Item` (one per SKU, so the SKU is unique) and `StockRecord` (one per SKU per warehouse), with the brief's `Product` as a joined view; drawn in `erd-improved.drawio.svg` | mae's ProductId design | `models.ts`, plus join and split functions, after WP1 to WP5 |
+| I5 | A status per warehouse, for example "Low stock" in one warehouse only | Q12 | `StockRecord`, after I4 |
 
 ### WP9 Integration and QA
 

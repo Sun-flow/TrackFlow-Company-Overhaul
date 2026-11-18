@@ -44,3 +44,5 @@ public website, is finished.
 
 ## Open questions
 
+- The product code's format: `docs/open-questions.md`, Q13. (2026-11-17)
+

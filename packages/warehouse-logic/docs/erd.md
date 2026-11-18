@@ -13,16 +13,32 @@ A product's key has two parts, `sku` and `warehouse`, because the same SKU can b
 
 `Dimensions` and `Destination` are not separate records. They are objects stored inside a product or a shipment, drawn as boxes only so their fields can be seen.
 
+The dashed `ProductKey` box is a type, not a stored record: the pair `{ sku, warehouse }` the code reads from a product (`sku`, `warehouse`), a shipment (`sku`, `origin`) or an inventory movement (`sku`, `warehouse`). `toProductCode` turns a key into one string, such as `SHOE-BLK-42|Zaragoza`, and `parseProductCode` turns the string back. The code is always derived and never stored, so it can't drift from the fields it comes from. Its format is open question Q13. The brief's interfaces stay exactly as written.
+
 ### Editing the diagram
 
-`erd.drawio.svg` is the diagram's only copy (`docs/decisions.md`, "The Milestone 2 ERD is a draw.io file"). It is an image GitHub shows as it is, and it is also a draw.io file:
+`erd.drawio.svg` and `erd-improved.drawio.svg` are the diagrams' only copies (`docs/decisions.md`, "The Milestone 2 ERD is a draw.io file"). Each is an image GitHub shows as it is, and also a draw.io file. They are two files rather than two pages of one, because GitHub only shows a file's first page:
 
-1. Open https://app.diagrams.net, choose **Open Existing Diagram**, and pick `erd.drawio.svg` (download it from GitHub first, or connect draw.io to GitHub and open it from the branch).
+1. Open https://app.diagrams.net, choose **Open Existing Diagram**, and pick the file (download it from GitHub first, or connect draw.io to GitHub and open it from the branch).
 2. Drag, edit and add as needed.
 3. Save it back under the same name and format (**File > Save**, or **File > Export as > SVG** with **Include a copy of my diagram** ticked), so it stays editable.
 4. Commit it to a branch, never to `production`, or send it to a Claude thread to commit.
 
 When the diagram changes, the tables below change with it in the same commit.
+
+## Improved model (planned)
+
+![Improved model: Item and StockRecord](./erd-improved.drawio.svg)
+
+mae's design (2026-11-17), built after the brief's model as improvement I4 in the plan. The brief's `Product` holds two kinds of data:
+- **The item itself**, the same in every warehouse: `sku`, `name`, `category`, `weightKg`, `dimensions`, `isFragile`, and, by mae's answers to Q11 and Q12, `unitCostUSD` and `status`.
+- **Its stock in one warehouse**: `stockQuantity` and `minStockThreshold`.
+
+Splitting them makes the SKU unique on `Item`. A SKU can be in both warehouses through one `StockRecord` per SKU per warehouse, keyed by the `ProductKey`. Items and warehouses only meet through `StockRecord`, so the model has no many-to-many link. Shipments and inventory movements keep the brief's fields and point at a stock record through `sku` with `origin` or `warehouse`. The brief's `Product` becomes one `Item` joined with one `StockRecord` by a function, so every briefing function still works on it.
+
+`Carrier.operatesIn` and `Carrier.acceptsPriority` are many-to-many in principle, linking carriers to countries and to priorities. Both are lists of fixed values that the briefing requires inside the carrier, so they stay as lists, marked "value list" in both diagrams.
+
+A status per warehouse (for example "Low stock" in Zaragoza only) is improvement I5.
 
 ## Q1 (was D3): `Shipment.carrier` holds the carrier's name
 
