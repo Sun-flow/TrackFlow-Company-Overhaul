@@ -61,10 +61,10 @@ The default branch is `production` on `origin` (GitHub). Each piece of work gets
 pull request into `production`; mae reviews and merges it, and GitHub then deletes the branch. Work is
 finished when it is merged with the suite passing. `.github/workflows/checks.yml` runs the suite on every
 pull request without the browser check. The testing kit's workflow,
-`.github/workflows/testing-kit.yml`, runs the form's and the package's tests on every pull request and
-checks that no test was weakened; a pull request that changes tests needs mae's `allow-test-changes`
-label. A milestone starts when its brief is in `docs/milestones/`, is built from a plan mae has
-confirmed, and is finished when mae says so.
+`.github/workflows/testing-kit.yml`, runs both test sets and the package's typecheck on every pull
+request and checks that no test was weakened; a pull request that changes tests needs mae's
+`allow-test-changes` label. A milestone starts when its brief is in `docs/milestones/`, is built from
+a plan mae has confirmed, and is finished when mae says so.
 
 ## Environments
 

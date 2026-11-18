@@ -31,6 +31,14 @@ jobs:
         # Reads the JUnit file named by junit_path in .claude/testing-kit.json, if the runner writes one.
         if: ${{ !cancelled() }}
         run: python3 .claude/testing-kit/test_report.py || true
+      # Node runs the .ts files without checking their types, so the tests above can't see a type
+      # error. This step can. It is the one place this workflow installs a dependency: TypeScript.
+      - uses: pnpm/action-setup@v4
+        if: ${{ !cancelled() }}
+        with: {package_json_file: packages/warehouse-logic/package.json}
+      - name: Typecheck the warehouse logic
+        if: ${{ !cancelled() }}
+        run: cd packages/warehouse-logic && pnpm install --frozen-lockfile && pnpm typecheck
       - name: Diff coverage (changed lines)
         # Runs only when the fast tier writes a coverage report (e.g. pytest --cov --cov-report=xml,
         # or vitest/jest --coverage with the cobertura reporter).

@@ -37,7 +37,7 @@ pnpm build         # compile src/ to browser ES modules in dist/
 
 `pnpm test` and `pnpm demo` need no install. One test file: `node --test tests/views.test.ts`.
 
-The tests can't see a type error, because Node drops the types without checking them. `pnpm typecheck` is what checks them, and the checks at the top of `tests/models.test.ts` (each type is exactly the briefing's or the ERD's) run only there.
+The tests can't see a type error, because Node drops the types without checking them. `pnpm typecheck` is what checks them, in the suite and in the check a pull request must pass, and the checks at the top of `tests/models.test.ts` (each type is exactly the briefing's or the ERD's) run only there.
 
 ## Writing code here
 

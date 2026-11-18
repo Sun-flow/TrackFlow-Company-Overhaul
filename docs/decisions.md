@@ -17,6 +17,18 @@ Entry format:
 
 ---
 
+### [2026-11-18] The required check typechecks the warehouse logic
+- **Decision**: The `test` job of `.github/workflows/testing-kit.yml`, which the required `all-green` check waits on, installs the package's TypeScript and runs `pnpm typecheck` after the tests. The kit's fast command, which sessions' hooks run, stays tests only, so a session with nothing installed still passes it.
+- **Rationale**: mae (2026-11-18), on learning that the required check could not see a type error: Node runs TypeScript by dropping the types unchecked, and only `checks / suite`, which is not required, ran the typecheck. "No compilation errors" is one of the milestone's graded items.
+- **Alternatives considered**: mae adding `checks / suite` to the `production` ruleset, which also makes the stylesheet, brief and memory bank checks required and is still open to mae; a typecheck inside the fast command, which would fail in every session that has not installed the package.
+- **Status**: Accepted (mae, 2026-11-18). The step is a hand edit to a file the kit's installer rewrites, like the workflow's Node and Fast tier steps: re-running the installer removes it.
+
+### [2026-11-18] A built stock record id is upper case throughout
+- **Decision**: mae's answer to Q27. `buildStockRecordId(sku, warehouseId)` upper-cases the warehouse id as well as the SKU, so `buildStockRecordId("shoe-blk-42", "wh-zgz")` is `SHOE-BLK-42-WH-ZGZ`. Every other function takes a key as it is stored and compares it exactly.
+- **Rationale**: mae (2026-11-18), on the recommendation. It is Q17, "stored keys are upper case" with the case settled once when a key is built, applied to the whole key. Upper-casing only the SKU would build `SHOE-BLK-42-wh-zgz`, which matches no record.
+- **Alternatives considered**: upper-casing only the SKU, as the plan's working signature said, since a warehouse id normally comes from a `Warehouse` record.
+- **Status**: Accepted (mae, 2026-11-18).
+
 ### [2026-11-18] Each literal type is derived from a list of its values in `models.ts`
 - **Decision**: mae's answer to Q26, and a departure from the brief in form only. `src/types/models.ts` writes the values of each literal type once, as a list for code to read (`productCategories`, `warehouseLocations`, `productStatuses`, `countries`, `shipmentPriorities`, `shipmentStatuses`, `movementTypes` and `movementDirections`), and derives the type from it: `type ProductCategory = (typeof productCategories)[number]`. The briefing writes each type as a union, `"Fashion" | "Electronics" | ...`; the derived type is the same type, so every interface and function signature is unchanged, but `models.ts` no longer shows the briefing's line as written. Each list keeps the briefing's order. `tests/models.test.ts` checks each type against the briefing's union in the typecheck, and each list against the briefing's values when the tests run.
 - **Rationale**: mae (2026-11-18). The briefing gives the values only as types, which are gone when the code runs, and three packages need them: the reports return every key (Q3), the mock data generator picks from them, and the validation review proposes checking a value against its list. mae first picked a list beside each type as the briefing writes it, then asked for one source, so that an edit in one place shows in both the type and the list and the two can't drift.

@@ -24,8 +24,9 @@ WP1 of its plan, the package scaffold and data model, is built; the briefing's f
 - The warehouse logic's types check and its 84 tests pass, the views giving back the briefing's samples:
   `(cd packages/warehouse-logic && pnpm typecheck && pnpm test)`. (2026-11-18)
 - The testing kit (0.4.1) is installed: its files match `.claude/testing-kit/manifest.json` except the
-  workflow's Node step and two patched scripts (`docs/decisions.md`), and its CI passed on pull
-  requests #26 and #27. (2026-11-13)
+  workflow, whose Node, Fast tier and typecheck steps are hand edits, and two patched scripts
+  (`docs/decisions.md`). Its required check runs both test sets and the package's typecheck.
+  (2026-11-18)
 - `production` is protected: a ruleset requires the testing kit's `all-green` check before a merge
   (mae, 2026-11-13; GitHub lists the branch as protected). (2026-11-13)
 - The `Milestone-1` branch, for grading, points at the end of Milestone 1, the merge of pull request
@@ -44,11 +45,7 @@ WP1 of its plan, the package scaffold and data model, is built; the briefing's f
 - The testing kit's hooks run in a project thread only on the TrackFlow-Company-Overhaul cloud
   environment, whose setup script runs `scripts/wire-cloud-hooks.py`; on Default none run. Confirmed in a
   fresh thread on that environment. (2026-11-13)
-- The required `all-green` check runs the package's tests but not its typecheck, and Node runs TypeScript
-  files without checking types. Only `checks / suite`, which is not required, catches a type error.
-  (2026-11-18)
 
 ## Open questions
 
-- Q27 in `docs/open-questions.md`: whether `buildStockRecordId` upper-cases the warehouse id too. WP1
-  is built on the recommendation, yes. (2026-11-18)
+- None. Q1 to Q27 are answered in `docs/decisions.md`. (2026-11-18)
