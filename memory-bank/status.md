@@ -33,6 +33,8 @@ WP1 of its plan, the package scaffold and data model, is built; the briefing's f
   #24: `git ls-remote origin Milestone-1` prints 34e5069. (2026-11-13)
 - All 39 items of Milestone 1's definition of done are rated done:
   `grep -A9 '^## Summary' docs/milestones/milestone-1/definition-of-done.md`. (2026-11-13)
+- The briefing's three validators enforce its 14 rules, every failing rule's message returned:
+  `(cd packages/warehouse-logic && node --test tests/validations.test.ts)`, 129 tests. (2026-11-18)
 
 ## Next
 
@@ -48,4 +50,5 @@ WP1 of its plan, the package scaffold and data model, is built; the briefing's f
 
 ## Open questions
 
-- None. Q1 to Q27 are answered in `docs/decisions.md`. (2026-11-18)
+- Q28 (WP5): does a rule over several fields give one error per field or one per rule? In
+  `docs/open-questions.md`; Q1 to Q27 are answered in `docs/decisions.md`. (2026-11-18)

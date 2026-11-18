@@ -61,6 +61,8 @@ goes in `memory-bank/website.md`.
 - A project thread starts Claude in the folder above the clone, so the repo's `.claude/settings.json`
   is never read there; `scripts/wire-cloud-hooks.py` gives that folder a copy. The kit's bash guard also
   refuses any shell command that names the kit's state folder, even a listing. (2026-11-13)
+- The kit's hook flags a shell command that changes any test file, even a new, uncommitted one. Write
+  and edit tests with the editor tools instead. (2026-11-18)
 - Lighthouse in a cloud session: serve the site, then run
   `CHROME_PATH=/opt/pw-browsers/chromium npx --yes lighthouse@12 http://localhost:3000/ --chrome-flags="--headless=new --no-sandbox"`
   (add `--preset=desktop` for desktop). (2026-11-13)
