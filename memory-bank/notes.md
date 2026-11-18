@@ -42,6 +42,8 @@ This is mae's solo repo, so mae's preferences apply to every session.
 Traps in tools and environments. A trap met while changing the website's code, Tailwind's included,
 goes in `memory-bank/website.md`.
 
+- The kit's hook flags a shell command that changes a test file, even one written minutes before and
+  never committed. Change test files with the Edit tool. (2026-11-18)
 - A fresh cloud clone doesn't record the remote's default branch, and the check doesn't guess
   `production`. Until `git remote set-head origin --auto` has run, the check can't tell what is merged or
   in flight. (2026-11-13)
