@@ -23,6 +23,8 @@ WP1 of its plan, the package scaffold and data model, is built; the briefing's f
   `production`; its last deploy, for pull request #25, succeeded. (2026-11-13)
 - The warehouse logic's types check and its 84 tests pass, the views giving back the briefing's samples:
   `(cd packages/warehouse-logic && pnpm typecheck && pnpm test)`. (2026-11-18)
+- WP3's collection functions filter, sort and group, the briefing's five among them, with 84 tests in
+  `packages/warehouse-logic/tests/collections.test.ts`. (2026-11-18)
 - The testing kit (0.4.1) is installed: its files match `.claude/testing-kit/manifest.json` except the
   workflow, whose Node, Fast tier and typecheck steps are hand edits, and two patched scripts
   (`docs/decisions.md`). Its required check runs both test sets and the package's typecheck.
@@ -48,4 +50,5 @@ WP1 of its plan, the package scaffold and data model, is built; the briefing's f
 
 ## Open questions
 
-- None. Q1 to Q27 are answered in `docs/decisions.md`. (2026-11-18)
+- Q28, where `groupBy` puts an entry whose key is not listed, in `docs/open-questions.md`. Q1 to Q27
+  are answered in `docs/decisions.md`. (2026-11-18)
