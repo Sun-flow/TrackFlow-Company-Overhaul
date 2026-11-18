@@ -28,6 +28,13 @@ Q1 to Q25 were answered by mae on 2026-11-17 and 2026-11-18 (`docs/decisions.md`
 - **Recommendation**: (b). The briefing's rule is about kilograms, and 7 kg is not more than 7 kg. WP4 is built on (b) through `calculateShipmentWeightKg`, and the tests that depend on it name Q30, so (a) would be a visible change.
 - **Asked**: 2026-11-18
 
+### Q31. Does `findTopCarriers` count every shipment that has a carrier, or only shipments whose status is "Assigned"?
+- **Where it comes from**: the briefing, `findTopCarriers`. Raised by the separate-context test writer for WP4.
+- **What the brief says**: "Finds the N most used carriers based on assigned shipments" and, on the next line, "Ignores shipments with null carrier". "Assigned" is also one of the five shipment statuses, so "assigned shipments" can be read two ways.
+- **Options**: (a) Every shipment with a carrier counts, whatever its status: "assigned" means a carrier is assigned to it. (b) Only shipments whose `status` is `"Assigned"` count, so one that is in transit or delivered no longer does.
+- **Recommendation**: (a). The briefing's own next line defines what is left out, a null carrier, and "most used" is about every shipment a carrier has carried: under (b) a carrier's count would fall each time one of its shipments leaves the warehouse. WP4 is built on (a), and the tests that depend on it name Q31.
+- **Asked**: 2026-11-18
+
 ## Waiting elsewhere
 
 mae picked all of Milestone 2's extras, X1 to X5, on 2026-11-18 (`docs/milestones/milestone-2/plan.md`, "Proposed extras").
