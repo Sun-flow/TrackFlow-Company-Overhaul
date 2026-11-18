@@ -19,7 +19,7 @@ Entry format:
 
 ## Milestone 2
 
-Q1 to Q25 were answered by mae on 2026-11-17 and 2026-11-18 (`docs/decisions.md`, "Milestone 2's open questions answered", "Milestone 2 stores single-id records, with the brief's interfaces as views", "A transfer shows as a send and a receipt", "Milestone 2's review questions answered", "A movement is one warehouse's record of a change to its own stock" and "The movement totals report splits by direction"). Q26 and Q27 came out of building WP1. mae answered Q26 on 2026-11-18 ("Each literal type's values are also a list in `models.ts`"); Q27 is open. The next new question is Q28.
+Q1 to Q25 were answered by mae on 2026-11-17 and 2026-11-18 (`docs/decisions.md`, "Milestone 2's open questions answered", "Milestone 2 stores single-id records, with the brief's interfaces as views", "A transfer shows as a send and a receipt", "Milestone 2's review questions answered", "A movement is one warehouse's record of a change to its own stock" and "The movement totals report splits by direction"). Q26 and Q27 came out of building WP1. mae answered Q26 on 2026-11-18 ("Each literal type is derived from a list of its values in `models.ts`"); Q27 is open. The next new question is Q28.
 
 ### Q27. Does `buildStockRecordId` upper-case the warehouse id as well as the SKU?
 - **Where it comes from**: plan WP1's working signatures; Q17.

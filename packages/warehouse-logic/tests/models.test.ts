@@ -213,6 +213,9 @@ export type TheStoredRecordsMatchTheErd = [
 ];
 
 // Each list of allowed values holds exactly its type's values: none missing, none extra (Q26).
+// Each type is derived from its list, so the two can't differ today; these lines fail if a type is
+// ever written apart from its list again. What ties the values to the briefing is the block above,
+// on the types, and the tests on the lists further down.
 export type TheValueListsMatchTheirTypes = [
   Expect<Equal<(typeof productCategories)[number], ProductCategory>>,
   Expect<Equal<(typeof warehouseLocations)[number], WarehouseLocation>>,

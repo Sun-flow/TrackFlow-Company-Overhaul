@@ -12,7 +12,7 @@ Data is stored as records with one key each: `Item`, `Warehouse`, `StockRecord`,
 
 | Path | What |
 |---|---|
-| `src/types/models.ts` | Every type: the briefing's interfaces and literal types, field for field, and the stored records of `docs/erd.md`. Under each literal type is a list of its values, such as `productCategories`, for code that needs every value. Import types and these lists only from here. |
+| `src/types/models.ts` | Every type: the briefing's interfaces and literal types, field for field, and the stored records of `docs/erd.md`. Each literal type's values are written once, as a list such as `productCategories`, and the type is derived from the list; code that needs every value reads the list. Import types and these lists only from here. |
 | `src/utils/views.ts` | Builds the briefing's interfaces from stored records, and builds and splits stock record ids. See "Views" below. |
 | `src/utils/collections.ts`, `search.ts`, `transformations.ts`, `validations.ts` | The briefing's functions and the toolkit under them. Empty until their packages (plan WP2 to WP5). |
 | `src/data/samples.ts` | The briefing's sample products, carriers and shipment, as the briefing's interfaces and as the stored records they come from. |
@@ -25,7 +25,7 @@ Data is stored as records with one key each: `Item`, `Warehouse`, `StockRecord`,
 
 ## Commands
 
-Run from this folder. Node 22.18 or newer runs the `.ts` files directly, with no build step and no flag; `package.json` pins pnpm 10.28.0 and TypeScript, the only dependency of the logic.
+Run from this folder. Node 22.18 or newer runs the `.ts` files directly, with no build step and no flag; `package.json` pins pnpm 10.28.0 and TypeScript 6.0.3, the only dependency of the logic. TypeScript 7.0.2 also passed the typecheck and built the same output when WP1 was built (2026-11-18); 6 was kept as the safer choice for tools that plug into the compiler, such as a mutation tester.
 
 ```bash
 pnpm install       # once: TypeScript, for the typecheck and the build
@@ -37,7 +37,7 @@ pnpm build         # compile src/ to browser ES modules in dist/
 
 `pnpm test` and `pnpm demo` need no install. One test file: `node --test tests/views.test.ts`.
 
-The tests can't see a type error, because Node drops the types without checking them. `pnpm typecheck` is what checks them, and the checks at the top of `tests/models.test.ts` (each type is exactly the briefing's or the ERD's, and each list of values matches its type) run only there.
+The tests can't see a type error, because Node drops the types without checking them. `pnpm typecheck` is what checks them, and the checks at the top of `tests/models.test.ts` (each type is exactly the briefing's or the ERD's) run only there.
 
 ## Writing code here
 

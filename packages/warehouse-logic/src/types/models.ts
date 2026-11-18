@@ -1,12 +1,15 @@
 // The data model of TrackFlow's warehouse and carrier logic.
 //
 // Two groups of types live here (docs/erd.md):
-//   1. The briefing's interfaces and literal types, field for field as the briefing writes them.
-//      Every briefing function takes these. They are views: built from stored records, not stored.
+//   1. The briefing's interfaces, field for field as the briefing writes them, and its literal
+//      types. Every briefing function takes these. They are views: built from stored records, not
+//      stored.
 //   2. The stored records, each with one key, from which src/utils/views.ts builds those views.
 //
-// A type is gone when the code runs, so each literal type has its values again as a list right under
-// it, for code that needs every value. tests/models.test.ts fails the typecheck if the two differ.
+// The values of each literal type are written once, as a list, and the type is derived from the list:
+// `ProductCategory` is "any value in `productCategories`". Code that needs every value reads the
+// list, and a value added to a list is in its type at once. Each type is the same type as the
+// briefing's (`"Fashion" | "Electronics" | ...`), which tests/models.test.ts checks.
 
 // ---------------------------------------------------------------------------------------------------
 // The briefing's entities ("Business Entities")
@@ -32,33 +35,28 @@ export interface Dimensions {
   heightCm: number;
 }
 
-export type ProductCategory =
-  | "Fashion"
-  | "Electronics"
-  | "Cosmetics"
-  | "Home"
-  | "Other";
 export const productCategories = [
   "Fashion",
   "Electronics",
   "Cosmetics",
   "Home",
   "Other",
-] as const satisfies readonly ProductCategory[];
+] as const;
+export type ProductCategory = (typeof productCategories)[number];
 
-export type WarehouseLocation = "Los Angeles" | "Zaragoza";
 export const warehouseLocations = [
   "Los Angeles",
   "Zaragoza",
-] as const satisfies readonly WarehouseLocation[];
+] as const;
+export type WarehouseLocation = (typeof warehouseLocations)[number];
 
-export type ProductStatus = "Active" | "Low stock" | "Out of stock" | "Discontinued";
 export const productStatuses = [
   "Active",
   "Low stock",
   "Out of stock",
   "Discontinued",
-] as const satisfies readonly ProductStatus[];
+] as const;
+export type ProductStatus = (typeof productStatuses)[number];
 
 export interface Shipment {
   id: string; // Unique shipment ID (e.g., "SH-2024-8821")
@@ -80,29 +78,24 @@ export interface Destination {
   distanceKm: number; // Distance from origin warehouse
 }
 
-export type Country = "United States" | "Spain";
-export const countries = ["United States", "Spain"] as const satisfies readonly Country[];
+export const countries = ["United States", "Spain"] as const;
+export type Country = (typeof countries)[number];
 
-export type ShipmentPriority = "Standard" | "Express" | "Same-day";
 export const shipmentPriorities = [
   "Standard",
   "Express",
   "Same-day",
-] as const satisfies readonly ShipmentPriority[];
+] as const;
+export type ShipmentPriority = (typeof shipmentPriorities)[number];
 
-export type ShipmentStatus =
-  | "Pending"
-  | "Assigned"
-  | "In transit"
-  | "Delivered"
-  | "Failed";
 export const shipmentStatuses = [
   "Pending",
   "Assigned",
   "In transit",
   "Delivered",
   "Failed",
-] as const satisfies readonly ShipmentStatus[];
+] as const;
+export type ShipmentStatus = (typeof shipmentStatuses)[number];
 
 export interface Carrier {
   id: string; // Carrier ID (e.g., "CAR-UPS")
@@ -128,13 +121,13 @@ export interface InventoryMovement {
   timestamp: Date; // When it happened
 }
 
-export type MovementType = "Inbound" | "Outbound" | "Transfer" | "Adjustment";
 export const movementTypes = [
   "Inbound",
   "Outbound",
   "Transfer",
   "Adjustment",
-] as const satisfies readonly MovementType[];
+] as const;
+export type MovementType = (typeof movementTypes)[number];
 
 // ---------------------------------------------------------------------------------------------------
 // The stored records (docs/erd.md)
@@ -184,8 +177,8 @@ export interface ShipmentRecord {
   createdAt: Date;
 }
 
-export type MovementDirection = "In" | "Out";
-export const movementDirections = ["In", "Out"] as const satisfies readonly MovementDirection[];
+export const movementDirections = ["In", "Out"] as const;
+export type MovementDirection = (typeof movementDirections)[number];
 
 /** One warehouse's own record of a change to its own stock. */
 export interface MovementRecord {
