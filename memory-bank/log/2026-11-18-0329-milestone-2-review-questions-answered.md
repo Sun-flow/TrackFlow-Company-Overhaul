@@ -9,9 +9,5 @@
   two warehouse reports, Tailwind's CLI, and the page's compiled output committed.
 - Parked in `docs/FUTURE_WORK.md`: finding and repairing broken links, and checking stock against
   movements.
-- Open: Q19. mae proposed that a movement be one warehouse's own record of a stock change, with no
-  from or to; `docs/open-questions.md` has that proposal, three options with diagrams and a
-  recommendation. `erd.md` is unchanged until mae picks, and WP1
-  waits on it.
-- Verified: the suite without the browser check; no code and no brief changed. The Mermaid
-  diagrams in Q19 were not rendered in the session.
+- Q19 was reopened as a rethink of how a movement is stored; the next log entry has its answer.
+- Verified: the suite without the browser check; no code and no brief changed.

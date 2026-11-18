@@ -35,9 +35,9 @@ The plan's extras X1 to X5 joined this list when mae picked all five (2026-11-18
 | M4 | `Carrier` with every field, name and type in the briefing | B, B-A1, L1, E-TC1, E-CA1 | WP1 | ⬜ | |
 | M5 | `InventoryMovement` with every field, name and type in the briefing | B, B-A1, L1, E-TC1, E-CA1 | WP1 | ⬜ | |
 | M6 | The literal types `ProductCategory`, `WarehouseLocation`, `ProductStatus`, `Country`, `ShipmentPriority`, `ShipmentStatus`, `MovementType` with exactly the briefing's values | B, E-CA1 | WP1 | ⬜ | |
-| M7 | Concrete instances as typed literal objects: the briefing's sample products, carriers and shipment, and one mock movement for each shape in `erd.md`, labelled as mock, since the briefing has no sample movement | T2, B | WP1 | ⬜ | |
+| M7 | Concrete instances as typed literal objects: the briefing's sample products, carriers and shipment, and one mock movement for each row of `erd.md`'s movement table, labelled as mock, since the briefing has no sample movement | T2, B | WP1 | ⬜ | |
 | M8 | Auxiliary functions to work with each entity's data (D6): `isLowStock` and the stock value for `Product`, the total weight for `Shipment`, one check per scoring rule for `Carrier`, and for `InventoryMovement` the movement totals per warehouse and type (Q23) | T2 | WP3, WP4 | ⬜ | |
-| M9 | The stored single-id records of the ERD, and functions that build the brief's interfaces from them, giving back the briefing's samples exactly and the right view for each movement shape, with `null` for a link that matches no record (Q16) and stored keys in upper case (Q17) | mae (departure, 2026-11-18) | WP1 | ⬜ | |
+| M9 | The stored single-id records of the ERD, and functions that build the brief's interfaces from them, giving back the briefing's samples exactly and each mock movement's view at its own stock record's warehouse (Q19), with `null` for a link that matches no record (Q16) and stored keys in upper case (Q17) | mae (departure, 2026-11-18) | WP1 | ⬜ | |
 
 ## Collections
 
