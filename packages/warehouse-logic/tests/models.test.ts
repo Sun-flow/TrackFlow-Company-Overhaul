@@ -25,6 +25,16 @@ import type {
   WarehouseLocation,
 } from "../src/types/models.ts";
 import {
+  countries,
+  movementDirections,
+  movementTypes,
+  productCategories,
+  productStatuses,
+  shipmentPriorities,
+  shipmentStatuses,
+  warehouseLocations,
+} from "../src/types/models.ts";
+import {
   sampleCarrierRecords,
   sampleCarriers,
   sampleItems,
@@ -202,6 +212,18 @@ export type TheStoredRecordsMatchTheErd = [
   Expect<Equal<MovementDirection, "In" | "Out">>,
 ];
 
+// Each list of allowed values holds exactly its type's values: none missing, none extra (Q26).
+export type TheValueListsMatchTheirTypes = [
+  Expect<Equal<(typeof productCategories)[number], ProductCategory>>,
+  Expect<Equal<(typeof warehouseLocations)[number], WarehouseLocation>>,
+  Expect<Equal<(typeof productStatuses)[number], ProductStatus>>,
+  Expect<Equal<(typeof countries)[number], Country>>,
+  Expect<Equal<(typeof shipmentPriorities)[number], ShipmentPriority>>,
+  Expect<Equal<(typeof shipmentStatuses)[number], ShipmentStatus>>,
+  Expect<Equal<(typeof movementTypes)[number], MovementType>>,
+  Expect<Equal<(typeof movementDirections)[number], MovementDirection>>,
+];
+
 // The checks above can fail: each line below must be a type error, or `pnpm typecheck` reports it.
 export type TheChecksCanFail = [
   // @ts-expect-error a product with no `sku` is not the brief's Product
@@ -212,6 +234,8 @@ export type TheChecksCanFail = [
   Expect<Equal<ProductCategory, BriefProduct["category"] | "Food">>,
   // @ts-expect-error a movement record with a `transferId` is the model Q19 replaced
   Expect<Equal<MovementRecord, ErdMovementRecord & { transferId: string | null }>>,
+  // @ts-expect-error a list that lacks one of its type's values does not match the type
+  Expect<Equal<Exclude<(typeof countries)[number], "Spain">, Country>>,
 ];
 
 // The samples type-check against the models (plan WP1, "Done when").
@@ -223,6 +247,31 @@ sampleWarehouses satisfies Warehouse[];
 sampleStockRecords satisfies StockRecord[];
 sampleCarrierRecords satisfies CarrierRecord[];
 sampleShipmentRecord satisfies ShipmentRecord;
+
+// ---------------------------------------------------------------------------------------------------
+// The lists of allowed values (Q26)
+// ---------------------------------------------------------------------------------------------------
+
+describe("each list of allowed values holds the briefing's values, in the briefing's order (Q26)", () => {
+  const rows: [string, readonly string[], string[]][] = [
+    ["productCategories", productCategories, ["Fashion", "Electronics", "Cosmetics", "Home", "Other"]],
+    ["warehouseLocations", warehouseLocations, ["Los Angeles", "Zaragoza"]],
+    ["productStatuses", productStatuses, ["Active", "Low stock", "Out of stock", "Discontinued"]],
+    ["countries", countries, ["United States", "Spain"]],
+    ["shipmentPriorities", shipmentPriorities, ["Standard", "Express", "Same-day"]],
+    ["shipmentStatuses", shipmentStatuses, ["Pending", "Assigned", "In transit", "Delivered", "Failed"]],
+    ["movementTypes", movementTypes, ["Inbound", "Outbound", "Transfer", "Adjustment"]],
+  ];
+  for (const [name, list, expected] of rows) {
+    test(name, () => {
+      assert.deepStrictEqual([...list], expected);
+    });
+  }
+
+  test("movementDirections, the model's own type (Q19)", () => {
+    assert.deepStrictEqual([...movementDirections], ["In", "Out"]);
+  });
+});
 
 // ---------------------------------------------------------------------------------------------------
 // The samples, as the brief's interfaces

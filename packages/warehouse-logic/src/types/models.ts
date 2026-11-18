@@ -4,6 +4,9 @@
 //   1. The briefing's interfaces and literal types, field for field as the briefing writes them.
 //      Every briefing function takes these. They are views: built from stored records, not stored.
 //   2. The stored records, each with one key, from which src/utils/views.ts builds those views.
+//
+// A type is gone when the code runs, so each literal type has its values again as a list right under
+// it, for code that needs every value. tests/models.test.ts fails the typecheck if the two differ.
 
 // ---------------------------------------------------------------------------------------------------
 // The briefing's entities ("Business Entities")
@@ -35,8 +38,27 @@ export type ProductCategory =
   | "Cosmetics"
   | "Home"
   | "Other";
+export const productCategories = [
+  "Fashion",
+  "Electronics",
+  "Cosmetics",
+  "Home",
+  "Other",
+] as const satisfies readonly ProductCategory[];
+
 export type WarehouseLocation = "Los Angeles" | "Zaragoza";
+export const warehouseLocations = [
+  "Los Angeles",
+  "Zaragoza",
+] as const satisfies readonly WarehouseLocation[];
+
 export type ProductStatus = "Active" | "Low stock" | "Out of stock" | "Discontinued";
+export const productStatuses = [
+  "Active",
+  "Low stock",
+  "Out of stock",
+  "Discontinued",
+] as const satisfies readonly ProductStatus[];
 
 export interface Shipment {
   id: string; // Unique shipment ID (e.g., "SH-2024-8821")
@@ -59,13 +81,28 @@ export interface Destination {
 }
 
 export type Country = "United States" | "Spain";
+export const countries = ["United States", "Spain"] as const satisfies readonly Country[];
+
 export type ShipmentPriority = "Standard" | "Express" | "Same-day";
+export const shipmentPriorities = [
+  "Standard",
+  "Express",
+  "Same-day",
+] as const satisfies readonly ShipmentPriority[];
+
 export type ShipmentStatus =
   | "Pending"
   | "Assigned"
   | "In transit"
   | "Delivered"
   | "Failed";
+export const shipmentStatuses = [
+  "Pending",
+  "Assigned",
+  "In transit",
+  "Delivered",
+  "Failed",
+] as const satisfies readonly ShipmentStatus[];
 
 export interface Carrier {
   id: string; // Carrier ID (e.g., "CAR-UPS")
@@ -92,6 +129,12 @@ export interface InventoryMovement {
 }
 
 export type MovementType = "Inbound" | "Outbound" | "Transfer" | "Adjustment";
+export const movementTypes = [
+  "Inbound",
+  "Outbound",
+  "Transfer",
+  "Adjustment",
+] as const satisfies readonly MovementType[];
 
 // ---------------------------------------------------------------------------------------------------
 // The stored records (docs/erd.md)
@@ -142,6 +185,7 @@ export interface ShipmentRecord {
 }
 
 export type MovementDirection = "In" | "Out";
+export const movementDirections = ["In", "Out"] as const satisfies readonly MovementDirection[];
 
 /** One warehouse's own record of a change to its own stock. */
 export interface MovementRecord {

@@ -12,7 +12,7 @@ Data is stored as records with one key each: `Item`, `Warehouse`, `StockRecord`,
 
 | Path | What |
 |---|---|
-| `src/types/models.ts` | Every type: the briefing's interfaces and literal types, field for field, and the stored records of `docs/erd.md`. Import types only from here. |
+| `src/types/models.ts` | Every type: the briefing's interfaces and literal types, field for field, and the stored records of `docs/erd.md`. Under each literal type is a list of its values, such as `productCategories`, for code that needs every value. Import types and these lists only from here. |
 | `src/utils/views.ts` | Builds the briefing's interfaces from stored records, and builds and splits stock record ids. See "Views" below. |
 | `src/utils/collections.ts`, `search.ts`, `transformations.ts`, `validations.ts` | The briefing's functions and the toolkit under them. Empty until their packages (plan WP2 to WP5). |
 | `src/data/samples.ts` | The briefing's sample products, carriers and shipment, as the briefing's interfaces and as the stored records they come from. |
@@ -37,7 +37,7 @@ pnpm build         # compile src/ to browser ES modules in dist/
 
 `pnpm test` and `pnpm demo` need no install. One test file: `node --test tests/views.test.ts`.
 
-The tests can't see a type error, because Node drops the types without checking them. `pnpm typecheck` is what checks them, and the checks at the top of `tests/models.test.ts` (each type is exactly the briefing's or the ERD's) run only there.
+The tests can't see a type error, because Node drops the types without checking them. `pnpm typecheck` is what checks them, and the checks at the top of `tests/models.test.ts` (each type is exactly the briefing's or the ERD's, and each list of values matches its type) run only there.
 
 ## Writing code here
 

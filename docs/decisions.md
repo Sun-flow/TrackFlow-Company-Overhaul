@@ -17,6 +17,12 @@ Entry format:
 
 ---
 
+### [2026-11-18] Each literal type's values are also a list in `models.ts`
+- **Decision**: mae's answer to Q26. `src/types/models.ts` holds, right under each literal type, a list of its values for code to read: `productCategories`, `warehouseLocations`, `productStatuses`, `countries`, `shipmentPriorities`, `shipmentStatuses`, `movementTypes` and `movementDirections`. The briefing's type declarations stay as written. Each list keeps the briefing's order, and a typecheck test in `tests/models.test.ts` fails when a list and its type differ in either direction.
+- **Rationale**: mae (2026-11-18), on the recommendation. The briefing gives the values only as types, which are gone when the code runs, and three packages need them: the reports return every key (Q3), the mock data generator picks from them, and the validation review proposes checking a value against its list. Beside the type, a new value is added in one place, and no two packages write their own copy.
+- **Alternatives considered**: the same lists in a new `src/types/values.ts`, so `models.ts` holds only interfaces and types, as the brief's file tree describes it; each package writing the lists it needs, which can drift.
+- **Status**: Accepted (mae, 2026-11-18).
+
 ### [2026-11-18] The movement totals report splits by direction
 - **Decision**: mae's answer to Q25. The movement totals report mae picked in Q23 gives totals per warehouse, type and direction. It reads stored `MovementRecord`s, since only they hold a `direction`, and so it can also give the net change in a warehouse's stock. It says in its documentation that it works on stored records, where the other reports work on the brief's views.
 - **Rationale**: mae (2026-11-18), on the recommendation: a total that adds units in to units out says nothing about a warehouse's stock. Q23's wording, "per warehouse and type", was written before Q19 gave a movement a direction.
