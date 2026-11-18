@@ -51,7 +51,7 @@ npx --yes http-server uis/website -p 3000 -c-1
 # The warehouse logic: types, tests (Node 22.18 or newer runs the .ts files), demo
 (cd packages/warehouse-logic && pnpm typecheck && pnpm test && pnpm demo)
 
-# The suite: both test sets, types, stylesheet, briefs, browser check and this bank
+# The suite: both test sets, types, stylesheet, no test drafts, briefs, browser check and this bank
 scripts/suite.sh
 ```
 
