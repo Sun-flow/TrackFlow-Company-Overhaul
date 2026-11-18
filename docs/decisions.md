@@ -17,6 +17,12 @@ Entry format:
 
 ---
 
+### [2026-11-18] Stricter validators beside the brief's: clean SKUs, finite numbers, text patterns
+- **Decision**: A departure from the brief, built beside it. `src/utils/validations.ts` gains `validateProductStrict`, `validateShipmentStrict` and `validateCarrierStrict`, which run the briefing's rules plus: a SKU of letters and digits in groups joined by single hyphens (`^[A-Z0-9]+(-[A-Z0-9]+)*$`), the same shape for shipment and carrier ids; every number finite; a pattern for names, the assigned carrier, the city and the postal code (US ZIP, or Spain's province codes 01 to 52); and a real `createdAt`. `cleanText` and `cleanSku` trim what arrives from outside and turn a blank into `null`, which fails as "must not be empty". The strict validators check the stored, cleaned form and give one message per field. The brief's three validators and their 14 rules are unchanged. `packages/warehouse-logic/docs/validation-rules.md` tables every strict rule and message.
+- **Rationale**: mae (2026-11-18), on seeing that the brief's rules pass a SKU of spaces and `Infinity` in 11 checks: "a SKU made of only spaces should convert to NULL -- skus should be alphanumeric", with patterns welcome on text fields. mae chose to build it now, in its own pull request beside the brief's validators, and approved the proposal with its examples whole ("Stricter validation rules: proposal", a Claude doc). This brings part of plan WP8 forward; the rest of WP8's list stays there.
+- **Alternatives considered**: changing the brief's validators in place, which would break "an improvement is built beside the brief's version"; waiting for WP8; ids that must look like the briefing's examples (`^SH-\d{4}-\d+$`, `CAR-...`), since the briefing gives one example of each and not a format.
+- **Status**: Accepted (mae, 2026-11-18).
+
 ### [2026-11-18] A validation rule over several fields gives one message per field that fails
 - **Decision**: mae's answer to Q28. The briefing's two rules that cover three fields, "All dimensions must be > 0 and <= 200" and "`baseRateUSD`, `ratePerKgUSD`, `ratePerKmUSD` must all be >= 0", give one error message for each field that fails, naming it, such as `dimensions.heightCm must be > 0 and <= 200 (got 0)`. A product with two bad dimensions has two messages. `packages/warehouse-logic/docs/validation-rules.md` tables every message.
 - **Rationale**: mae (2026-11-18), on the recommendation: the message says exactly which value to fix, and every rule's messages read the same way. `valid` is the same under either choice.
