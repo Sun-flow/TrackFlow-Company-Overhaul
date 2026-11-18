@@ -13,5 +13,5 @@
 - Wiring: the suite, `checks.yml`, the kit's config and its workflow's Fast tier run the package's
   tests from the repo root. The kit's guard needs mae's `allow-test-changes` label for them.
 - Verified: tests written first and seen failing; `scripts/suite.sh` with the browser check passed
-  (481 form tests, 84 package tests, the typecheck). Hand-made faults in the models, samples and
-  views each failed a test or the typecheck. Not run: `/test-review` and `/mutation-check`.
+  (481 form tests, 84 package tests, the typecheck). Hand-made faults each failed a test or the
+  typecheck. Not run: `/test-review` and `/mutation-check`.
