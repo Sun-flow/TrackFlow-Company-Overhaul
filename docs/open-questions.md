@@ -19,13 +19,13 @@ Entry format:
 
 ## Milestone 2
 
-Q1 to Q13 were answered by mae on 2026-11-17 and 2026-11-18 (`docs/decisions.md`, "Milestone 2's open questions answered" and "SKU and warehouse: a ProductKey now, an Item and StockRecord split later"). The next new question is Q15.
+Q1 to Q14 were answered by mae on 2026-11-17 and 2026-11-18 (`docs/decisions.md`, "Milestone 2's open questions answered", "SKU and warehouse: a ProductKey now, an Item and StockRecord split later" and "A transfer shows as a send and a receipt"). The next new question is Q16.
 
-### Q14. Which warehouse does a Transfer show in the brief's `InventoryMovement`?
-- **Where it comes from**: `trackflow-BRIEFING.en.md`, "Business Entities", `InventoryMovement`; and the stored model in `packages/warehouse-logic/docs/erd.md`, where a movement points at the stock it left (`from`) and the stock it joined (`to`).
-- **What the brief says**: `InventoryMovement` has one `warehouse` field and a `type` that can be `"Transfer"`. It doesn't say whether a transfer's `warehouse` is where the stock left or where it arrived.
-- **Options**: (a) the warehouse it left (`from`), as a shipment's `origin` names where it ships from; (b) the warehouse it joined (`to`); (c) two views per transfer, one for each warehouse, so each warehouse's history shows it.
-- **Recommendation**: (a). One movement stays one view, it matches how `Shipment.origin` reads, and the stored record keeps both warehouses, so (c) can be added later as a report without changing data.
+### Q15. How is a transfer's send and receive stored?
+- **Where it comes from**: mae's answer to Q14 (2026-11-18): a transfer shows as two `InventoryMovement`s, one when the sending warehouse sends it and one when the receiving warehouse receives it, so every send has a matching receipt. The stored model in `packages/warehouse-logic/docs/erd.md` has one `MovementRecord` with one `timestamp`.
+- **What the brief says**: nothing about transfers beyond the `"Transfer"` movement type.
+- **Options**: (a) one `MovementRecord` per transfer with a `receivedAt` time, empty while in transit: its send view uses `timestamp` at the `from` warehouse, its receive view uses `receivedAt` at the `to` warehouse and appears once it is set; (b) two `MovementRecord`s, a send and a receive, joined by a shared `transferId`.
+- **Recommendation**: (a). One id per transfer and nothing to keep in sync; a transfer still in transit is one with no `receivedAt`. A receipt short of what was sent is logged as an `Adjustment`. Until mae answers, `erd.md` and the plan follow (a).
 - **Asked**: 2026-11-18
 
 ## Waiting elsewhere

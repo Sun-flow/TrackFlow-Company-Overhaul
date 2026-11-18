@@ -44,7 +44,7 @@ public website, is finished.
 
 ## Open questions
 
-- Q14: which warehouse a Transfer shows in the brief's `InventoryMovement` (`docs/open-questions.md`).
+- Q15: how a transfer's send and receipt are stored, one record or two (`docs/open-questions.md`).
   (2026-11-18)
 
 
