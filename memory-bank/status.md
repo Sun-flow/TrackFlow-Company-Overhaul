@@ -36,17 +36,13 @@ WP1 of its plan, the package scaffold and data model, is built; the briefing's f
   #24: `git ls-remote origin Milestone-1` prints 34e5069. (2026-11-13)
 - All 39 items of Milestone 1's definition of done are rated done:
   `grep -A9 '^## Summary' docs/milestones/milestone-1/definition-of-done.md`. (2026-11-13)
-- The briefing's three validators enforce its 14 rules, every failing rule's message returned:
-  `(cd packages/warehouse-logic && node --test tests/validations.test.ts)`, 129 tests. (2026-11-18)
-- Strict validators and input cleaners sit beside the brief's (a departure mae approved): finite
-  numbers and text patterns, `node --test tests/validations-strict.test.ts` in the package, 151 tests.
-  (2026-11-18)
+- The briefing's validators enforce its 14 rules, and strict ones beside them (mae's departure) add
+  finite numbers and text patterns: `node --test "tests/validations*.test.ts"` in the package. (2026-11-18)
 
 ## Next
 
-1. Phase 2 of `docs/milestones/milestone-2/plan.md`: WP2 to WP5, each in its own thread, branching
-   from `origin/production`, when mae gives the go-ahead. WP4's pull request opens after WP3 merges.
-   (2026-11-18)
+1. Phase 2 of `docs/milestones/milestone-2/plan.md`: WP2 and WP5 are merged; WP3 and WP4 are in their
+   own threads, and WP4's pull request opens after WP3 merges. (2026-11-18)
 
 ## Known problems
 
