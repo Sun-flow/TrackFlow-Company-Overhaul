@@ -20,7 +20,7 @@ Entry format:
 ### [2026-11-18] Milestone 2's review questions answered
 - **Decision**: mae's answers to the questions a review of the planning docs raised. They were asked in `docs/open-questions.md`, which keeps the options in its git history.
   - Q16: a view builder returns `null` for a link that matches no record, a builder of many leaves that record out, and none throws. Listing, logging and repairing broken links, and broken datasets to test that, are parked in `docs/FUTURE_WORK.md`.
-  - Q17: stored keys are upper case. Building a stock record id upper-cases the SKU, so keys compare exactly. Proposed, not yet confirmed: mae found this and "compare ignoring case everywhere" both good and asked which is cheaper and more reliable. This one is: the case is settled once, when a key is built, and every later comparison and `Map` lookup is exact, where the other needs every comparison to remember to ignore case.
+  - Q17: stored keys are upper case. Building a stock record id upper-cases the SKU, so keys compare exactly. mae found this and "compare ignoring case everywhere" both good, asked which is cheaper and more reliable, and chose this one on the answer: the case is settled once, when a key is built, and every later comparison and `Map` lookup is exact, where the other needs every comparison to remember to ignore case.
   - Q18: the test page gets Tailwind from its CLI, a second development dependency of the package, with the compiled stylesheet committed.
   - Q20: the function that builds a stock record id is `buildStockRecordId`, so `toStockRecordId` names only the movement's field.
   - Q21: the shared rounding helper is `roundToTwoDecimals`.
@@ -29,7 +29,7 @@ Entry format:
   - Q24: the test page's compiled modules are committed, with a suite step that fails when they are stale.
 - **Rationale**: mae (2026-11-18). On Q16: this milestone is about the functions that manipulate data; generating broken datasets and enforcing repair comes later.
 - **Alternatives considered**: listed per question in `docs/open-questions.md` as of the commit before this entry's.
-- **Status**: Accepted (mae, 2026-11-18), except Q17, which is Proposed until mae confirms it. Q19 stays open: mae asked to rethink how a movement is stored and tied to a shipment.
+- **Status**: Accepted (mae, 2026-11-18). Q19 stays open: mae asked to rethink how a movement is stored.
 
 ### [2026-11-18] Milestone 2's plan corrected after a review
 - **Decision**: A review of the merged planning docs was applied in one docs-only pull request. Its choices: `groupShipmentsByStatus` is built by WP4 in `transformations.ts`, where the briefing puts it, on WP3's `groupBy`; the stored carrier is `CarrierRecord`; WP1 also changes the test step in `.github/workflows/testing-kit.yml`, so the required `all-green` check runs the package's tests; the package README is WP6's, and the parallel packages write their notes under the package's `docs/`; the tracked improvements I2, I3 and I5 are package WP8b; the mutation check aims for 70% or more; WP7 uses the medium tier. Nine choices the review could not settle are Q16 to Q24 in `docs/open-questions.md`.

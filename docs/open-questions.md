@@ -21,16 +21,20 @@ Entry format:
 
 Q1 to Q18 and Q20 to Q24 were answered by mae on 2026-11-17 and 2026-11-18 (`docs/decisions.md`, "Milestone 2's open questions answered", "Milestone 2 stores single-id records, with the brief's interfaces as views", "A transfer shows as a send and a receipt" and "Milestone 2's review questions answered"). Q19 is open, and WP1 waits on it. The next new question is Q25.
 
-### Q19. How is a movement stored, and is it tied to a shipment?
-- **Where it comes from**: a review asked what the receipt's link to its send, `transferId`, should be called (2026-11-18). mae answered with a wider idea: rethink `MovementRecord` so that a `ShipmentRecord` tracks a transfer's send and receipt, with stock coming into a warehouse from outside it and going out of it.
-- **What the brief says**: `InventoryMovement` has one `warehouse`, a `type` (`"Inbound"`, `"Outbound"`, `"Transfer"`, `"Adjustment"`) and a `quantity`. Nothing ties it to a `Shipment`, and no required function works on movements. A `Shipment` is "a delivery order that needs to be shipped to a customer", and its `origin` must be one of the two warehouses.
-- **Today** (`packages/warehouse-logic/docs/erd.md`, agreed 2026-11-18): a movement points at the stock it left (`fromStockRecordId`) and the stock it joined (`toStockRecordId`), and no shipment. A transfer is two movements. The send holds both, its `to` meaning "headed for"; the receipt holds a `to` and `transferId`, which is its send's `movementId`.
+### Q19. How is a movement stored?
+- **Where it comes from**: a review asked what the receipt's link to its send, `transferId`, should be called (2026-11-18). mae answered by rethinking `MovementRecord`, first around shipments and then, the same day, by going back to the briefing's own shape. This entry holds that second proposal and the version of it a review supports.
+- **What the brief says**: `InventoryMovement` "tracks inventory changes (inbound or outbound)". It has one `warehouse`, a `type` (`"Inbound"`, `"Outbound"`, `"Transfer"`, `"Adjustment"`), a `quantity`, a `reason` and a `timestamp`. Nothing ties it to a `Shipment`, which is "a delivery order that needs to be shipped to a customer", and no required function works on movements.
+- **Today** (`packages/warehouse-logic/docs/erd.md`, agreed 2026-11-18): a movement points at the stock it left (`fromStockRecordId`) and the stock it joined (`toStockRecordId`). A transfer is two movements, and the receipt points at its send through `transferId`.
+- **mae's proposal** (2026-11-18): shipments stay deliveries to customers, and transfers stay inside the organization and are not shipments. A movement is one warehouse's own record of a change to its own stock: whether units came in or went out, how many, and why. It does not say where the units came from or where they are headed. Each warehouse writes its own. Every shipment has a matching Outbound movement, and a movement can exist with no shipment, as a transfer or an adjustment does. A movement's warehouse is always the warehouse that wrote it.
+- **Review**: the proposal is consistent, and it is the brief's own reading of a movement. It is also the simplest of the models discussed. Three points need to be exact for it to hold:
+  1. The marker of in or out is a field, `direction` (`"In"` or `"Out"`), stored on every movement. An Inbound is always In and an Outbound always Out; a Transfer and an Adjustment can be either.
+  2. "Every shipment has a matching Outbound" is true once the shipment has left. A shipment that is Pending or Assigned has none yet. For the match to be checkable, not only assumed, the Outbound carries an optional `shipmentId`. It says which order the units left for, not where they went; the shipment knows that.
+  3. A transfer's two movements, out of one warehouse and into the other, are not linked. That gives up the check mae wanted in Q14 and Q15, that every send has a receipt, and the count of units in transit. Q14's answer itself still holds: a transfer shows as a send at one warehouse and a receipt at the other.
 - **Options**:
-  - (a) **Tied to a shipment, one stock record per movement.** A movement changes exactly one stock record: `stockRecordId` and a `direction` (`"In"` or `"Out"`) replace `fromStockRecordId`, `toStockRecordId` and `transferId`. It gains an optional `shipmentId`, and `ShipmentRecord` gains an optional `destinationStockRecordId`, set only for a transfer between warehouses. A customer delivery then has at most one movement, the Outbound when it leaves. A transfer is a shipment between two stock records with up to two movements, out of the sender and into the receiver, each with its own quantity and time, so mae's answers to Q14 and Q15 hold. Stock arriving from outside and an Adjustment have no shipment.
-  - (b) **One movement per shipment, and every movement has a shipment**, as mae first put it. The shipment's status says whether a transfer has arrived. To keep Q14's receipt, `ShipmentRecord` needs a received quantity and a received time, which the brief's `Shipment` does not have. A delivery from a supplier and an Adjustment would need shipments too, and neither can be shown as the brief's `Shipment`: a supplier's `origin` is not one of the two warehouses, and an Adjustment is not a delivery.
-  - (c) **Keep the agreed model** and only rename `transferId` to `sendMovementId`, the review's first recommendation.
-- **Recommendation**: (a). It keeps what mae's idea is after: a shipment carries a transfer, with its status, carrier and date, and every dispatched customer shipment can be checked against the movement that took its stock. It also makes the model simpler than today's. Every movement touches one stock record, so stock is what came in less what went out, the view's `warehouse` is always that record's warehouse, no field means two things, and the self-link and `transferId` go away. Two things in (b) can't hold as stated: an Adjustment and a supplier's delivery have no shipment the brief can show, and one movement can't record a different received quantity.
-- **What (a) changes elsewhere**: `StockRecord` keeps its fields. `stockQuantity` stays stored, because the briefing gives stock figures with no movements behind them; checking stock against movements is parked in `docs/FUTURE_WORK.md`. A transfer becomes a `ShipmentRecord`, and the brief's reports are about customer deliveries, so the builder of many shipments would leave transfers out. That rule is confirmed with mae if (a) is picked.
+  - (a) **The proposal with points 1 and 2.** `MovementRecord` is `movementId`, `stockRecordId` (the one stock record it changes), `direction`, an optional `shipmentId`, and the brief's `type`, `quantity`, `reason` and `timestamp`. They replace `fromStockRecordId`, `toStockRecordId` and `transferId`. `ShipmentRecord` and `StockRecord` do not change. Linking a transfer's two halves is parked in `docs/FUTURE_WORK.md`.
+  - (b) **The same without `shipmentId`.** The movement stays purely about stock. A shipment's Outbound can then be matched only by SKU, warehouse, quantity and time, or by the free text in `reason`.
+  - (c) **The same as (a), and a transfer's receipt may point at its send** (an optional `sendMovementId`). It keeps the send-and-receipt check, and it makes one movement care about another warehouse's record, which the proposal set out to avoid.
+- **Recommendation**: (a). Every movement touches one stock record, so stock is what came in less what went out, and the view's `warehouse` is always that record's warehouse, which is mae's last rule held by the structure itself. No field means two things, and the self-link and `transferId` go away. The link to the shipment sits on the movement because the movement is written once, when the units leave, and points at a record that already exists; a link on the shipment would need a second write that can be forgotten.
 - **Until answered**: `erd.md` stays as agreed, and WP1 does not build `MovementRecord`, `toInventoryMovement` or the mock movements.
 - **Asked**: 2026-11-18
 
@@ -65,13 +69,11 @@ Option (a):
 ```mermaid
 erDiagram
     StockRecord ||--o{ ShipmentRecord : "shipped from"
-    StockRecord |o--o{ ShipmentRecord : "headed to, a transfer only"
     StockRecord ||--o{ MovementRecord : "changed by"
-    ShipmentRecord |o--o{ MovementRecord : "caused, at most one out and one in"
+    ShipmentRecord |o--o| MovementRecord : "left as, once it has left"
     ShipmentRecord {
         string shipmentId PK
         string stockRecordId FK "what ships, and from where"
-        string destinationStockRecordId FK "a transfer only: the stock it is headed for"
         string carrierId FK "null until assigned"
         ShipmentStatus status
     }
@@ -79,7 +81,7 @@ erDiagram
         string movementId PK
         string stockRecordId FK "the one stock record it changes"
         MovementDirection direction "In or Out"
-        string shipmentId FK "null for an Adjustment or stock from outside"
+        string shipmentId FK "an Outbound for a customer shipment only"
         MovementType type
         number quantity
         string reason
@@ -87,14 +89,14 @@ erDiagram
     }
 ```
 
-Both diagrams leave out the fields that stay the same. The movements under option (a):
+Both diagrams leave out the fields that stay the same. The movements under option (a), each written by the warehouse whose stock changed:
 
-| What happened | `type` | `direction` | `shipmentId` |
+| What happened at the warehouse | `type` | `direction` | `shipmentId` |
 |---|---|---|---|
-| Stock arrives from outside | Inbound | In | none |
-| A customer shipment leaves | Outbound | Out | the customer shipment |
-| A transfer leaves the sending warehouse | Transfer | Out | the transfer's shipment |
-| A transfer arrives at the receiving warehouse | Transfer | In | the same shipment |
+| Stock arrives from outside the organization | Inbound | In | none |
+| A customer shipment leaves | Outbound | Out | that shipment |
+| Stock is sent to the other warehouse | Transfer | Out | none |
+| Stock arrives from the other warehouse | Transfer | In | none |
 | A count is corrected upward | Adjustment | In | none |
 | A count is corrected downward | Adjustment | Out | none |
 
