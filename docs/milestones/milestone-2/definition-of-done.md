@@ -1,7 +1,7 @@
 # Milestone 2 definition of done
 
 > **Date created**: 2026-11-17
-> **Last checked**: 2026-11-17, against `production` at `77f7b0d` (the Milestone 2 brief files, PR #32). Nothing is built yet, so every item is ⬜. Revised the same day with mae's answers to the plan's decisions.
+> **Last checked**: 2026-11-17, against `production` at `77f7b0d` (the Milestone 2 brief files, PR #32). Nothing is built yet, so every item is ⬜. Revised the same day with mae's answers to the plan's decisions, and on 2026-11-18 with M9 for the stored model.
 > **Sources**: every checklist and requirement in this folder, merged and de-duplicated. The company briefing (`trackflow-BRIEFING.en.md`, called `BRIEFING.md` in the checklists) still wins where it is more specific.
 
 Milestone 2 is done when every item below is rated ✅. The test page (O) is optional in its checklist but required here: mae counts optional work as required (2026-11-17, plan D8). Items marked "after review" are built only once mae has approved the analysis that comes before them (plan, "How this milestone works"). Where several sources ask for the same thing, they are one item and the Source column lists each. `plan.md` says which package delivers each item; the D numbers point to its Phase 0 decisions.
@@ -18,10 +18,10 @@ To re-check, update the rating and evidence in place and the "Last checked" line
 |---|---|
 | ✅ Completely done | 0 |
 | 🟡 Partially done | 0 |
-| ⬜ Not done | 61 |
+| ⬜ Not done | 62 |
 | 🙋 Needs mae | 0 |
 | ❔ Not verifiable here | 0 |
-| **Total** | **61** |
+| **Total** | **62** |
 
 The extras proposed in the plan (X1 to X5) join this list once mae picks them.
 
@@ -37,6 +37,7 @@ The extras proposed in the plan (X1 to X5) join this list once mae picks them.
 | M6 | The literal types `ProductCategory`, `WarehouseLocation`, `ProductStatus`, `Country`, `ShipmentPriority`, `ShipmentStatus`, `MovementType` with exactly the briefing's values | B, E-CA1 | ⬜ | |
 | M7 | Concrete instances as typed literal objects: the briefing's sample products, carriers and shipment | T2, B | ⬜ | |
 | M8 | Auxiliary functions to work with each entity's data (D6) | T2 | ⬜ | |
+| M9 | The stored single-id records of the ERD, and functions that build the brief's interfaces from them, giving back the briefing's samples exactly | mae (departure, 2026-11-18) | ⬜ | |
 
 ## Collections
 

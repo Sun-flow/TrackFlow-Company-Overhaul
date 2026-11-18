@@ -1,96 +1,11 @@
 # Warehouse logic: entity relationship diagram
 
-> **Status**: Draft for mae's agreement (plan WP1), updated with mae's answers to Q1 and Q10 (2026-11-17). Nothing in `src/` is written until mae agrees.
-> **Source**: `docs/milestones/milestone-2/trackflow-BRIEFING.en.md`, "Business Entities". Every entity, field, type and value below is copied from it. Where the briefing left something open, the diagram follows mae's answer (`docs/decisions.md`, "Milestone 2's open questions answered").
+> **Status**: Agreed by mae (2026-11-18). It is the stored structure, with the brief's interfaces as views, a departure from the brief logged in `docs/decisions.md` ("Milestone 2 stores single-id records, with the brief's interfaces as views").
+> **Source**: `docs/milestones/milestone-2/trackflow-BRIEFING.en.md`, "Business Entities", and mae's design (2026-11-17 and 2026-11-18). Every field and value comes from the briefing. The new records (`Item`, `Warehouse`, `StockRecord`) only regroup the briefing's fields, apart from the warehouse id, which follows mae's format (Q13).
 
 ## The diagram
 
-```mermaid
-erDiagram
-    Product {
-        string sku PK "key part 1 of 2, e.g. SHOE-BLK-42"
-        string name
-        ProductCategory category
-        number weightKg
-        Dimensions dimensions "stored inside"
-        WarehouseLocation warehouse PK "key part 2 of 2"
-        number stockQuantity
-        number minStockThreshold
-        number unitCostUSD
-        boolean isFragile
-        ProductStatus status
-    }
-    Dimensions {
-        number lengthCm
-        number widthCm
-        number heightCm
-    }
-    Shipment {
-        string id PK "e.g. SH-2024-8821"
-        string sku FK "product link part 1 of 2"
-        number quantity
-        WarehouseLocation origin FK "product link part 2 of 2"
-        Destination destination "stored inside"
-        ShipmentPriority priority
-        number declaredValueUSD
-        string carrier FK "carrier name, null until assigned (Q1)"
-        ShipmentStatus status
-        Date createdAt
-    }
-    Destination {
-        string city
-        Country country
-        string postalCode
-        number distanceKm "from the origin warehouse"
-    }
-    Carrier {
-        string id PK "e.g. CAR-UPS"
-        string name "what shipments store (Q1)"
-        Country[] operatesIn "value list"
-        number baseRateUSD
-        number ratePerKgUSD
-        number ratePerKmUSD
-        number avgDeliveryDays
-        number onTimeRate "0 to 100"
-        number maxWeightKg
-        boolean handlesFragile
-        ShipmentPriority[] acceptsPriority "value list"
-    }
-    InventoryMovement {
-        string id PK
-        string sku FK "product link part 1 of 2"
-        WarehouseLocation warehouse FK "product link part 2 of 2"
-        MovementType type
-        number quantity
-        string reason
-        Date timestamp
-    }
-    ProductKey {
-        string sku "type only, read from records"
-        WarehouseLocation warehouse "warehouse, or a shipment's origin"
-        string code "derived by toProductCode (Q13)"
-    }
-
-    Product ||--|| Dimensions : "has"
-    Shipment ||--|| Destination : "goes to"
-    Product ||--o{ Shipment : "shipped in (sku + origin)"
-    Product ||--o{ InventoryMovement : "stock changed by (sku + warehouse)"
-    Carrier |o--o{ Shipment : "assigned to (by name)"
-```
-
-Each box is one interface from the briefing, listing its fields in the briefing's order. `PK` (primary key) marks the field or fields that identify a record: no two records share them. `FK` (foreign key) marks a field that points to another record's key. Lines show how records refer to each other. Their ends read: `||` exactly one, `|o` zero or one, `o{` zero or more.
-
-A product's key has two parts, `sku` and `warehouse`, because the same SKU can be stocked in both warehouses (Q10). So a shipment needs two fields to point at one product, its `sku` and its `origin`, and an inventory movement needs its `sku` and its `warehouse`. The notes "part 1 of 2" and "part 2 of 2" mark those pairs.
-
-`Dimensions` and `Destination` are not separate records. They are objects stored inside a product or a shipment, drawn as boxes only so their fields can be seen.
-
-The `ProductKey` box, with no lines, is a type, not a stored record: the pair `{ sku, warehouse }` the code reads from a product (`sku`, `warehouse`), a shipment (`sku`, `origin`) or an inventory movement (`sku`, `warehouse`). `toProductCode` turns a key into one string, in the format mae chose for Q13: the SKU, a hyphen, then the warehouse id (for example `SHOE-BLK-42-WH-ZGZ`), and `parseProductCode` turns the string back. The code is always derived and never stored, so it can't drift from the fields it comes from. The brief's interfaces stay exactly as written.
-
-### Editing the diagrams
-
-Both diagrams are Mermaid code in this file, which GitHub draws (`docs/decisions.md`, "The Milestone 2 ERD is Mermaid in `erd.md`"). To try a change with a live preview, paste a block into https://mermaid.live. To make one, edit the block here or ask a Claude thread. When a diagram changes, the text and tables around it change in the same commit.
-
-## Improved model (planned)
+How the data is stored. Every record has one id, and every link is one id pointing at one id.
 
 ```mermaid
 erDiagram
@@ -100,9 +15,9 @@ erDiagram
         ProductCategory category
         number weightKg
         Dimensions dimensions "stored inside"
-        number unitCostUSD "same in every warehouse"
+        number unitCostUSD "same in every warehouse (Q11)"
         boolean isFragile
-        ProductStatus status "same in every warehouse (I5)"
+        ProductStatus status "same in every warehouse (Q12, I5)"
     }
     Dimensions {
         number lengthCm
@@ -115,20 +30,20 @@ erDiagram
         Country country "Spain"
     }
     StockRecord {
-        string id PK "e.g. SHOE-BLK-42-WH-ZGZ (Q13)"
+        string id PK "SKU-warehouse id, e.g. SHOE-BLK-42-WH-ZGZ"
         string itemSku FK "which item"
         string warehouseId FK "which warehouse"
         number stockQuantity
         number minStockThreshold
     }
-    Shipment {
+    ShipmentRecord {
         string id PK "e.g. SH-2024-8821"
         string stockRecordId FK "what ships, and from where"
         number quantity
         Destination destination "stored inside"
         ShipmentPriority priority
         number declaredValueUSD
-        string carrierId FK "null until assigned (I1)"
+        string carrierId FK "null until assigned"
         ShipmentStatus status
         Date createdAt
     }
@@ -136,9 +51,9 @@ erDiagram
         string city
         Country country
         string postalCode
-        number distanceKm
+        number distanceKm "from the origin warehouse"
     }
-    InventoryMovement {
+    MovementRecord {
         string id PK
         string fromStockRecordId FK "stock it left; null for Inbound"
         string toStockRecordId FK "stock it joined; null for Outbound"
@@ -148,8 +63,8 @@ erDiagram
         Date timestamp
     }
     Carrier {
-        string id PK "e.g. CAR-UPS, what shipments store"
-        string name "display name"
+        string id PK "e.g. CAR-UPS"
+        string name "e.g. UPS"
         Country[] operatesIn "value list"
         number baseRateUSD
         number ratePerKgUSD
@@ -164,16 +79,80 @@ erDiagram
     Item ||--|| Dimensions : "has"
     Item ||--o{ StockRecord : "stocked as"
     Warehouse ||--o{ StockRecord : "holds"
-    StockRecord ||--o{ Shipment : "shipped from"
-    StockRecord ||--o{ InventoryMovement : "moved out of (from)"
-    StockRecord ||--o{ InventoryMovement : "moved into (to)"
-    Carrier |o--o{ Shipment : "assigned to"
-    Shipment ||--|| Destination : "goes to"
+    StockRecord ||--o{ ShipmentRecord : "shipped from"
+    StockRecord ||--o{ MovementRecord : "moved out of (from)"
+    StockRecord ||--o{ MovementRecord : "moved into (to)"
+    Carrier |o--o{ ShipmentRecord : "assigned to"
+    ShipmentRecord ||--|| Destination : "goes to"
 ```
 
-This is mae's design (2026-11-17), built after the brief's model as improvement I4 in the plan. Its goal is a system of single ids with no two-part keys. The brief's `Product` mixes the item with its stock in one warehouse, so the model splits them:
+How to read it: `PK` (primary key) marks the field that identifies a record, so no two records share it. `FK` (foreign key) marks a field that holds another record's id. The ends of each line read `||` exactly one, `|o` zero or one, and `o{` zero or more. `Dimensions` and `Destination` are not separate records: they are objects stored inside an item or a shipment, drawn as boxes only so their fields can be seen.
 
-- **`Item`**: one record per SKU, so the SKU is unique and serves as the item's id. It holds everything that is the same in every warehouse, which includes `unitCostUSD` and `status` by mae's answers to Q11 and Q12.
-- **`Warehouse`**: one record per warehouse with its own `id`, its `name` (the briefing's `WarehouseLocation`) and its `country`.
-- **`StockRecord`**: one record per item per warehouse, with its own `id`. It points at its item (`itemSku`) and its warehouse (`warehouseId`), and holds the stock: `stockQuantity` and `minStockThreshold`. This is the ProductId mae described: one code that names a SKU in one warehouse.
-- **`Shipment`** points at the stock it ships with one `stockRecordId`, in place of `sku` and `origin`. **`InventoryMovement`** says where stock came from and went to, in place of `sku` and `warehouse`: `fromStockRecordId` and `toStockRecordId` (mae, 2026-11-18). An Inbound movement has only a `to`, an Outbound only a `from`, a Transfer both (the same item in two different warehouses), and an Adjustment one of them. Each points at a stock record, which names both the item and the warehouse, so the warehouses are reached through it and are never stored twice. A shipment also points at its carrier by `carrierId` (improvement I1).
+## The records
+
+- **`Item`**: one per SKU, so the SKU is unique and is the item's id. It holds everything that is the same in every warehouse. By mae's answers that includes `unitCostUSD` (Q11) and `status` (Q12). A status per warehouse is improvement I5.
+- **`Warehouse`**: one per warehouse, with an id in the carriers' style (`WH-LA`, `WH-ZGZ`), its `name` (the briefing's `WarehouseLocation`) and its `country`.
+- **`StockRecord`**: one per item per warehouse. It holds the stock (`stockQuantity`, `minStockThreshold`). Its id is the SKU, a hyphen, then the warehouse id (Q13), so the same item can never have two records in one warehouse. SKUs contain hyphens too, so an id is split by matching the known warehouse id at its end. This is the ProductId mae described.
+- **`ShipmentRecord`**: a shipment, pointing at the stock it ships from (`stockRecordId`) and at its carrier by id (`carrierId`), so renaming a carrier changes nothing (improvement I1, now part of the design).
+- **`MovementRecord`**: an inventory movement, pointing at the stock it left (`fromStockRecordId`) and the stock it joined (`toStockRecordId`). An Inbound movement has only a `to`, an Outbound only a `from`, a Transfer both (the same item in two warehouses), and an Adjustment one of them.
+- **`Carrier`**: as in the briefing.
+
+Items and warehouses meet only through `StockRecord`, so there is no many-to-many link. `Carrier.operatesIn` and `Carrier.acceptsPriority` link carriers to countries and to priorities. Both are lists of fixed values that the briefing requires inside the carrier, so they stay as lists.
+
+## The brief's interfaces, as views
+
+The briefing's interfaces are kept in `src/types/models.ts` exactly as written, because they are graded field for field and every briefing function takes them. They are not stored. Functions build them from the records above, and the briefing's functions work on them unchanged.
+
+| Brief interface | Built from |
+|---|---|
+| `Product` | An `Item`, plus one of its `StockRecord`s for `stockQuantity` and `minStockThreshold`, plus that record's `Warehouse` `name` for `warehouse`. One `Product` for each item in each warehouse. |
+| `Shipment` | A `ShipmentRecord`, with `sku` and `origin` read through its stock record (the item's SKU and the warehouse's name), and `carrier` the carrier's `name` (Q1) or `null`. |
+| `InventoryMovement` | A `MovementRecord`, with `sku` read through its stock record, and `warehouse` the name of the warehouse it describes. For a Transfer, which warehouse that is remains open question Q14. |
+| `Carrier`, `Dimensions`, `Destination` | Unchanged. |
+
+A product in the views is named by its SKU and warehouse together (Q10). `toStockRecordId` builds the matching stock record id from them, and `parseStockRecordId` turns an id back into the two.
+
+### Editing the diagram
+
+The diagram is Mermaid code in this file, which GitHub draws (`docs/decisions.md`, "The Milestone 2 ERD is Mermaid in `erd.md`"). To try a change with a live preview, paste the block into https://mermaid.live. To make one, edit the block here or ask a Claude thread. When the diagram changes, the text and tables around it change in the same commit.
+
+## Allowed values
+
+Copied from the briefing's literal types.
+
+| Type | Values |
+|---|---|
+| `ProductCategory` | `"Fashion"`, `"Electronics"`, `"Cosmetics"`, `"Home"`, `"Other"` |
+| `WarehouseLocation` | `"Los Angeles"`, `"Zaragoza"` |
+| `ProductStatus` | `"Active"`, `"Low stock"`, `"Out of stock"`, `"Discontinued"` |
+| `Country` | `"United States"`, `"Spain"` |
+| `ShipmentPriority` | `"Standard"`, `"Express"`, `"Same-day"` |
+| `ShipmentStatus` | `"Pending"`, `"Assigned"`, `"In transit"`, `"Delivered"`, `"Failed"` |
+| `MovementType` | `"Inbound"`, `"Outbound"`, `"Transfer"`, `"Adjustment"` |
+
+## Validation rules
+
+The briefing's 14 rules, checked on the brief's interfaces (the views below). These are the only rules built first (plan D7). Proposed improvements come later, in plan WP8.
+
+| Entity | Rule |
+|---|---|
+| Product | `sku` must not be empty |
+| Product | `weightKg` must be > 0 and <= 100 |
+| Product | all dimensions must be > 0 and <= 200 |
+| Product | `stockQuantity` must be >= 0 |
+| Product | `minStockThreshold` must be >= 0 |
+| Product | `unitCostUSD` must be > 0 |
+| Shipment | `quantity` must be > 0 |
+| Shipment | `declaredValueUSD` must be > 0 |
+| Shipment | `destination.distanceKm` must be >= 0 |
+| Carrier | `baseRateUSD`, `ratePerKgUSD` and `ratePerKmUSD` must all be >= 0 |
+| Carrier | `avgDeliveryDays` must be > 0 |
+| Carrier | `onTimeRate` must be between 0 and 100 |
+| Carrier | `maxWeightKg` must be > 0 |
+| Carrier | `operatesIn` must contain at least 1 country |
+
+`InventoryMovement` has no rules in the briefing.
+
+## What the diagram does not decide
+
+The answers about function behaviour (Q2 to Q9) are in `docs/decisions.md`, and open questions are in `docs/open-questions.md`.
