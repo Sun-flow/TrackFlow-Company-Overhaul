@@ -50,5 +50,4 @@ WP1 of its plan, the package scaffold and data model, is built; the briefing's f
 
 ## Open questions
 
-- Q28 (WP5): does a rule over several fields give one error per field or one per rule? In
-  `docs/open-questions.md`; Q1 to Q27 are answered in `docs/decisions.md`. (2026-11-18)
+- None. Q1 to Q28 are answered in `docs/decisions.md`. (2026-11-18)

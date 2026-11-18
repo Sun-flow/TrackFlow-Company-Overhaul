@@ -38,7 +38,7 @@ The three validators check exactly the briefing's 14 rules ("Business Entities",
 
 Each rule is checked exactly as the briefing writes it. Where the words allow more than one reading, this is the one built:
 
-- **Q28, one message per field.** Rules 3 and 10 each cover three fields. Each field that fails gets its own message, naming it, so a product with two bad dimensions has two messages. This is the recommendation in `docs/open-questions.md`, Q28, built while mae decides.
+- **Q28, one message per field.** Rules 3 and 10 each cover three fields. Each field that fails gets its own message, naming it, so a product with two bad dimensions has two messages. mae chose this on 2026-11-18 (`docs/decisions.md`, "A validation rule over several fields gives one message per field that fails").
 - **"Between 0 and 100" includes both ends.** The `Carrier` interface describes `onTimeRate` as "(0-100)", and both 0% and 100% on time are real rates, so 0 and 100 pass.
 - **"Not empty" means no characters.** A SKU of spaces, such as `"   "`, has characters, so rule 1 passes it. Treating a blank SKU as empty is a candidate for WP8 (below).
 - **A value that is not a number fails every comparison.** `NaN > 0`, `NaN >= 0` and `NaN <= 100` are all false in JavaScript, so a `NaN` fails every numeric rule, and its message reads `(got NaN)`. Nothing extra is written for it: it is what the rule's own comparison does.
