@@ -20,7 +20,7 @@ WP1 to WP5 of its plan are built (2026-11-18). Milestone 1, the public website, 
   (2026-11-13)
 - The live site at https://sun-flow.github.io/TrackFlow-Company-Overhaul/ serves the same home page as
   `production`; its last deploy, for pull request #25, succeeded. (2026-11-13)
-- The warehouse logic's types check and its 972 tests pass, the views giving back the briefing's samples:
+- The warehouse logic's types check and its 1123 tests pass, the views giving back the briefing's samples:
   `(cd packages/warehouse-logic && pnpm typecheck && pnpm test)`. (2026-11-18)
 - WP3's collections filter, sort and group:
   `packages/warehouse-logic/tests/collections.test.ts`. (2026-11-18)
@@ -39,8 +39,8 @@ WP1 to WP5 of its plan are built (2026-11-18). Milestone 1, the public website, 
   #24: `git ls-remote origin Milestone-1` prints 34e5069. (2026-11-13)
 - All 39 items of Milestone 1's definition of done are rated done:
   `grep -A9 '^## Summary' docs/milestones/milestone-1/definition-of-done.md`. (2026-11-13)
-- The briefing's three validators enforce its 14 rules, every failing rule's message returned:
-  `(cd packages/warehouse-logic && node --test tests/validations.test.ts)`, 129 tests. (2026-11-18)
+- The briefing's validators enforce its 14 rules, and strict ones beside them (mae's departure) add
+  finite numbers and text patterns: `node --test "tests/validations*.test.ts"` in the package. (2026-11-18)
 
 ## Next
 
