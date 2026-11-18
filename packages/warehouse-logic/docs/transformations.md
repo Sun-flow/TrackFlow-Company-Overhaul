@@ -2,7 +2,7 @@
 
 What `src/utils/transformations.ts` exports (plan WP4): every function with its signature, what it returns for empty input, and a worked example. The briefing's eight functions keep the briefing's names and signatures exactly; the rest are the toolkit under them and the reports mae picked (plan D6, Q23, Q25). The package README links here.
 
-Every function is pure: it reads only its parameters, changes none of them and never throws. A function that returns entries returns the input's own objects, not copies.
+Every function is pure: it reads only its parameters, changes none of them and never throws. A function that returns entries returns the input's own objects, not copies. The result types named below (`CarrierScoreBreakdown`, `CarrierEvaluation`, `WarehouseSummary`, `WarehouseMovementTotals`) are exported from `transformations.ts` too.
 
 Every worked figure below is from the briefing's sample data, calculated by hand. "The sample shipment" is the briefing's `SH-2024-8821`: one Dell laptop (2.3 kg, fragile), Express, from Zaragoza to Madrid, 320 km.
 
@@ -15,13 +15,13 @@ They trust the data they are given, as the briefing's formulas do. A carrier wit
 | Function | Returns |
 |---|---|
 | `roundToTwoDecimals(value: number): number` | The value rounded half up to 2 decimals, by its decimal value and not its binary one (Q5, Q21). Every amount and score in this file is rounded with it. |
-| `removeFloatingPointNoise(value: number): number` | The value rounded to 15 significant digits, which drops what binary arithmetic adds at the far end: `0.3 * 100` is `30.000000000000004` in JavaScript, and this gives back `30`. |
+| `removeFloatingPointNoise(value: number): number` | The value rounded to 15 significant digits, which drops what binary arithmetic adds at the far end: `0.28 * 25` is `7.000000000000001` in JavaScript, and this gives back `7`. `NaN`, `Infinity` and `-Infinity` come back as they are. |
 
 `roundToTwoDecimals`:
 
 - JavaScript holds 35.55 × 1.3, which is 46.215 by hand, as 46.214999999999996, and `toFixed(2)` turns that into 46.21. `roundToTwoDecimals` first reads the value to 15 significant digits (46.2150000000000), then rounds half up: `roundToTwoDecimals(35.55 * 1.3)` is `46.22`. In the same way `roundToTwoDecimals(1.005)` is `1.01`.
 - A half goes up, toward positive infinity: `roundToTwoDecimals(2.345)` is `2.35` and `roundToTwoDecimals(-2.345)` is `-2.34`.
-- A value with 2 decimals or fewer comes back unchanged. `NaN`, `Infinity` and `-Infinity` come back as they are. The result is never `-0`.
+- A value with 2 decimals or fewer comes back unchanged. `NaN`, `Infinity` and `-Infinity` come back as they are. The result is never `-0`: `-0` and a tiny negative such as `-0.001` both give `0`.
 
 ## Generic blocks
 
@@ -33,7 +33,7 @@ They work on a list of any kind of entry. `valueOf` reads a number from an entry
 | `averageBy<Entry>(entries: readonly Entry[], valueOf: (entry: Entry) => number): number \| null` | The mean of `valueOf` over the entries, not rounded. | `null` |
 | `countOccurrences<Entry, Key>(entries: readonly Entry[], keyOf: (entry: Entry) => Key): Map<Key, number>` | How many entries have each key, as a `Map` whose keys are in the order first seen. A key can be any value. | An empty `Map` |
 | `countBy<Entry, Key extends string>(entries: readonly Entry[], keyOf: (entry: Entry) => Key, allKeys: readonly Key[]): Record<Key, number>` | How many entries have each key, as an object. Every key in `allKeys` is present, in that order, with `0` for a key no entry has (Q3). An entry whose key is not listed is still counted, under its own key after the listed ones, as `groupBy` in `collections.ts` keeps it. | Every listed key with `0` |
-| `countBy<Entry, Key extends string>(entries: readonly Entry[], keyOf: (entry: Entry) => Key): Partial<Record<Key, number>>` | The same without `allKeys`: only the keys the entries have. | `{}` |
+| `countBy<Entry, Key extends string>(entries: readonly Entry[], keyOf: (entry: Entry) => Key): Partial<Record<Key, number>>` | The same without `allKeys`: only the keys the entries have, in the order first seen. | `{}` |
 | `findMaximumBy<Entry>(entries: readonly Entry[], valueOf: (entry: Entry) => number): Entry \| null` | The entry with the largest value. When several tie, the first listed. | `null` |
 | `findMinimumBy<Entry>(entries: readonly Entry[], valueOf: (entry: Entry) => number): Entry \| null` | The entry with the smallest value. When several tie, the first listed. | `null` |
 
@@ -46,7 +46,7 @@ The Tech Lead's "auxiliary methods" (definition of done, M8).
 | Function | Returns |
 |---|---|
 | `calculateStockValue(product: Product): number` | `stockQuantity * unitCostUSD`, not rounded. The sample shoes: 45 × 35 = 1575. |
-| `calculateShipmentWeightKg(shipment: Shipment, product: Product): number` | `product.weightKg * shipment.quantity`, with floating-point noise removed (Q29). The sample shipment: 2.3 kg. A hundred of the sample perfume: exactly 30 kg. |
+| `calculateShipmentWeightKg(shipment: Shipment, product: Product): number` | `product.weightKg * shipment.quantity`, with floating-point noise removed (Q29). The sample shipment: 2.3 kg. Twenty-five units of a 0.28 kg product: exactly 7 kg, where JavaScript's `0.28 * 25` is `7.000000000000001`. |
 | `getPrioritySurchargeRate(priority: ShipmentPriority): number` | The briefing's surcharge as a fraction: `0` for Standard, `0.3` for Express, `0.6` for Same-day. |
 | `carrierOperatesInCountry(carrier: Carrier, country: Country): boolean` | Whether `carrier.operatesIn` has the country. |
 | `carrierCanCarryWeight(carrier: Carrier, weightKg: number): boolean` | Whether `weightKg <= carrier.maxWeightKg`. A weight equal to the limit passes. |
@@ -140,7 +140,7 @@ A minimum report: the carrier with the lowest cost for the shipment among all th
 | `calculateTotalInventoryValue(products: Product[]): number` | The sum of `stockQuantity * unitCostUSD`, rounded to 2 decimals once, after adding. The samples: 45 × 35 + 8 × 650 + 120 × 85 = 16975. | `0` |
 | `calculateAverageShipmentDistance(shipments: Shipment[]): number` | The mean of `destination.distanceKm`, rounded to 2 decimals. | `0` (Q2) |
 | `groupShipmentsByStatus(shipments: Shipment[]): Record<ShipmentStatus, Shipment[]>` | The shipments under their status. All five statuses are keys, in the briefing's order, with `[]` for a status no shipment has (Q3). Each group keeps the shipments' order. Built on `groupBy` in `collections.ts`. | Every status with `[]` |
-| `findTopCarriers(shipments: Shipment[], topN: number): Array<{ carrier: string; count: number }>` | The `topN` carrier names that appear on the most shipments, with their counts, the highest count first. Shipments whose `carrier` is `null` are ignored. Carriers with equal counts stay in the order first seen (Q8). Fewer than `topN` carriers gives all of them. | `[]` |
+| `findTopCarriers(shipments: Shipment[], topN: number): Array<{ carrier: string; count: number }>` | The `topN` carrier names that appear on the most shipments, with their counts, the highest count first. Shipments whose `carrier` is `null` are ignored; every other shipment counts, whatever its status (the briefing's "assigned shipments" is read as shipments with a carrier assigned, as its next line says). Carriers with equal counts stay in the order first seen (Q8). Fewer than `topN` carriers gives all of them. | `[]` |
 
 `findTopCarriers` returns `[]` for a `topN` of 0 or less (Q8) and for `NaN`. A `topN` with a fraction counts as its whole part: 2.5 gives the top 2.
 
