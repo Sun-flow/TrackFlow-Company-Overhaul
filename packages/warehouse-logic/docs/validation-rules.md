@@ -40,7 +40,7 @@ Each rule is checked exactly as the briefing writes it. Where the words allow mo
 
 - **Q28, one message per field.** Rules 3 and 10 each cover three fields. Each field that fails gets its own message, naming it, so a product with two bad dimensions has two messages. mae chose this on 2026-11-18 (`docs/decisions.md`, "A validation rule over several fields gives one message per field that fails").
 - **"Between 0 and 100" includes both ends.** The `Carrier` interface describes `onTimeRate` as "(0-100)", and both 0% and 100% on time are real rates, so 0 and 100 pass.
-- **"Not empty" means no characters.** A SKU of spaces, such as `"   "`, has characters, so rule 1 passes it. Treating a blank SKU as empty is a candidate for WP8 (below).
+- **"Not empty" means no characters.** A SKU of spaces, such as `"   "`, has characters, so rule 1 passes it. The strict validators (below) treat a blank SKU as empty.
 - **A value that is not a number fails every comparison.** `NaN > 0`, `NaN >= 0` and `NaN <= 100` are all false in JavaScript, so a `NaN` fails every numeric rule, and its message reads `(got NaN)`. Nothing extra is written for it: it is what the rule's own comparison does.
 - **The types do the rest.** The validators take the briefing's interfaces, so the type checker already rules out a missing field or a string where a number belongs. Data that arrives untyped, such as JSON from a form, is WP8's.
 
@@ -60,11 +60,50 @@ The validators are built from small, generic functions in the same file, which l
 | `toValidationResult(errors)` | `{ valid: errors.length === 0, errors }` |
 | `productRules(product)`, `shipmentRules(shipment)`, `carrierRules(carrier)` | Every check's outcome for one entity, in the order of the table above. A validator is `toValidationResult(collectErrors(productRules(product)))`, and so on |
 
+## The strict validators
+
+`validateProductStrict`, `validateShipmentStrict` and `validateCarrierStrict` sit beside the briefing's validators, which stay exactly as above. mae approved them on 2026-11-18 (`docs/decisions.md`, "Stricter validators beside the brief's: clean SKUs, finite numbers, text patterns"). They return the same `{ valid, errors }` and keep every briefing rule, with these changes:
+
+- **One message per field**, listed in the order the interface lists its fields. A field's first failing check gives its message, and its later checks are not run.
+- **Every number must be finite** (`Number.isFinite`), checked before the briefing's rule for that field: `<field> must be a finite number (got X)`. So `Infinity` and `NaN` give this message, not the briefing's.
+- **Text is checked as stored.** A value that is empty or only spaces gives `<field> must not be empty`. Any other value that breaks its pattern gives `<field> must be <description> (got "<value>")`, the value written as a JSON string. A value with spaces at its ends fails its pattern: clean it first.
+
+| Field | Pattern | Message when it fails |
+|---|---|---|
+| `Product.sku`, `Shipment.sku` | `^[A-Z0-9]+(-[A-Z0-9]+)*$` | `sku must be letters and digits in groups joined by single hyphens (got "...")` |
+| `Shipment.id`, `Carrier.id` | `^[A-Z0-9]+(-[A-Z0-9]+)*$` | `id must be letters and digits in groups joined by single hyphens (got "...")` |
+| `Product.name`, `Carrier.name` | Starts and ends with a character that is neither a space nor a control character, with no control character inside | `name must have no space at either end and no control characters (got "...")` |
+| `Shipment.carrier` | `null`, or the name rule above | `carrier must have no space at either end and no control characters (got "...")`, or `carrier must not be empty` for `""` or spaces |
+| `destination.city` | `^\p{L}[\p{L}\p{M} .'-]*\p{L}$` (Unicode) | `destination.city must be letters, with spaces, apostrophes, periods or hyphens inside (got "...")` |
+| `destination.postalCode`, `country` "United States" | `^\d{5}(-\d{4})?$` | `destination.postalCode must be a US ZIP code, 5 digits or 5 digits, a hyphen and 4 more (got "...")` |
+| `destination.postalCode`, `country` "Spain" | `^(0[1-9]\|[1-4]\d\|5[0-2])\d{3}$` | `destination.postalCode must be a Spanish postal code, 5 digits starting 01 to 52 (got "...")` |
+| `Shipment.createdAt` | A `Date` whose time is a number | `createdAt must be a real date (got Invalid Date)` |
+
+The order of the fields checked:
+
+- Product: `sku`, `name`, `weightKg`, `dimensions.lengthCm`, `dimensions.widthCm`, `dimensions.heightCm`, `stockQuantity`, `minStockThreshold`, `unitCostUSD`.
+- Shipment: `id`, `sku`, `quantity`, `destination.city`, `destination.postalCode`, `destination.distanceKm`, `declaredValueUSD`, `carrier`, `createdAt`.
+- Carrier: `id`, `name`, `operatesIn`, `baseRateUSD`, `ratePerKgUSD`, `ratePerKmUSD`, `avgDeliveryDays`, `onTimeRate`, `maxWeightKg`.
+
+### Cleaning what arrives
+
+The validators never change a value. Data from outside, such as a form or a file, is cleaned first:
+
+| Function | Returns |
+|---|---|
+| `cleanText(raw)` | `raw` without spaces at either end, or `null` when nothing is left |
+| `cleanSku(raw)` | `cleanText(raw)` in upper case (`normalizeSku`), or `null` |
+
+`cleanSku("  shoe-blk-42 ")` is `"SHOE-BLK-42"`, which passes; `cleanSku("   ")` is `null`. A `null` SKU can't be stored in the briefing's `Product`, whose `sku` is a string, so the caller treats it as a missing SKU.
+
+### Their building blocks
+
+`isFiniteNumber(value)`, `isCode(value)` (the SKU and id pattern), `isCleanName(value)`, `isCityName(value)`, `isPostalCode(postalCode, country)`, `isRealDate(date)`, and `strictProductRules`, `strictShipmentRules` and `strictCarrierRules`, which list one outcome per field in the order above.
+
 ## Noticed while building, for WP8
 
 These are not built. They follow from the rules as written and are listed so WP8's review can weigh them:
 
-- A blank SKU (`"   "`) passes rule 1.
-- `Infinity` passes every rule that has no upper bound: `stockQuantity`, `minStockThreshold`, `unitCostUSD`, `quantity`, `declaredValueUSD`, `distanceKm`, the three rates, `avgDeliveryDays` and `maxWeightKg`.
+- A blank SKU (`"   "`) passes rule 1, and `Infinity` passes every rule that has no upper bound. The strict validators close both.
 - A fractional `quantity` or `stockQuantity`, such as 0.5 units, passes. WP8 already lists whole-number quantities.
 - `operatesIn: ["Spain", "Spain"]` passes rule 14, and the list isn't checked against `countries` for data that arrives untyped. WP8 already lists literal values on their lists.

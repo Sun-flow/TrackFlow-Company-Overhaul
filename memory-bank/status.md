@@ -37,8 +37,8 @@ WP1 to WP3 and WP5 of its plan are built; WP4 is next (2026-11-18). Milestone 1,
   #24: `git ls-remote origin Milestone-1` prints 34e5069. (2026-11-13)
 - All 39 items of Milestone 1's definition of done are rated done:
   `grep -A9 '^## Summary' docs/milestones/milestone-1/definition-of-done.md`. (2026-11-13)
-- The briefing's three validators enforce its 14 rules, every failing rule's message returned:
-  `(cd packages/warehouse-logic && node --test tests/validations.test.ts)`, 129 tests. (2026-11-18)
+- The briefing's validators enforce its 14 rules, and strict ones beside them (mae's departure) add
+  finite numbers and text patterns: `node --test "tests/validations*.test.ts"` in the package. (2026-11-18)
 
 ## Next
 
