@@ -102,7 +102,7 @@ In Milestone 2 a transfer is two movements with nothing linking them: an Out wri
 
 ### Manage inputs and parse them into valid formats
 
-The strict validators check data as it is stored, and `cleanText` and `cleanSku` only trim, upper-case and turn a blank into `null`. A fuller input layer would parse what people and files send into the stored formats, or say exactly what to fix: collapse repeated separators in a city name (`Los  Angeles`, `Winston--Salem`, which the approved city pattern still lets through), normalise postal codes and ids, and read numbers and dates that arrive as text.
+The strict validators check data as it is stored, and `cleanText` and `cleanSku` only trim, upper-case and turn a blank into `null`. A fuller input layer would parse what people and files send into the stored formats, or say exactly what to fix: collapse repeated separators in a city name (`Los  Angeles`, `Winston--Salem`, which the approved city pattern still lets through), normalise postal codes and ids, and read numbers and dates that arrive as text. `parseDate` (WP8 R10) reads ISO 8601 only; mae suggested a fuller date reader later, such as one of Python's date parsers (2026-11-19).
 
 - **Source:** mae, 2026-11-18, while reviewing the strict validators (PR #40)
 - **Target:** ?

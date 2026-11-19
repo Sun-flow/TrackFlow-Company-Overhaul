@@ -81,9 +81,9 @@ The validators are built from small, generic functions in the same file, which l
 
 The order of the fields checked:
 
-- Product: `sku`, `name`, `weightKg`, `dimensions.lengthCm`, `dimensions.widthCm`, `dimensions.heightCm`, `stockQuantity`, `minStockThreshold`, `unitCostUSD`.
-- Shipment: `id`, `sku`, `quantity`, `destination.city`, `destination.postalCode`, `destination.distanceKm`, `declaredValueUSD`, `carrier`, `createdAt`.
-- Carrier: `id`, `name`, `operatesIn`, `baseRateUSD`, `ratePerKgUSD`, `ratePerKmUSD`, `avgDeliveryDays`, `onTimeRate`, `maxWeightKg`.
+- Product: `sku`, `name`, `category`, `weightKg`, `dimensions.lengthCm`, `dimensions.widthCm`, `dimensions.heightCm`, `warehouse`, `stockQuantity`, `minStockThreshold`, `unitCostUSD`, `status` (`category`, `warehouse` and `status` since WP8).
+- Shipment: `id`, `sku`, `quantity`, `origin`, `destination.city`, `destination.country`, `destination.postalCode`, `destination.distanceKm`, `priority`, `declaredValueUSD`, `carrier`, `status`, `createdAt` (`origin`, the country, `priority` and `status` since WP8).
+- Carrier: `id`, `name`, `operatesIn`, `baseRateUSD`, `ratePerKgUSD`, `ratePerKmUSD`, `avgDeliveryDays`, `onTimeRate`, `maxWeightKg`, `acceptsPriority` (since WP8).
 
 ### Cleaning what arrives
 
@@ -100,10 +100,93 @@ The validators never change a value. Data from outside, such as a form or a file
 
 `isFiniteNumber(value)`, `isCode(value)` (the SKU and id pattern), `isCleanName(value)`, `isCityName(value)`, `isPostalCode(postalCode, country)`, `isRealDate(date)`, and `strictProductRules`, `strictShipmentRules` and `strictCarrierRules`, which list one outcome per field in the order above.
 
+## WP8's improvements
+
+mae approved these from `docs/validation-review.md` on 2026-11-19: R1, R2, R4, R5, R7, R13 and R14 first (`docs/decisions.md`, "WP8's first validation improvements"), then R3, R6, R8, R9's no-carrier flag, R10's `parseDate` and R12 ("WP8's second validation improvements"). The briefing's validators are unchanged. Tests: `tests/validations-improved.test.ts`.
+
+### In the strict validators
+
+| # | Rule | Message when it fails |
+|---|---|---|
+| R1 | `destination.country` is on the `countries` list. When it isn't, the postal code is not checked, since there is no format for it, and the validator no longer throws. | `destination.country must be one of "United States", "Spain" (got "France")` |
+| R2 | A value of the wrong kind is quoted as it arrived, and a `createdAt` that is not a `Date` is a message, not a crash. | `weightKg must be a finite number (got "5")`, `createdAt must be a real date (got "2024-03-15")` |
+| R5 | `stockQuantity`, `minStockThreshold` and a shipment's `quantity` are whole numbers, checked after "finite" and before the briefing's rule. | `stockQuantity must be a whole number (got 0.5)` |
+| R7 | A SKU does not end in a warehouse id, by Q13's format (`-WH-` and one group), checked after the SKU's pattern. | `sku must not end in a warehouse id such as -WH-LA (got "SHOE-WH-LA")` |
+| R3 | Every literal value is on its list in `models.ts`: a product's `category`, `warehouse` and `status`; a shipment's `origin`, `priority` and `status`; each entry of `operatesIn` and `acceptsPriority`, which also list no value twice. | `category must be one of "Fashion", "Electronics", "Cosmetics", "Home", "Other" (got "Toys")`, `operatesIn must list only "United States", "Spain" (got "France")`, `operatesIn must not list "Spain" twice` |
+| R6 | `acceptsPriority` holds at least one priority. | `acceptsPriority must contain at least 1 priority` |
+| R8 | `unitCostUSD` and `declaredValueUSD` are in whole cents (`roundToTwoDecimals(value) === value`), checked after "finite" and before the briefing's rule. The carrier rates are not, since a per-km rate can need finer steps. | `unitCostUSD must be in whole cents (got 19.999)` |
+
+With these, the strict rules give twelve outcomes for a product, thirteen for a shipment and ten for a carrier, one per field checked, in the interface's order.
+
+The allowed values in a message are read from the lists in `models.ts`, so a value added to a list shows in its message at once.
+
+### Movements
+
+`validateInventoryMovementStrict(movement)` (R13), one message per field, in this order:
+
+| Field | Rule | Message when it fails |
+|---|---|---|
+| `id` | the code pattern | `id must be letters and digits in groups joined by single hyphens (got "...")`, or `id must not be empty` |
+| `sku` | the code pattern, then R7 | as for a product's SKU |
+| `warehouse` | on `warehouseLocations` | `warehouse must be one of "Los Angeles", "Zaragoza" (got "Madrid")` |
+| `type` | on `movementTypes` | `type must be one of "Inbound", "Outbound", "Transfer", "Adjustment" (got "Return")` |
+| `quantity` | finite, whole, above 0 (the direction says which way) | `quantity must be > 0 (got -5)` |
+| `reason` | not blank, the name pattern | `reason must not be empty` |
+| `timestamp` | a real date | `timestamp must be a real date (got Invalid Date)` |
+
+`validateMovementRecord(record, warehouses)` (R14) checks a stored `MovementRecord`, one message per field: `movementId` (the code pattern); `stockRecordId`, which must end in one of the warehouses given (`stockRecordId must end in a known warehouse id, -WH-LA or -WH-ZGZ (got "...")`); `direction`, which must be on its list and allowed for the type by `movementDirectionsByType` (`direction must be "In" for an Inbound (got "Out")`); `shipmentId`, which an Outbound must have (`shipmentId must name the shipment an Outbound left for (got null)`) and no other type may (`shipmentId must be null except on an Outbound (got "...")`); then `type`, `quantity`, `reason` and `timestamp` as above. A type not on its list gets its own message, and the direction and shipment id are not checked against it.
+
+### Cleaning priorities (R6)
+
+`cleanPriority(raw, field = "priority")` trims a priority and keeps it when it is on `shipmentPriorities`; an empty or unknown one becomes "Standard". `cleanAcceptsPriority(raw)` cleans a carrier's list entry by entry and keeps each priority once; an empty list, or anything that is not a list, becomes `["Standard"]`. Both return `{ value, warnings }`, a warning for each change, since a priority changes a price: `priority "Overnight" is not a priority, so it was set to "Standard"`, `acceptsPriority listed "Express" 2 times, so the repeat was dropped`. Nothing else is read in: "express" is not "Express".
+
+### Reading a date (R10)
+
+`parseDate(raw, field = "date")` returns `{ date, error: null }` for a real `Date`, or for ISO 8601 text, the form JSON gives a `Date`: `"2024-03-15"` (midnight UTC) or a time with its zone, `"2024-03-15T10:30:00Z"`, `"2024-03-15T10:30:00.123+02:00"`. Otherwise `{ date: null, error }`, and it never throws:
+
+| Given | Error |
+|---|---|
+| `Invalid Date` | `date must be a real date (got Invalid Date)` |
+| A day or time the calendar doesn't have | `date is not a real calendar date (got "2024-02-30")` |
+| A time with no zone | `date needs a time zone, such as Z or +01:00 (got "2024-03-15T10:30:00")` |
+| Other text | `date must be ISO 8601 text such as "2024-03-15" or "2024-03-15T10:30:00Z" (got "15/03/2024")` |
+| Anything else | `date must be a Date or ISO 8601 text (got number 1710460800000)` |
+
+### A shipment that needs a carrier (R9)
+
+`shipmentStatusWarnings(shipment)` gives `status is "In transit" but no carrier is assigned` when the status is "Assigned", "In transit" or "Delivered" and `carrier` is `null`. "Pending" and "Failed" may have a carrier or not. It is a warning: `validateShipmentInput` adds it after the shape's warnings, and the shipment stays valid.
+
+### Lists of records (R12)
+
+`validateProductList`, `validateShipmentList` and `validateCarrierList` take `unknown` and return `{ valid, errors, warnings }`. They never throw. Each record is checked by its input validator, with its messages prefixed by its position (`products[1]: weightKg must be > 0 and <= 100 (got 0)`). Then come the list's own errors:
+
+| Found | Error |
+|---|---|
+| Not a list | `products must be a list (got null)` |
+| A SKU listed twice in one warehouse | `SHOE-BLK-42 in Los Angeles is listed 2 times` |
+| One SKU's products disagreeing on what its item stores once: name, category, weight, each dimension, unit cost, fragility | `SHOE-BLK-42 has unitCostUSD 35 in Los Angeles and 37 in Zaragoza` |
+| Discontinued in one warehouse only | `SHOE-BLK-42 is discontinued in Zaragoza but not in Los Angeles` |
+| A shipment or carrier id listed twice | `shipment SH-2024-8821 is listed 2 times`, `carrier CAR-UPS is listed 2 times` |
+
+### Untyped input
+
+`validateProductInput`, `validateShipmentInput`, `validateCarrierInput` and `validateInventoryMovementInput` take `unknown` and return `{ valid, errors, warnings }`. They never throw. They check the shape first, with `checkShape` and the record's shape (`productShape` and the others), and run the strict rules only when the shape holds:
+
+| Found | Kind | Message |
+|---|---|---|
+| Not an object | error | `product must be an object (got null)`; `(got a list)`, `(got text "abc")`, `(got a Date)` |
+| A required field missing or `undefined` | error | `dimensions is required` |
+| The wrong kind of value | error | `weightKg must be a number (got text "5")`, `isFragile must be true or false (got text "yes")`, `createdAt must be a Date (got text "2024-03-15")`, `sku must be text (got null)` |
+| A list entry of the wrong kind | error | `acceptsPriority[1] must be text (got number 5)` |
+| A field the shape doesn't list | warning | `colour is not a field of a product, so it is kept but not checked` |
+| An optional field missing | warning | `note is optional and missing` (no briefing field is optional yet) |
+
+Nothing is converted: `"5"` stays an error, since parsing input is parked in `docs/FUTURE_WORK.md`. `carrier` must be present and may be `null`. `isValidProduct(value)` and the other three guards return the result's `valid`; `assertValidProduct(value)` and the other three return when it is valid and otherwise throw a `ValidationError` whose `errors` lists every error, on purpose and never as a crash.
+
 ## Noticed while building, for WP8
 
 These are not built. They follow from the rules as written and are listed so WP8's review can weigh them:
 
 - A blank SKU (`"   "`) passes rule 1, and `Infinity` passes every rule that has no upper bound. The strict validators close both.
-- A fractional `quantity` or `stockQuantity`, such as 0.5 units, passes. WP8 already lists whole-number quantities.
-- `operatesIn: ["Spain", "Spain"]` passes rule 14, and the list isn't checked against `countries` for data that arrives untyped. WP8 already lists literal values on their lists.
+- A fractional `quantity` or `stockQuantity`, such as 0.5 units, passes. The strict validators refuse it since WP8 (R5).
+- `operatesIn: ["Spain", "Spain"]` passes rule 14, and the list isn't checked against `countries` for data that arrives untyped. The strict validators refuse both since WP8 (R3).

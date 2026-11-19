@@ -35,8 +35,9 @@ WP1 to WP7 of its plan are built (2026-11-19). Milestone 1, the public website, 
   #24: `git ls-remote origin Milestone-1` prints 34e5069. (2026-11-13)
 - All 39 items of Milestone 1's definition of done are rated done:
   `grep -A9 '^## Summary' docs/milestones/milestone-1/definition-of-done.md`. (2026-11-13)
-- The briefing's validators enforce its 14 rules, and strict ones beside them (mae's departure) add
-  finite numbers and text patterns: `node --test "tests/validations*.test.ts"` in the package. (2026-11-18)
+- The briefing's validators enforce its 14 rules; beside them, mae's departures add strict rules,
+  movement rules and input validators that never throw: `node --test "tests/validations*.test.ts"` in
+  the package. (2026-11-19)
 
 ## Next
 
@@ -47,8 +48,7 @@ WP1 to WP7 of its plan are built (2026-11-19). Milestone 1, the public website, 
 - The testing kit's hooks run in a project thread only on the TrackFlow-Company-Overhaul cloud
   environment, whose setup script runs `scripts/wire-cloud-hooks.py`; on Default none run. Confirmed in a
   fresh thread on that environment. (2026-11-13)
-- `validateShipmentStrict` throws on a country that is not on its list. (2026-11-19)
 
 ## Open questions
 
-- Q34: whether mock data gets movements, for the test page: `docs/open-questions.md`. (2026-11-19)
+- What each shipment status means: `docs/open-questions.md`, "Waiting elsewhere". (2026-11-19)
