@@ -7,7 +7,7 @@ work file, not here.
 
 Current milestone: Milestone 2, a TypeScript logic layer. Its brief, plan, definition of done and ERD
 are in `docs/milestones/milestone-2/` and `packages/warehouse-logic/docs/`, agreed by mae and reviewed.
-WP1 to WP6 of its plan are built (2026-11-19). Milestone 1, the public website, is finished.
+WP1 to WP7 of its plan are built (2026-11-19). Milestone 1, the public website, is finished.
 
 ## Works
 
@@ -20,7 +20,7 @@ WP1 to WP6 of its plan are built (2026-11-19). Milestone 1, the public website, 
   (2026-11-13)
 - The live site at https://sun-flow.github.io/TrackFlow-Company-Overhaul/ serves the same home page as
   `production`; its last deploy, for pull request #25, succeeded. (2026-11-13)
-- The warehouse logic's types check and its 1463 tests pass, WP1 to WP6:
+- The warehouse logic's types check and its 1765 tests pass, WP1 to WP7:
   `(cd packages/warehouse-logic && pnpm typecheck && pnpm test)`. (2026-11-19)
 - `pnpm demo` prints each briefing function on the samples, and the test page works from a fresh
   clone: `npx --yes http-server packages/warehouse-logic -p 3000 -c-1`, then `/src/index.html`.
@@ -40,7 +40,7 @@ WP1 to WP6 of its plan are built (2026-11-19). Milestone 1, the public website, 
 
 ## Next
 
-1. Phase 4 of `docs/milestones/milestone-2/plan.md`: WP7, WP8 and WP8b, then WP9. (2026-11-19)
+1. Phase 4 of `docs/milestones/milestone-2/plan.md`: WP8 and WP8b, then WP9. (2026-11-19)
 
 ## Known problems
 

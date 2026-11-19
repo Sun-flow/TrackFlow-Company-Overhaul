@@ -177,7 +177,7 @@ The briefing picks UPS, which does not offer Same-day. The customer was promised
 
 The briefing picks the mock carrier for a fragile laptop. Country and weight as the only must-haves do not fix this one either.
 
-**F5. It fails two rules, or three, and still wins.** Mock shipment: 20 of the sample laptops (2.3 × 20 = 46 kg), Zaragoza to Madrid, 320 km.
+**F5. It fails two rules, or three, and still wins.** Mock shipment: 20 of the sample laptops (2.3 × 20 = 46 kg), Zaragoza to Spain, 320 km.
 
 | Priority | UPS (United States only, limit 30 kg) | SEUR (limit 25 kg) | DHL Express | The briefing picks |
 |---|---|---|---|---|
@@ -307,7 +307,7 @@ The same cases under the briefing, under D4 as agreed (CS1 (a)), and under the r
 | F2 | 40 shoes (32 kg), Express, within the United States | UPS, $62.92 ✗ | DHL Express, $111.80 | DHL Express, $111.80 |
 | F3 | 1 pair of shoes, Same-day, within the United States | UPS, $11.14 ✗ | UPS, $11.14 ✗ | DHL Express, $24.96 |
 | F4 | Sample shipment, with the mock carrier that does not handle fragile | Mock carrier, $23.53 ✗ | Mock carrier, $23.53 ✗ | SEUR, $46.22 |
-| F5 | 20 laptops (46 kg), Express, Zaragoza to Madrid | UPS, $99.06 ✗ | DHL Express, $176.80 | DHL Express, $176.80 |
+| F5 | 20 laptops (46 kg), Express, Zaragoza to Spain | UPS, $99.06 ✗ | DHL Express, $176.80 | DHL Express, $176.80 |
 | F5 | The same, Same-day | SEUR, $161.76 ✗ | DHL Express, $217.60 | DHL Express, $217.60 |
 | F6 | 1 pair of shoes, Express, Los Angeles to Spain | UPS, $592.75 ✗ | SEUR, $946.01 ✗ (cannot collect in Los Angeles) | DHL Express, $1,187.68 |
 | F7 | 100 shoes (80 kg), Standard, within the United States | UPS, $106.00 ✗ | none | none, with each carrier's reason |
@@ -326,7 +326,7 @@ mae agreed to this review on 2026-11-19, and the code was built that day. It cal
 
 - Four functions in `src/utils/transformations.ts`: `findShipmentOriginCountry`, `isCarrierEligibleForShipment`, `filterEligibleCarriers` and `selectBestEligibleCarrier`. Their reference, with twelve worked examples, is `docs/transformations.md`, "Must-have carrier selection".
 - One question came out of building it, Q35: the origin's warehouse is not in the list of warehouses given. mae's answer: no carrier is picked (`docs/decisions.md`).
-- Medium risk tier, as for WP4 (plan D9): `tests/carrier-selection-improved.test.ts` was written from this document and the reference before the code, `tests/carrier-selection-improved.independent.test.ts` was written from them in a separate context, and a fresh-context review followed.
+- Medium risk tier, as for WP4 (plan D9): `tests/carrier-selection-improved.test.ts` was written from this document and the reference before the code, `tests/carrier-selection-improved.independent.test.ts` was written from them in a separate context, and a fresh-context review followed. The review found one gap, an origin that only resembles a warehouse's name, which both files now cover.
 - The new test files leave the briefing's tests untouched. For each worked example they assert the briefing's result and the new result side by side, with the expected values worked by hand.
 - What is not built is parked in `docs/FUTURE_WORK.md`.
 

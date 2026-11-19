@@ -52,7 +52,8 @@ export const mockCarrierWithoutFragileHandling: Carrier = {
 
 /**
  * Mock carrier B (docs/transformations.md): always on time, and for a fragile Same-day shipment
- * inside Spain it fails the country, the priority and fragile. The briefing's score is exactly 50.
+ * inside Spain it fails four must-haves: the origin's country, the destination's country, the
+ * priority and fragile. The briefing's score is exactly 50.
  */
 export const mockCarrierAlwaysOnTime: Carrier = {
   id: "MOCK-CAR-B",

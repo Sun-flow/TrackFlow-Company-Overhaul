@@ -140,7 +140,17 @@ describe("findShipmentOriginCountry: the country of the warehouse a shipment lea
     assert.equal(findShipmentOriginCountry(lowerCaseOrigin, sampleWarehouses), null);
   });
 
-  test("it changes neither the shipment nor the warehouses", () => {
+  test("the name must match exactly: an origin that only resembles a warehouse's name is not found", () => {
+    // MOCK origins, data built wrong, which the type would refuse: each contains, starts, shortens or
+    // pads the name "Zaragoza", or is empty. Added after the fresh-context review, which found that a
+    // lenient match (starts with, contains, trimmed) passed every earlier test.
+    for (const origin of ["Zaragoza Norte", "Nueva Zaragoza", "Zara", " Zaragoza", "Zaragoza ", ""]) {
+      const resembling = buildMockShipment({ origin: origin as WarehouseLocation });
+      assert.equal(findShipmentOriginCountry(resembling, sampleWarehouses), null, `origin "${origin}"`);
+    }
+  });
+
+  test("findShipmentOriginCountry changes neither its shipment nor its warehouses", () => {
     assertLeavesUnchanged([sampleShipment, sampleWarehouses], () =>
       findShipmentOriginCountry(sampleShipment, sampleWarehouses),
     );
@@ -159,7 +169,7 @@ describe("isCarrierEligibleForShipment: the five must-haves (CS1, CS2, CS3)", ()
   const shipment = buildMockShipment();
   const carrier = buildMockCarrier();
 
-  test("a carrier that meets all five is eligible", () => {
+  test("a carrier that meets all five must-haves is eligible", () => {
     assert.equal(isCarrierEligibleForShipment(carrier, shipment, product, sampleWarehouses), true);
   });
 
@@ -172,7 +182,7 @@ describe("isCarrierEligibleForShipment: the five must-haves (CS1, CS2, CS3)", ()
       assert.equal(isCarrierEligibleForShipment(carrier, fromLosAngeles, product, sampleWarehouses), false);
     });
 
-    test("a carrier in both countries is eligible", () => {
+    test("from the United States to Spain, a carrier in both countries is eligible", () => {
       const inBoth = buildMockCarrier({ operatesIn: ["Spain", "United States"] });
       assert.equal(isCarrierEligibleForShipment(inBoth, fromLosAngeles, product, sampleWarehouses), true);
     });
@@ -188,7 +198,7 @@ describe("isCarrierEligibleForShipment: the five must-haves (CS1, CS2, CS3)", ()
       assert.equal(isCarrierEligibleForShipment(carrier, toUnitedStates, product, sampleWarehouses), false);
     });
 
-    test("a carrier in both countries is eligible", () => {
+    test("from Spain to the United States, a carrier in both countries is eligible", () => {
       const inBoth = buildMockCarrier({ operatesIn: ["United States", "Spain"] });
       assert.equal(isCarrierEligibleForShipment(inBoth, toUnitedStates, product, sampleWarehouses), true);
     });
@@ -264,6 +274,13 @@ describe("isCarrierEligibleForShipment: the five must-haves (CS1, CS2, CS3)", ()
       const everywhere = buildMockCarrier({ operatesIn: ["United States", "Spain"] });
       assert.equal(isCarrierEligibleForShipment(everywhere, shipment, product, [losAngeles]), false);
     });
+
+    test("an origin that only resembles a warehouse's name: no carrier is eligible", () => {
+      // MOCK origin, data built wrong: "Zaragoza Norte" is not the name of a warehouse in the list.
+      const everywhere = buildMockCarrier({ operatesIn: ["United States", "Spain"] });
+      const resembling = buildMockShipment({ origin: "Zaragoza Norte" as WarehouseLocation });
+      assert.equal(isCarrierEligibleForShipment(everywhere, resembling, product, sampleWarehouses), false);
+    });
   });
 
   test("reliability is not a must-have: a carrier that is never on time is still eligible (CS5)", () => {
@@ -276,7 +293,7 @@ describe("isCarrierEligibleForShipment: the five must-haves (CS1, CS2, CS3)", ()
     assert.equal(isCarrierEligibleForShipment(slowAndCostly, shipment, product, sampleWarehouses), true);
   });
 
-  test("a carrier that fails every must-have is not eligible", () => {
+  test("a carrier that fails every must-have at once is not eligible", () => {
     const failsAll = buildMockCarrier({
       operatesIn: [],
       maxWeightKg: 1,
@@ -286,7 +303,7 @@ describe("isCarrierEligibleForShipment: the five must-haves (CS1, CS2, CS3)", ()
     assert.equal(isCarrierEligibleForShipment(failsAll, shipment, product, sampleWarehouses), false);
   });
 
-  test("it changes none of its parameters", () => {
+  test("isCarrierEligibleForShipment changes none of its parameters", () => {
     assertLeavesUnchanged([carrier, shipment, product, sampleWarehouses], () =>
       isCarrierEligibleForShipment(carrier, shipment, product, sampleWarehouses),
     );
@@ -513,22 +530,24 @@ const workedExamples: WorkedExample[] = [
 ];
 
 describe("the worked examples: the briefing's selectBestCarrier beside selectBestEligibleCarrier", () => {
-  for (const example of workedExamples) {
+  for (const [index, example] of workedExamples.entries()) {
+    // Each test's name carries its example's number, so no two tests share a name.
+    const label = `example ${String(index + 1)}`;
     describe(example.name, () => {
-      test("the briefing's selection is unchanged", () => {
+      test(`${label}: the briefing's selection is unchanged`, () => {
         const best = selectBestCarrier(example.carriers, example.shipment, example.product);
         assert.deepEqual(best, example.briefing);
         assert.equal(best?.carrier, example.briefing?.carrier);
       });
 
-      test("the eligible carriers, in the carriers' order", () => {
+      test(`${label}: the eligible carriers, in the carriers' order`, () => {
         assertSameCarriers(
           filterEligibleCarriers(example.carriers, example.shipment, example.product, sampleWarehouses),
           example.eligible,
         );
       });
 
-      test("each carrier's eligibility, one by one", () => {
+      test(`${label}: each carrier's eligibility, one by one`, () => {
         for (const carrier of example.carriers) {
           assert.equal(
             isCarrierEligibleForShipment(carrier, example.shipment, example.product, sampleWarehouses),
@@ -538,7 +557,7 @@ describe("the worked examples: the briefing's selectBestCarrier beside selectBes
         }
       });
 
-      test("the must-have selection", () => {
+      test(`${label}: the must-have selection`, () => {
         const best = selectBestEligibleCarrier(
           example.carriers,
           example.shipment,
@@ -550,7 +569,7 @@ describe("the worked examples: the briefing's selectBestCarrier beside selectBes
         assert.equal(best?.carrier, example.mustHave?.carrier);
       });
 
-      test("the must-have selection does not depend on the order of the carriers", () => {
+      test(`${label}: the must-have selection does not depend on the order of the carriers`, () => {
         // No example has two eligible carriers on the same cost, so the order cannot decide.
         const reversed = [...example.carriers].reverse();
         assert.deepEqual(
@@ -567,7 +586,7 @@ describe("the worked examples: the briefing's selectBestCarrier beside selectBes
 // ---------------------------------------------------------------------------------------------------
 
 describe("filterEligibleCarriers", () => {
-  test("no carriers gives []", () => {
+  test("filterEligibleCarriers: no carriers gives []", () => {
     assert.deepEqual(filterEligibleCarriers([], sampleShipment, laptop, sampleWarehouses), []);
   });
 
@@ -596,7 +615,7 @@ describe("filterEligibleCarriers", () => {
     assert.notEqual(eligible, carriers);
   });
 
-  test("it changes none of its parameters", () => {
+  test("filterEligibleCarriers changes none of its parameters", () => {
     assertLeavesUnchanged([sampleCarriers, sampleShipment, laptop, sampleWarehouses], () =>
       filterEligibleCarriers(sampleCarriers, sampleShipment, laptop, sampleWarehouses),
     );
@@ -608,7 +627,7 @@ describe("filterEligibleCarriers", () => {
 // ---------------------------------------------------------------------------------------------------
 
 describe("selectBestEligibleCarrier: when there is nothing to pick", () => {
-  test("no carriers: null", () => {
+  test("selectBestEligibleCarrier: no carriers gives null", () => {
     assert.equal(selectBestEligibleCarrier([], sampleShipment, laptop, sampleWarehouses), null);
   });
 
@@ -624,6 +643,19 @@ describe("selectBestEligibleCarrier: when there is nothing to pick", () => {
 
   test("no warehouse with the origin's name: null (Q35)", () => {
     assert.equal(selectBestEligibleCarrier(sampleCarriers, sampleShipment, laptop, [losAngeles]), null);
+  });
+
+  test("an origin that only resembles a warehouse's name, or is empty: null (Q35)", () => {
+    // MOCK origins, data built wrong. The briefing's selection reads no origin and still names UPS.
+    for (const origin of ["Zaragoza Norte", "Zara", "Zaragoza ", ""]) {
+      const resembling: Shipment = { ...sampleShipment, id: "MOCK-SH-0203", origin: origin as WarehouseLocation };
+      assert.deepEqual(selectBestCarrier(sampleCarriers, resembling, laptop), { carrier: ups, score: 76.4, cost: 30.89 });
+      assert.equal(
+        selectBestEligibleCarrier(sampleCarriers, resembling, laptop, sampleWarehouses),
+        null,
+        `origin "${origin}"`,
+      );
+    }
   });
 });
 
@@ -705,7 +737,7 @@ describe("selectBestEligibleCarrier: the lowest cost among eligible carriers (CS
     assert.deepEqual(Object.keys(best).sort(), ["carrier", "cost", "score"]);
   });
 
-  test("it changes none of its parameters", () => {
+  test("selectBestEligibleCarrier changes none of its parameters", () => {
     assertLeavesUnchanged([sampleCarriers, sampleShipment, laptop, sampleWarehouses], () =>
       selectBestEligibleCarrier(sampleCarriers, sampleShipment, laptop, sampleWarehouses),
     );

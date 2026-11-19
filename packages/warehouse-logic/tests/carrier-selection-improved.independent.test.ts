@@ -321,6 +321,16 @@ describe("findShipmentOriginCountry", () => {
     assert.equal(findShipmentOriginCountry(sampleShipment, nearMisses), null);
   });
 
+  test("the name must be exactly the origin: an origin that contains, shortens or pads a name is not a match", () => {
+    // Added after the fresh-context review (its GAP-1): a match by "starts with", "contains" or a
+    // trimmed origin passed every test above. MOCK origins, data built wrong, which the type refuses.
+    const origins: string[] = ["Zaragoza Norte", "Nueva Zaragoza", "Zara", " Zaragoza", "Zaragoza ", ""];
+    for (const origin of origins) {
+      const shipment: Shipment = { ...sampleShipment, id: "MOCK-SH-NEAR-ORIGIN", origin: origin as WarehouseLocation };
+      assert.equal(findShipmentOriginCountry(shipment, sampleWarehouses), null, `origin "${origin}"`);
+    }
+  });
+
   test("the match is on the warehouse's name, not on its id", () => {
     // MOCK warehouse whose id reads "Zaragoza" and whose name is Los Angeles.
     const warehouses: Warehouse[] = [
@@ -847,6 +857,17 @@ describe("the origin's country not found (Q35): no carrier is eligible", () => {
     ];
     assert.deepEqual(filterEligibleCarriers(sampleCarriers, sampleShipment, laptop, nearMiss), []);
     assert.equal(selectBestEligibleCarrier(sampleCarriers, sampleShipment, laptop, nearMiss), null);
+  });
+
+  test("an origin that only resembles a warehouse's name does not count as found", () => {
+    // Added after the fresh-context review (its GAP-1). MOCK origins, data built wrong.
+    const origins: string[] = ["Zaragoza Norte", "Zara", "Zaragoza ", ""];
+    for (const origin of origins) {
+      const shipment: Shipment = { ...sampleShipment, id: "MOCK-SH-NEAR-ORIGIN", origin: origin as WarehouseLocation };
+      assert.equal(isCarrierEligibleForShipment(canDoEverything, shipment, laptop, sampleWarehouses), false);
+      assert.deepEqual(filterEligibleCarriers(sampleCarriers, shipment, laptop, sampleWarehouses), []);
+      assert.equal(selectBestEligibleCarrier(sampleCarriers, shipment, laptop, sampleWarehouses), null);
+    }
   });
 
   test("a shipment whose origin is in the same list is still served", () => {

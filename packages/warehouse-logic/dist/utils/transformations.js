@@ -257,7 +257,8 @@ export function filterEligibleCarriers(carriers, shipment, product, warehouses) 
  * selection departure: five must-haves in front of the briefing's selection"): the briefing's
  * selection run only on the carriers that can do the shipment at all, so the lowest cost decides
  * among carriers able to do the job (CS5). The result has the briefing's shape and names only the
- * winner (CS4). null when no carrier is eligible.
+ * winner (CS4). null when no carrier is eligible, and, as in the briefing's function, when none of
+ * them reaches the cut-off, which needs data that breaks a validation rule (Q32).
  */
 export function selectBestEligibleCarrier(carriers, shipment, product, warehouses) {
     return selectBestCarrier(filterEligibleCarriers(carriers, shipment, product, warehouses), shipment, product);
