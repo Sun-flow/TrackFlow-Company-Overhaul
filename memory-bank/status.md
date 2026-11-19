@@ -51,5 +51,4 @@ WP1 to WP7 of its plan are built (2026-11-19). Milestone 1, the public website, 
 
 ## Open questions
 
-- R9's flag against the status meanings mae settled: `docs/open-questions.md`, "Waiting elsewhere".
-  (2026-11-19)
+- None open: `docs/open-questions.md`. (2026-11-19)

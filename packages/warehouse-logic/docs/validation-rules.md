@@ -154,7 +154,7 @@ The allowed values in a message are read from the lists in `models.ts`, so a val
 
 ### A shipment that needs a carrier (R9)
 
-`shipmentStatusWarnings(shipment)` gives `status is "In transit" but no carrier is assigned` when the status is "Assigned", "In transit" or "Delivered" and `carrier` is `null`. "Pending" and "Failed" may have a carrier or not. It is a warning: `validateShipmentInput` adds it after the shape's warnings, and the shipment stays valid.
+`shipmentStatusWarnings(shipment)` checks that the status and the carrier agree, following mae's meanings (`docs/decisions.md`, "What each shipment status means"): only a "Pending" shipment has no carrier. Any other status with `carrier` `null` gives `status is "Failed" but no carrier is assigned`; a "Pending" shipment with a carrier gives `status is "Pending" but carrier "SEUR" is assigned`. It is a warning: `validateShipmentInput` adds it after the shape's warnings, and the shipment stays valid.
 
 ### Lists of records (R12)
 
