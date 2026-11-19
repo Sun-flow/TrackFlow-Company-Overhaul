@@ -4,11 +4,20 @@
 // this file reads the controls, calls the functions and shows what they return.
 import {
   countries,
+  movementDirections,
+  movementTypes,
   productCategories,
   shipmentPriorities,
   warehouseLocations,
 } from "../types/models.ts";
-import type { Carrier, Product, Shipment } from "../types/models.ts";
+import type {
+  Carrier,
+  MovementRecord,
+  Product,
+  Shipment,
+  StockRecord,
+  Warehouse,
+} from "../types/models.ts";
 import type { SortableField, SortOrder } from "../utils/collections.ts";
 import { sampleCarriers, sampleProducts, sampleShipment } from "../data/samples.ts";
 import { createMockData } from "../data/mock.ts";
@@ -17,6 +26,7 @@ import { binarySearchProductByWeight, findProductBySKU, findShipmentById } from 
 import {
   calculateAverageShipmentDistance,
   calculateCarrierScoreBreakdown,
+  calculateMovementTotals,
   calculateShippingCost,
   calculateTotalInventoryValue,
   countProductsByCategory,
@@ -49,16 +59,25 @@ import { badge, byId, callList, code, definitionList, element, note, show, table
 // Data
 // ---------------------------------------------------------------------------------------------------
 
+/** The stored records the movement totals report reads; the briefing's samples have no movements. */
+interface MovementData {
+  movementRecords: MovementRecord[];
+  stockRecords: StockRecord[];
+  warehouses: Warehouse[];
+}
+
 interface DataSet {
   products: Product[];
   carriers: Carrier[];
   shipments: Shipment[];
+  movementData: MovementData | null;
 }
 
 /** The seed of the search research's timing run (scripts/time-search.ts), so the data matches it. */
 const mockSeed = 20261118;
 const mockItemCount = 200;
 const mockShipmentCount = 500;
+const mockMovementCount = 300;
 /** Longer lists are cut to this many rows on screen; every function still runs on the whole list. */
 const shownRows = 50;
 
@@ -66,6 +85,7 @@ const samples: DataSet = {
   products: sampleProducts,
   carriers: sampleCarriers,
   shipments: [sampleShipment],
+  movementData: null,
 };
 let mock: DataSet | null = null;
 let current: DataSet = samples;
@@ -76,8 +96,15 @@ function mockData(): DataSet {
       seed: mockSeed,
       itemCount: mockItemCount,
       shipmentCount: mockShipmentCount,
+      movementCount: mockMovementCount,
     });
-    mock = { products: generated.products, carriers: sampleCarriers, shipments: generated.shipments };
+    const { movementRecords, stockRecords, warehouses } = generated;
+    mock = {
+      products: generated.products,
+      carriers: sampleCarriers,
+      shipments: generated.shipments,
+      movementData: { movementRecords, stockRecords, warehouses },
+    };
   }
   return mock;
 }
@@ -459,6 +486,39 @@ function reportCard(call: string, children: ReadonlyArray<Node | string>): HTMLE
   ]);
 }
 
+function movementTotalsCard(movementData: MovementData | null): Node[] {
+  if (movementData === null) {
+    return [note("Not run on the briefing's samples: they have no stored movements. Choose the mock data to run it.")];
+  }
+  const { movementRecords, stockRecords, warehouses } = movementData;
+  const totals = calculateMovementTotals(movementRecords, stockRecords, warehouses);
+  const nameOf = new Map(warehouses.map((warehouse) => [warehouse.warehouseId, warehouse.name]));
+  return [
+    note(`${formatNumber(movementRecords.length)} mock movements.`),
+    table(
+      "Each warehouse's movements, in units",
+      ["Warehouse", "In", "Out", "Net"],
+      totals.map((total) => [
+        nameOf.get(total.warehouseId) ?? total.warehouseId,
+        formatNumber(total.unitsIn),
+        formatNumber(total.unitsOut),
+        formatNumber(total.netChange),
+      ]),
+    ),
+    table(
+      "Units by movement type",
+      ["Warehouse", "Type", ...movementDirections],
+      totals.flatMap((total) =>
+        movementTypes.map((type) => [
+          nameOf.get(total.warehouseId) ?? total.warehouseId,
+          type,
+          ...movementDirections.map((direction) => formatNumber(total.byType[type][direction])),
+        ]),
+      ),
+    ),
+  ];
+}
+
 function renderReports(): void {
   const { products, shipments } = current;
   const topN = Number.parseInt(inputValue("reports-top"), 10);
@@ -506,11 +566,7 @@ function renderReports(): void {
         ]),
       ),
     ]),
-    reportCard("calculateMovementTotals(movementRecords, stockRecords, warehouses)", [
-      note(
-        "Not run here: it reads stored movement records, and neither the briefing's samples nor the mock data has any.",
-      ),
-    ]),
+    reportCard("calculateMovementTotals(movementRecords, stockRecords, warehouses)", movementTotalsCard(current.movementData)),
   ]);
 }
 

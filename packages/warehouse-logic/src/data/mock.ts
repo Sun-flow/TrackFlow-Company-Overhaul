@@ -8,25 +8,37 @@
 // through src/utils/views.ts, so mock data takes the same path as real data.
 import type {
   CarrierRecord,
+  InventoryMovement,
   Item,
+  MovementRecord,
   Product,
   Shipment,
   ShipmentRecord,
+  ShipmentStatus,
   StockRecord,
   Warehouse,
 } from "../types/models.ts";
 import {
+  movementDirections,
   productCategories,
   shipmentPriorities,
   shipmentStatuses,
 } from "../types/models.ts";
 import { sampleCarrierRecords, sampleWarehouses } from "./samples.ts";
-import { buildStockRecordId, toProducts, toShipments } from "../utils/views.ts";
+import {
+  buildStockRecordId,
+  toInventoryMovements,
+  toProducts,
+  toShipments,
+} from "../utils/views.ts";
 
 export interface MockDataOptions {
   seed: number; // The same seed gives the same data
   itemCount: number; // How many items (SKUs) to make; below zero counts as zero
   shipmentCount: number; // How many shipments to make; none when no item is in stock anywhere
+  // How many movements to make besides each shipped order's Outbound (Q34); below zero or left out
+  // counts as zero, and none are made when no item is in stock anywhere
+  movementCount?: number;
 }
 
 export interface MockData {
@@ -34,11 +46,13 @@ export interface MockData {
   items: Item[];
   stockRecords: StockRecord[];
   shipmentRecords: ShipmentRecord[];
+  movementRecords: MovementRecord[]; // An Outbound for each shipment that has left, then the others
   warehouses: Warehouse[]; // The briefing's, as the samples store them
   carrierRecords: CarrierRecord[]; // The briefing's, as the samples store them
   // The briefing's interfaces, built from the records above by views.ts
   products: Product[];
   shipments: Shipment[];
+  inventoryMovements: InventoryMovement[];
 }
 
 // Ranges the mock values are drawn from. Each lies inside the briefing's validation rules.
@@ -56,6 +70,17 @@ const millisecondsPerDay = 86_400_000;
 const shareFragile = 0.3;
 const shareDiscontinued = 0.25; // as often as when a status was picked from the four (I5)
 const shareStockedInBothWarehouses = 0.25;
+const movementUnits = { lowest: 1, highest: 50 };
+const outboundDaysAfterCreated = { lowest: 0, highest: 3 };
+const transferDaysInTransit = { lowest: 0, highest: 5 };
+const movementDaysAfterStart = { lowest: 0, highest: 365 };
+
+/**
+ * The statuses of a shipment that has left its warehouse, so its warehouse wrote an Outbound (mae,
+ * 2026-11-19): a carrier has picked it up. "Pending" and "Assigned" shipments are still in the
+ * warehouse (docs/decisions.md, "What each shipment status means").
+ */
+const statusesThatHaveLeft: readonly ShipmentStatus[] = ["In transit", "Delivered", "Failed"];
 
 type RandomNumber = () => number;
 
@@ -168,9 +193,136 @@ function createShipmentRecord(
   };
 }
 
+function dayAfterStart(random: RandomNumber): Date {
+  return new Date(createdStart + wholeNumberIn(random, movementDaysAfterStart) * millisecondsPerDay);
+}
+
+function daysLater(date: Date, days: number): Date {
+  return new Date(date.getTime() + days * millisecondsPerDay);
+}
+
+/** Hands out movement ids in order: MOCK-MV-000001, MOCK-MV-000002, ... */
+function createMovementIds(): () => string {
+  let position = 0;
+  return () => {
+    position += 1;
+    return `MOCK-MV-${zeroPadded(position)}`;
+  };
+}
+
+/** The Outbound a shipment's warehouse wrote when it left: its units, from its stock record. */
+function createOutbound(
+  random: RandomNumber,
+  movementId: string,
+  shipmentRecord: ShipmentRecord,
+): MovementRecord {
+  return {
+    movementId,
+    stockRecordId: shipmentRecord.stockRecordId,
+    direction: "Out",
+    shipmentId: shipmentRecord.shipmentId,
+    type: "Outbound",
+    quantity: shipmentRecord.quantity,
+    reason: `Mock shipment ${shipmentRecord.shipmentId} left`,
+    timestamp: daysLater(shipmentRecord.createdAt, wholeNumberIn(random, outboundDaysAfterCreated)),
+  };
+}
+
+/** What a movement with no shipment says, beyond its id: the ERD's table's other rows. */
+type UnshippedMovement = Pick<MovementRecord, "direction" | "quantity" | "reason" | "timestamp"> & {
+  type: "Inbound" | "Transfer" | "Adjustment";
+};
+
+function createUnshippedMovement(
+  movementId: string,
+  stockRecord: StockRecord,
+  movement: UnshippedMovement,
+): MovementRecord {
+  return { movementId, stockRecordId: stockRecord.stockRecordId, shipmentId: null, ...movement };
+}
+
 /**
- * Mock stored records for `itemCount` items and `shipmentCount` shipments, and the briefing's
- * Products and Shipments built from them. The same options always give the same data.
+ * `count` movements besides the Outbounds, drawn among Inbound, Adjustment and Transfer. A transfer
+ * is two records, the sender's Out and then the receiver's In, so it is drawn only while two places
+ * are left and only for a SKU stocked in more than one warehouse.
+ */
+function createOtherMovements(
+  random: RandomNumber,
+  count: number,
+  stockRecords: StockRecord[],
+  warehouses: Warehouse[],
+  nextMovementId: () => string,
+): MovementRecord[] {
+  const warehouseNames = new Map(
+    warehouses.map((warehouse) => [warehouse.warehouseId, warehouse.name]),
+  );
+  const transferable = stockRecords.filter((stockRecord) =>
+    stockRecords.some(
+      (other) => other.sku === stockRecord.sku && other.warehouseId !== stockRecord.warehouseId,
+    ),
+  );
+  const movements: MovementRecord[] = [];
+  while (movements.length < count) {
+    const stockRecord = pickOne(random, stockRecords);
+    const quantity = wholeNumberIn(random, movementUnits);
+    const timestamp = dayAfterStart(random);
+    const kind = pickOne(random, ["Inbound", "Adjustment", "Transfer"] as const);
+    const canTransfer = transferable.length > 0 && count - movements.length >= 2;
+
+    if (kind === "Transfer" && canTransfer) {
+      const sender = pickOne(random, transferable);
+      const receivers = stockRecords.filter(
+        (other) => other.sku === sender.sku && other.warehouseId !== sender.warehouseId,
+      );
+      const receiver = pickOne(random, receivers);
+      const from = warehouseNames.get(sender.warehouseId);
+      const to = warehouseNames.get(receiver.warehouseId);
+      movements.push(
+        createUnshippedMovement(nextMovementId(), sender, {
+          type: "Transfer",
+          direction: "Out",
+          quantity,
+          reason: `Mock transfer to ${to}`,
+          timestamp,
+        }),
+        createUnshippedMovement(nextMovementId(), receiver, {
+          type: "Transfer",
+          direction: "In",
+          quantity,
+          reason: `Mock transfer from ${from}`,
+          timestamp: daysLater(timestamp, wholeNumberIn(random, transferDaysInTransit)),
+        }),
+      );
+    } else if (kind === "Adjustment") {
+      const direction = pickOne(random, movementDirections);
+      movements.push(
+        createUnshippedMovement(nextMovementId(), stockRecord, {
+          type: "Adjustment",
+          direction,
+          quantity,
+          reason: `Mock count corrected ${direction === "In" ? "upward" : "downward"}`,
+          timestamp,
+        }),
+      );
+    } else {
+      movements.push(
+        createUnshippedMovement(nextMovementId(), stockRecord, {
+          type: "Inbound",
+          direction: "In",
+          quantity,
+          reason: "Mock delivery from a supplier",
+          timestamp,
+        }),
+      );
+    }
+  }
+  return movements;
+}
+
+/**
+ * Mock stored records for `itemCount` items and `shipmentCount` shipments, an Outbound for each
+ * shipment that has left and `movementCount` other movements, and the briefing's Products, Shipments
+ * and InventoryMovements built from them. The same options always give the same data.
  */
 export function createMockData(options: MockDataOptions): MockData {
   const random = createSeededRandom(options.seed);
@@ -187,14 +339,32 @@ export function createMockData(options: MockDataOptions): MockData {
       : Array.from({ length: countFrom(options.shipmentCount) }, (_, index) =>
           createShipmentRecord(random, index + 1, stockRecords, warehouses, carrierRecords),
         );
+  // Movements are drawn last, so asking for them changes none of the data drawn above.
+  const nextMovementId = createMovementIds();
+  const outbounds = shipmentRecords
+    .filter((shipmentRecord) => statusesThatHaveLeft.includes(shipmentRecord.status))
+    .map((shipmentRecord) => createOutbound(random, nextMovementId(), shipmentRecord));
+  const otherMovements =
+    stockRecords.length === 0
+      ? []
+      : createOtherMovements(
+          random,
+          countFrom(options.movementCount ?? 0),
+          stockRecords,
+          warehouses,
+          nextMovementId,
+        );
+  const movementRecords = [...outbounds, ...otherMovements];
 
   return {
     items,
     stockRecords,
     shipmentRecords,
+    movementRecords,
     warehouses,
     carrierRecords,
     products: toProducts(items, stockRecords, warehouses),
     shipments: toShipments(shipmentRecords, stockRecords, warehouses, carrierRecords),
+    inventoryMovements: toInventoryMovements(movementRecords, stockRecords, warehouses),
   };
 }

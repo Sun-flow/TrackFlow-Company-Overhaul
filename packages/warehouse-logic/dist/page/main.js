@@ -2,12 +2,12 @@
 // `pnpm build` compiles it to dist/page/main.js, which the page loads as an ES module. The logic a test
 // can check without a browser lives beside it (product-query.ts, record-input.ts, search-timing.ts);
 // this file reads the controls, calls the functions and shows what they return.
-import { countries, productCategories, shipmentPriorities, warehouseLocations, } from "../types/models.js";
+import { countries, movementDirections, movementTypes, productCategories, shipmentPriorities, warehouseLocations, } from "../types/models.js";
 import { sampleCarriers, sampleProducts, sampleShipment } from "../data/samples.js";
 import { createMockData } from "../data/mock.js";
 import { sortCarriersByReliability, sortProductsBy } from "../utils/collections.js";
 import { binarySearchProductByWeight, findProductBySKU, findShipmentById } from "../utils/search.js";
-import { calculateAverageShipmentDistance, calculateCarrierScoreBreakdown, calculateShippingCost, calculateTotalInventoryValue, countProductsByCategory, findCheapestCarrierForShipment, findHeaviestProduct, findLongestShipment, findTopCarriers, groupShipmentsByStatus, roundToTwoDecimals, scoreCarrierForShipment, selectBestCarrier, summarizeWarehouses, } from "../utils/transformations.js";
+import { calculateAverageShipmentDistance, calculateCarrierScoreBreakdown, calculateMovementTotals, calculateShippingCost, calculateTotalInventoryValue, countProductsByCategory, findCheapestCarrierForShipment, findHeaviestProduct, findLongestShipment, findTopCarriers, groupShipmentsByStatus, roundToTwoDecimals, scoreCarrierForShipment, selectBestCarrier, summarizeWarehouses, } from "../utils/transformations.js";
 import { validateCarrier, validateCarrierStrict, validateProduct, validateProductStrict, validateShipment, validateShipmentStrict, } from "../utils/validations.js";
 import { runProductQuery } from "./product-query.js";
 import { parseRecordInput } from "./record-input.js";
@@ -17,12 +17,14 @@ import { badge, byId, callList, code, definitionList, element, note, show, table
 const mockSeed = 20261118;
 const mockItemCount = 200;
 const mockShipmentCount = 500;
+const mockMovementCount = 300;
 /** Longer lists are cut to this many rows on screen; every function still runs on the whole list. */
 const shownRows = 50;
 const samples = {
     products: sampleProducts,
     carriers: sampleCarriers,
     shipments: [sampleShipment],
+    movementData: null,
 };
 let mock = null;
 let current = samples;
@@ -32,8 +34,15 @@ function mockData() {
             seed: mockSeed,
             itemCount: mockItemCount,
             shipmentCount: mockShipmentCount,
+            movementCount: mockMovementCount,
         });
-        mock = { products: generated.products, carriers: sampleCarriers, shipments: generated.shipments };
+        const { movementRecords, stockRecords, warehouses } = generated;
+        mock = {
+            products: generated.products,
+            carriers: sampleCarriers,
+            shipments: generated.shipments,
+            movementData: { movementRecords, stockRecords, warehouses },
+        };
     }
     return mock;
 }
@@ -354,6 +363,28 @@ function reportCard(call, children) {
         ...children,
     ]);
 }
+function movementTotalsCard(movementData) {
+    if (movementData === null) {
+        return [note("Not run on the briefing's samples: they have no stored movements. Choose the mock data to run it.")];
+    }
+    const { movementRecords, stockRecords, warehouses } = movementData;
+    const totals = calculateMovementTotals(movementRecords, stockRecords, warehouses);
+    const nameOf = new Map(warehouses.map((warehouse) => [warehouse.warehouseId, warehouse.name]));
+    return [
+        note(`${formatNumber(movementRecords.length)} mock movements.`),
+        table("Each warehouse's movements, in units", ["Warehouse", "In", "Out", "Net"], totals.map((total) => [
+            nameOf.get(total.warehouseId) ?? total.warehouseId,
+            formatNumber(total.unitsIn),
+            formatNumber(total.unitsOut),
+            formatNumber(total.netChange),
+        ])),
+        table("Units by movement type", ["Warehouse", "Type", ...movementDirections], totals.flatMap((total) => movementTypes.map((type) => [
+            nameOf.get(total.warehouseId) ?? total.warehouseId,
+            type,
+            ...movementDirections.map((direction) => formatNumber(total.byType[type][direction])),
+        ]))),
+    ];
+}
 function renderReports() {
     const { products, shipments } = current;
     const topN = Number.parseInt(inputValue("reports-top"), 10);
@@ -396,9 +427,7 @@ function renderReports() {
                 formatNumber(summary.lowStockCount),
             ])),
         ]),
-        reportCard("calculateMovementTotals(movementRecords, stockRecords, warehouses)", [
-            note("Not run here: it reads stored movement records, and neither the briefing's samples nor the mock data has any."),
-        ]),
+        reportCard("calculateMovementTotals(movementRecords, stockRecords, warehouses)", movementTotalsCard(current.movementData)),
     ]);
 }
 const validationSamples = [
