@@ -1,6 +1,7 @@
 # Tracked improvements: I2, I3 and I5, with WP2's P1 and P2
 
-> **Status**: analysis for mae, 2026-11-19. Nothing here is built. Plan WP8b
+> **Status**: analysis for mae, 2026-11-19, answered by mae the same day ("mae's answers", below;
+> `docs/decisions.md`, "WP8b's tracked improvements decided"). Nothing here is built yet. Plan WP8b
 > (`docs/milestones/milestone-2/plan.md`, "Phase 4").
 > **Rule for all five**: the briefing's interfaces and functions stay exactly as they are. Whatever mae
 > approves is built beside them, under new names, and logged in `docs/decisions.md` as a departure.
@@ -21,6 +22,19 @@ name the ones to change.
 
 Decisions 1 to 4 would ship together in one pull request (`search.ts`, `views.ts`, one new test file).
 Decision 5 gets its own pull request, last.
+
+### mae's answers (2026-11-19)
+
+| # | Answer | What gets built |
+|---|---|---|
+| 1 | I2: no change now; (a) parked for later | Nothing. `docs/FUTURE_WORK.md`, "Binary search that returns the first matching index" |
+| 2 | P2: (a) | `isSortedBy(items, keyOf)` |
+| 3 | I3: (a), overloaded with (b) | `findProductsBySKU(products, sku)` gives every warehouse's product; `findProductsBySKU(products, sku, warehouse)` gives the one product, or `null` |
+| 4 | P1: (b) | The views use `indexBy`; `normalizeSku` moves to `search.ts`, re-exported from `views.ts` |
+| 5 | I5: (c) | `Item.isDiscontinued` replaces `Item.status`; the views work out `Product.status` |
+
+The sections below are the analysis as mae read it. The function names in them for decision 3, option
+(b), are replaced by the overload above.
 
 ---
 

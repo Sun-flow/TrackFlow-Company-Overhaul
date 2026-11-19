@@ -33,4 +33,3 @@ Q1 to Q25 were answered by mae on 2026-11-17 and 2026-11-18 (`docs/decisions.md`
 
 mae picked all of Milestone 2's extras, X1 to X5, on 2026-11-18 (`docs/milestones/milestone-2/plan.md`, "Proposed extras").
 
-- WP8b's five decisions, I2, I3 and I5 with WP2's proposals P1 (the views use `indexBy`) and P2 (`isSortedBy`) folded in: `packages/warehouse-logic/docs/tracked-improvements.md`, "How to answer" (2026-11-19).
