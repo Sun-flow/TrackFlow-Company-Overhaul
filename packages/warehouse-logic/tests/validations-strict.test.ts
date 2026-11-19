@@ -469,8 +469,9 @@ describe("validateShipmentStrict: several failures, one per field, in the interf
     );
   });
 
-  test("strictShipmentRules lists one outcome per field: nine, all passing", () => {
-    assert.deepEqual(strictShipmentRules(briefingShipment), Array(9).fill(null));
+  test("strictShipmentRules lists one outcome per field: ten, all passing", () => {
+    // Ten since R1 (WP8, 2026-11-19) checks destination.country too.
+    assert.deepEqual(strictShipmentRules(briefingShipment), Array(10).fill(null));
   });
 
   test("leaves the shipment unchanged, its destination and date included", () => {
