@@ -116,7 +116,7 @@ export const sampleItems = [
         dimensions: { lengthCm: 35, widthCm: 22, heightCm: 12 },
         unitCostUSD: 35.0,
         isFragile: false,
-        status: "Active",
+        isDiscontinued: false,
     },
     {
         sku: "LAPTOP-DELL-15",
@@ -126,7 +126,7 @@ export const sampleItems = [
         dimensions: { lengthCm: 40, widthCm: 28, heightCm: 3 },
         unitCostUSD: 650.0,
         isFragile: true,
-        status: "Low stock",
+        isDiscontinued: false,
     },
     {
         sku: "PERFUME-COCO-50",
@@ -136,7 +136,7 @@ export const sampleItems = [
         dimensions: { lengthCm: 12, widthCm: 8, heightCm: 15 },
         unitCostUSD: 85.0,
         isFragile: true,
-        status: "Active",
+        isDiscontinued: false,
     },
 ];
 export const sampleStockRecords = [

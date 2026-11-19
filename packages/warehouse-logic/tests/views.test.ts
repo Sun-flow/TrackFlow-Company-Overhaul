@@ -1,7 +1,7 @@
 // Tests for src/utils/views.ts (plan WP1): the functions that build the brief's interfaces from the
 // stored records of docs/erd.md. Expected values come from the briefing's samples, read from the
 // briefing file, or are written out by hand from docs/erd.md. A test that depends on one of mae's
-// answers names it (Q10, Q14, Q16, Q17, Q19; docs/decisions.md).
+// answers names it (Q10, Q14, Q16, Q17, Q19, I5; docs/decisions.md).
 import { describe, test } from "node:test";
 import assert from "node:assert/strict";
 import type {
@@ -167,7 +167,7 @@ describe("toProduct: an item, one of its stock records and that record's warehou
       minStockThreshold: 20,
       unitCostUSD: 35,
       isFragile: false,
-      status: "Active",
+      status: "Low stock", // 5 units at or below the threshold of 20, in this warehouse (I5)
     });
   });
 });

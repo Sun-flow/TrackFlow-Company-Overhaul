@@ -7,7 +7,6 @@ import assert from "node:assert/strict";
 import {
   countries,
   productCategories,
-  productStatuses,
   shipmentPriorities,
   shipmentStatuses,
   warehouseLocations,
@@ -139,7 +138,7 @@ describe("createMockData: stored records and their views, all labelled as mock",
           }
           assert.ok(item.unitCostUSD > 0, `${item.sku} costs ${item.unitCostUSD}`);
           assert.ok(productCategories.includes(item.category));
-          assert.ok(productStatuses.includes(item.status));
+          assert.equal(typeof item.isDiscontinued, "boolean", `${item.sku} isDiscontinued`);
         }
         for (const record of data.stockRecords) {
           assert.ok(Number.isInteger(record.stockQuantity) && record.stockQuantity >= 0);

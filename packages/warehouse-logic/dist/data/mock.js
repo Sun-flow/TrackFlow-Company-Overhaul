@@ -1,4 +1,4 @@
-import { productCategories, productStatuses, shipmentPriorities, shipmentStatuses, } from "../types/models.js";
+import { productCategories, shipmentPriorities, shipmentStatuses, } from "../types/models.js";
 import { sampleCarrierRecords, sampleWarehouses } from "./samples.js";
 import { buildStockRecordId, toProducts, toShipments } from "../utils/views.js";
 // Ranges the mock values are drawn from. Each lies inside the briefing's validation rules.
@@ -14,6 +14,7 @@ const createdDaysAfterStart = { lowest: 0, highest: 365 };
 const createdStart = Date.UTC(2024, 0, 1);
 const millisecondsPerDay = 86_400_000;
 const shareFragile = 0.3;
+const shareDiscontinued = 0.25; // as often as when a status was picked from the four (I5)
 const shareStockedInBothWarehouses = 0.25;
 /**
  * A repeatable stream of numbers from 0 up to, but not including, 1: the same seed always gives the
@@ -56,7 +57,7 @@ function createItem(random, position) {
         },
         unitCostUSD: wholeNumberIn(random, unitCostCents) / 100,
         isFragile: random() < shareFragile,
-        status: pickOne(random, productStatuses),
+        isDiscontinued: random() < shareDiscontinued,
     };
 }
 function createStockRecord(random, item, warehouse) {
