@@ -390,6 +390,69 @@ export function findCheapestCarrierForShipment(
 }
 
 // ---------------------------------------------------------------------------------------------------
+// Must-have carrier selection (plan WP7): a departure from the briefing, built beside it
+// ---------------------------------------------------------------------------------------------------
+
+/**
+ * The country a shipment leaves from: the country of the first warehouse whose name is the
+ * shipment's origin. null when no warehouse has that name.
+ */
+export function findShipmentOriginCountry(shipment: Shipment, warehouses: Warehouse[]): Country | null {
+  return warehouses.find((warehouse) => warehouse.name === shipment.origin)?.country ?? null;
+}
+
+/**
+ * Whether the carrier can do the shipment at all: it operates in the origin's country and in the
+ * destination's, can carry the whole shipment's weight, accepts the priority and handles fragile
+ * goods when the product is fragile (mae's CS1 to CS3). Each must-have is the rule check the
+ * briefing's score uses. Reliability, speed and price never make a carrier ineligible.
+ *
+ * Provisional (Q35): when the origin's country is not found, no carrier is eligible.
+ */
+export function isCarrierEligibleForShipment(
+  carrier: Carrier,
+  shipment: Shipment,
+  product: Product,
+  warehouses: Warehouse[],
+): boolean {
+  const originCountry = findShipmentOriginCountry(shipment, warehouses);
+  return (
+    originCountry !== null &&
+    carrierOperatesInCountry(carrier, originCountry) &&
+    carrierOperatesInCountry(carrier, shipment.destination.country) &&
+    carrierCanCarryWeight(carrier, calculateShipmentWeightKg(shipment, product)) &&
+    carrierAcceptsPriority(carrier, shipment.priority) &&
+    carrierCanHandleFragility(carrier, product.isFragile)
+  );
+}
+
+/** The carriers that can do the shipment at all, in the carriers' order. [] for no carriers. */
+export function filterEligibleCarriers(
+  carriers: Carrier[],
+  shipment: Shipment,
+  product: Product,
+  warehouses: Warehouse[],
+): Carrier[] {
+  return carriers.filter((carrier) => isCarrierEligibleForShipment(carrier, shipment, product, warehouses));
+}
+
+/**
+ * A departure from the briefing, beside its `selectBestCarrier` (docs/decisions.md, "Carrier
+ * selection departure: five must-haves in front of the briefing's selection"): the briefing's
+ * selection run only on the carriers that can do the shipment at all, so the lowest cost decides
+ * among carriers able to do the job (CS5). The result has the briefing's shape and names only the
+ * winner (CS4). null when no carrier is eligible.
+ */
+export function selectBestEligibleCarrier(
+  carriers: Carrier[],
+  shipment: Shipment,
+  product: Product,
+  warehouses: Warehouse[],
+): { carrier: Carrier; score: number; cost: number } | null {
+  return selectBestCarrier(filterEligibleCarriers(carriers, shipment, product, warehouses), shipment, product);
+}
+
+// ---------------------------------------------------------------------------------------------------
 // The briefing's reports
 // ---------------------------------------------------------------------------------------------------
 
