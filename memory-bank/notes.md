@@ -47,6 +47,8 @@ goes in `memory-bank/website.md`.
 - The kit flags a shell command that changes any test file on disk, even a new one. Edit tests with the
   Edit tool: it asks only before a line `production` has changes, and those changes go through a draft
   ("Tests in progress", `.claude/rules/testing.md`). (2026-11-18)
+- Run a claim about JavaScript's arithmetic before writing it down: `0.3 * 100` is exactly 30, and
+  `0.28 * 25` is not 7. (2026-11-18)
 - A fresh cloud clone doesn't record the remote's default branch, and the check doesn't guess
   `production`. Until `git remote set-head origin --auto` has run, the check can't tell what is merged or
   in flight. (2026-11-13)

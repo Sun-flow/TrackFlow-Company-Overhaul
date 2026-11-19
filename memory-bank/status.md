@@ -7,7 +7,7 @@ work file, not here.
 
 Current milestone: Milestone 2, a TypeScript logic layer. Its brief, plan, definition of done and ERD
 are in `docs/milestones/milestone-2/` and `packages/warehouse-logic/docs/`, agreed by mae and reviewed.
-WP1 to WP3 and WP5 of its plan are built; WP4 is next (2026-11-18). Milestone 1, the public website, is finished.
+WP1 to WP5 of its plan are built (2026-11-18). Milestone 1, the public website, is finished.
 
 ## Works
 
@@ -20,10 +20,12 @@ WP1 to WP3 and WP5 of its plan are built; WP4 is next (2026-11-18). Milestone 1,
   (2026-11-13)
 - The live site at https://sun-flow.github.io/TrackFlow-Company-Overhaul/ serves the same home page as
   `production`; its last deploy, for pull request #25, succeeded. (2026-11-13)
-- The warehouse logic's types check and its 401 tests pass, the views giving back the briefing's samples:
+- The warehouse logic's types check and its 1127 tests pass, the views giving back the briefing's samples:
   `(cd packages/warehouse-logic && pnpm typecheck && pnpm test)`. (2026-11-18)
 - WP3's collections filter, sort and group:
   `packages/warehouse-logic/tests/collections.test.ts`. (2026-11-18)
+- WP4's shipping cost, carrier scoring and reports give the briefing's hand-worked figures, 575 tests:
+  `packages/warehouse-logic/docs/transformations.md`. (2026-11-18)
 - WP2's searches and mock data generator pass their tests, 98 of the package's tests, and the
   timing run behind `packages/warehouse-logic/docs/search-research.md` runs:
   `(cd packages/warehouse-logic && pnpm test && pnpm time:search)`. (2026-11-18)
@@ -42,8 +44,7 @@ WP1 to WP3 and WP5 of its plan are built; WP4 is next (2026-11-18). Milestone 1,
 
 ## Next
 
-1. WP4 of `docs/milestones/milestone-2/plan.md`, whose pull request opens after WP3 merges; then
-   Phase 3, WP6. (2026-11-18)
+1. Phase 3 of `docs/milestones/milestone-2/plan.md`: WP6. (2026-11-18)
 
 ## Known problems
 
@@ -53,4 +54,5 @@ WP1 to WP3 and WP5 of its plan are built; WP4 is next (2026-11-18). Milestone 1,
 
 ## Open questions
 
-- None. Q1 to Q29 are answered in `docs/decisions.md`. (2026-11-18)
+- Q32, in part: whether to build checked cost and scoring functions that return warnings:
+  `docs/open-questions.md`. (2026-11-19)
