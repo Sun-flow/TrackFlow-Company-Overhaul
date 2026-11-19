@@ -2,7 +2,7 @@
 
 How the briefing's `selectBestCarrier` picks a carrier, the ways it picks a wrong one, and a proposed fix for mae to decide on (plan WP7, D4). This is the analysis only. No code is built from it until mae has agreed to it, and the briefing's functions stay exactly as they are either way.
 
-> **Status**: waiting for mae (2026-11-19). Of the five choices under "Choices for mae", mae answered two on 2026-11-19: CS1 (b), all four rules are must-haves, and CS2 (b), the carrier must operate in the origin's country and the destination's. CS3 to CS5 are open.
+> **Status**: waiting for mae (2026-11-19). Of the five choices under "Choices for mae", mae answered three on 2026-11-19: CS1 (b), all four rules are must-haves; CS2 (b), the carrier must operate in the origin's country and the destination's; CS5 (a), the lowest cost decides among eligible carriers. CS3 and CS4 are open.
 
 ## Summary
 
@@ -263,6 +263,8 @@ Each is a separate choice. The recommendation is first in each list of reasons.
 - **(c) The highest score, with cost as the tie-break.** This reverses the briefing's rule. With the sample carriers DHL Express, the most expensive, would win wherever it is eligible.
 
 **Recommendation: (a).** It keeps the briefing's rule, and it is how rate shopping works once eligibility is settled. (b) is worth doing when TrackFlow has real carrier performance data and Carlos Vega's team can name a floor; until then it goes in `docs/FUTURE_WORK.md`, with speed against a promised delivery date, which needs a date the briefing's `Shipment` does not have.
+
+**mae, 2026-11-19: (a).** The lowest cost decides among eligible carriers, as the briefing says.
 
 ### Before and after
 
