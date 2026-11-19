@@ -20,7 +20,7 @@ WP1 to WP6 of its plan are built (2026-11-19). Milestone 1, the public website, 
   (2026-11-13)
 - The live site at https://sun-flow.github.io/TrackFlow-Company-Overhaul/ serves the same home page as
   `production`; its last deploy, for pull request #25, succeeded. (2026-11-13)
-- The warehouse logic's types check and its 1207 tests pass, WP1 to WP6 and WP8b's searches:
+- The warehouse logic's types check and its 1496 tests pass, WP1 to WP6 and WP8b's searches:
   `(cd packages/warehouse-logic && pnpm typecheck && pnpm test)`. (2026-11-19)
 - `pnpm demo` prints each briefing function on the samples, and the test page works from a fresh
   clone: `npx --yes http-server packages/warehouse-logic -p 3000 -c-1`, then `/src/index.html`.
@@ -47,9 +47,8 @@ WP1 to WP6 of its plan are built (2026-11-19). Milestone 1, the public website, 
 - The testing kit's hooks run in a project thread only on the TrackFlow-Company-Overhaul cloud
   environment, whose setup script runs `scripts/wire-cloud-hooks.py`; on Default none run. Confirmed in a
   fresh thread on that environment. (2026-11-13)
+- `validateShipmentStrict` throws on a country that is not on its list. (2026-11-19)
 
 ## Open questions
 
-- Q32, in part: whether to build checked cost and scoring functions that return warnings:
-  `docs/open-questions.md`. (2026-11-19)
 - Q34: whether mock data gets movements, for the test page: `docs/open-questions.md`. (2026-11-19)

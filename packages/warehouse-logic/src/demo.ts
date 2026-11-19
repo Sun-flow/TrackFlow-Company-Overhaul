@@ -32,6 +32,7 @@ import {
   calculateAverageShipmentDistance,
   calculateCarrierScoreBreakdown,
   calculateShippingCost,
+  calculateShippingCostChecked,
   calculateTotalInventoryValue,
   countProductsByCategory,
   findCheapestCarrierForShipment,
@@ -40,7 +41,9 @@ import {
   findTopCarriers,
   groupShipmentsByStatus,
   scoreCarrierForShipment,
+  scoreCarrierForShipmentChecked,
   selectBestCarrier,
+  selectBestCarrierChecked,
   summarizeWarehouses,
 } from "./utils/transformations.ts";
 import {
@@ -141,6 +144,25 @@ console.log(
 );
 const cheapest = findCheapestCarrierForShipment(sampleCarriers, sampleShipment, laptop);
 result("findCheapestCarrierForShipment(carriers, shipment, product)", cheapest === null ? null : { carrier: cheapest.carrier.name, cost: cheapest.cost });
+
+console.log("\nChecked versions (Q32): the same results, with a warning for each thing wrong with the data.");
+const checkedBest = selectBestCarrierChecked(sampleCarriers, sampleShipment, laptop);
+result("selectBestCarrierChecked(carriers, shipment, product), the samples are clean", {
+  best: checkedBest.best === null ? null : { carrier: checkedBest.best.carrier.name, score: checkedBest.best.score, cost: checkedBest.best.cost },
+  warnings: checkedBest.warnings,
+});
+// Two faults made up for this demo, not TrackFlow's data: UPS's rate set out of range.
+const [ups] = sampleCarriers;
+if (ups !== undefined) {
+  result(
+    "scoreCarrierForShipmentChecked(UPS with onTimeRate 150, a fault made up for this demo, shipment, product)",
+    scoreCarrierForShipmentChecked({ ...ups, onTimeRate: 150 }, sampleShipment, laptop),
+  );
+  result(
+    "calculateShippingCostChecked(shipment, product, UPS with baseRateUSD -5, a fault made up for this demo)",
+    calculateShippingCostChecked(sampleShipment, laptop, { ...ups, baseRateUSD: -5 }),
+  );
+}
 
 heading("4. Reports (transformations.ts)");
 result("countProductsByCategory(products)", countProductsByCategory(sampleProducts));

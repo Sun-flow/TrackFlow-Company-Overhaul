@@ -8,7 +8,7 @@ Every worked figure below is from the briefing's sample data, calculated by hand
 
 ## What these functions do not check
 
-They trust the data they are given, as the briefing's formulas do. A carrier with an `onTimeRate` of 150 earns 45 reliability points, a negative rate gives a negative cost, and a priority that is not one of the three gives a cost of `NaN`. Checking data is the validations' job (`src/utils/validations.ts`): validate first, then calculate. The briefing's functions stay this way (Q32); a checked version beside them, which returns the same result with a list of warnings, waits for mae's go-ahead.
+They trust the data they are given, as the briefing's formulas do. A carrier with an `onTimeRate` of 150 earns 45 reliability points, a negative rate gives a negative cost, and a priority that is not one of the three gives a cost of `NaN`. Checking data is the validations' job (`src/utils/validations.ts`): validate first, then calculate. The briefing's functions stay this way (Q32). Beside each is a checked version, which returns the same result with a list of warnings: see "Checked versions" below.
 
 ## Rounding and floating-point noise
 
@@ -124,13 +124,58 @@ interface CarrierEvaluation {
 
 ### `selectBestCarrier(carriers: Carrier[], shipment: Shipment, product: Product): { carrier: Carrier; score: number; cost: number } | null`
 
-The briefing's, exactly as written: score every carrier, drop those scoring under 50, and of the rest return the one with the lowest cost, with its score and cost. The score compared with 50 is the rounded one `scoreCarrierForShipment` returns, so exactly 50 stays in, and so does a raw 49.997, which rounds to 50 (Q33). When two carriers cost the same, the higher score wins, and when that ties too, the one listed first (Q6). It returns `null` when no carrier scores 50 or more, and for an empty list. It also returns `null` when no suitable carrier has a cost that can be compared: a shipment whose priority is not one of the three gives every carrier a cost of `NaN` (Q32). A carrier whose cost is `NaN` is passed over while another has a real cost.
+The briefing's, exactly as written: score every carrier, drop those scoring under 50, and of the rest return the one with the lowest cost, with its score and cost. The score compared with 50 is the rounded one `scoreCarrierForShipment` returns, so exactly 50 stays in, and so does a raw 49.997, which rounds to 50 (Q33). When two carriers cost the same, the higher score wins, and when that ties too, the one listed first (Q6). It returns `null` when no carrier scores 50 or more, and for an empty list. It also returns `null` when no suitable carrier has a cost that can be compared: a shipment whose priority is not one of the three gives every carrier a cost of `NaN` (Q32). A carrier whose cost is `NaN` is passed over while another has a real cost. A score of `NaN` is not 50 or more, so that carrier is dropped. An infinite cost is still compared as a number: `Infinity` loses to any real cost, and `-Infinity` wins.
 
 **The briefing's known failure (plan D4).** For the sample shipment every carrier scores 50 or more, so the cheapest wins: `selectBestCarrier` returns UPS, with a score of 76.4 and a cost of $30.89. UPS operates only in the United States and the shipment goes to Madrid. Every rule was applied as the briefing writes it. Losing the 20 points for the country still leaves UPS far above the cut-off, and price decides among the carriers above it. SEUR, which serves Spain, scores 97.6 and costs $46.22. The tests pin this result and label it as the known failure. The fix, which makes the country and the weight limit must-haves, is a later, separate change (plan WP7), built beside this function and not in place of it.
 
 ### `findCheapestCarrierForShipment(carriers: Carrier[], shipment: Shipment, product: Product): CarrierEvaluation | null`
 
 A minimum report: the carrier with the lowest cost for the shipment among all the carriers given, whatever its score. When several cost the same, the first listed. `null` for no carriers. For the sample shipment: UPS, score 76.4, cost 30.89.
+
+## Checked versions: the same result, with warnings (Q32)
+
+mae's answer to Q32 (2026-11-19): data that is built wrong still goes through, and is flagged where it happens. Each of the briefing's three cost and scoring functions has a checked version beside it. It returns exactly what the briefing's function returns, and a list of `warnings` saying what is wrong with the data it was given. Nothing is clamped, nothing is left out and nothing throws. Clean data gives `warnings: []`.
+
+| Function | Returns |
+|---|---|
+| `calculateShippingCostChecked(shipment: Shipment, product: Product, carrier: Carrier): CheckedShippingCost` | `{ cost, warnings }`: `cost` is `calculateShippingCost(shipment, product, carrier)`. |
+| `scoreCarrierForShipmentChecked(carrier: Carrier, shipment: Shipment, product: Product): CheckedCarrierScore` | `{ score, warnings }`: `score` is `scoreCarrierForShipment(carrier, shipment, product)`. |
+| `selectBestCarrierChecked(carriers: Carrier[], shipment: Shipment, product: Product): CheckedCarrierSelection` | `{ best, warnings }`: `best` is `selectBestCarrier(carriers, shipment, product)`, a carrier with its score and cost, or `null`. |
+
+```typescript
+interface CheckedShippingCost {
+  cost: number;
+  warnings: string[];
+}
+interface CheckedCarrierScore {
+  score: number;
+  warnings: string[];
+}
+interface CheckedCarrierSelection {
+  best: { carrier: Carrier; score: number; cost: number } | null;
+  warnings: string[];
+}
+```
+
+**The warnings, in this order.**
+
+1. The records. Every message the briefing's validators give for the shipment, then the product, then the carrier (`validateShipment`, `validateProduct` and `validateCarrier` in `src/utils/validations.ts`; `docs/validation-rules.md` lists the messages). Each message is prefixed with the record it is about: `Shipment <id>: `, `Product <sku>: ` or `Carrier <id>: `, with the id as it is given, so an empty SKU gives `Product : sku must not be empty`. The order is the same in all three functions, whatever the order of their parameters. `selectBestCarrierChecked` checks the shipment and the product once, then every carrier in the list's order, and a carrier listed twice is checked twice.
+2. The results. A cost or a score that is not a finite number (`NaN`, `Infinity` or `-Infinity`) can't be used, and gets a warning of its own:
+   - `Carrier <id>: the shipping cost of shipment <shipment id> is not a finite number (got <value>)`
+   - `Carrier <id>: the score for shipment <shipment id> is not a finite number (got <value>)`
+
+   `<value>` is written as JavaScript writes the number: `NaN`, `Infinity` or `-Infinity`. `calculateShippingCostChecked` gives only the first, `scoreCarrierForShipmentChecked` only the second, and `selectBestCarrierChecked` gives both for each carrier, in the list's order, a carrier's cost before its score, and twice for a carrier listed twice. These come after every record warning.
+
+The rules themselves are written once, in the validators. The checked versions use the briefing's validators and not the strict ones.
+
+**Worked examples**, with the sample shipment `SH-2024-8821` and the Dell laptop:
+
+- Clean data. `calculateShippingCostChecked(sampleShipment, laptop, ups)` is `{ cost: 30.89, warnings: [] }`, and `scoreCarrierForShipmentChecked(ups, sampleShipment, laptop)` is `{ score: 76.4, warnings: [] }`.
+- A negative rate. UPS with a `baseRateUSD` of -5: the cost is (-5 + 2.76 + 16) × 1.3 = 17.888, so `{ cost: 17.89, warnings: ["Carrier CAR-UPS: baseRateUSD must be >= 0 (got -5)"] }`.
+- An on-time rate over 100. UPS with an `onTimeRate` of 150: 0 + 20 + 15 + 15 + 45 = 95, so `{ score: 95, warnings: ["Carrier CAR-UPS: onTimeRate must be between 0 and 100 (got 150)"] }`.
+- A priority that is not one of the three. No validation rule covers the priority, so no record warning is given, but the cost is `NaN`: `calculateShippingCostChecked` gives `{ cost: NaN, warnings: ["Carrier CAR-UPS: the shipping cost of shipment SH-2024-8821 is not a finite number (got NaN)"] }`. With the three sample carriers `selectBestCarrierChecked` gives `best: null` and that warning three times, for `CAR-UPS`, `CAR-SEUR` and `CAR-DHL` in turn.
+- Several records wrong. A shipment with a `quantity` of 0, the laptop with a `weightKg` of 0, and UPS with an `onTimeRate` of 150 give, from either single-carrier function, the three record warnings in the order shipment, product, carrier: `"Shipment SH-2024-8821: quantity must be > 0 (got 0)"`, `"Product LAPTOP-DELL-15: weightKg must be > 0 and <= 100 (got 0)"`, `"Carrier CAR-UPS: onTimeRate must be between 0 and 100 (got 150)"`.
+- The selection. `selectBestCarrierChecked(sampleCarriers, sampleShipment, laptop)` is `{ best: { carrier: ups, score: 76.4, cost: 30.89 }, warnings: [] }`. The briefing's known failure is not a warning: the data is right and the rules pick UPS (plan D4, WP7). With UPS's `baseRateUSD` at -5, UPS still wins, now at a cost of 17.89, and the warning `"Carrier CAR-UPS: baseRateUSD must be >= 0 (got -5)"` says why not to trust it. No carriers gives `{ best: null, warnings }` with only the shipment's and the product's warnings.
 
 ## Reports
 
@@ -202,4 +247,4 @@ With the six mock movements in `tests/fixtures/movements.ts`, the sample stock r
 
 ## Answers these functions follow
 
-Q2 to Q6 and Q8 are in `docs/decisions.md`, "Milestone 2's open questions answered"; Q16, Q21, Q23 and Q25 in "Milestone 2's review questions answered" and "The movement totals report splits by direction". Q29 is in "`groupBy` keeps an entry whose key is not listed, and a checked version flags it". Q30 to Q33 are in "WP4's questions answered: the weight limit, "assigned shipments", unchecked data and the cut-off": Q30, remove floating-point noise from a shipment's weight before comparing it with a carrier's limit; Q31, `findTopCarriers` counts every shipment that has a carrier; Q32, calculate with the data as given and never throw; Q33, compare the rounded score with 50. The tests that depend on one name it.
+Q2 to Q6 and Q8 are in `docs/decisions.md`, "Milestone 2's open questions answered"; Q16, Q21, Q23 and Q25 in "Milestone 2's review questions answered" and "The movement totals report splits by direction". Q29 is in "`groupBy` keeps an entry whose key is not listed, and a checked version flags it". Q30 to Q33 are in "WP4's questions answered: the weight limit, "assigned shipments", unchecked data and the cut-off": Q30, remove floating-point noise from a shipment's weight before comparing it with a carrier's limit; Q31, `findTopCarriers` counts every shipment that has a carrier; Q32, calculate with the data as given and never throw, with the checked versions beside them ("The checked cost and scoring functions return the briefing's result with warnings"); Q33, compare the rounded score with 50. The tests that depend on one name it.
