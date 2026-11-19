@@ -322,7 +322,7 @@ As decided, the "Recommended" column is what the new function returns, without t
 
 ## The code, as built
 
-mae agreed to this review on 2026-11-19, and the code was built that day on `production` as it stood after WP6. It does not use the checked cost and scoring functions (Q32): it calls only the briefing's `selectBestCarrier`.
+mae agreed to this review on 2026-11-19, and the code was built that day. It calls only the briefing's `selectBestCarrier`, not the checked functions (Q32), so it returns no warnings.
 
 - Four functions in `src/utils/transformations.ts`: `findShipmentOriginCountry`, `isCarrierEligibleForShipment`, `filterEligibleCarriers` and `selectBestEligibleCarrier`. Their reference, with twelve worked examples, is `docs/transformations.md`, "Must-have carrier selection".
 - One question came out of building it, Q35: the origin's warehouse is not in the list of warehouses given. mae's answer: no carrier is picked (`docs/decisions.md`).

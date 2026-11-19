@@ -279,7 +279,7 @@ Reliability is not a must-have: `onTimeRate` never makes a carrier ineligible (C
 
 ### Worked examples
 
-The carriers, products and the sample shipment are the briefing's, and the warehouses are the samples (`WH-LA` in the United States, `WH-ZGZ` in Spain). The other shipments are MOCK: they go to "Mock City", and their quantities and distances are invented for the example. Each cost and score is worked by hand in `docs/carrier-selection-review.md`.
+The carriers, products and the sample shipment are the briefing's, and the warehouses are the samples (`WH-LA` in the United States, `WH-ZGZ` in Spain). The other shipments are MOCK. Rows 11 and 12 are the sample shipment with only its priority changed; the rest go to "Mock City", and their quantities and distances are invented for the example. Each cost and score is worked by hand in `docs/carrier-selection-review.md`.
 
 | # | Shipment | Carriers | Eligible | `selectBestCarrier` (the briefing's) | `selectBestEligibleCarrier` |
 |---|---|---|---|---|---|
@@ -287,7 +287,7 @@ The carriers, products and the sample shipment are the briefing's, and the wareh
 | 2 | MOCK: 40 pairs of shoes (32 kg), Express, Los Angeles to the United States, 100 km | samples | DHL Express | UPS, 76.4, 62.92 | DHL Express, 98.5, 111.8 |
 | 3 | MOCK: 1 pair of shoes (0.8 kg), Same-day, Los Angeles to the United States, 20 km | samples | DHL Express | UPS, 81.4, 11.14 | DHL Express, 98.5, 24.96 |
 | 4 | The sample shipment | samples and MOCK carrier A | SEUR, DHL Express | MOCK carrier A, 82, 23.53 | SEUR, 97.6, 46.22 |
-| 5 | MOCK: 20 laptops (46 kg), Express, Zaragoza to Madrid, Spain, 320 km | samples | DHL Express | UPS, 56.4, 99.06 | DHL Express, 98.5, 176.8 |
+| 5 | MOCK: 20 laptops (46 kg), Express, Zaragoza to Spain, 320 km | samples | DHL Express | UPS, 56.4, 99.06 | DHL Express, 98.5, 176.8 |
 | 6 | MOCK: the same 20 laptops, Same-day | samples | DHL Express | SEUR, 77.6, 161.76 | DHL Express, 98.5, 217.6 |
 | 7 | MOCK: 1 pair of shoes, Express, Los Angeles to Spain, 9000 km | samples | DHL Express | UPS, 76.4, 592.75 | DHL Express, 98.5, 1187.68 |
 | 8 | MOCK: 100 pairs of shoes (80 kg), Standard, Los Angeles to the United States, 100 km | samples | none | UPS, 76.4, 106 | `null` |
@@ -301,7 +301,7 @@ The MOCK carriers, each listed after the samples:
 | MOCK carrier | `operatesIn` | Base, per kg, per km | `onTimeRate` | `maxWeightKg` | `handlesFragile` | `acceptsPriority` |
 |---|---|---|---|---|---|---|
 | A, which does not handle fragile | Spain | 3, 1, 0.04 | 90 | 20 | `false` | Standard, Express |
-| B, which fails three must-haves and is always on time | United States | 1, 1, 0.01 | 100 | 30 | `false` | Standard |
+| B, which fails four must-haves and is always on time | United States | 1, 1, 0.01 | 100 | 30 | `false` | Standard |
 | C, SEUR with a base rate one cent lower and a poor on-time rate | Spain | 6.49, 1.5, 0.08 | 40 | 25 | `true` | Standard, Express, Same-day |
 
 Why each row comes out as it does:
