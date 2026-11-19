@@ -32,6 +32,16 @@ echo "== Warehouse logic: types and tests"
 [ -d packages/warehouse-logic/node_modules ] || (cd packages/warehouse-logic && pnpm install --frozen-lockfile)
 (cd packages/warehouse-logic && pnpm typecheck && pnpm test)
 
+echo "== Warehouse logic: the test page's compiled files match their source"
+# The page loads dist/, which is committed so it works in a fresh clone (Q18, Q24).
+dist_hashes() { (cd packages/warehouse-logic && find dist -type f -print0 | sort -z | xargs -0 -r sha1sum); }
+before=$(dist_hashes)
+(cd packages/warehouse-logic && pnpm build)
+if [ "$before" != "$(dist_hashes)" ]; then
+  echo "FAIL  packages/warehouse-logic/dist/ was stale. The fresh build is now in place: commit it." >&2
+  exit 1
+fi
+
 echo "== No test drafts left"
 # A draft (x.test.draft.ts) is where a thread reworks a test that is on production before asking mae
 # once to promote it (.claude/rules/testing.md). The kit doesn't guard a draft, so none may merge.

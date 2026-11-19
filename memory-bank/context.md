@@ -18,9 +18,9 @@ TrackFlow's teams and client brands need, starting with the public website. It i
   definition of done; `docs/milestones/README.md` describes the layout.
 - `docs/decisions.md` records each decision and its reason; `docs/open-questions.md` holds the questions
   waiting for mae; `docs/FUTURE_WORK.md` parks ideas for later milestones.
-- `packages/warehouse-logic/` is Milestone 2's logic layer, in TypeScript: the types, the samples and
-  the views built from stored records. `packages/warehouse-logic/README.md` has its file map and the
-  rules for code in it; `packages/warehouse-logic/docs/erd.md` is the agreed data model.
+- `packages/warehouse-logic/` is Milestone 2's logic layer, in TypeScript, with a demo and a Tailwind
+  test page whose compiled `packages/warehouse-logic/dist/` is committed. Its README has the file map,
+  the rules for code in it and the API reference; `packages/warehouse-logic/docs/erd.md` is the agreed data model.
 - `uis/website/` is the public website from Milestone 1: static HTML pages, Tailwind CSS 4 compiled into
   the committed `uis/website/dist/styles.css`, plain JavaScript, and tests in `uis/website/tests/`.
   `uis/website/README.md` describes its files.
@@ -51,7 +51,11 @@ npx --yes http-server uis/website -p 3000 -c-1
 # The warehouse logic: types, tests (Node 22.18 or newer runs the .ts files), demo
 (cd packages/warehouse-logic && pnpm typecheck && pnpm test && pnpm demo)
 
-# The suite: both test sets, types, stylesheet, no test drafts, briefs, browser check and this bank
+# The logic's test page, at http://localhost:3000/src/index.html; rebuild dist/ after changing src/
+npx --yes http-server packages/warehouse-logic -p 3000 -c-1
+(cd packages/warehouse-logic && pnpm build)
+
+# The suite: both test sets, types, both builds, no test drafts, briefs, browser check and this bank
 scripts/suite.sh
 ```
 

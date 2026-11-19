@@ -1,3 +1,2 @@
+# Dependencies. dist/ is committed: the test page loads it (plan WP6, Q24).
 node_modules/
-# pnpm build output; the test page will commit it (plan WP6, Q24).
-dist/

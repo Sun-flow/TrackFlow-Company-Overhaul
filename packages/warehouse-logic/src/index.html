@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Warehouse logic test page · TrackFlow</title>
+    <meta name="description" content="Try TrackFlow's Milestone 2 warehouse and carrier functions by hand." />
+    <link rel="stylesheet" href="../dist/styles.css" />
+    <script type="module" src="../dist/page/main.js"></script>
+  </head>
+  <body class="bg-slate-50 text-slate-900 antialiased">
+    <a
+      href="#main"
+      class="sr-only rounded bg-white px-3 py-2 font-semibold text-teal-800 focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus-visible:outline-2 focus-visible:outline-teal-700"
+      >Skip to the panels</a
+    >
+    <header class="border-b border-slate-200 bg-white">
+      <div class="mx-auto max-w-6xl px-4 py-6">
+        <p class="text-sm font-semibold tracking-wide text-teal-800 uppercase">TrackFlow · Milestone 2</p>
+        <h1 class="mt-1 text-2xl font-bold sm:text-3xl">Warehouse logic test page</h1>
+        <p class="mt-2 max-w-3xl text-slate-700">
+          Try the warehouse and carrier functions by hand. Each panel runs the functions on the data you choose
+          below, shows the calls it made as code, and shows what they returned.
+        </p>
+        <nav aria-label="Panels" class="mt-4">
+          <ul class="flex flex-wrap gap-x-4 gap-y-2 text-sm">
+            <li><a class="page-link" href="#data">Data</a></li>
+            <li><a class="page-link" href="#products">Filter and sort</a></li>
+            <li><a class="page-link" href="#carriers">Carriers by reliability</a></li>
+            <li><a class="page-link" href="#search">Search</a></li>
+            <li><a class="page-link" href="#scoring">Carrier for a shipment</a></li>
+            <li><a class="page-link" href="#reports">Reports</a></li>
+            <li><a class="page-link" href="#validations">Validations</a></li>
+            <li><a class="page-link" href="#timing">Search comparison</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main" class="mx-auto max-w-6xl space-y-6 px-4 py-6">
+      <section id="data" aria-labelledby="data-heading" class="panel">
+        <h2 id="data-heading" class="panel-heading">Data</h2>
+        <form id="data-form" class="mt-3 space-y-2">
+          <fieldset>
+            <legend class="field-label">Run the panels on</legend>
+            <div class="mt-2 space-y-2">
+              <label class="flex items-start gap-2">
+                <input type="radio" name="source" value="samples" checked class="mt-1 accent-teal-700" />
+                <span>The briefing's sample data: three products, three carriers and one shipment</span>
+              </label>
+              <label class="flex items-start gap-2">
+                <input type="radio" name="source" value="mock" class="mt-1 accent-teal-700" />
+                <span>Mock data, seeded so it is the same on every load: 200 items and 500 shipments</span>
+              </label>
+            </div>
+          </fieldset>
+        </form>
+        <p class="mt-3 text-sm text-slate-700">
+          Mock data is invented to try the functions on more rows. None of it is TrackFlow's: its SKUs start with
+          MOCK-. The carrier and validation panels always use the briefing's samples.
+        </p>
+        <div id="data-output" class="mt-3" aria-live="polite"></div>
+      </section>
+
+      <section id="products" aria-labelledby="products-heading" class="panel">
+        <h2 id="products-heading" class="panel-heading">Filter and sort products</h2>
+        <form id="products-form" class="mt-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+          <div>
+            <label for="products-warehouse" class="field-label">Warehouse</label>
+            <select id="products-warehouse" name="warehouse" class="field"></select>
+          </div>
+          <div>
+            <label for="products-category" class="field-label">Category</label>
+            <select id="products-category" name="category" class="field"></select>
+          </div>
+          <div class="flex items-end">
+            <label class="flex items-center gap-2 pb-2">
+              <input type="checkbox" id="products-low-stock" name="lowStock" class="size-4 accent-teal-700" />
+              <span>Only low stock</span>
+            </label>
+          </div>
+          <div>
+            <label for="products-sort" class="field-label">Sort by</label>
+            <select id="products-sort" name="sort" class="field">
+              <option value="">No sort</option>
+              <option value="stockQuantity">Stock quantity</option>
+              <option value="weightKg">Weight</option>
+              <option value="unitCostUSD">Unit cost</option>
+              <option value="name">Name</option>
+              <option value="sku">SKU</option>
+            </select>
+          </div>
+          <div>
+            <label for="products-order" class="field-label">Order</label>
+            <select id="products-order" name="order" class="field">
+              <option value="asc">Smallest first</option>
+              <option value="desc">Largest first</option>
+            </select>
+          </div>
+        </form>
+        <div id="products-output" class="mt-4 space-y-3" aria-live="polite"></div>
+      </section>
+
+      <section id="carriers" aria-labelledby="carriers-heading" class="panel">
+        <h2 id="carriers-heading" class="panel-heading">Carriers by reliability</h2>
+        <form id="carriers-form" class="mt-3 max-w-xs">
+          <label for="carriers-order" class="field-label">Order</label>
+          <select id="carriers-order" name="order" class="field">
+            <option value="desc">Most reliable first</option>
+            <option value="asc">Least reliable first</option>
+          </select>
+        </form>
+        <div id="carriers-output" class="mt-4 space-y-3" aria-live="polite"></div>
+      </section>
+
+      <section id="search" aria-labelledby="search-heading" class="panel">
+        <h2 id="search-heading" class="panel-heading">Search</h2>
+        <div class="mt-3 grid gap-6 lg:grid-cols-3">
+          <form id="search-sku-form" class="space-y-2">
+            <h3 class="font-semibold">A product by SKU</h3>
+            <label for="search-sku" class="field-label">SKU, in any case</label>
+            <div class="flex gap-2">
+              <input id="search-sku" name="sku" type="text" class="field" autocomplete="off" />
+              <button type="submit" class="button">Find</button>
+            </div>
+            <div id="search-sku-output" class="space-y-2 pt-2" aria-live="polite"></div>
+          </form>
+          <form id="search-shipment-form" class="space-y-2">
+            <h3 class="font-semibold">A shipment by id</h3>
+            <label for="search-shipment" class="field-label">Shipment id, exactly</label>
+            <div class="flex gap-2">
+              <input id="search-shipment" name="id" type="text" class="field" autocomplete="off" />
+              <button type="submit" class="button">Find</button>
+            </div>
+            <div id="search-shipment-output" class="space-y-2 pt-2" aria-live="polite"></div>
+          </form>
+          <form id="search-weight-form" class="space-y-2">
+            <h3 class="font-semibold">A product by weight, binary search</h3>
+            <label for="search-weight" class="field-label">Weight in kg</label>
+            <div class="flex gap-2">
+              <input id="search-weight" name="weight" type="number" step="0.1" min="0" class="field" />
+              <button type="submit" class="button">Find</button>
+            </div>
+            <div id="search-weight-output" class="space-y-2 pt-2" aria-live="polite"></div>
+          </form>
+        </div>
+      </section>
+
+      <section id="scoring" aria-labelledby="scoring-heading" class="panel">
+        <h2 id="scoring-heading" class="panel-heading">Carrier for a shipment</h2>
+        <p class="mt-2 text-sm text-slate-700">
+          The briefing's cost and scoring rules, exactly as written, on its three carriers. The fields start as the
+          briefing's sample shipment; the shipment leaves from the product's warehouse.
+        </p>
+        <form id="scoring-form" class="mt-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+          <div>
+            <label for="scoring-product" class="field-label">Product</label>
+            <select id="scoring-product" name="product" class="field"></select>
+          </div>
+          <div>
+            <label for="scoring-quantity" class="field-label">Quantity</label>
+            <input id="scoring-quantity" name="quantity" type="number" min="1" step="1" class="field" />
+          </div>
+          <div>
+            <label for="scoring-country" class="field-label">Destination country</label>
+            <select id="scoring-country" name="country" class="field"></select>
+          </div>
+          <div>
+            <label for="scoring-distance" class="field-label">Distance in km</label>
+            <input id="scoring-distance" name="distance" type="number" min="0" step="1" class="field" />
+          </div>
+          <div>
+            <label for="scoring-priority" class="field-label">Priority</label>
+            <select id="scoring-priority" name="priority" class="field"></select>
+          </div>
+        </form>
+        <div id="scoring-output" class="mt-4 space-y-3" aria-live="polite"></div>
+      </section>
+
+      <section id="reports" aria-labelledby="reports-heading" class="panel">
+        <h2 id="reports-heading" class="panel-heading">Reports</h2>
+        <form id="reports-form" class="mt-3 max-w-xs">
+          <label for="reports-top" class="field-label">Top carriers to list</label>
+          <input id="reports-top" name="top" type="number" min="0" step="1" value="3" class="field" />
+        </form>
+        <div id="reports-output" class="mt-4 grid gap-4 lg:grid-cols-2" aria-live="polite"></div>
+      </section>
+
+      <section id="validations" aria-labelledby="validations-heading" class="panel">
+        <h2 id="validations-heading" class="panel-heading">Validations</h2>
+        <p class="mt-2 text-sm text-slate-700">
+          Load a sample, change any value in its JSON, and validate it. The briefing's validators check its 14 rules;
+          the strict ones beside them also check finite numbers, text patterns and real dates.
+        </p>
+        <form id="validations-form" class="mt-3 space-y-3">
+          <div class="max-w-sm">
+            <label for="validations-sample" class="field-label">Sample</label>
+            <select id="validations-sample" name="sample" class="field"></select>
+          </div>
+          <div>
+            <label for="validations-json" class="field-label">The record, as JSON</label>
+            <textarea
+              id="validations-json"
+              name="json"
+              rows="14"
+              spellcheck="false"
+              aria-describedby="validations-json-help"
+              class="field font-mono text-sm"
+            ></textarea>
+            <p id="validations-json-help" class="mt-1 text-sm text-slate-700">
+              A shipment's createdAt is written as a date in text, such as "2024-03-15".
+            </p>
+          </div>
+          <button type="submit" class="button">Validate</button>
+        </form>
+        <div id="validations-output" class="mt-4 grid gap-4 lg:grid-cols-2" aria-live="polite"></div>
+      </section>
+
+      <section id="timing" aria-labelledby="timing-heading" class="panel">
+        <h2 id="timing-heading" class="panel-heading">Search comparison</h2>
+        <p class="mt-2 text-sm text-slate-700">
+          Times three ways to find products by SKU in mock data: linear search, binary search on a copy sorted by
+          SKU, and a Map built once. It repeats the timing run in
+          <a class="page-link" href="../docs/search-research.md">the search research</a>, live in this browser.
+        </p>
+        <form id="timing-form" class="mt-3 grid gap-4 sm:grid-cols-3">
+          <div>
+            <label for="timing-size" class="field-label">Mock items</label>
+            <select id="timing-size" name="size" class="field">
+              <option value="1000">1,000</option>
+              <option value="10000" selected>10,000</option>
+              <option value="100000">100,000 (takes a few seconds)</option>
+            </select>
+          </div>
+          <div>
+            <label for="timing-lookups" class="field-label">Lookups</label>
+            <select id="timing-lookups" name="lookups" class="field">
+              <option value="1000" selected>1,000</option>
+              <option value="10000">10,000</option>
+            </select>
+          </div>
+          <div class="flex items-end">
+            <button type="submit" class="button">Time the searches</button>
+          </div>
+        </form>
+        <p id="timing-status" class="mt-3 text-sm text-slate-700" role="status">Not run yet.</p>
+        <div id="timing-output" class="mt-3 space-y-3"></div>
+      </section>
+    </main>
+
+    <footer class="border-t border-slate-200 bg-white">
+      <div class="mx-auto max-w-6xl px-4 py-4 text-sm text-slate-700">
+        Milestone 2's logic layer, <code class="font-mono">@trackflow/warehouse-logic</code>. The page loads the
+        compiled modules in <code class="font-mono">dist/</code>; rebuild them with
+        <code class="font-mono">pnpm build</code>.
+      </div>
+    </footer>
+  </body>
+</html>

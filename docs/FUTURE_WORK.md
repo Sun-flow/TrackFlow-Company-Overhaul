@@ -128,6 +128,27 @@ With I5 (c), "Low stock" and "Out of stock" are worked out from the numbers and 
 - **Source:** I5 option (c), 2026-11-19 (`packages/warehouse-logic/docs/tracked-improvements.md`, decision 5)
 - **Target:** ?
 
+### Say why a carrier was left out
+
+The must-have carrier selection names the winner, or returns `null`, and gives no reasons. A result that lists each rejected carrier with the must-haves it failed (wrong country, over the weight limit, priority not accepted, no fragile handling) would tell a coordinator what to change. It could also warn when the product passed in is not the shipment's. `CONTEXT.md` asks for "explainable recommendations".
+
+- **Source:** `packages/warehouse-logic/docs/carrier-selection-review.md`, CS4, F9 and F10; mae, 2026-11-19: "if we need readouts later as to why things failed, we can expand then"
+- **Target:** ?
+
+### Split a large order into packages
+
+A carrier's limit is per package, and the weight rule holds the whole shipment against it, so a large order of small items has no eligible carrier. Splitting an order needs data the briefing does not have (how many units go in a box) and a cost formula that charges a base rate per package.
+
+- **Source:** `packages/warehouse-logic/docs/carrier-selection-review.md`, CS3 and F7; mae chose the whole shipment's weight, 2026-11-19
+- **Target:** ?
+
+### Let reliability and speed count in carrier selection
+
+Among eligible carriers only cost decides, so a carrier that is rarely on time wins by one cent, and `avgDeliveryDays` is never read. A minimum on-time rate needs a figure from the carrier team and real performance data, which `CONTEXT.md` says TrackFlow does not have yet. Speed against a promised delivery date needs a date the briefing's `Shipment` does not have.
+
+- **Source:** `packages/warehouse-logic/docs/carrier-selection-review.md`, CS5 and F8; mae chose lowest cost, 2026-11-19
+- **Target:** ?
+
 ## AI and agents
 
 ### Orchestrator agent
