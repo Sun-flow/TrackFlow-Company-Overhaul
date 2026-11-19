@@ -13,8 +13,8 @@
 - Parked in `docs/FUTURE_WORK.md`: what the answers leave out.
 - No code or test changed. The code waits for WP6 and the checked cost and scoring functions
   (Q32), which also change `src/utils/transformations.ts`.
-- Verified: figures worked by hand, then compared with the package's functions in a throwaway
-  script; `scripts/suite.sh`. Not done: rendering the Mermaid diagrams, and opening the external
+- Verified: figures worked by hand and compared with the package's functions;
+  `scripts/suite.sh`. Not done: rendering the Mermaid diagrams, and opening the external
   sources, which the proxy blocked.
 - Left alone: `memory-bank/status.md`, at its word limit, and the plan's and the definition of
   done's wording for WP7, K5 and K6.
