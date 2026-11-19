@@ -1,8 +1,8 @@
 # Carrier selection review
 
-How the briefing's `selectBestCarrier` picks a carrier, the ways it picks a wrong one, and the fix mae decided on (plan WP7, D4). This is the analysis only: it holds no code, and the briefing's functions stay exactly as they are.
+How the briefing's `selectBestCarrier` picks a carrier, the ways it picks a wrong one, and the fix mae decided on (plan WP7, D4). This is the analysis: it holds no code, and the briefing's functions stay exactly as they are.
 
-> **Status**: decided by mae on 2026-11-19. The answers to the five choices are under "What mae decided" and in `docs/decisions.md`, "Carrier selection departure: five must-haves in front of the briefing's selection". The code is not built yet.
+> **Status**: decided by mae on 2026-11-19. The answers to the five choices are under "What mae decided" and in `docs/decisions.md`, "Carrier selection departure: five must-haves in front of the briefing's selection". The code was built on 2026-11-19: `selectBestEligibleCarrier` and its three helpers, described in `docs/transformations.md`, "Must-have carrier selection".
 
 ## Summary
 
@@ -320,13 +320,15 @@ The last three rows are the honest limits of the recommendation. Two of them ans
 
 As decided, the "Recommended" column is what the new function returns, without the reasons: where the column says "none", it returns `null`.
 
-## When the code is built
+## The code, as built
 
-mae agreed to this review on 2026-11-19. The code now waits for two merges that also change `src/utils/transformations.ts`: WP6 (the demo, the test page and the README, which the new exports are then added to) and the checked cost and scoring functions (Q32).
+mae agreed to this review on 2026-11-19, and the code was built that day on `production` as it stood after WP6. It does not use the checked cost and scoring functions (Q32): it calls only the briefing's `selectBestCarrier`.
 
-- Medium risk tier, as for WP4 (plan D9): tests written from this document before the code, a second set written from it in a separate context, and a fresh-context review.
-- A new test file, so the briefing's tests are untouched. For each case above it asserts the briefing's result and the new result side by side, with the expected values worked by hand here.
-- The departure is logged in `docs/decisions.md` with mae's answers to CS1 to CS5, and what is not built is parked in `docs/FUTURE_WORK.md`.
+- Four functions in `src/utils/transformations.ts`: `findShipmentOriginCountry`, `isCarrierEligibleForShipment`, `filterEligibleCarriers` and `selectBestEligibleCarrier`. Their reference, with twelve worked examples, is `docs/transformations.md`, "Must-have carrier selection".
+- One question came out of building it, Q35: the origin's warehouse is not in the list of warehouses given. mae's answer: no carrier is picked (`docs/decisions.md`).
+- Medium risk tier, as for WP4 (plan D9): `tests/carrier-selection-improved.test.ts` was written from this document and the reference before the code, `tests/carrier-selection-improved.independent.test.ts` was written from them in a separate context, and a fresh-context review followed.
+- The new test files leave the briefing's tests untouched. For each worked example they assert the briefing's result and the new result side by side, with the expected values worked by hand.
+- What is not built is parked in `docs/FUTURE_WORK.md`.
 
 ## How this was checked
 
@@ -334,7 +336,7 @@ mae agreed to this review on 2026-11-19. The code now waits for two merges that 
 - The "Option" and "Recommended" columns come from a throwaway script that filtered the carriers with the existing rule checks and then called the briefing's `selectBestCarrier`, which is the design proposed above. The script is not in the repository, and nothing in `src/` or `tests/` changed.
 - The table of sixteen combinations was calculated by hand and confirmed by a loop over whole on-time percentages, using the rounded score (Q33).
 - The table of sample carriers was reasoned from the rates and limits, then confirmed on 28,800 mock shipments. The mock shipments test the rule; they say nothing about what TrackFlow actually ships.
-- Not done: no test was added, because no code was. The must-have functions do not exist yet.
+- When this review was written no test was added, because no code was. The tests came with the code ("The code, as built").
 
 ## Sources
 

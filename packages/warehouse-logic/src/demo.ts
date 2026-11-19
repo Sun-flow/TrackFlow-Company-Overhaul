@@ -28,6 +28,7 @@ import {
   calculateShippingCost,
   calculateTotalInventoryValue,
   countProductsByCategory,
+  filterEligibleCarriers,
   findCheapestCarrierForShipment,
   findHeaviestProduct,
   findLongestShipment,
@@ -35,6 +36,7 @@ import {
   groupShipmentsByStatus,
   scoreCarrierForShipment,
   selectBestCarrier,
+  selectBestEligibleCarrier,
   summarizeWarehouses,
 } from "./utils/transformations.ts";
 import {
@@ -122,7 +124,26 @@ console.log(
   [
     "  The briefing's known failure (plan D4): UPS operates only in the United States, yet it wins the",
     "  shipment to Spain. Missing the country costs 20 points, it still scores over 50, and the lowest",
-    "  cost decides. WP7 reviews it; the briefing's rules are kept as written here.",
+    "  cost decides. The briefing's rules are kept as written here; the must-have selection is next.",
+  ].join("\n"),
+);
+const eligible = filterEligibleCarriers(sampleCarriers, sampleShipment, laptop, sampleWarehouses);
+result(
+  "filterEligibleCarriers(carriers, shipment, product, warehouses)",
+  eligible.map((carrier) => carrier.name),
+);
+const bestEligible = selectBestEligibleCarrier(sampleCarriers, sampleShipment, laptop, sampleWarehouses);
+result(
+  "selectBestEligibleCarrier(carriers, shipment, product, warehouses)",
+  bestEligible === null
+    ? null
+    : { carrier: bestEligible.carrier.name, score: bestEligible.score, cost: bestEligible.cost },
+);
+console.log(
+  [
+    "  The must-have selection (plan WP7, a departure beside the briefing's): a carrier must operate in",
+    "  the origin's and the destination's country, carry the whole shipment's weight, accept the priority",
+    "  and handle fragile goods. UPS is left out, and the lowest cost decides between the carriers left.",
   ].join("\n"),
 );
 const cheapest = findCheapestCarrierForShipment(sampleCarriers, sampleShipment, laptop);

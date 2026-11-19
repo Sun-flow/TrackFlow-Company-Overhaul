@@ -356,7 +356,8 @@ export function evaluateCarriersForShipment(
  *
  * Known failure of these rules (plan D4): the briefing's sample shipment to Madrid goes to UPS, which
  * operates only in the United States. Missing the country costs 20 points, UPS still scores 76.4, and
- * the lowest cost decides. The tests pin that result. The fix is a separate, later function (WP7).
+ * the lowest cost decides. The tests pin that result. The fix is a separate function below,
+ * `selectBestEligibleCarrier` (WP7).
  */
 export function selectBestCarrier(
   carriers: Carrier[],
@@ -407,7 +408,7 @@ export function findShipmentOriginCountry(shipment: Shipment, warehouses: Wareho
  * goods when the product is fragile (mae's CS1 to CS3). Each must-have is the rule check the
  * briefing's score uses. Reliability, speed and price never make a carrier ineligible.
  *
- * Provisional (Q35): when the origin's country is not found, no carrier is eligible.
+ * When the origin's country is not found, no carrier is eligible (Q35).
  */
 export function isCarrierEligibleForShipment(
   carrier: Carrier,

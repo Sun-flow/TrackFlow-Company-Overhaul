@@ -229,7 +229,7 @@ Reliability is not a must-have: `onTimeRate` never makes a carrier ineligible (C
 
 - The result has the briefing's shape, and the carrier in it is the carrier object that was passed in. The score and the cost are `scoreCarrierForShipment` and `calculateShippingCost` for that carrier.
 - What the briefing's function settles is settled the same way among eligible carriers: on the same cost the higher score wins, then the carrier listed first (Q6); the rounded score is compared with 50 (Q33). An eligible carrier with valid data scores at least 70, so the cut-off leaves none out.
-- **The origin's country not found (Q35, provisional).** When no warehouse in `warehouses` is named `shipment.origin`, the first must-have cannot be confirmed, so no carrier is eligible and the selection is `null`. This waits for mae's answer in `docs/open-questions.md`.
+- **The origin's country not found (Q35).** When no warehouse in `warehouses` is named `shipment.origin`, the first must-have cannot be confirmed, so no carrier is eligible and the selection is `null` (mae, 2026-11-19). It can only happen when the list of warehouses given is incomplete.
 - Like every function here, these four read only their parameters, change none of them and do not check their data (Q32).
 
 ### Worked examples

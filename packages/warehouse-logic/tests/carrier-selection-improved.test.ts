@@ -3,7 +3,8 @@
 // carrier selection") and docs/carrier-selection-review.md before the code. Every expected cost and
 // score is the briefing's formula worked by hand, with the arithmetic beside it; none comes from
 // running the code. mae's answers CS1 to CS5 are in docs/decisions.md ("Carrier selection departure:
-// five must-haves in front of the briefing's selection"); a test that depends on one names it.
+// five must-haves in front of the briefing's selection"), with Q35, the origin's country not found;
+// a test that depends on one names it.
 // The briefing's own selection is asserted beside the new one, so these tests also show that the
 // briefing's function still answers as the briefing wrote it. Mock data is in tests/fixtures/ and is
 // labelled there.
@@ -254,7 +255,7 @@ describe("isCarrierEligibleForShipment: the five must-haves (CS1, CS2, CS3)", ()
     });
   });
 
-  describe("the origin's country not found (Q35, provisional)", () => {
+  describe("the origin's country not found (Q35)", () => {
     test("no warehouses: no carrier is eligible", () => {
       assert.equal(isCarrierEligibleForShipment(carrier, shipment, product, []), false);
     });
@@ -570,7 +571,7 @@ describe("filterEligibleCarriers", () => {
     assert.deepEqual(filterEligibleCarriers([], sampleShipment, laptop, sampleWarehouses), []);
   });
 
-  test("no warehouses gives [], because no origin country is found (Q35, provisional)", () => {
+  test("no warehouses gives [], because no origin country is found (Q35)", () => {
     assert.deepEqual(filterEligibleCarriers(sampleCarriers, sampleShipment, laptop, []), []);
   });
 
@@ -617,11 +618,11 @@ describe("selectBestEligibleCarrier: when there is nothing to pick", () => {
     assert.equal(selectBestEligibleCarrier([ups], sampleShipment, laptop, sampleWarehouses), null);
   });
 
-  test("no warehouses: null (Q35, provisional)", () => {
+  test("no warehouses: null (Q35)", () => {
     assert.equal(selectBestEligibleCarrier(sampleCarriers, sampleShipment, laptop, []), null);
   });
 
-  test("no warehouse with the origin's name: null (Q35, provisional)", () => {
+  test("no warehouse with the origin's name: null (Q35)", () => {
     assert.equal(selectBestEligibleCarrier(sampleCarriers, sampleShipment, laptop, [losAngeles]), null);
   });
 });
