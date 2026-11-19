@@ -1,0 +1,33 @@
+/* The test page's stylesheet (plan WP6, Q18). `pnpm build` compiles it to dist/styles.css, which is
+   committed so the page works in a fresh clone. Only the page's own files are scanned for classes: not
+   the docs, whose words would otherwise compile into classes, and not dist/, the build's own output. */
+@import "tailwindcss" source(none);
+@source "../index.html";
+@source "./*.ts";
+
+/* Shared looks, written once so the page's markup stays readable. */
+@layer components {
+  .panel {
+    @apply rounded-xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6;
+  }
+  .panel-heading {
+    @apply text-xl font-bold text-slate-900;
+  }
+  .field-label {
+    @apply block text-sm font-semibold text-slate-900;
+  }
+  .field {
+    @apply mt-1 block w-full rounded-md border border-slate-400 bg-white px-3 py-2 text-slate-900
+      focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-teal-700;
+  }
+  .button {
+    @apply inline-flex items-center justify-center rounded-md bg-teal-700 px-4 py-2 font-semibold whitespace-nowrap
+      text-white hover:bg-teal-800 focus-visible:outline-2 focus-visible:outline-offset-2
+      focus-visible:outline-teal-700 disabled:cursor-wait disabled:opacity-70 motion-safe:transition-colors
+      motion-reduce:transition-none;
+  }
+  .page-link {
+    @apply font-medium text-teal-800 underline underline-offset-2 hover:text-teal-950
+      focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700;
+  }
+}
