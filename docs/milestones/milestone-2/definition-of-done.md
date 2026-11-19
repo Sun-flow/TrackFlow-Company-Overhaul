@@ -102,8 +102,8 @@ The plan's extras X1 to X5 joined this list when mae picked all five (2026-11-18
 | ST1 | Files are organized by responsibility as `src/types/models.ts` and `src/utils/collections.ts`, `search.ts`, `transformations.ts`, `validations.ts`, each function in the file the briefing names | ES, B-A5, E-SO1 | WP1, all | 🟡 | WP1: the five files are where the briefing names them, with `views.ts` beside them. The four `src/utils/` files of the briefing export nothing until WP2 to WP5 |
 | ST2 | Every parameter and return value has an explicit type, and `any` is not used | L8, E-CQ3, B-A1 | all | ⬜ | |
 | ST3 | No TypeScript compilation errors in any file | E-TC8 | all | ⬜ | |
-| ST4 | A documented command typechecks the code, and another runs it, during development | G, L10, E-TC9 | WP1, WP6 | 🟡 | WP1: `pnpm typecheck` and `pnpm demo`, in the package README. The demo shows only the data model until WP6 |
-| ST5 | TypeScript only, and the code runs both in the browser and in a development environment | G | WP1, WP6 | 🟡 | WP1: TypeScript only; `src/` compiles with no Node types, and `pnpm build` writes browser ES modules. Shown in a browser by WP6's test page |
+| ST4 | A documented command typechecks the code, and another runs it, during development | G, L10, E-TC9 | WP1, WP6 | ✅ | `pnpm typecheck` and `pnpm demo`, in the package README's Commands; the demo prints each briefing function's result on the samples, D4's case included (WP6, 2026-11-19) |
+| ST5 | TypeScript only, and the code runs both in the browser and in a development environment | G | WP1, WP6 | ✅ | TypeScript only, the page's script included; `src/` compiles with no Node types. The same modules run in Node (`pnpm test`, `pnpm demo`) and in a browser (`src/index.html` loads `dist/`, clean in `scripts/site-check.py`) (WP6, 2026-11-19) |
 | ST6 | Each function has one clearly identifiable responsibility | T, G, L9, E-SO2 | all | ⬜ | |
 | ST7 | Any repeated task has its own function | G | all | ⬜ | |
 | ST8 | Descriptive names: camelCase variables and functions, PascalCase interfaces and types | T, G-Q, B-A6, E-SO3 | all | ⬜ | |
@@ -128,16 +128,16 @@ The plan's extras X1 to X5 joined this list when mae picked all five (2026-11-18
 
 | ID | Item | Source | Package | Rating | Evidence |
 |---|---|---|---|---|---|
-| O1 | A simple HTML page with Tailwind CSS to try the functions by hand, served with a documented command (D8) | FT1, ES | WP6 | ⬜ | |
-| O2 | Buttons or controls to run the operations: filter, search, sort, reports | FT2 | WP6 | ⬜ | |
-| O3 | Results shown clearly on the page | FT3 | WP6 | ⬜ | |
+| O1 | A simple HTML page with Tailwind CSS to try the functions by hand, served with a documented command (D8) | FT1, ES | WP6 | ✅ | `src/index.html`, Tailwind CSS 4 compiled to `dist/styles.css`; served with `npx --yes http-server packages/warehouse-logic -p 3000 -c-1`, in the package README (2026-11-19) |
+| O2 | Buttons or controls to run the operations: filter, search, sort, reports | FT2 | WP6 | ✅ | Controls to filter, sort, search, score carriers, run the reports and validate, on the samples or on mock data (2026-11-19) |
+| O3 | Results shown clearly on the page | FT3 | WP6 | ✅ | Each panel shows the calls it made as code and their results as tables or lists; the D4 failure and invalid input are flagged (2026-11-19) |
 
 ## Extras (picked by mae, 2026-11-18)
 
 | ID | Item | Source | Package | Rating | Evidence |
 |---|---|---|---|---|---|
-| X1 | An API reference in the package README: every exported function, its signature, what it returns for empty input, and an example | mae (D8, plan X1) | WP6, then Phase 4 | ⬜ | |
+| X1 | An API reference in the package README: every exported function, its signature, what it returns for empty input, and an example | mae (D8, plan X1) | WP6, then Phase 4 | ✅ | The package README's API reference, as of WP6; `tests/readme.test.ts` fails on any export it doesn't name. Phase 4 adds its own exports (2026-11-19) |
 | X2 | A seeded mock data generator, clearly labelled as mock, for larger test arrays and the search timing, which makes stored records and builds the views from them | mae (D8, plan X2) | WP2 | ⬜ | |
-| X3 | The test page in the browser check: screenshots, no console errors, axe clean | mae (D8, plan X3) | WP6 | ⬜ | |
+| X3 | The test page in the browser check: screenshots, no console errors, axe clean | mae (D8, plan X3) | WP6 | ✅ | `scripts/site-check.py` checks the page with the website by default: four widths, no console errors or sideways scroll, axe clean (2026-11-19) |
 | X4 | A mutation check on cost, scoring and validations, with its score reported against a target of 70% or more | mae (D8, plan X4) | WP9 | ⬜ | |
-| X5 | A search comparison panel on the test page: linear, binary and `Map` lookup timed on the mock data | mae (D8, plan X5) | WP6 | ⬜ | |
+| X5 | A search comparison panel on the test page: linear, binary and `Map` lookup timed on the mock data | mae (D8, plan X5) | WP6 | ✅ | The page's "Search comparison" panel times linear, binary and `Map` lookup on X2's mock data; its logic is tested in `tests/page/search-timing.test.ts` (2026-11-19) |
