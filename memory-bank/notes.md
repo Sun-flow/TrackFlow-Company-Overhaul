@@ -34,8 +34,8 @@ This is mae's solo repo, so mae's preferences apply to every session.
   pointer there, so every open item can be found in one place. (2026-11-17, pointer 2026-11-18)
 - One source of truth: when a value would be written in two places, derive one from the other, even
   where a test could keep two copies in step (the literal types and their lists, Q26). (2026-11-18)
-- Grace, but flagged: data built wrong should still go through without stopping the work, and the
-  function marks where it happened, such as a warning list beside the result (Q29). (2026-11-18)
+- Grace, but flagged: bad data never crashes the work. It goes through with warnings beside the
+  result (Q29), or is rejected with a clear reason, never a bare crash (WP8 R1). (2026-11-19)
 - Names say exactly what they identify: a record's key is named for its record (`stockRecordId`, not
   `productId`), and accuracy wins over a familiar term. (2026-11-18)
 

@@ -29,6 +29,7 @@ import type {
 } from "../types/models.ts";
 import { filterProductsByWarehouse, groupBy, isLowStock, sortBy } from "./collections.ts";
 import { indexBy } from "./search.ts";
+import { validateCarrier, validateProduct, validateShipment } from "./validations.ts";
 
 // ---------------------------------------------------------------------------------------------------
 // The briefing's figures
@@ -356,7 +357,8 @@ export function evaluateCarriersForShipment(
  *
  * Known failure of these rules (plan D4): the briefing's sample shipment to Madrid goes to UPS, which
  * operates only in the United States. Missing the country costs 20 points, UPS still scores 76.4, and
- * the lowest cost decides. The tests pin that result. The fix is a separate, later function (WP7).
+ * the lowest cost decides. The tests pin that result. The fix is a separate function below,
+ * `selectBestEligibleCarrier` (WP7).
  */
 export function selectBestCarrier(
   carriers: Carrier[],
@@ -387,6 +389,70 @@ export function findCheapestCarrierForShipment(
     evaluateCarriersForShipment(carriers, shipment, product),
     (evaluation) => evaluation.cost,
   );
+}
+
+// ---------------------------------------------------------------------------------------------------
+// Must-have carrier selection (plan WP7): a departure from the briefing, built beside it
+// ---------------------------------------------------------------------------------------------------
+
+/**
+ * The country a shipment leaves from: the country of the first warehouse whose name is the
+ * shipment's origin. null when no warehouse has that name.
+ */
+export function findShipmentOriginCountry(shipment: Shipment, warehouses: Warehouse[]): Country | null {
+  return warehouses.find((warehouse) => warehouse.name === shipment.origin)?.country ?? null;
+}
+
+/**
+ * Whether the carrier can do the shipment at all: it operates in the origin's country and in the
+ * destination's, can carry the whole shipment's weight, accepts the priority and handles fragile
+ * goods when the product is fragile (mae's CS1 to CS3). Each must-have is the rule check the
+ * briefing's score uses. Reliability, speed and price never make a carrier ineligible.
+ *
+ * When the origin's country is not found, no carrier is eligible (Q35).
+ */
+export function isCarrierEligibleForShipment(
+  carrier: Carrier,
+  shipment: Shipment,
+  product: Product,
+  warehouses: Warehouse[],
+): boolean {
+  const originCountry = findShipmentOriginCountry(shipment, warehouses);
+  return (
+    originCountry !== null &&
+    carrierOperatesInCountry(carrier, originCountry) &&
+    carrierOperatesInCountry(carrier, shipment.destination.country) &&
+    carrierCanCarryWeight(carrier, calculateShipmentWeightKg(shipment, product)) &&
+    carrierAcceptsPriority(carrier, shipment.priority) &&
+    carrierCanHandleFragility(carrier, product.isFragile)
+  );
+}
+
+/** The carriers that can do the shipment at all, in the carriers' order. [] for no carriers. */
+export function filterEligibleCarriers(
+  carriers: Carrier[],
+  shipment: Shipment,
+  product: Product,
+  warehouses: Warehouse[],
+): Carrier[] {
+  return carriers.filter((carrier) => isCarrierEligibleForShipment(carrier, shipment, product, warehouses));
+}
+
+/**
+ * A departure from the briefing, beside its `selectBestCarrier` (docs/decisions.md, "Carrier
+ * selection departure: five must-haves in front of the briefing's selection"): the briefing's
+ * selection run only on the carriers that can do the shipment at all, so the lowest cost decides
+ * among carriers able to do the job (CS5). The result has the briefing's shape and names only the
+ * winner (CS4). null when no carrier is eligible, and, as in the briefing's function, when none of
+ * them reaches the cut-off, which needs data that breaks a validation rule (Q32).
+ */
+export function selectBestEligibleCarrier(
+  carriers: Carrier[],
+  shipment: Shipment,
+  product: Product,
+  warehouses: Warehouse[],
+): { carrier: Carrier; score: number; cost: number } | null {
+  return selectBestCarrier(filterEligibleCarriers(carriers, shipment, product, warehouses), shipment, product);
 }
 
 // ---------------------------------------------------------------------------------------------------
@@ -544,4 +610,129 @@ export function calculateMovementTotals(
       (movementsByWarehouseId[warehouseId] ?? []).map((placed) => placed.movement),
     ),
   );
+}
+
+// ---------------------------------------------------------------------------------------------------
+// Checked versions: the same result, with warnings (Q32)
+// ---------------------------------------------------------------------------------------------------
+
+/** What `calculateShippingCostChecked` returns: the briefing's cost, and what is wrong with the data. */
+export interface CheckedShippingCost {
+  cost: number;
+  warnings: string[];
+}
+
+/** What `scoreCarrierForShipmentChecked` returns: the briefing's score, and what is wrong with the data. */
+export interface CheckedCarrierScore {
+  score: number;
+  warnings: string[];
+}
+
+/** What `selectBestCarrierChecked` returns: the briefing's selection, and what is wrong with the data. */
+export interface CheckedCarrierSelection {
+  best: { carrier: Carrier; score: number; cost: number } | null;
+  warnings: string[];
+}
+
+/** Each message with the record it is about in front, such as "Carrier CAR-UPS: ...". */
+function labelMessages(label: string, messages: readonly string[]): string[] {
+  return messages.map((message) => `${label}: ${message}`);
+}
+
+function carrierLabel(carrier: Carrier): string {
+  return `Carrier ${carrier.id}`;
+}
+
+/** What the briefing's validators say about the shipment, then about the product. */
+function collectShipmentAndProductWarnings(shipment: Shipment, product: Product): string[] {
+  return [
+    ...labelMessages(`Shipment ${shipment.id}`, validateShipment(shipment).errors),
+    ...labelMessages(`Product ${product.sku}`, validateProduct(product).errors),
+  ];
+}
+
+/** What the briefing's validator says about the carrier. */
+function collectCarrierWarnings(carrier: Carrier): string[] {
+  return labelMessages(carrierLabel(carrier), validateCarrier(carrier).errors);
+}
+
+/** A warning when a carrier's result can't be used, being `NaN` or infinite; none for a finite number. */
+function warnWhenNotFinite(carrier: Carrier, resultName: string, value: number): string[] {
+  return Number.isFinite(value)
+    ? []
+    : [`${carrierLabel(carrier)}: ${resultName} is not a finite number (got ${String(value)})`];
+}
+
+function warnWhenCostNotFinite(carrier: Carrier, shipment: Shipment, cost: number): string[] {
+  return warnWhenNotFinite(carrier, `the shipping cost of shipment ${shipment.id}`, cost);
+}
+
+function warnWhenScoreNotFinite(carrier: Carrier, shipment: Shipment, score: number): string[] {
+  return warnWhenNotFinite(carrier, `the score for shipment ${shipment.id}`, score);
+}
+
+/**
+ * `calculateShippingCost`'s cost, unchanged, with a warning for each of the briefing's validation
+ * rules the shipment, the product or the carrier breaks, and one more when the cost is not a finite
+ * number (Q32). Clean data gives no warnings. Nothing is clamped and nothing throws.
+ */
+export function calculateShippingCostChecked(
+  shipment: Shipment,
+  product: Product,
+  carrier: Carrier,
+): CheckedShippingCost {
+  const cost = calculateShippingCost(shipment, product, carrier);
+  return {
+    cost,
+    warnings: [
+      ...collectShipmentAndProductWarnings(shipment, product),
+      ...collectCarrierWarnings(carrier),
+      ...warnWhenCostNotFinite(carrier, shipment, cost),
+    ],
+  };
+}
+
+/**
+ * `scoreCarrierForShipment`'s score, unchanged, with a warning for each of the briefing's validation
+ * rules the shipment, the product or the carrier breaks, and one more when the score is not a finite
+ * number (Q32). The warnings are in the order shipment, product, carrier, as in the other two.
+ */
+export function scoreCarrierForShipmentChecked(
+  carrier: Carrier,
+  shipment: Shipment,
+  product: Product,
+): CheckedCarrierScore {
+  const score = scoreCarrierForShipment(carrier, shipment, product);
+  return {
+    score,
+    warnings: [
+      ...collectShipmentAndProductWarnings(shipment, product),
+      ...collectCarrierWarnings(carrier),
+      ...warnWhenScoreNotFinite(carrier, shipment, score),
+    ],
+  };
+}
+
+/**
+ * `selectBestCarrier`'s selection, unchanged, with the warnings for the shipment and the product
+ * once, then for each carrier in the list's order, then for each carrier whose cost or score is not
+ * a finite number, its cost first (Q32). The briefing's known failure is not a warning: there the
+ * data is right, and the rules pick the carrier.
+ */
+export function selectBestCarrierChecked(
+  carriers: Carrier[],
+  shipment: Shipment,
+  product: Product,
+): CheckedCarrierSelection {
+  return {
+    best: selectBestCarrier(carriers, shipment, product),
+    warnings: [
+      ...collectShipmentAndProductWarnings(shipment, product),
+      ...carriers.flatMap((carrier) => collectCarrierWarnings(carrier)),
+      ...evaluateCarriersForShipment(carriers, shipment, product).flatMap(({ carrier, cost, score }) => [
+        ...warnWhenCostNotFinite(carrier, shipment, cost),
+        ...warnWhenScoreNotFinite(carrier, shipment, score),
+      ]),
+    ],
+  };
 }

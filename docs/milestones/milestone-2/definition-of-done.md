@@ -1,7 +1,7 @@
 # Milestone 2 definition of done
 
 > **Date created**: 2026-11-17
-> **Last checked**: 2026-11-18, on WP1's branch. WP1, the package scaffold and data model, is built: M1 to M7 and M9 are done, and ST1, ST4, ST5 and ST14 are done as far as WP1 goes. Nothing else is built yet. Revised on 2026-11-17 with mae's answers to the plan's decisions, on 2026-11-18 with M9 for the stored model and X1 to X5 for the extras, and after a review that day with the Package column and clearer rows.
+> **Last checked**: 2026-11-18, on WP1's branch. WP1, the package scaffold and data model, is built: M1 to M7 and M9 are done, and ST1, ST4, ST5 and ST14 are done as far as WP1 goes. Nothing else is built yet. Revised on 2026-11-17 with mae's answers to the plan's decisions, on 2026-11-18 with M9 for the stored model and X1 to X5 for the extras, and after a review that day with the Package column and clearer rows. On 2026-11-19, on WP7's branch, K5 and K6 were rated done; the rows of WP2 to WP6 were not re-rated there.
 > **Built from**: every checklist and requirement in this folder, merged and de-duplicated. The company briefing (`trackflow-BRIEFING.en.md`, called `BRIEFING.md` in the checklists) still wins where it is more specific.
 
 Milestone 2 is done when every item below is rated ✅. The test page (O) is optional in its checklist but required here: mae counts optional work as required (2026-11-17, plan D8). Items marked "after review" are built only once mae has approved the analysis that comes before them (plan, "How this milestone works"). Where several sources ask for the same thing, they are one item and the Source column lists each. The Package column names the package in `plan.md` that delivers each item; "all" means every package keeps to it and WP9 checks it. The D numbers point to the plan's Phase 0 decisions, and the Q numbers to `docs/open-questions.md` or, once answered, `docs/decisions.md`.
@@ -16,9 +16,9 @@ To re-check, update the rating and evidence in place and the "Last checked" line
 
 | Rating | Items |
 |---|---|
-| ✅ Completely done | 8 |
+| ✅ Completely done | 10 |
 | 🟡 Partially done | 4 |
-| ⬜ Not done | 55 |
+| ⬜ Not done | 53 |
 | 🙋 Needs mae | 0 |
 | ❔ Not verifiable here | 0 |
 | **Total** | **67** |
@@ -69,8 +69,8 @@ The plan's extras X1 to X5 joined this list when mae picked all five (2026-11-18
 | K2 | `scoreCarrierForShipment` gives 20, 20, 15, 15 and up to 30 points by the briefing's five rules and rounds to 2 decimals | B-F, B-A2 | WP4 | ⬜ | |
 | K3 | `selectBestCarrier` drops carriers scoring under 50, picks the cheapest of the rest, returns its carrier, score and cost, or `null`, exactly as the briefing writes it | B-F, B-A2 | WP4 | ⬜ | |
 | K4 | Tests show the briefing's selection following every rule and still sending the sample Madrid shipment with UPS, which doesn't serve Spain, labelled as a known failure | mae (D4) | WP4 | ⬜ | |
-| K5 | A written review of other ways the scoring can fail, discussed with mae | mae (D4) | WP7 | ⬜ | |
-| K6 | After review: the departure that makes country and weight must-haves, beside the briefing's version, logged in `docs/decisions.md` | mae (D4) | WP7 | ⬜ | |
+| K5 | A written review of other ways the scoring can fail, discussed with mae | mae (D4) | WP7 | ✅ | `packages/warehouse-logic/docs/carrier-selection-review.md`, ten failure cases; mae decided its five choices on 2026-11-19 (pull request #45) |
+| K6 | After review: the departure that makes country and weight must-haves, beside the briefing's version, logged in `docs/decisions.md` | mae (D4) | WP7 | ✅ | `selectBestEligibleCarrier` in `src/utils/transformations.ts`, with priority and fragile as must-haves too (mae, CS1); `tests/carrier-selection-improved.test.ts` shows the briefing's result and the new one side by side; `docs/decisions.md`, "Carrier selection departure: five must-haves in front of the briefing's selection" |
 
 ## Reports
 
@@ -102,8 +102,8 @@ The plan's extras X1 to X5 joined this list when mae picked all five (2026-11-18
 | ST1 | Files are organized by responsibility as `src/types/models.ts` and `src/utils/collections.ts`, `search.ts`, `transformations.ts`, `validations.ts`, each function in the file the briefing names | ES, B-A5, E-SO1 | WP1, all | 🟡 | WP1: the five files are where the briefing names them, with `views.ts` beside them. The four `src/utils/` files of the briefing export nothing until WP2 to WP5 |
 | ST2 | Every parameter and return value has an explicit type, and `any` is not used | L8, E-CQ3, B-A1 | all | ⬜ | |
 | ST3 | No TypeScript compilation errors in any file | E-TC8 | all | ⬜ | |
-| ST4 | A documented command typechecks the code, and another runs it, during development | G, L10, E-TC9 | WP1, WP6 | 🟡 | WP1: `pnpm typecheck` and `pnpm demo`, in the package README. The demo shows only the data model until WP6 |
-| ST5 | TypeScript only, and the code runs both in the browser and in a development environment | G | WP1, WP6 | 🟡 | WP1: TypeScript only; `src/` compiles with no Node types, and `pnpm build` writes browser ES modules. Shown in a browser by WP6's test page |
+| ST4 | A documented command typechecks the code, and another runs it, during development | G, L10, E-TC9 | WP1, WP6 | ✅ | `pnpm typecheck` and `pnpm demo`, in the package README's Commands; the demo prints each briefing function's result on the samples, D4's case included (WP6, 2026-11-19) |
+| ST5 | TypeScript only, and the code runs both in the browser and in a development environment | G | WP1, WP6 | ✅ | TypeScript only, the page's script included; `src/` compiles with no Node types. The same modules run in Node (`pnpm test`, `pnpm demo`) and in a browser (`src/index.html` loads `dist/`, clean in `scripts/site-check.py`) (WP6, 2026-11-19) |
 | ST6 | Each function has one clearly identifiable responsibility | T, G, L9, E-SO2 | all | ⬜ | |
 | ST7 | Any repeated task has its own function | G | all | ⬜ | |
 | ST8 | Descriptive names: camelCase variables and functions, PascalCase interfaces and types | T, G-Q, B-A6, E-SO3 | all | ⬜ | |
@@ -128,16 +128,16 @@ The plan's extras X1 to X5 joined this list when mae picked all five (2026-11-18
 
 | ID | Item | Source | Package | Rating | Evidence |
 |---|---|---|---|---|---|
-| O1 | A simple HTML page with Tailwind CSS to try the functions by hand, served with a documented command (D8) | FT1, ES | WP6 | ⬜ | |
-| O2 | Buttons or controls to run the operations: filter, search, sort, reports | FT2 | WP6 | ⬜ | |
-| O3 | Results shown clearly on the page | FT3 | WP6 | ⬜ | |
+| O1 | A simple HTML page with Tailwind CSS to try the functions by hand, served with a documented command (D8) | FT1, ES | WP6 | ✅ | `src/index.html`, Tailwind CSS 4 compiled to `dist/styles.css`; served with `npx --yes http-server packages/warehouse-logic -p 3000 -c-1`, in the package README (2026-11-19) |
+| O2 | Buttons or controls to run the operations: filter, search, sort, reports | FT2 | WP6 | ✅ | Controls to filter, sort, search, score carriers, run the reports and validate, on the samples or on mock data (2026-11-19) |
+| O3 | Results shown clearly on the page | FT3 | WP6 | ✅ | Each panel shows the calls it made as code and their results as tables or lists; the D4 failure and invalid input are flagged (2026-11-19) |
 
 ## Extras (picked by mae, 2026-11-18)
 
 | ID | Item | Source | Package | Rating | Evidence |
 |---|---|---|---|---|---|
-| X1 | An API reference in the package README: every exported function, its signature, what it returns for empty input, and an example | mae (D8, plan X1) | WP6, then Phase 4 | ⬜ | |
+| X1 | An API reference in the package README: every exported function, its signature, what it returns for empty input, and an example | mae (D8, plan X1) | WP6, then Phase 4 | ✅ | The package README's API reference, as of WP6; `tests/readme.test.ts` fails on any export it doesn't name. Phase 4 adds its own exports (2026-11-19) |
 | X2 | A seeded mock data generator, clearly labelled as mock, for larger test arrays and the search timing, which makes stored records and builds the views from them | mae (D8, plan X2) | WP2 | ⬜ | |
-| X3 | The test page in the browser check: screenshots, no console errors, axe clean | mae (D8, plan X3) | WP6 | ⬜ | |
+| X3 | The test page in the browser check: screenshots, no console errors, axe clean | mae (D8, plan X3) | WP6 | ✅ | `scripts/site-check.py` checks the page with the website by default: four widths, no console errors or sideways scroll, axe clean (2026-11-19) |
 | X4 | A mutation check on cost, scoring and validations, with its score reported against a target of 70% or more | mae (D8, plan X4) | WP9 | ⬜ | |
-| X5 | A search comparison panel on the test page: linear, binary and `Map` lookup timed on the mock data | mae (D8, plan X5) | WP6 | ⬜ | |
+| X5 | A search comparison panel on the test page: linear, binary and `Map` lookup timed on the mock data | mae (D8, plan X5) | WP6 | ✅ | The page's "Search comparison" panel times linear, binary and `Map` lookup on X2's mock data; its logic is tested in `tests/page/search-timing.test.ts` (2026-11-19) |

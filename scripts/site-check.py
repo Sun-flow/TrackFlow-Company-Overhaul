@@ -9,11 +9,13 @@ Setup, once per environment:
     python3 -m playwright install chromium   # skip if Chromium is already installed for Playwright
 
 Usage:
-    python3 scripts/site-check.py                           # every .html page under uis/website/
+    python3 scripts/site-check.py                           # every website page and the logic test page
     python3 scripts/site-check.py --root uis/backoffice --pages index.html login.html
     python3 scripts/site-check.py --widths 375 1440 --out /tmp/shots --no-axe
 
-The script serves --root itself on a free port, so no dev server needs to be running. Screenshots go to
+With no --root it checks two sites: every .html page under uis/website/, and Milestone 2's test page,
+src/index.html in packages/warehouse-logic/ (served from the package, since it loads ../dist/). The script
+serves each root itself on a free port, so no dev server needs to be running. Screenshots go to
 .site-check/ (git-ignored) unless --out says otherwise. Set PLAYWRIGHT_CHROMIUM_EXECUTABLE to use a specific
 Chromium binary. If cdn.jsdelivr.net is blocked, its /npm/ files are taken from the npm registry instead
 (same package, same version); axe-core always comes from the npm registry.
@@ -42,6 +44,11 @@ except ImportError:
 
 ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_SITE = ROOT / "uis" / "website"
+# What a run with no --root checks: each site's folder, and its pages (None: every .html page in it).
+DEFAULT_SITES = [
+    (DEFAULT_SITE, None),
+    (ROOT / "packages" / "warehouse-logic", ["src/index.html"]),
+]
 WIDTHS = [375, 768, 1024, 1440]
 AXE_VERSION = "4.10.2"
 AXE_TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"]
@@ -119,23 +126,60 @@ def axe_violations(page, axe_source):
     return [f"{v['id']} ({len(v['nodes'])}x): {v['help']}" for v in result["violations"]]
 
 
+def check_site(browser, site, pages, args, axe_source):
+    """Serve one site and check each of its pages at each width. Returns the problems found."""
+    server, base_url = serve(site)
+    prefix = "" if site == DEFAULT_SITE else site.relative_to(ROOT).as_posix().replace("/", "-") + "-"
+    problems = []
+    for page_path in pages:
+        name = prefix + page_path.removesuffix(".html").replace("/", "-")
+        label = page_path if site == DEFAULT_SITE else f"{site.relative_to(ROOT).as_posix()}/{page_path}"
+        for width in args.widths:
+            errors = []
+            context, page = open_page(browser, base_url + page_path, {"width": width, "height": 900}, errors)
+            overflow = page.evaluate("document.documentElement.scrollWidth - document.documentElement.clientWidth")
+            page.screenshot(path=args.out / f"{name}-{width}.png", full_page=True)
+            violations = axe_violations(page, axe_source) if axe_source else []
+            context.close()
+            found = []
+            if errors:
+                problems.append(f"{label} {width}px: console errors: {errors}")
+                found.append("console errors")
+            if overflow > 0:
+                problems.append(f"{label} {width}px: horizontal scroll ({overflow}px too wide)")
+                found.append("horizontal scroll")
+            if violations:
+                problems += [f"{label} {width}px: axe: {v}" for v in violations]
+                found.append(f"{len(violations)} axe violation(s)")
+            print(f"{label:30} {width:>4}px  {', '.join(found) or 'ok'}")
+    server.shutdown()
+    return problems
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--root", type=Path, default=DEFAULT_SITE, help="folder to serve (default uis/website)")
+    parser.add_argument("--root", type=Path,
+                        help="folder to serve (default: uis/website, then the warehouse logic's test page)")
     parser.add_argument("--pages", nargs="+", help="pages relative to --root (default: every .html file)")
     parser.add_argument("--widths", type=int, nargs="+", default=WIDTHS)
     parser.add_argument("--out", type=Path, default=ROOT / ".site-check")
     parser.add_argument("--no-axe", action="store_true", help="skip the axe-core accessibility scan")
     args = parser.parse_args()
 
-    site = args.root.resolve()
-    if not site.is_dir():
-        print(f"{args.root} doesn't exist. Pass the site's folder with --root.")
-        return 1
-    pages = args.pages or find_pages(site)
-    if not pages:
-        print(f"No .html pages under {args.root}.")
-        return 1
+    if args.root is None:
+        targets = [(site, args.pages) if site == DEFAULT_SITE else (site, pages) for site, pages in DEFAULT_SITES]
+    else:
+        targets = [(args.root.resolve(), args.pages)]
+    sites = []
+    for site, pages in targets:
+        if not site.is_dir():
+            print(f"{site} doesn't exist. Pass the site's folder with --root.")
+            return 1
+        pages = pages or find_pages(site)
+        if not pages:
+            print(f"No .html pages under {site}.")
+            return 1
+        sites.append((site, pages))
     args.out.mkdir(parents=True, exist_ok=True)
 
     axe_source = None
@@ -147,7 +191,6 @@ def main():
                   "Rerun with --no-axe to skip the accessibility scan.")
             return 1
 
-    server, base_url = serve(site)
     problems = []
     with sync_playwright() as p:
         # Chromium ignores the proxy environment variables, so pass the proxy on (CDNs need it).
@@ -159,28 +202,9 @@ def main():
             print(f"Couldn't start Chromium: {str(exc).splitlines()[0]}\n"
                   "Run `python3 -m playwright install chromium`, or set PLAYWRIGHT_CHROMIUM_EXECUTABLE.")
             return 1
-        for page_path in pages:
-            name = page_path.removesuffix(".html").replace("/", "-")
-            for width in args.widths:
-                errors = []
-                context, page = open_page(browser, base_url + page_path, {"width": width, "height": 900}, errors)
-                overflow = page.evaluate("document.documentElement.scrollWidth - document.documentElement.clientWidth")
-                page.screenshot(path=args.out / f"{name}-{width}.png", full_page=True)
-                violations = axe_violations(page, axe_source) if axe_source else []
-                context.close()
-                found = []
-                if errors:
-                    problems.append(f"{page_path} {width}px: console errors: {errors}")
-                    found.append("console errors")
-                if overflow > 0:
-                    problems.append(f"{page_path} {width}px: horizontal scroll ({overflow}px too wide)")
-                    found.append("horizontal scroll")
-                if violations:
-                    problems += [f"{page_path} {width}px: axe: {v}" for v in violations]
-                    found.append(f"{len(violations)} axe violation(s)")
-                print(f"{page_path:30} {width:>4}px  {', '.join(found) or 'ok'}")
+        for site, pages in sites:
+            problems += check_site(browser, site, pages, args, axe_source)
         browser.close()
-    server.shutdown()
 
     for problem in problems:
         print(f"FAIL  {problem}")

@@ -1,7 +1,7 @@
 # Validation review: proposed improvements
 
 > **Date created**: 2026-11-19 (plan WP8, first phase)
-> **Status**: Proposal. Nothing here is built. mae picks the proposals, and only those are built, after WP6 merges (plan WP8).
+> **Status**: mae answered on 2026-11-19 ("mae's answers", below). Nothing is built yet. Only what mae approves is built.
 > **Reads with**: `validation-rules.md` (what is built), `erd.md` (the data model), `src/utils/validations.ts`.
 
 ## Where things stand
@@ -56,6 +56,55 @@ Each proposal has an id, so mae can answer "R1 to R6, R9, not R7". Details and a
 | R16 | Every shipment that has left has one matching Outbound | parked | No: park it |
 
 "strict" means the rule joins the strict validators, so `validate*Strict` gives one more kind of message. "new" means a new function beside them.
+
+## mae's answers (2026-11-19)
+
+The proposals below are kept as first written, so the answers can be read against them.
+
+| # | Answer | What happens next |
+|---|---|---|
+| R1 | Approved. Graceful means a clear reason, not a forced result: rejecting data that doesn't fit the data structure is fine, crashing is not. | Built as proposed. The wider point, functions that return a bare `null`, is Q36 in `docs/open-questions.md`. |
+| R2 | Approved. | Built as proposed. |
+| R3 | The example read like instructions, not code. One source of truth is a firm rule. | Re-shown with its code (below). Waits for mae. |
+| R4 | Approved, with warnings too. | Each input validator returns `{ valid, errors, warnings }`. A field the interface doesn't list stays in the record and gets a warning; so does a missing optional field (none yet: every briefing field is required, and `carrier` must be present but may be `null`). Beside each: `isProduct(value): value is Product`, which never throws, and `assertProduct(value)`, which throws a `ValidationError` carrying the errors, a deliberate failure in place of a crash. |
+| R5 | Approved. | Built as proposed. |
+| R6 | Asked which values `acceptsPriority` may hold. | The briefing's `ShipmentPriority`: "Standard", "Express", "Same-day". R3 checks each entry; R6 adds that the list is not empty. |
+| R7 | Approved. | Built as proposed. |
+| R8 | Asked whether the two-decimal rounder can be used. | Yes: `roundToTwoDecimals(value) === value`. 19.99 passes; 19.999 and 1.005 fail. Proposed for `unitCostUSD` and `declaredValueUSD`, not the carrier rates, where a per-km rate may need finer steps. Waits for mae. |
+| E0 | Asked what it was. | It proposed that R9 to R12 report as warnings. R4's answer sets the shape for every validator (errors and warnings), so E0 is dropped. |
+| R9 | "Pending" doesn't imply no carrier. | The Pending half is dropped. Waits for mae: whether "Assigned", "In transit" or "Delivered" with no carrier is flagged. |
+| R10 | The founding date and "now" check is not needed; what is needed is checking that a field is a real `Date`, and handling dates in other formats. | The range check is dropped. A real `Date` is R4. Handling other formats is parsing, parked in `docs/FUTURE_WORK.md`; proposed: pull dates alone out of it as `parseDate(raw)`, which accepts a `Date` or an ISO 8601 string (what JSON makes of a `Date`) and rejects anything else with its reason. Waits for mae. |
+| R11 | Status should be per warehouse, as decided for I5. | Dropped. I5 (PR #49, decided after this review was written) works each warehouse's status out from its own stock, so status and stock can't disagree. |
+| R12 | Asked how it would output. | `validateProductList(products)`, `validateShipmentList(shipments)` and `validateCarrierList(carriers)` return `{ valid, errors, warnings }`. A repeated key (SKU and warehouse, shipment id, carrier id) is an error, since it can't be stored; details that differ between one SKU's products are an error too, since an item stores them once. Where they show is up to the caller: the test page's validation panel, the demo's printout, a later import script. Waits for mae. |
+| R13 | Approved. | Built as proposed. |
+| R14 | Approved. | Built as proposed. |
+| R15, R16 | Not answered. | Left with the parked broken-links work, as recommended, unless mae says otherwise. |
+
+### R3, shown as code
+
+The allowed values are written once, in `models.ts`, and the rule reads them from there:
+
+```ts
+// models.ts (exists today): the one place the values are defined
+export const productCategories = ["Fashion", "Electronics", "Cosmetics", "Home", "Other"] as const;
+
+// validations.ts: one generic check and one generic rule, used for every list field
+export function isOneOf<T>(value: unknown, allowed: readonly T[]): value is T {
+  return allowed.includes(value as T);
+}
+function oneOfRule(field: string, value: unknown, allowed: readonly string[]): RuleOutcome {
+  const values = allowed.map((each) => JSON.stringify(each)).join(", ");
+  return checkRule(isOneOf(value, allowed), `${field} must be one of ${values} (got ${JSON.stringify(value)})`);
+}
+
+// strictProductRules: one line per list field
+oneOfRule("category", category, productCategories),
+```
+
+| Call | Today | With R3 |
+|---|---|---|
+| `validateProductStrict({ ...product, category: "Toys" })` | `{ valid: true, errors: [] }` | `{ valid: false, errors: ['category must be one of "Fashion", "Electronics", "Cosmetics", "Home", "Other" (got "Toys")'] }` |
+| `validateCarrierStrict({ ...carrier, operatesIn: ["France"] })` | `{ valid: true, errors: [] }` | `{ valid: false, errors: ['operatesIn must list only "United States", "Spain" (got "France")'] }` |
 
 ## Fixes to the strict validators
 
