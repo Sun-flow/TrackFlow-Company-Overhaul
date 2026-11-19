@@ -2,7 +2,7 @@
 
 How the briefing's `selectBestCarrier` picks a carrier, the ways it picks a wrong one, and a proposed fix for mae to decide on (plan WP7, D4). This is the analysis only. No code is built from it until mae has agreed to it, and the briefing's functions stay exactly as they are either way.
 
-> **Status**: waiting for mae (2026-11-19). The five choices under "Choices for mae" are open.
+> **Status**: waiting for mae (2026-11-19). Of the five choices under "Choices for mae", mae answered CS1 on 2026-11-19: (b), all four rules are must-haves. CS2 to CS5 are open.
 
 ## Summary
 
@@ -229,6 +229,8 @@ Each is a separate choice. The recommendation is first in each list of reasons.
 - **(c) Country, weight and priority**, the three `CONTEXT.md` names. Fixes F1, F2, F3 and F5, leaves F4.
 
 **Recommendation: (b).** All four are yes-or-no facts about whether the carrier can do this job, and a carrier that fails any of them cannot deliver what was promised. D4 named country and weight because the Madrid case showed those two; F3 and F4 are the same failure in the other two rules. With (b) the briefing's score and cut-off are still calculated and returned, but they no longer leave anyone out: an eligible carrier has at least 70 points.
+
+**mae, 2026-11-19: (b).** Country, weight, priority and fragile are all must-haves.
 
 #### CS2. Which country must the carrier operate in?
 
