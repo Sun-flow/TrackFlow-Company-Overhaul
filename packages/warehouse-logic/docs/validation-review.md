@@ -1,7 +1,7 @@
 # Validation review: proposed improvements
 
 > **Date created**: 2026-11-19 (plan WP8, first phase)
-> **Status**: mae answered on 2026-11-19 ("mae's answers", below). R1, R2, R4, R5, R7, R13 and R14 are built (`validation-rules.md`, "WP8's improvements"). The rest wait for mae; only what mae approves is built.
+> **Status**: mae answered on 2026-11-19 ("mae's answers", below). R1 to R8, R9's no-carrier flag, R10's `parseDate`, R12, R13 and R14 are built (`validation-rules.md`, "WP8's improvements"). E0, R11 and R10's range check were dropped; R15 and R16 stay parked. What each shipment status means is still for mae to settle.
 > **Reads with**: `validation-rules.md` (what is built), `erd.md` (the data model), `src/utils/validations.ts`.
 
 ## Where things stand

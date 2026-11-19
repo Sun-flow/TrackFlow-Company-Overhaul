@@ -23,9 +23,21 @@ import type {
   MovementType,
   Product,
   Shipment,
+  ShipmentPriority,
+  ShipmentStatus,
   Warehouse,
 } from "../types/models.ts";
-import { countries, movementDirections, movementTypes, warehouseLocations } from "../types/models.ts";
+import {
+  countries,
+  movementDirections,
+  movementTypes,
+  productCategories,
+  productStatuses,
+  shipmentPriorities,
+  shipmentStatuses,
+  warehouseLocations,
+} from "../types/models.ts";
+import { roundToTwoDecimals } from "./numbers.ts";
 import { normalizeSku } from "./search.ts";
 import { parseStockRecordId } from "./views.ts";
 
@@ -258,6 +270,11 @@ export function isWholeNumber(value: number): boolean {
   return Number.isInteger(value);
 }
 
+/** An amount with no fraction of a cent (R8): the shared rounder leaves it as it is. 19.99 is; 19.999 isn't. */
+export function isInWholeCents(value: number): boolean {
+  return Number.isFinite(value) && roundToTwoDecimals(value) === value;
+}
+
 /** The warehouse id a value ends in, such as `-WH-LA`, by the format of Q13; `null` when none. */
 export function warehouseIdEndingOf(value: string): string | null {
   return warehouseIdEnding.exec(value)?.[0] ?? null;
@@ -302,6 +319,34 @@ function countRule(field: string, value: number, rule: () => RuleOutcome): RuleO
   return finiteRule(field, value, () =>
     isWholeNumber(value) ? rule() : mustBe(field, "a whole number", value),
   );
+}
+
+/** An amount of money (R8): finite, then whole cents, then its own rule. */
+function moneyRule(field: string, value: number, rule: () => RuleOutcome): RuleOutcome {
+  return finiteRule(field, value, () =>
+    isInWholeCents(value) ? rule() : mustBe(field, "in whole cents", value),
+  );
+}
+
+/**
+ * A list of values from one of the lists in `models.ts` (R3, R6): not empty, each value on the list,
+ * and none twice. The first failure is the field's message.
+ */
+function listRule(
+  field: string,
+  values: readonly unknown[],
+  allowed: readonly string[],
+  emptyMessage: string,
+): RuleOutcome {
+  if (values.length === 0) {
+    return emptyMessage;
+  }
+  const offList = values.find((value) => !isOneOf(value, allowed));
+  if (offList !== undefined) {
+    return `${field} must list only ${quoteAll(allowed)} (got ${formatValue(offList)})`;
+  }
+  const repeated = values.find((value, index) => values.indexOf(value) !== index);
+  return repeated === undefined ? null : `${field} must not list ${formatValue(repeated)} twice`;
 }
 
 /** A value from one of the lists in `models.ts`; the message lists the allowed values from it. */
@@ -350,40 +395,48 @@ function skuRule(field: string, value: string): RuleOutcome {
     : `${field} must not end in a warehouse id such as ${ending} (got ${JSON.stringify(value)})`;
 }
 
-/** The strict product rules: nine outcomes, one per field. */
+/** The strict product rules: twelve outcomes, one per field checked. */
 export function strictProductRules(product: Product): RuleOutcome[] {
-  const { sku, name, weightKg, dimensions, stockQuantity, minStockThreshold, unitCostUSD } = product;
+  const { sku, name, category, weightKg, dimensions, warehouse } = product;
+  const { stockQuantity, minStockThreshold, unitCostUSD, status } = product;
   return [
     skuRule("sku", sku),
     nameRule("name", name),
+    oneOfRule("category", category, productCategories),
     finiteRule("weightKg", weightKg, () => positiveAtMostRule("weightKg", weightKg, 100)),
     ...dimensionNames.map((dimension) => {
       const field = `dimensions.${dimension}`;
       const value = dimensions[dimension];
       return finiteRule(field, value, () => positiveAtMostRule(field, value, 200));
     }),
+    oneOfRule("warehouse", warehouse, warehouseLocations),
     countRule("stockQuantity", stockQuantity, () =>
       nonNegativeRule("stockQuantity", stockQuantity),
     ),
     countRule("minStockThreshold", minStockThreshold, () =>
       nonNegativeRule("minStockThreshold", minStockThreshold),
     ),
-    finiteRule("unitCostUSD", unitCostUSD, () => positiveRule("unitCostUSD", unitCostUSD)),
+    moneyRule("unitCostUSD", unitCostUSD, () => positiveRule("unitCostUSD", unitCostUSD)),
+    oneOfRule("status", status, productStatuses),
   ];
 }
 
-/** The strict shipment rules: ten outcomes, one per field, the destination's four among them. */
+/** The strict shipment rules: thirteen outcomes, one per field, the destination's four among them. */
 export function strictShipmentRules(shipment: Shipment): RuleOutcome[] {
-  const { id, sku, quantity, destination, declaredValueUSD, carrier, createdAt } = shipment;
+  const { id, sku, quantity, origin, destination, priority } = shipment;
+  const { declaredValueUSD, carrier, status, createdAt } = shipment;
   return [
     codeRule("id", id),
     skuRule("sku", sku),
     countRule("quantity", quantity, () => positiveRule("quantity", quantity)),
+    oneOfRule("origin", origin, warehouseLocations),
     ...destinationRules(destination),
-    finiteRule("declaredValueUSD", declaredValueUSD, () =>
+    oneOfRule("priority", priority, shipmentPriorities),
+    moneyRule("declaredValueUSD", declaredValueUSD, () =>
       positiveRule("declaredValueUSD", declaredValueUSD),
     ),
     carrier === null ? null : nameRule("carrier", carrier),
+    oneOfRule("status", status, shipmentStatuses),
     dateRule("createdAt", createdAt),
   ];
 }
@@ -419,13 +472,13 @@ function postalCodeRule(postalCode: string, country: Country): RuleOutcome {
   );
 }
 
-/** The strict carrier rules: nine outcomes, one per field. */
+/** The strict carrier rules: ten outcomes, one per field checked. */
 export function strictCarrierRules(carrier: Carrier): RuleOutcome[] {
-  const { id, name, operatesIn, avgDeliveryDays, onTimeRate, maxWeightKg } = carrier;
+  const { id, name, operatesIn, avgDeliveryDays, onTimeRate, maxWeightKg, acceptsPriority } = carrier;
   return [
     codeRule("id", id),
     nameRule("name", name),
-    operatesInRule(operatesIn),
+    listRule("operatesIn", operatesIn, countries, "operatesIn must contain at least 1 country"),
     ...carrierRateNames.map((rate) =>
       finiteRule(rate, carrier[rate], () => nonNegativeRule(rate, carrier[rate])),
     ),
@@ -434,6 +487,12 @@ export function strictCarrierRules(carrier: Carrier): RuleOutcome[] {
     ),
     finiteRule("onTimeRate", onTimeRate, () => onTimeRateRule(onTimeRate)),
     finiteRule("maxWeightKg", maxWeightKg, () => positiveRule("maxWeightKg", maxWeightKg)),
+    listRule(
+      "acceptsPriority",
+      acceptsPriority,
+      shipmentPriorities,
+      "acceptsPriority must contain at least 1 priority",
+    ),
   ];
 }
 
@@ -791,16 +850,27 @@ export function checkShape(
   return found;
 }
 
-/** The shape first; when it holds, the strict rules. The warnings come from the shape. */
+/**
+ * The shape first; when it holds, the strict rules and any warnings the record's own fields raise.
+ * The shape's warnings come first.
+ */
 function validateInput<T>(
   value: unknown,
   shape: RecordShape<T>,
   recordName: string,
   rules: (record: T) => RuleOutcome[],
+  recordWarnings: (record: T) => string[] = () => [],
 ): InputValidationResult {
   const { errors, warnings } = checkShape(value, shape, recordName);
-  const allErrors = errors.length > 0 ? errors : collectErrors(rules(value as T));
-  return { valid: allErrors.length === 0, errors: allErrors, warnings };
+  if (errors.length > 0) {
+    return { valid: false, errors, warnings };
+  }
+  const ruleErrors = collectErrors(rules(value as T));
+  return {
+    valid: ruleErrors.length === 0,
+    errors: ruleErrors,
+    warnings: [...warnings, ...recordWarnings(value as T)],
+  };
 }
 
 /** Checks anything that should be a `Product`: its shape, then the strict product rules. */
@@ -808,9 +878,12 @@ export function validateProductInput(value: unknown): InputValidationResult {
   return validateInput(value, productShape, "product", strictProductRules);
 }
 
-/** Checks anything that should be a `Shipment`: its shape, then the strict shipment rules. */
+/**
+ * Checks anything that should be a `Shipment`: its shape, then the strict shipment rules. Its
+ * warnings include `shipmentStatusWarnings` (R9).
+ */
 export function validateShipmentInput(value: unknown): InputValidationResult {
-  return validateInput(value, shipmentShape, "shipment", strictShipmentRules);
+  return validateInput(value, shipmentShape, "shipment", strictShipmentRules, shipmentStatusWarnings);
 }
 
 /** Checks anything that should be a `Carrier`: its shape, then the strict carrier rules. */
@@ -878,4 +951,270 @@ export function assertValidCarrier(value: unknown): asserts value is Carrier {
 /** Returns when `value` is a valid `InventoryMovement`; otherwise throws a `ValidationError`. */
 export function assertValidInventoryMovement(value: unknown): asserts value is InventoryMovement {
   throwWhenInvalid("movement", validateInventoryMovementInput(value));
+}
+
+// ---------------------------------------------------------------------------------------------------
+// R9: a shipment whose status needs a carrier, with none
+// ---------------------------------------------------------------------------------------------------
+
+/**
+ * The statuses a shipment can only have once a carrier is chosen (mae, 2026-11-19). "Pending" may
+ * have a carrier or not, and so may "Failed".
+ */
+const statusesNeedingCarrier = [
+  "Assigned",
+  "In transit",
+  "Delivered",
+] as const satisfies readonly ShipmentStatus[];
+
+/** A warning when the shipment's status needs a carrier and it has none (R9); `[]` otherwise. */
+export function shipmentStatusWarnings(shipment: Shipment): string[] {
+  return isOneOf(shipment.status, statusesNeedingCarrier) && shipment.carrier === null
+    ? [`status is ${JSON.stringify(shipment.status)} but no carrier is assigned`]
+    : [];
+}
+
+// ---------------------------------------------------------------------------------------------------
+// R6: cleaning priorities. Like cleanText and cleanSku, a cleaner returns a new value and changes
+// nothing it is given; unlike them it says what it changed, since a priority changes a price.
+// ---------------------------------------------------------------------------------------------------
+
+/** A cleaned value and a warning for each change the cleaning made. */
+export type Cleaned<T> = { value: T; warnings: string[] };
+
+/** What an empty or unknown priority becomes (mae, 2026-11-19). */
+const defaultPriority = "Standard" satisfies ShipmentPriority;
+
+/**
+ * A priority as stored: trimmed, and kept when it is one of `shipmentPriorities`. An empty one
+ * (`""`, spaces, `null`, `undefined`) or one not on the list becomes "Standard", with a warning
+ * naming `field`. Nothing else is read into it: "express" is not "Express".
+ */
+export function cleanPriority(raw: unknown, field = "priority"): Cleaned<ShipmentPriority> {
+  const trimmed = typeof raw === "string" ? raw.trim() : raw;
+  if (isOneOf(trimmed, shipmentPriorities)) {
+    return { value: trimmed, warnings: [] };
+  }
+  const isEmpty = trimmed === undefined || trimmed === null || trimmed === "";
+  const fallback = JSON.stringify(defaultPriority);
+  return {
+    value: defaultPriority,
+    warnings: [
+      isEmpty
+        ? `${field} was empty, so it was set to ${fallback}`
+        : `${field} ${formatValue(raw)} is not a priority, so it was set to ${fallback}`,
+    ],
+  };
+}
+
+/**
+ * A carrier's `acceptsPriority` as stored: each entry cleaned by `cleanPriority`, then each priority
+ * kept once. An empty list, or anything that is not a list, becomes `["Standard"]`. A warning for
+ * every change.
+ */
+export function cleanAcceptsPriority(raw: unknown): Cleaned<ShipmentPriority[]> {
+  if (!Array.isArray(raw) || raw.length === 0) {
+    return {
+      value: [defaultPriority],
+      warnings: [`acceptsPriority was empty, so it was set to ${JSON.stringify([defaultPriority])}`],
+    };
+  }
+  const warnings: string[] = [];
+  const counts = new Map<ShipmentPriority, number>();
+  raw.forEach((entry: unknown, index) => {
+    const cleaned = cleanPriority(entry, `acceptsPriority[${index}]`);
+    warnings.push(...cleaned.warnings);
+    counts.set(cleaned.value, (counts.get(cleaned.value) ?? 0) + 1);
+  });
+  for (const [priority, count] of counts) {
+    if (count > 1) {
+      const dropped = count === 2 ? "the repeat was dropped" : "the repeats were dropped";
+      warnings.push(`acceptsPriority listed ${JSON.stringify(priority)} ${count} times, so ${dropped}`);
+    }
+  }
+  return { value: [...counts.keys()], warnings };
+}
+
+// ---------------------------------------------------------------------------------------------------
+// R10: reading a date. It returns null with the reason, never throws (Q36)
+// ---------------------------------------------------------------------------------------------------
+
+/** A date that was read, or `null` with the reason it couldn't be. */
+export type ParsedDate = { date: Date; error: null } | { date: null; error: string };
+
+/** ISO 8601 as JSON writes it: a day, or a day and a time with an optional fraction and a zone. */
+const isoDatePattern =
+  /^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}):(\d{2})(?::(\d{2})(?:\.\d{1,3})?)?(Z|[+-]\d{2}:\d{2})?)?$/;
+
+function unreadDate(error: string): ParsedDate {
+  return { date: null, error };
+}
+
+/** The number of days in a month (1 to 12) of a year. */
+function daysInMonth(year: number, month: number): number {
+  const lastDay = new Date(0);
+  lastDay.setUTCFullYear(year, month, 0);
+  return lastDay.getUTCDate();
+}
+
+/**
+ * Reads a date: a real `Date` comes back as it is, and ISO 8601 text, the form JSON gives a `Date`,
+ * is read into one. A day alone ("2024-03-15") is midnight UTC; a time needs its zone ("Z" or
+ * "+01:00"), since a time without one means a different moment in each place. Anything else gives
+ * `null` and the reason, naming `field`. Reading other formats is parked in `docs/FUTURE_WORK.md`.
+ */
+export function parseDate(raw: unknown, field = "date"): ParsedDate {
+  if (raw instanceof Date) {
+    return isRealDate(raw)
+      ? { date: raw, error: null }
+      : unreadDate(`${field} must be a real date (got Invalid Date)`);
+  }
+  if (typeof raw !== "string") {
+    return unreadDate(`${field} must be a Date or ISO 8601 text (got ${describeKind(raw)})`);
+  }
+  const shown = JSON.stringify(raw);
+  const parts = isoDatePattern.exec(raw);
+  if (parts === null) {
+    return unreadDate(
+      `${field} must be ISO 8601 text such as "2024-03-15" or "2024-03-15T10:30:00Z" (got ${shown})`,
+    );
+  }
+  const [, year, month, day, hour, minute, second, zone] = parts;
+  if (hour !== undefined && zone === undefined) {
+    return unreadDate(`${field} needs a time zone, such as Z or +01:00 (got ${shown})`);
+  }
+  const [y, mo, d] = [Number(year), Number(month), Number(day)];
+  const date = new Date(raw);
+  const isCalendarDate =
+    mo >= 1 &&
+    mo <= 12 &&
+    d >= 1 &&
+    d <= daysInMonth(y, mo) &&
+    Number(hour ?? 0) <= 23 &&
+    Number(minute ?? 0) <= 59 &&
+    Number(second ?? 0) <= 59 &&
+    isRealDate(date);
+  return isCalendarDate
+    ? { date, error: null }
+    : unreadDate(`${field} is not a real calendar date (got ${shown})`);
+}
+
+// ---------------------------------------------------------------------------------------------------
+// R12: lists of records. Each record is checked as untyped input, then the list as a whole: a key
+// listed twice can't be stored, and one SKU's products must agree on what its item stores once.
+// ---------------------------------------------------------------------------------------------------
+
+/** Each key that appears more than once, with how many times, in the order first seen. */
+function repeatedKeys<Entry>(entries: readonly Entry[], keyOf: (entry: Entry) => string): [string, number][] {
+  const counts = new Map<string, number>();
+  for (const entry of entries) {
+    counts.set(keyOf(entry), (counts.get(keyOf(entry)) ?? 0) + 1);
+  }
+  return [...counts].filter(([, count]) => count > 1);
+}
+
+/** Each record checked by `validateEntry`, its messages prefixed with its position, then the list's own. */
+function validateList<T>(
+  value: unknown,
+  listName: string,
+  shape: RecordShape<T>,
+  validateEntry: (entry: unknown) => InputValidationResult,
+  listErrors: (records: T[]) => string[],
+): InputValidationResult {
+  if (!Array.isArray(value)) {
+    return { valid: false, errors: [`${listName} must be a list (got ${describeKind(value)})`], warnings: [] };
+  }
+  const errors: string[] = [];
+  const warnings: string[] = [];
+  const readable: T[] = [];
+  value.forEach((entry: unknown, index) => {
+    const result = validateEntry(entry);
+    errors.push(...result.errors.map((error) => `${listName}[${index}]: ${error}`));
+    warnings.push(...result.warnings.map((warning) => `${listName}[${index}]: ${warning}`));
+    if (checkShape(entry, shape, listName).errors.length === 0) {
+      readable.push(entry as T);
+    }
+  });
+  errors.push(...listErrors(readable));
+  return { valid: errors.length === 0, errors, warnings };
+}
+
+/** What an item stores once (`docs/erd.md`), so every warehouse's product of one SKU must agree on it. */
+const itemDetails: readonly [string, (product: Product) => unknown][] = [
+  ["name", (product) => product.name],
+  ["category", (product) => product.category],
+  ["weightKg", (product) => product.weightKg],
+  ...dimensionNames.map((name): [string, (product: Product) => unknown] => [
+    `dimensions.${name}`,
+    (product) => product.dimensions[name],
+  ]),
+  ["unitCostUSD", (product) => product.unitCostUSD],
+  ["isFragile", (product) => product.isFragile],
+];
+
+function isDiscontinued(product: Product): boolean {
+  return product.status === "Discontinued";
+}
+
+/** Where one SKU's products in two warehouses disagree on what its item stores once. */
+function itemDisagreements(first: Product, other: Product): string[] {
+  const details = itemDetails
+    .filter(([, valueOf]) => valueOf(first) !== valueOf(other))
+    .map(
+      ([field, valueOf]) =>
+        `${first.sku} has ${field} ${formatValue(valueOf(first))} in ${first.warehouse} and ${formatValue(valueOf(other))} in ${other.warehouse}`,
+    );
+  if (isDiscontinued(first) !== isDiscontinued(other)) {
+    const [discontinued, active] = isDiscontinued(first) ? [first, other] : [other, first];
+    details.push(
+      `${first.sku} is discontinued in ${discontinued.warehouse} but not in ${active.warehouse}`,
+    );
+  }
+  return details;
+}
+
+function productListErrors(products: Product[]): string[] {
+  const repeats = repeatedKeys(products, ({ sku, warehouse }) => `${sku} in ${warehouse}`).map(
+    ([key, count]) => `${key} is listed ${count} times`,
+  );
+  const firstBySku = new Map<string, Product>();
+  const seen = new Set<string>();
+  const disagreements: string[] = [];
+  for (const product of products) {
+    const key = `${product.sku} in ${product.warehouse}`;
+    if (seen.has(key)) {
+      continue;
+    }
+    seen.add(key);
+    const first = firstBySku.get(product.sku);
+    if (first === undefined) {
+      firstBySku.set(product.sku, product);
+    } else {
+      disagreements.push(...itemDisagreements(first, product));
+    }
+  }
+  return [...repeats, ...disagreements];
+}
+
+/**
+ * Checks a list that should hold `Product`s (R12): each one as `validateProductInput` does, messages
+ * prefixed `products[i]: `, then an error for a SKU listed twice in one warehouse and for each detail
+ * one SKU's products disagree on. Never throws.
+ */
+export function validateProductList(value: unknown): InputValidationResult {
+  return validateList(value, "products", productShape, validateProductInput, productListErrors);
+}
+
+/** Checks a list that should hold `Shipment`s (R12): each one, then an error for an id listed twice. */
+export function validateShipmentList(value: unknown): InputValidationResult {
+  return validateList(value, "shipments", shipmentShape, validateShipmentInput, (shipments: Shipment[]) =>
+    repeatedKeys(shipments, ({ id }) => id).map(([id, count]) => `shipment ${id} is listed ${count} times`),
+  );
+}
+
+/** Checks a list that should hold `Carrier`s (R12): each one, then an error for an id listed twice. */
+export function validateCarrierList(value: unknown): InputValidationResult {
+  return validateList(value, "carriers", carrierShape, validateCarrierInput, (carriers: Carrier[]) =>
+    repeatedKeys(carriers, ({ id }) => id).map(([id, count]) => `carrier ${id} is listed ${count} times`),
+  );
 }

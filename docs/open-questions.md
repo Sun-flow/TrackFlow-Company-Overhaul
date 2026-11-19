@@ -25,4 +25,4 @@ Q1 to Q25 were answered by mae on 2026-11-17 and 2026-11-18 (`docs/decisions.md`
 
 mae picked all of Milestone 2's extras, X1 to X5, on 2026-11-18 (`docs/milestones/milestone-2/plan.md`, "Proposed extras").
 
-- WP8's validation review: mae answered R1 to R16 on 2026-11-19; R3, R8, R9, R10 and R12 wait for a last answer: `packages/warehouse-logic/docs/validation-review.md`, "mae's answers" (2026-11-19).
+- What each shipment status means ("Pending" to "Failed"), which the briefing doesn't define: mae asked to settle it after WP8's R9; suggested readings in thread "Review validation rules and propose improvements" (2026-11-19).

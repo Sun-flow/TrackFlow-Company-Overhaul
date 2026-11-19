@@ -1,5 +1,6 @@
 // Tests for the validation improvements mae approved on 2026-11-19 from WP8's review: R1, R2, R4, R5,
-// R7, R13 and R14 (packages/warehouse-logic/docs/validation-review.md, "mae's answers"). Expected
+// R7, R13 and R14, then R3, R6 with its cleaning, R8, R9's no-carrier flag, R10's parseDate and R12
+// (packages/warehouse-logic/docs/validation-review.md, "mae's answers"). Expected
 // values come from the review's examples and its messages, written before the code. The briefing's
 // validators keep their tests in tests/validations.test.ts and the strict ones theirs in
 // tests/validations-strict.test.ts.
@@ -19,7 +20,17 @@ import {
   assertValidProduct,
   assertValidShipment,
   checkShape,
+  cleanAcceptsPriority,
+  cleanPriority,
+  isInWholeCents,
   isOneOf,
+  parseDate,
+  shipmentStatusWarnings,
+  strictCarrierRules,
+  strictProductRules,
+  validateCarrierList,
+  validateProductList,
+  validateShipmentList,
   isValidCarrier,
   isValidInventoryMovement,
   isValidProduct,
@@ -182,9 +193,9 @@ describe("R1: validateShipmentStrict names a country that is not on the list", (
     );
   });
 
-  test("strictShipmentRules lists one outcome per field: ten, the country among them", () => {
-    assert.equal(strictShipmentRules(briefingShipment).length, 10);
-    assert.deepEqual(strictShipmentRules(briefingShipment), Array(10).fill(null));
+  test("strictShipmentRules lists one outcome per field: thirteen, the country among them (R1, R3)", () => {
+    assert.equal(strictShipmentRules(briefingShipment).length, 13);
+    assert.deepEqual(strictShipmentRules(briefingShipment), Array(13).fill(null));
   });
 
   test("the briefing's shipment still passes", () => {
@@ -837,6 +848,515 @@ describe("R4: the assertions throw a ValidationError, never a crash", () => {
     assert.throws(() => assertValidInventoryMovement([]), {
       name: "ValidationError",
       message: "movement is not valid: movement must be an object (got a list)",
+    });
+  });
+});
+
+// ---------------------------------------------------------------------------------------------------
+// R3: every literal value on its list, and lists without repeats
+// ---------------------------------------------------------------------------------------------------
+
+describe("R3: the strict validators check each literal value against its list in models.ts", () => {
+  const rows: [string, () => unknown, string][] = [
+    [
+      "a product category",
+      () => validateProductStrict(untyped(shoes, { category: "Toys" }) as Product),
+      'category must be one of "Fashion", "Electronics", "Cosmetics", "Home", "Other" (got "Toys")',
+    ],
+    [
+      "a product's warehouse",
+      () => validateProductStrict(untyped(shoes, { warehouse: "Madrid" }) as Product),
+      'warehouse must be one of "Los Angeles", "Zaragoza" (got "Madrid")',
+    ],
+    [
+      "a product status",
+      () => validateProductStrict(untyped(shoes, { status: "Gone" }) as Product),
+      'status must be one of "Active", "Low stock", "Out of stock", "Discontinued" (got "Gone")',
+    ],
+    [
+      "a shipment's origin",
+      () => validateShipmentStrict(untyped(briefingShipment, { origin: "Madrid" }) as Shipment),
+      'origin must be one of "Los Angeles", "Zaragoza" (got "Madrid")',
+    ],
+    [
+      "a shipment's priority",
+      () => validateShipmentStrict(untyped(briefingShipment, { priority: "Overnight" }) as Shipment),
+      'priority must be one of "Standard", "Express", "Same-day" (got "Overnight")',
+    ],
+    [
+      "a shipment status",
+      () => validateShipmentStrict(untyped(briefingShipment, { status: "Lost" }) as Shipment),
+      'status must be one of "Pending", "Assigned", "In transit", "Delivered", "Failed" (got "Lost")',
+    ],
+    [
+      "a country a carrier operates in",
+      () => validateCarrierStrict(untyped(ups, { operatesIn: ["United States", "France"] }) as Carrier),
+      'operatesIn must list only "United States", "Spain" (got "France")',
+    ],
+    [
+      "a country listed twice",
+      () => validateCarrierStrict({ ...ups, operatesIn: ["Spain", "Spain"] }),
+      'operatesIn must not list "Spain" twice',
+    ],
+    [
+      "an empty operatesIn keeps the briefing's message",
+      () => validateCarrierStrict({ ...ups, operatesIn: [] }),
+      "operatesIn must contain at least 1 country",
+    ],
+    [
+      "a priority a carrier accepts",
+      () => validateCarrierStrict(untyped(ups, { acceptsPriority: ["Standard", "Overnight"] }) as Carrier),
+      'acceptsPriority must list only "Standard", "Express", "Same-day" (got "Overnight")',
+    ],
+    [
+      "a priority listed twice",
+      () => validateCarrierStrict({ ...ups, acceptsPriority: ["Express", "Standard", "Express"] }),
+      'acceptsPriority must not list "Express" twice',
+    ],
+  ];
+  for (const [what, run, message] of rows) {
+    test(what, () => {
+      assert.deepEqual(run(), invalid(message));
+    });
+  }
+
+  test("a value in the wrong case is not on its list", () => {
+    assert.deepEqual(
+      validateProductStrict(untyped(shoes, { category: "fashion" }) as Product),
+      invalid('category must be one of "Fashion", "Electronics", "Cosmetics", "Home", "Other" (got "fashion")'),
+    );
+  });
+
+  test("every briefing sample still passes", () => {
+    for (const product of briefingProducts) {
+      assert.deepEqual(validateProductStrict(product), valid, product.sku);
+    }
+    for (const carrier of briefingCarriers) {
+      assert.deepEqual(validateCarrierStrict(carrier), valid, carrier.id);
+    }
+    assert.deepEqual(validateShipmentStrict(briefingShipment), valid);
+  });
+
+  test("one outcome per field: twelve for a product, ten for a carrier", () => {
+    assert.deepEqual(strictProductRules(shoes), Array(12).fill(null));
+    assert.deepEqual(strictCarrierRules(ups), Array(10).fill(null));
+  });
+
+  test("the new fields are checked in the interface's order", () => {
+    const product = untyped(shoes, {
+      category: "Toys",
+      warehouse: "Madrid",
+      status: "Gone",
+      weightKg: 0,
+    }) as Product;
+    assert.deepEqual(
+      validateProductStrict(product),
+      invalid(
+        'category must be one of "Fashion", "Electronics", "Cosmetics", "Home", "Other" (got "Toys")',
+        "weightKg must be > 0 and <= 100 (got 0)",
+        'warehouse must be one of "Los Angeles", "Zaragoza" (got "Madrid")',
+        'status must be one of "Active", "Low stock", "Out of stock", "Discontinued" (got "Gone")',
+      ),
+    );
+  });
+});
+
+// ---------------------------------------------------------------------------------------------------
+// R6: a carrier accepts at least one priority, and priorities can be cleaned to "Standard"
+// ---------------------------------------------------------------------------------------------------
+
+describe("R6: acceptsPriority must not be empty", () => {
+  test("an empty list", () => {
+    assert.deepEqual(
+      validateCarrierStrict({ ...ups, acceptsPriority: [] }),
+      invalid("acceptsPriority must contain at least 1 priority"),
+    );
+  });
+});
+
+describe("R6: cleanPriority sets an empty or unknown priority to Standard, with a warning", () => {
+  for (const priority of ["Standard", "Express", "Same-day"] as const) {
+    test(`${priority} stays, with no warning`, () => {
+      assert.deepEqual(cleanPriority(priority), { value: priority, warnings: [] });
+    });
+  }
+
+  test("spaces at the ends are trimmed first, with no warning", () => {
+    assert.deepEqual(cleanPriority(" Express "), { value: "Express", warnings: [] });
+  });
+
+  const empty: [string, unknown][] = [
+    ["an empty text", ""],
+    ["spaces", "   "],
+    ["null", null],
+    ["undefined", undefined],
+  ];
+  for (const [what, raw] of empty) {
+    test(`${what} is empty`, () => {
+      assert.deepEqual(cleanPriority(raw), {
+        value: "Standard",
+        warnings: ['priority was empty, so it was set to "Standard"'],
+      });
+    });
+  }
+
+  const unknown: [string, unknown, string][] = [
+    ["a value not on the list", "Overnight", '"Overnight"'],
+    ["a different case, since nothing is parsed", "express", '"express"'],
+    ["a number", 2, "2"],
+  ];
+  for (const [what, raw, shown] of unknown) {
+    test(`${what} is set to Standard`, () => {
+      assert.deepEqual(cleanPriority(raw), {
+        value: "Standard",
+        warnings: [`priority ${shown} is not a priority, so it was set to "Standard"`],
+      });
+    });
+  }
+
+  test("the field name in the warnings can be given", () => {
+    assert.deepEqual(cleanPriority("", "acceptsPriority[0]"), {
+      value: "Standard",
+      warnings: ['acceptsPriority[0] was empty, so it was set to "Standard"'],
+    });
+  });
+});
+
+describe("R6: cleanAcceptsPriority", () => {
+  test("a clean list comes back equal, as a new list, with no warning", () => {
+    const raw = ["Standard", "Express"];
+    const cleaned = cleanAcceptsPriority(raw);
+    assert.deepEqual(cleaned, { value: ["Standard", "Express"], warnings: [] });
+    assert.notEqual(cleaned.value, raw);
+  });
+
+  test("an empty list becomes [\"Standard\"]", () => {
+    assert.deepEqual(cleanAcceptsPriority([]), {
+      value: ["Standard"],
+      warnings: ['acceptsPriority was empty, so it was set to ["Standard"]'],
+    });
+  });
+
+  test("something that is not a list is treated as empty", () => {
+    assert.deepEqual(cleanAcceptsPriority(null), {
+      value: ["Standard"],
+      warnings: ['acceptsPriority was empty, so it was set to ["Standard"]'],
+    });
+  });
+
+  test("an unknown entry becomes Standard, and a repeat is dropped", () => {
+    assert.deepEqual(cleanAcceptsPriority(["Express", "Overnight", "Express", ""]), {
+      value: ["Express", "Standard"],
+      warnings: [
+        'acceptsPriority[1] "Overnight" is not a priority, so it was set to "Standard"',
+        'acceptsPriority[3] was empty, so it was set to "Standard"',
+        'acceptsPriority listed "Express" 2 times, so the repeat was dropped',
+        'acceptsPriority listed "Standard" 2 times, so the repeat was dropped',
+      ],
+    });
+  });
+
+  test("a cleaned list passes the strict carrier rules", () => {
+    const { value } = cleanAcceptsPriority(["Overnight", "Same-day", "Same-day"]);
+    assert.deepEqual(validateCarrierStrict({ ...ups, acceptsPriority: value }), valid);
+  });
+
+  test("leaves the list it is given unchanged", () => {
+    const raw = ["Express", "Overnight", "Express"];
+    cleanAcceptsPriority(raw);
+    assert.deepEqual(raw, ["Express", "Overnight", "Express"]);
+  });
+});
+
+// ---------------------------------------------------------------------------------------------------
+// R8: amounts of money in whole cents
+// ---------------------------------------------------------------------------------------------------
+
+describe("R8: isInWholeCents, by the shared two-decimal rounder", () => {
+  for (const value of [0, 19.99, 35, 650, 25.5, 0.01, -3.5]) {
+    test(`${value} is in whole cents`, () => {
+      assert.equal(isInWholeCents(value), true);
+    });
+  }
+  for (const value of [19.999, 1.005, 0.001, 0.1 + 0.2, Number.NaN, Number.POSITIVE_INFINITY]) {
+    test(`${value} is not`, () => {
+      assert.equal(isInWholeCents(value), false);
+    });
+  }
+});
+
+describe("R8: unitCostUSD and declaredValueUSD in whole cents", () => {
+  test("a unit cost of 19.999", () => {
+    assert.deepEqual(
+      validateProductStrict(shoesWith({ unitCostUSD: 19.999 })),
+      invalid("unitCostUSD must be in whole cents (got 19.999)"),
+    );
+  });
+
+  test("a declared value of 650.001", () => {
+    assert.deepEqual(
+      validateShipmentStrict(shipmentWith({ declaredValueUSD: 650.001 })),
+      invalid("declaredValueUSD must be in whole cents (got 650.001)"),
+    );
+  });
+
+  test("whole cents come after finite and before the briefing's rule", () => {
+    assert.deepEqual(
+      validateProductStrict(shoesWith({ unitCostUSD: 0.001 })),
+      invalid("unitCostUSD must be in whole cents (got 0.001)"),
+    );
+    assert.deepEqual(
+      validateProductStrict(shoesWith({ unitCostUSD: -5 })),
+      invalid("unitCostUSD must be > 0 (got -5)"),
+    );
+    assert.deepEqual(
+      validateProductStrict(shoesWith({ unitCostUSD: Number.NaN })),
+      invalid("unitCostUSD must be a finite number (got NaN)"),
+    );
+  });
+
+  test("the carrier rates are not held to whole cents", () => {
+    assert.deepEqual(validateCarrierStrict({ ...ups, ratePerKmUSD: 0.005 }), valid);
+  });
+});
+
+// ---------------------------------------------------------------------------------------------------
+// R9: a shipment that needs a carrier and has none is flagged
+// ---------------------------------------------------------------------------------------------------
+
+describe("R9: shipmentStatusWarnings", () => {
+  for (const status of ["Assigned", "In transit", "Delivered"] as const) {
+    test(`"${status}" with no carrier is flagged`, () => {
+      assert.deepEqual(shipmentStatusWarnings(shipmentWith({ status, carrier: null })), [
+        `status is "${status}" but no carrier is assigned`,
+      ]);
+    });
+    test(`"${status}" with a carrier is fine`, () => {
+      assert.deepEqual(shipmentStatusWarnings(shipmentWith({ status, carrier: "SEUR" })), []);
+    });
+  }
+  for (const status of ["Pending", "Failed"] as const) {
+    for (const carrier of [null, "SEUR"]) {
+      test(`"${status}" with carrier ${carrier} is fine`, () => {
+        assert.deepEqual(shipmentStatusWarnings(shipmentWith({ status, carrier })), []);
+      });
+    }
+  }
+});
+
+describe("R9: the flag is a warning on validateShipmentInput, and the shipment stays valid", () => {
+  test("In transit with no carrier", () => {
+    assert.deepEqual(validateShipmentInput(shipmentWith({ status: "In transit", carrier: null })), {
+      valid: true,
+      errors: [],
+      warnings: ['status is "In transit" but no carrier is assigned'],
+    });
+  });
+
+  test("after the shape's own warnings", () => {
+    assert.deepEqual(
+      validateShipmentInput({ ...shipmentWith({ status: "Delivered", carrier: null }), note: "x" }),
+      {
+        valid: true,
+        errors: [],
+        warnings: [
+          "note is not a field of a shipment, so it is kept but not checked",
+          'status is "Delivered" but no carrier is assigned',
+        ],
+      },
+    );
+  });
+});
+
+// ---------------------------------------------------------------------------------------------------
+// R10: parseDate reads a Date or ISO 8601 text, and says why when it can't
+// ---------------------------------------------------------------------------------------------------
+
+describe("R10: parseDate", () => {
+  test("a real Date comes back as it is", () => {
+    const date = new Date("2024-03-15T10:30:00Z");
+    const parsed = parseDate(date);
+    assert.equal(parsed.date, date);
+    assert.equal(parsed.error, null);
+  });
+
+  const readable: [string, string, string][] = [
+    ["a day", "2024-03-15", "2024-03-15T00:00:00.000Z"],
+    ["a leap day", "2024-02-29", "2024-02-29T00:00:00.000Z"],
+    ["a time in UTC", "2024-03-15T10:30:00Z", "2024-03-15T10:30:00.000Z"],
+    ["a time without seconds", "2024-03-15T10:30Z", "2024-03-15T10:30:00.000Z"],
+    ["milliseconds and an offset", "2024-03-15T10:30:00.123+02:00", "2024-03-15T08:30:00.123Z"],
+    ["what JSON makes of a Date", "2024-03-15T00:00:00.000Z", "2024-03-15T00:00:00.000Z"],
+  ];
+  for (const [what, raw, iso] of readable) {
+    test(`${what}: ${raw}`, () => {
+      const parsed = parseDate(raw);
+      assert.equal(parsed.error, null);
+      assert.equal(parsed.date?.toISOString(), iso);
+    });
+  }
+
+  const unreadable: [string, unknown, string][] = [
+    ["an Invalid Date", new Date("nope"), "date must be a real date (got Invalid Date)"],
+    [
+      "a day the calendar doesn't have",
+      "2024-02-30",
+      'date is not a real calendar date (got "2024-02-30")',
+    ],
+    ["29 February in a common year", "2023-02-29", 'date is not a real calendar date (got "2023-02-29")'],
+    ["a thirteenth month", "2024-13-01", 'date is not a real calendar date (got "2024-13-01")'],
+    ["hour 24", "2024-03-15T24:00:00Z", 'date is not a real calendar date (got "2024-03-15T24:00:00Z")'],
+    [
+      "a time with no time zone",
+      "2024-03-15T10:30:00",
+      'date needs a time zone, such as Z or +01:00 (got "2024-03-15T10:30:00")',
+    ],
+    [
+      "a day written another way",
+      "15/03/2024",
+      'date must be ISO 8601 text such as "2024-03-15" or "2024-03-15T10:30:00Z" (got "15/03/2024")',
+    ],
+    ["empty text", "", 'date must be ISO 8601 text such as "2024-03-15" or "2024-03-15T10:30:00Z" (got "")'],
+    ["a number", 1710460800000, "date must be a Date or ISO 8601 text (got number 1710460800000)"],
+    ["null", null, "date must be a Date or ISO 8601 text (got null)"],
+  ];
+  for (const [what, raw, error] of unreadable) {
+    test(`${what}: null, with the reason`, () => {
+      assert.deepEqual(parseDate(raw), { date: null, error });
+    });
+  }
+
+  test("the field name in the reason can be given", () => {
+    assert.deepEqual(parseDate("yesterday", "createdAt"), {
+      date: null,
+      error: 'createdAt must be ISO 8601 text such as "2024-03-15" or "2024-03-15T10:30:00Z" (got "yesterday")',
+    });
+  });
+
+  test("never throws", () => {
+    for (const raw of [undefined, {}, [], Symbol("x"), () => 1, 10n]) {
+      assert.doesNotThrow(() => parseDate(raw));
+    }
+  });
+});
+
+// ---------------------------------------------------------------------------------------------------
+// R12: lists of records
+// ---------------------------------------------------------------------------------------------------
+
+describe("R12: validateProductList", () => {
+  test("the briefing's products: clean", () => {
+    assert.deepEqual(validateProductList(briefingProducts), clean);
+  });
+
+  test("an empty list: clean", () => {
+    assert.deepEqual(validateProductList([]), clean);
+  });
+
+  test("not a list", () => {
+    assert.deepEqual(validateProductList(null), {
+      valid: false,
+      errors: ["products must be a list (got null)"],
+      warnings: [],
+    });
+  });
+
+  test("each record's errors and warnings, named by position", () => {
+    assert.deepEqual(validateProductList([shoes, { ...shoes, weightKg: 0, sku: "SHOE-RED-40", colour: "red" }, null]), {
+      valid: false,
+      errors: [
+        "products[1]: weightKg must be > 0 and <= 100 (got 0)",
+        "products[2]: product must be an object (got null)",
+      ],
+      warnings: ["products[1]: colour is not a field of a product, so it is kept but not checked"],
+    });
+  });
+
+  test("a SKU listed twice in one warehouse", () => {
+    assert.deepEqual(validateProductList([shoes, shoes, shoes]), {
+      valid: false,
+      errors: ["SHOE-BLK-42 in Los Angeles is listed 3 times"],
+      warnings: [],
+    });
+  });
+
+  test("one SKU in two warehouses is fine when its details agree", () => {
+    const shoesInZaragoza = shoesWith({ warehouse: "Zaragoza", stockQuantity: 5, status: "Low stock" });
+    assert.deepEqual(validateProductList([shoes, shoesInZaragoza]), clean);
+  });
+
+  test("details that differ between one SKU's warehouses", () => {
+    const shoesInZaragoza = shoesWith({
+      warehouse: "Zaragoza",
+      unitCostUSD: 37,
+      dimensions: { ...shoes.dimensions, heightCm: 13 },
+    });
+    assert.deepEqual(validateProductList([shoes, shoesInZaragoza]), {
+      valid: false,
+      errors: [
+        "SHOE-BLK-42 has dimensions.heightCm 12 in Los Angeles and 13 in Zaragoza",
+        "SHOE-BLK-42 has unitCostUSD 35 in Los Angeles and 37 in Zaragoza",
+      ],
+      warnings: [],
+    });
+  });
+
+  test("discontinued in one warehouse only", () => {
+    const shoesInZaragoza = shoesWith({ warehouse: "Zaragoza", status: "Discontinued" });
+    assert.deepEqual(validateProductList([shoes, shoesInZaragoza]), {
+      valid: false,
+      errors: ["SHOE-BLK-42 is discontinued in Zaragoza but not in Los Angeles"],
+      warnings: [],
+    });
+  });
+
+  test("a name that differs is quoted", () => {
+    const shoesInZaragoza = shoesWith({ warehouse: "Zaragoza", name: "Black Shoes 42" });
+    assert.deepEqual(validateProductList([shoes, shoesInZaragoza]).errors, [
+      'SHOE-BLK-42 has name "Black Running Shoes - Size 42" in Los Angeles and "Black Shoes 42" in Zaragoza',
+    ]);
+  });
+
+  test("never throws, and leaves the list unchanged", () => {
+    const list = [shoes, "x", 5, shoes];
+    const before = structuredClone(list);
+    assert.doesNotThrow(() => validateProductList(list));
+    assert.deepEqual(list, before);
+  });
+});
+
+describe("R12: validateShipmentList and validateCarrierList", () => {
+  test("the briefing's shipment and carriers: clean", () => {
+    assert.deepEqual(validateShipmentList([briefingShipment]), clean);
+    assert.deepEqual(validateCarrierList(briefingCarriers), clean);
+  });
+
+  test("a shipment id listed twice", () => {
+    assert.deepEqual(validateShipmentList([briefingShipment, shipmentWith({ quantity: 2 })]), {
+      valid: false,
+      errors: ["shipment SH-2024-8821 is listed 2 times"],
+      warnings: [],
+    });
+  });
+
+  test("a carrier id listed twice", () => {
+    assert.deepEqual(validateCarrierList([...briefingCarriers, ups]), {
+      valid: false,
+      errors: ["carrier CAR-UPS is listed 2 times"],
+      warnings: [],
+    });
+  });
+
+  test("not a list", () => {
+    assert.deepEqual(validateShipmentList("x").errors, ['shipments must be a list (got text "x")']);
+    assert.deepEqual(validateCarrierList({}).errors, ["carriers must be a list (got an object)"]);
+  });
+
+  test("a shipment's warnings carry its position", () => {
+    assert.deepEqual(validateShipmentList([shipmentWith({ status: "Assigned", carrier: null })]), {
+      valid: true,
+      errors: [],
+      warnings: ['shipments[0]: status is "Assigned" but no carrier is assigned'],
     });
   });
 });

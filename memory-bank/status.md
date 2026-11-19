@@ -51,4 +51,4 @@ WP1 to WP7 of its plan are built (2026-11-19). Milestone 1, the public website, 
 
 ## Open questions
 
-- WP8's review items R3, R6, R8, R9, R10 and R12: `docs/open-questions.md`, "Waiting elsewhere". (2026-11-19)
+- What each shipment status means: `docs/open-questions.md`, "Waiting elsewhere". (2026-11-19)
