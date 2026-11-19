@@ -149,6 +149,20 @@ Among eligible carriers only cost decides, so a carrier that is rarely on time w
 - **Source:** `packages/warehouse-logic/docs/carrier-selection-review.md`, CS5 and F8; mae chose lowest cost, 2026-11-19
 - **Target:** ?
 
+### Statuses for a shipment that gets no carrier or is rejected
+
+The briefing's five statuses cover a shipment from creation to delivery or a package-related failure. A request that never gets a carrier, or a data entry that goes bad, has no status of its own; mae suggested "Unassigned" for the first and "Denied" for a rejected shipment. Adding either changes the briefing's `ShipmentStatus`, so it is a departure, and there are no cases yet.
+
+- **Source:** mae, 2026-11-19 (`docs/decisions.md`, "What each shipment status means")
+- **Target:** ?
+
+### One shipment with several carriers
+
+A shipment names one carrier from the moment it is Assigned. A shipment handed from one carrier to another, such as a long haul and then a last-mile carrier, would need a list of carriers and the status to say which one has it now.
+
+- **Source:** mae, 2026-11-19 (`docs/decisions.md`, "What each shipment status means")
+- **Target:** ?
+
 ## AI and agents
 
 ### Orchestrator agent

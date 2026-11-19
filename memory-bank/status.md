@@ -51,4 +51,5 @@ WP1 to WP7 of its plan are built (2026-11-19). Milestone 1, the public website, 
 
 ## Open questions
 
-- What each shipment status means: `docs/open-questions.md`, "Waiting elsewhere". (2026-11-19)
+- R9's flag against the status meanings mae settled: `docs/open-questions.md`, "Waiting elsewhere".
+  (2026-11-19)

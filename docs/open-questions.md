@@ -25,4 +25,4 @@ Q1 to Q25 were answered by mae on 2026-11-17 and 2026-11-18 (`docs/decisions.md`
 
 mae picked all of Milestone 2's extras, X1 to X5, on 2026-11-18 (`docs/milestones/milestone-2/plan.md`, "Proposed extras").
 
-- What each shipment status means ("Pending" to "Failed"), which the briefing doesn't define: mae asked to settle it after WP8's R9; suggested readings in thread "Review validation rules and propose improvements" (2026-11-19).
+- R9's flag against mae's status meanings: flag a Failed shipment with no carrier, and a Pending one with a carrier (`docs/decisions.md`, "What each shipment status means"); waiting on mae's go-ahead (2026-11-19).
