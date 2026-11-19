@@ -126,7 +126,7 @@ interface CarrierEvaluation {
 
 The briefing's, exactly as written: score every carrier, drop those scoring under 50, and of the rest return the one with the lowest cost, with its score and cost. The score compared with 50 is the rounded one `scoreCarrierForShipment` returns, so exactly 50 stays in, and so does a raw 49.997, which rounds to 50 (Q33). When two carriers cost the same, the higher score wins, and when that ties too, the one listed first (Q6). It returns `null` when no carrier scores 50 or more, and for an empty list. It also returns `null` when no suitable carrier has a cost that can be compared: a shipment whose priority is not one of the three gives every carrier a cost of `NaN` (Q32). A carrier whose cost is `NaN` is passed over while another has a real cost. A score of `NaN` is not 50 or more, so that carrier is dropped. An infinite cost is still compared as a number: `Infinity` loses to any real cost, and `-Infinity` wins.
 
-**The briefing's known failure (plan D4).** For the sample shipment every carrier scores 50 or more, so the cheapest wins: `selectBestCarrier` returns UPS, with a score of 76.4 and a cost of $30.89. UPS operates only in the United States and the shipment goes to Madrid. Every rule was applied as the briefing writes it. Losing the 20 points for the country still leaves UPS far above the cut-off, and price decides among the carriers above it. SEUR, which serves Spain, scores 97.6 and costs $46.22. The tests pin this result and label it as the known failure. The fix, which makes the country and the weight limit must-haves, is a later, separate change (plan WP7), built beside this function and not in place of it.
+**The briefing's known failure (plan D4).** For the sample shipment every carrier scores 50 or more, so the cheapest wins: `selectBestCarrier` returns UPS, with a score of 76.4 and a cost of $30.89. UPS operates only in the United States and the shipment goes to Madrid. Every rule was applied as the briefing writes it. Losing the 20 points for the country still leaves UPS far above the cut-off, and price decides among the carriers above it. SEUR, which serves Spain, scores 97.6 and costs $46.22. The tests pin this result and label it as the known failure. The fix is a separate function, `selectBestEligibleCarrier`, under "Must-have carrier selection" below (plan WP7), built beside this function and not in place of it.
 
 ### `findCheapestCarrierForShipment(carriers: Carrier[], shipment: Shipment, product: Product): CarrierEvaluation | null`
 
@@ -244,6 +244,79 @@ With the six mock movements in `tests/fixtures/movements.ts`, the sample stock r
 |---|---|---|---|---|
 | `WH-LA` | Outbound out 2, Transfer out 6, Adjustment in 1 | 1 | 8 | -7 |
 | `WH-ZGZ` | Inbound in 10, Transfer in 5, Adjustment out 1 | 15 | 1 | 14 |
+
+## Must-have carrier selection (plan WP7)
+
+A departure from the briefing, built beside it (`docs/decisions.md`, "Carrier selection departure: five must-haves in front of the briefing's selection"; the analysis is `docs/carrier-selection-review.md`). The briefing's `selectBestCarrier` turns yes-or-no facts into points, so a carrier that cannot do the job can still win (its known failure, above). These four functions leave such carriers out first. The briefing's functions are unchanged, and `selectBestEligibleCarrier` calls the briefing's `selectBestCarrier` as it is on the carriers that remain.
+
+### The five must-haves
+
+A carrier is eligible for a shipment when all five hold. Each uses the rule check that the briefing's score uses, so a rule is written once.
+
+| Must-have | Holds when |
+|---|---|
+| Operates in the origin's country | `carrierOperatesInCountry(carrier, originCountry)`, where `originCountry` is `findShipmentOriginCountry(shipment, warehouses)` (CS2) |
+| Operates in the destination's country | `carrierOperatesInCountry(carrier, shipment.destination.country)` |
+| Can carry the weight | `carrierCanCarryWeight(carrier, calculateShipmentWeightKg(shipment, product))`: the whole shipment's weight, the limit included, floating-point noise removed (CS3, Q30) |
+| Accepts the priority | `carrierAcceptsPriority(carrier, shipment.priority)` |
+| Handles fragile | `carrierCanHandleFragility(carrier, product.isFragile)`: always holds for a product that is not fragile |
+
+Reliability is not a must-have: `onTimeRate` never makes a carrier ineligible (CS5).
+
+### The functions
+
+| Function | Returns | For an empty list |
+|---|---|---|
+| `findShipmentOriginCountry(shipment: Shipment, warehouses: Warehouse[]): Country \| null` | The `country` of the first warehouse in `warehouses` whose `name` is exactly `shipment.origin`. `null` when no warehouse has that name. | `null` for no warehouses |
+| `isCarrierEligibleForShipment(carrier: Carrier, shipment: Shipment, product: Product, warehouses: Warehouse[]): boolean` | `true` when the carrier meets all five must-haves, `false` when it fails any. `false` for every carrier when the origin's country is not found (Q35). | `false` for no warehouses |
+| `filterEligibleCarriers(carriers: Carrier[], shipment: Shipment, product: Product, warehouses: Warehouse[]): Carrier[]` | The eligible carriers, in the carriers' order. A new array holding the same carrier objects. | `[]` |
+| `selectBestEligibleCarrier(carriers: Carrier[], shipment: Shipment, product: Product, warehouses: Warehouse[]): { carrier: Carrier; score: number; cost: number } \| null` | Exactly `selectBestCarrier(filterEligibleCarriers(carriers, shipment, product, warehouses), shipment, product)`: of the eligible carriers scoring 50 or more, the cheapest, with the briefing's score and cost. `null` when no carrier is eligible; also, as in the briefing's function, when no eligible carrier reaches the cut-off or has a cost that can be compared, which needs data that breaks a validation rule (Q32). It names the winner and does not say why the others were left out (CS4). | `null` |
+
+- The result has the briefing's shape, and the carrier in it is the carrier object that was passed in. The score and the cost are `scoreCarrierForShipment` and `calculateShippingCost` for that carrier.
+- What the briefing's function settles is settled the same way among eligible carriers: on the same cost the higher score wins, then the carrier listed first (Q6); the rounded score is compared with 50 (Q33). An eligible carrier with valid data scores at least 70, so the cut-off leaves none out.
+- **The origin's country not found (Q35).** When no warehouse in `warehouses` is named `shipment.origin`, the first must-have cannot be confirmed, so no carrier is eligible and the selection is `null` (mae, 2026-11-19). It can only happen when the list of warehouses given is incomplete.
+- Like every function here, these four read only their parameters, change none of them and do not check their data (Q32).
+
+### Worked examples
+
+The carriers, products and the sample shipment are the briefing's, and the warehouses are the samples (`WH-LA` in the United States, `WH-ZGZ` in Spain). The other shipments are MOCK. Rows 11 and 12 are the sample shipment with its priority changed and a MOCK id; the rest go to "Mock City", and their quantities and distances are invented for the example. Each cost and score is worked by hand in `docs/carrier-selection-review.md` or in the notes under the tables.
+
+| # | Shipment | Carriers | Eligible | `selectBestCarrier` (the briefing's) | `selectBestEligibleCarrier` |
+|---|---|---|---|---|---|
+| 1 | The sample shipment: 1 laptop (2.3 kg, fragile), Express, Zaragoza to Madrid, Spain, 320 km | samples | SEUR, DHL Express | UPS, 76.4, 30.89 | SEUR, 97.6, 46.22 |
+| 2 | MOCK: 40 pairs of shoes (32 kg), Express, Los Angeles to the United States, 100 km | samples | DHL Express | UPS, 76.4, 62.92 | DHL Express, 98.5, 111.8 |
+| 3 | MOCK: 1 pair of shoes (0.8 kg), Same-day, Los Angeles to the United States, 20 km | samples | DHL Express | UPS, 81.4, 11.14 | DHL Express, 98.5, 24.96 |
+| 4 | The sample shipment | samples and MOCK carrier A | SEUR, DHL Express | MOCK carrier A, 82, 23.53 | SEUR, 97.6, 46.22 |
+| 5 | MOCK: 20 laptops (46 kg), Express, Zaragoza to Spain, 320 km | samples | DHL Express | UPS, 56.4, 99.06 | DHL Express, 98.5, 176.8 |
+| 6 | MOCK: the same 20 laptops, Same-day | samples | DHL Express | SEUR, 77.6, 161.76 | DHL Express, 98.5, 217.6 |
+| 7 | MOCK: 1 pair of shoes, Express, Los Angeles to Spain, 9000 km | samples | DHL Express | UPS, 76.4, 592.75 | DHL Express, 98.5, 1187.68 |
+| 8 | MOCK: 100 pairs of shoes (80 kg), Standard, Los Angeles to the United States, 100 km | samples | none | UPS, 76.4, 106 | `null` |
+| 9 | MOCK: 40 pairs of shoes (32 kg), Standard, Los Angeles to the United States, 100 km | samples | none | UPS, 76.4, 48.4 | `null` |
+| 10 | MOCK: 10 pairs of shoes (8 kg), Standard, Los Angeles to the United States, 100 km | samples | UPS | UPS, 96.4, 19.6 | UPS, 96.4, 19.6 |
+| 11 | MOCK: the sample shipment sent Same-day | samples and MOCK carrier B | SEUR, DHL Express | MOCK carrier B, 50, 10.4 | SEUR, 97.6, 56.88 |
+| 12 | MOCK: the sample shipment sent Standard | SEUR and MOCK carrier C | SEUR, MOCK carrier C | MOCK carrier C, 82, 35.54 | MOCK carrier C, 82, 35.54 |
+
+The MOCK carriers, each listed after the samples:
+
+| MOCK carrier | `operatesIn` | Base, per kg, per km | `onTimeRate` | `maxWeightKg` | `handlesFragile` | `acceptsPriority` |
+|---|---|---|---|---|---|---|
+| A, which does not handle fragile | Spain | 3, 1, 0.04 | 90 | 20 | `false` | Standard, Express |
+| B, which fails four must-haves and is always on time | United States | 1, 1, 0.01 | 100 | 30 | `false` | Standard |
+| C, SEUR with a base rate one cent lower and a poor on-time rate | Spain | 6.49, 1.5, 0.08 | 40 | 25 | `true` | Standard, Express, Same-day |
+
+Why each row comes out as it does:
+
+- **1.** UPS does not operate in Spain. SEUR costs less than DHL Express.
+- **2.** UPS's limit is 30 kg and SEUR's 25 kg; SEUR also does not operate in the United States.
+- **3.** UPS does not accept Same-day. SEUR does not operate in the United States.
+- **4.** Carrier A does not handle fragile goods and the laptop is fragile. Carrier A's cost: (3 + 2.3 × 1 + 320 × 0.04) × 1.3 = 23.53.
+- **5 and 6.** 46 kg is over UPS's and SEUR's limits. DHL Express takes 50 kg.
+- **7.** The origin is in the United States and the destination in Spain. Only DHL Express operates in both.
+- **8.** 80 kg is over every carrier's limit.
+- **9.** UPS's limit is 30 kg, SEUR does not operate in the United States, and DHL Express does not accept Standard.
+- **10.** Where the briefing's pick can do the job, both functions agree. UPS: (5 + 0.8 × 1.2 × 10 + 100 × 0.05) × 1 = 19.6, and 20 + 20 + 15 + 15 + 26.4 = 96.4.
+- **11.** Carrier B scores exactly 50 under the briefing's rules (0 + 20 + 0 + 0 + 30) and costs (1 + 2.3 × 1 + 320 × 0.01) × 1.6 = 10.4, so the briefing picks it. It fails the origin's and the destination's country, the priority and fragile. SEUR, sent Same-day: 35.55 × 1.6 = 56.88.
+- **12.** Both carriers are eligible, so the lowest cost decides as in the briefing: 35.54 against SEUR's 35.55. Reliability does not rule a carrier out (CS5).
 
 ## Answers these functions follow
 

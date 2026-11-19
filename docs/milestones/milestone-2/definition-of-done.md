@@ -1,7 +1,7 @@
 # Milestone 2 definition of done
 
 > **Date created**: 2026-11-17
-> **Last checked**: 2026-11-18, on WP1's branch. WP1, the package scaffold and data model, is built: M1 to M7 and M9 are done, and ST1, ST4, ST5 and ST14 are done as far as WP1 goes. Nothing else is built yet. Revised on 2026-11-17 with mae's answers to the plan's decisions, on 2026-11-18 with M9 for the stored model and X1 to X5 for the extras, and after a review that day with the Package column and clearer rows.
+> **Last checked**: 2026-11-18, on WP1's branch. WP1, the package scaffold and data model, is built: M1 to M7 and M9 are done, and ST1, ST4, ST5 and ST14 are done as far as WP1 goes. Nothing else is built yet. Revised on 2026-11-17 with mae's answers to the plan's decisions, on 2026-11-18 with M9 for the stored model and X1 to X5 for the extras, and after a review that day with the Package column and clearer rows. On 2026-11-19, on WP7's branch, K5 and K6 were rated done; the rows of WP2 to WP6 were not re-rated there.
 > **Built from**: every checklist and requirement in this folder, merged and de-duplicated. The company briefing (`trackflow-BRIEFING.en.md`, called `BRIEFING.md` in the checklists) still wins where it is more specific.
 
 Milestone 2 is done when every item below is rated ✅. The test page (O) is optional in its checklist but required here: mae counts optional work as required (2026-11-17, plan D8). Items marked "after review" are built only once mae has approved the analysis that comes before them (plan, "How this milestone works"). Where several sources ask for the same thing, they are one item and the Source column lists each. The Package column names the package in `plan.md` that delivers each item; "all" means every package keeps to it and WP9 checks it. The D numbers point to the plan's Phase 0 decisions, and the Q numbers to `docs/open-questions.md` or, once answered, `docs/decisions.md`.
@@ -16,9 +16,9 @@ To re-check, update the rating and evidence in place and the "Last checked" line
 
 | Rating | Items |
 |---|---|
-| ✅ Completely done | 8 |
+| ✅ Completely done | 10 |
 | 🟡 Partially done | 4 |
-| ⬜ Not done | 55 |
+| ⬜ Not done | 53 |
 | 🙋 Needs mae | 0 |
 | ❔ Not verifiable here | 0 |
 | **Total** | **67** |
@@ -69,8 +69,8 @@ The plan's extras X1 to X5 joined this list when mae picked all five (2026-11-18
 | K2 | `scoreCarrierForShipment` gives 20, 20, 15, 15 and up to 30 points by the briefing's five rules and rounds to 2 decimals | B-F, B-A2 | WP4 | ⬜ | |
 | K3 | `selectBestCarrier` drops carriers scoring under 50, picks the cheapest of the rest, returns its carrier, score and cost, or `null`, exactly as the briefing writes it | B-F, B-A2 | WP4 | ⬜ | |
 | K4 | Tests show the briefing's selection following every rule and still sending the sample Madrid shipment with UPS, which doesn't serve Spain, labelled as a known failure | mae (D4) | WP4 | ⬜ | |
-| K5 | A written review of other ways the scoring can fail, discussed with mae | mae (D4) | WP7 | ⬜ | |
-| K6 | After review: the departure that makes country and weight must-haves, beside the briefing's version, logged in `docs/decisions.md` | mae (D4) | WP7 | ⬜ | |
+| K5 | A written review of other ways the scoring can fail, discussed with mae | mae (D4) | WP7 | ✅ | `packages/warehouse-logic/docs/carrier-selection-review.md`, ten failure cases; mae decided its five choices on 2026-11-19 (pull request #45) |
+| K6 | After review: the departure that makes country and weight must-haves, beside the briefing's version, logged in `docs/decisions.md` | mae (D4) | WP7 | ✅ | `selectBestEligibleCarrier` in `src/utils/transformations.ts`, with priority and fragile as must-haves too (mae, CS1); `tests/carrier-selection-improved.test.ts` shows the briefing's result and the new one side by side; `docs/decisions.md`, "Carrier selection departure: five must-haves in front of the briefing's selection" |
 
 ## Reports
 
