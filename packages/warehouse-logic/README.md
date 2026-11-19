@@ -149,7 +149,7 @@ Which method to use when, with a timing run: `docs/search-research.md`.
 
 ### Transformations: `src/utils/transformations.ts`
 
-Every figure worked out by hand: `docs/transformations.md`. The briefing's functions don't check their data, so a priority that is not one of the three gives a cost of `NaN` (Q32).
+Every figure worked out by hand: `docs/transformations.md`. The briefing's functions don't check their data, so a priority that is not one of the three gives a cost of `NaN`; the checked versions return the same result and say what is wrong with the data (Q32).
 
 | Export | Returns | Empty |
 |---|---|---|
@@ -190,9 +190,10 @@ Every figure worked out by hand: `docs/transformations.md`. The briefing's funct
 | `carrierAcceptsPriority(carrier: Carrier, priority: ShipmentPriority): boolean` | Scoring rule 3. | — |
 | `carrierCanHandleFragility(carrier: Carrier, isFragile: boolean): boolean` | Scoring rule 4: true for a product that is not fragile. | — |
 | `calculateReliabilityPoints(carrier: Carrier): number` | Scoring rule 5, `onTimeRate * 0.3`: 90% is 27 points. | — |
-| `CarrierScoreBreakdown`, `CarrierEvaluation`, `WarehouseSummary`, `WarehouseMovementTotals` | The result types above. | — |
-
-Coming in a separate pull request, and to be listed here when it merges (WP9 checks): `calculateShippingCostChecked`, `scoreCarrierForShipmentChecked` and `selectBestCarrierChecked`, versions that return the same result with warnings (Q32).
+| `calculateShippingCostChecked(shipment: Shipment, product: Product, carrier: Carrier): CheckedShippingCost` | `{ cost, warnings }`: `calculateShippingCost`'s cost, unchanged, with a warning for each of the briefing's validation rules the shipment, the product or the carrier breaks, such as `Carrier CAR-UPS: baseRateUSD must be >= 0 (got -5)`, and one more when the cost is not a finite number (Q32). Clean data: `warnings: []`. | — |
+| `scoreCarrierForShipmentChecked(carrier: Carrier, shipment: Shipment, product: Product): CheckedCarrierScore` | `{ score, warnings }`: `scoreCarrierForShipment`'s score, unchanged, with the same warnings, and one more when the score is not a finite number. UPS with an `onTimeRate` of 150 scores 95, with `Carrier CAR-UPS: onTimeRate must be between 0 and 100 (got 150)`. | — |
+| `selectBestCarrierChecked(carriers: Carrier[], shipment: Shipment, product: Product): CheckedCarrierSelection` | `{ best, warnings }`: `selectBestCarrier`'s selection, unchanged, with the warnings for the shipment and the product once, then each carrier in the list's order, then each cost or score that is not a finite number. | `{ best: null, warnings }` with the shipment's and the product's warnings |
+| `CarrierScoreBreakdown`, `CarrierEvaluation`, `WarehouseSummary`, `WarehouseMovementTotals`, `CheckedShippingCost`, `CheckedCarrierScore`, `CheckedCarrierSelection` | The result types above. | — |
 
 ### Validations: `src/utils/validations.ts`
 
