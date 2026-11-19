@@ -2,7 +2,7 @@
 
 How the briefing's `selectBestCarrier` picks a carrier, the ways it picks a wrong one, and a proposed fix for mae to decide on (plan WP7, D4). This is the analysis only. No code is built from it until mae has agreed to it, and the briefing's functions stay exactly as they are either way.
 
-> **Status**: waiting for mae (2026-11-19). Of the five choices under "Choices for mae", mae answered CS1 on 2026-11-19: (b), all four rules are must-haves. CS2 to CS5 are open.
+> **Status**: waiting for mae (2026-11-19). Of the five choices under "Choices for mae", mae answered two on 2026-11-19: CS1 (b), all four rules are must-haves, and CS2 (b), the carrier must operate in the origin's country and the destination's. CS3 to CS5 are open.
 
 ## Summary
 
@@ -239,6 +239,8 @@ Each is a separate choice. The recommendation is first in each list of reasons.
 - **(c) The destination's, and flag a shipment whose origin and destination countries differ** as a warning, without leaving any carrier out for it.
 
 **Recommendation: (b).** It costs nothing for domestic shipments and is the only safe answer for the others. If TrackFlow never ships between its countries, (b) and (a) give the same results on real data.
+
+**mae, 2026-11-19: (b).** The carrier must operate in the origin warehouse's country and in the destination's.
 
 #### CS3. Which weight is held against the carrier's limit?
 
