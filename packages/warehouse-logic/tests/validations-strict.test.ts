@@ -331,8 +331,9 @@ describe("validateProductStrict: several failures, one per field, in the interfa
     );
   });
 
-  test("strictProductRules lists one outcome per field: nine for the shoes, all passing", () => {
-    assert.deepEqual(strictProductRules(shoes), Array(9).fill(null));
+  test("strictProductRules lists one outcome per field: twelve for the shoes, all passing", () => {
+    // Twelve since R3 (WP8, 2026-11-19) checks category, warehouse and status too.
+    assert.deepEqual(strictProductRules(shoes), Array(12).fill(null));
   });
 
   test("leaves the product unchanged", () => {
@@ -469,9 +470,9 @@ describe("validateShipmentStrict: several failures, one per field, in the interf
     );
   });
 
-  test("strictShipmentRules lists one outcome per field: ten, all passing", () => {
-    // Ten since R1 (WP8, 2026-11-19) checks destination.country too.
-    assert.deepEqual(strictShipmentRules(briefingShipment), Array(10).fill(null));
+  test("strictShipmentRules lists one outcome per field: thirteen, all passing", () => {
+    // Thirteen since R1 (WP8, 2026-11-19) checks destination.country and R3 origin, priority and status.
+    assert.deepEqual(strictShipmentRules(briefingShipment), Array(13).fill(null));
   });
 
   test("leaves the shipment unchanged, its destination and date included", () => {
@@ -573,8 +574,9 @@ describe("validateCarrierStrict: several failures, one per field, in the interfa
     );
   });
 
-  test("strictCarrierRules lists one outcome per field: nine, all passing", () => {
-    assert.deepEqual(strictCarrierRules(ups), Array(9).fill(null));
+  test("strictCarrierRules lists one outcome per field: ten, all passing", () => {
+    // Ten since R6 (WP8, 2026-11-19) checks acceptsPriority too.
+    assert.deepEqual(strictCarrierRules(ups), Array(10).fill(null));
   });
 
   test("leaves the carrier unchanged, its lists included", () => {
