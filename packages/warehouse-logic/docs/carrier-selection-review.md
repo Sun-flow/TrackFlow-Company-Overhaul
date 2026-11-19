@@ -1,8 +1,8 @@
 # Carrier selection review
 
-How the briefing's `selectBestCarrier` picks a carrier, the ways it picks a wrong one, and a proposed fix for mae to decide on (plan WP7, D4). This is the analysis only. No code is built from it until mae has agreed to it, and the briefing's functions stay exactly as they are either way.
+How the briefing's `selectBestCarrier` picks a carrier, the ways it picks a wrong one, and the fix mae decided on (plan WP7, D4). This is the analysis only: it holds no code, and the briefing's functions stay exactly as they are.
 
-> **Status**: waiting for mae (2026-11-19). Of the five choices under "Choices for mae", mae answered four on 2026-11-19: CS1 (b), all four rules are must-haves; CS2 (b), the carrier must operate in the origin's country and the destination's; CS3 (a), the whole shipment's weight is held against the limit; CS5 (a), the lowest cost decides among eligible carriers. CS4 is open.
+> **Status**: decided by mae on 2026-11-19. The answers to the five choices are under "What mae decided" and in `docs/decisions.md`, "Carrier selection departure: five must-haves in front of the briefing's selection". The code is not built yet.
 
 ## Summary
 
@@ -19,6 +19,31 @@ How the briefing's `selectBestCarrier` picks a carrier, the ways it picks a wron
 | CS3 | Which weight is held against the carrier's limit? | The whole shipment's, as the briefing's rule says |
 | CS4 | What does the new function return? | The selected carrier, plus every rejected carrier with the must-haves it failed |
 | CS5 | What decides among eligible carriers? | The lowest cost, as the briefing says |
+
+## What mae decided
+
+mae answered all five choices on 2026-11-19. Four follow the recommendation. On CS4 mae chose the simpler answer.
+
+| Choice | mae's answer |
+|---|---|
+| CS1 | (b) All four yes-or-no rules are must-haves: country, weight, priority and fragile |
+| CS2 | (b) The carrier must operate in the origin warehouse's country and in the destination's |
+| CS3 | (a) The whole shipment's weight is held against the carrier's limit |
+| CS4 | (a) The briefing's shape, `{ carrier, score, cost } \| null`: "for now, just name the winner. if we need readouts later as to why things failed, we can expand then." |
+| CS5 | (a) The lowest cost decides among eligible carriers |
+
+So the new function has five must-haves: the destination's country, the origin's country, the weight, the priority and fragile handling. It takes the carriers, the shipment, the product and the warehouses, leaves out every carrier that fails a must-have, and returns what the briefing's `selectBestCarrier` returns for the carriers that remain. It names the winner and does not say why the others were left out.
+
+```mermaid
+flowchart TD
+    A["Every carrier"] --> B{"Meets all five must-haves?"}
+    B -- "no" --> R["Left out"]
+    B -- "yes" --> E["Eligible"]
+    E --> S["The briefing's selectBestCarrier, unchanged: score, cut-off at 50, lowest cost"]
+    S --> G["carrier, score and cost, or null when no carrier is eligible"]
+```
+
+Parked in `docs/FUTURE_WORK.md`: a result that says why each carrier was left out (CS4, F9, F10), splitting a large order into packages (CS3, F7), and letting reliability and speed count (CS5, F8).
 
 ## How the briefing selects a carrier
 
@@ -201,6 +226,8 @@ Sources are listed at the end, with what could and could not be opened from this
 
 ## The proposed departure
 
+This section is the proposal as mae read it. Where the answer differs from it, which is CS4 only, "What mae decided" above is what gets built.
+
 One step goes in front of the briefing's function. Nothing in the briefing's function changes, and it is called as it is on the carriers that pass.
 
 ```mermaid
@@ -258,6 +285,8 @@ Each is a separate choice. The recommendation is first in each list of reasons.
 
 **Recommendation: (b).** It is "grace, but flagged" (Q29) applied here, it matches `CONTEXT.md`'s "explainable recommendations", and the selected carrier inside it has the briefing's shape, so a caller who wants only that reads one field. F9 fits here too: a product whose SKU is not the shipment's can be returned as a warning beside the result.
 
+**mae, 2026-11-19: (a).** "for now, just name the winner. if we need readouts later as to why things failed, we can expand then." The new function returns the briefing's shape, and the explained result is parked in `docs/FUTURE_WORK.md`.
+
 #### CS5. What decides among eligible carriers?
 
 - **(a) The lowest cost**, as the briefing says. F8 stays: reliability and speed do not affect the choice.
@@ -289,13 +318,15 @@ The same cases under the briefing, under D4 as agreed (CS1 (a)), and under the r
 
 The last three rows are the honest limits of the recommendation. Two of them answer "none" where the briefing names a carrier, and one keeps a pick mae may not like. Each is a true statement about the data: the three sample carriers cannot move 80 kg as one shipment, or 32 kg at Standard priority, and the rules as recommended still let price beat reliability.
 
+As decided, the "Recommended" column is what the new function returns, without the reasons: where the column says "none", it returns `null`.
+
 ## When the code is built
 
-Not before mae has agreed to this review, and after two merges that also change `src/utils/transformations.ts`: WP6 (the demo, the test page and the README, which the new exports are then added to) and the checked cost and scoring functions (Q32).
+mae agreed to this review on 2026-11-19. The code now waits for two merges that also change `src/utils/transformations.ts`: WP6 (the demo, the test page and the README, which the new exports are then added to) and the checked cost and scoring functions (Q32).
 
 - Medium risk tier, as for WP4 (plan D9): tests written from this document before the code, a second set written from it in a separate context, and a fresh-context review.
 - A new test file, so the briefing's tests are untouched. For each case above it asserts the briefing's result and the new result side by side, with the expected values worked by hand here.
-- The departure is logged in `docs/decisions.md` with mae's answers to CS1 to CS5, and what is not built goes in `docs/FUTURE_WORK.md`.
+- The departure is logged in `docs/decisions.md` with mae's answers to CS1 to CS5, and what is not built is parked in `docs/FUTURE_WORK.md`.
 
 ## How this was checked
 
