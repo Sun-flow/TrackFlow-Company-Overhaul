@@ -13,4 +13,4 @@
 - Verified, medium tier: 46 tests written here and 243 in a separate context; 285 of the 289 seen
   failing before the code. A fresh-context review found one medium gap, now covered by the other 4.
   Hand-made faults: mine 21 of 21 caught, the reviewer's 32 of 32 after the fix. `scripts/suite.sh`.
-- Left for WP6: the three exports in the README and the demo.
+- The package README and `pnpm demo` list the three. The test page does not show them (WP9).
