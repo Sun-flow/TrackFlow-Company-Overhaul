@@ -44,9 +44,9 @@ This is mae's solo repo, so mae's preferences apply to every session.
 Traps in tools and environments. A trap met while changing the website's code, Tailwind's included,
 goes in `memory-bank/website.md`.
 
-- The kit flags a shell command that changes any test file on disk, even a new one. Edit tests with the
-  Edit tool: it asks only before a line `production` has changes, and those changes go through a draft
-  ("Tests in progress", `.claude/rules/testing.md`). (2026-11-18)
+- The kit asks before a shell command or an edit changes a test line `production` has; those changes
+  go through a draft ("Tests in progress", `.claude/rules/testing.md`). It also asks before a git
+  command that moves the base branch, `git remote set-head` included. (2026-11-19)
 - Run a claim about JavaScript's arithmetic before writing it down: `0.3 * 100` is exactly 30, and
   `0.28 * 25` is not 7. (2026-11-18)
 - A fresh cloud clone doesn't record the remote's default branch, and the check doesn't guess
@@ -85,10 +85,9 @@ home: `uis/AGENTS.md` for every user interface, `memory-bank/website.md` for the
 Things not to copy, and names that no longer mean what they say.
 
 - A `Milestone-<N>` branch is for grading, not for work: branch from `origin/production`. (2026-11-13)
-- `.claude/testing-kit/kitlib.py`, `.claude/testing-kit/guard_bash.py` and
-  `.claude/testing-kit/protect_tests.py` carry local patches, and `.claude/rules/testing.md` a hand edit
-  (`docs/decisions.md`). Re-running the kit's installer overwrites them unless the kit has taken the
-  same change. (2026-11-18)
+- `.claude/rules/testing.md`, `docs/testing/KIT-GUIDE.md` and `.github/workflows/testing-kit.yml`
+  carry hand edits (`docs/decisions.md`). The kit's installer keeps them and writes its own version
+  beside each as `.kit-new`. (2026-11-19)
 - `docs/milestones/milestone-1/plan.md` is a record of a finished milestone. Its memory-bank steps
   describe a layout that is gone, so don't copy them into a new plan. (2026-11-13)
 

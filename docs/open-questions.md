@@ -25,3 +25,4 @@ Q1 to Q25 were answered by mae on 2026-11-17 and 2026-11-18 (`docs/decisions.md`
 
 mae picked all of Milestone 2's extras, X1 to X5, on 2026-11-18 (`docs/milestones/milestone-2/plan.md`, "Proposed extras").
 
+The testing kit (0.5.0) asks before `git remote set-head origin --auto`, which the session protocol in `AGENTS.md` runs at every start. Options: (a) the cloud environment's script, `scripts/wire-cloud-hooks.py`, records origin's default branch before Claude starts and the protocol drops the command; (b) the kit stops asking when `base_branch` is set in its config, in a later release; (c) leave it, and approve the prompt in each thread. Recommendation: (a), since the script already runs before the hooks load and the check needs the branch recorded. Asked: 2026-11-19 (`docs/decisions.md`, "Testing kit 0.5.0 replaces the three local patches").
