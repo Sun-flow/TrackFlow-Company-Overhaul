@@ -82,7 +82,7 @@ The validators are built from small, generic functions in the same file, which l
 The order of the fields checked:
 
 - Product: `sku`, `name`, `weightKg`, `dimensions.lengthCm`, `dimensions.widthCm`, `dimensions.heightCm`, `stockQuantity`, `minStockThreshold`, `unitCostUSD`.
-- Shipment: `id`, `sku`, `quantity`, `destination.city`, `destination.postalCode`, `destination.distanceKm`, `declaredValueUSD`, `carrier`, `createdAt`.
+- Shipment: `id`, `sku`, `quantity`, `destination.city`, `destination.country` (since WP8), `destination.postalCode`, `destination.distanceKm`, `declaredValueUSD`, `carrier`, `createdAt`.
 - Carrier: `id`, `name`, `operatesIn`, `baseRateUSD`, `ratePerKgUSD`, `ratePerKmUSD`, `avgDeliveryDays`, `onTimeRate`, `maxWeightKg`.
 
 ### Cleaning what arrives
@@ -100,10 +100,56 @@ The validators never change a value. Data from outside, such as a form or a file
 
 `isFiniteNumber(value)`, `isCode(value)` (the SKU and id pattern), `isCleanName(value)`, `isCityName(value)`, `isPostalCode(postalCode, country)`, `isRealDate(date)`, and `strictProductRules`, `strictShipmentRules` and `strictCarrierRules`, which list one outcome per field in the order above.
 
+## WP8's improvements
+
+mae approved these from `docs/validation-review.md` on 2026-11-19 (R1, R2, R4, R5, R7, R13 and R14; `docs/decisions.md`, "WP8's first validation improvements"). The briefing's validators are unchanged. Tests: `tests/validations-improved.test.ts`.
+
+### In the strict validators
+
+| # | Rule | Message when it fails |
+|---|---|---|
+| R1 | `destination.country` is on the `countries` list. When it isn't, the postal code is not checked, since there is no format for it, and the validator no longer throws. | `destination.country must be one of "United States", "Spain" (got "France")` |
+| R2 | A value of the wrong kind is quoted as it arrived, and a `createdAt` that is not a `Date` is a message, not a crash. | `weightKg must be a finite number (got "5")`, `createdAt must be a real date (got "2024-03-15")` |
+| R5 | `stockQuantity`, `minStockThreshold` and a shipment's `quantity` are whole numbers, checked after "finite" and before the briefing's rule. | `stockQuantity must be a whole number (got 0.5)` |
+| R7 | A SKU does not end in a warehouse id, by Q13's format (`-WH-` and one group), checked after the SKU's pattern. | `sku must not end in a warehouse id such as -WH-LA (got "SHOE-WH-LA")` |
+
+The allowed values in a message are read from the lists in `models.ts`, so a value added to a list shows in its message at once.
+
+### Movements
+
+`validateInventoryMovementStrict(movement)` (R13), one message per field, in this order:
+
+| Field | Rule | Message when it fails |
+|---|---|---|
+| `id` | the code pattern | `id must be letters and digits in groups joined by single hyphens (got "...")`, or `id must not be empty` |
+| `sku` | the code pattern, then R7 | as for a product's SKU |
+| `warehouse` | on `warehouseLocations` | `warehouse must be one of "Los Angeles", "Zaragoza" (got "Madrid")` |
+| `type` | on `movementTypes` | `type must be one of "Inbound", "Outbound", "Transfer", "Adjustment" (got "Return")` |
+| `quantity` | finite, whole, above 0 (the direction says which way) | `quantity must be > 0 (got -5)` |
+| `reason` | not blank, the name pattern | `reason must not be empty` |
+| `timestamp` | a real date | `timestamp must be a real date (got Invalid Date)` |
+
+`validateMovementRecord(record, warehouses)` (R14) checks a stored `MovementRecord`, one message per field: `movementId` (the code pattern); `stockRecordId`, which must end in one of the warehouses given (`stockRecordId must end in a known warehouse id, -WH-LA or -WH-ZGZ (got "...")`); `direction`, which must be on its list and allowed for the type by `movementDirectionsByType` (`direction must be "In" for an Inbound (got "Out")`); `shipmentId`, which an Outbound must have (`shipmentId must name the shipment an Outbound left for (got null)`) and no other type may (`shipmentId must be null except on an Outbound (got "...")`); then `type`, `quantity`, `reason` and `timestamp` as above. A type not on its list gets its own message, and the direction and shipment id are not checked against it.
+
+### Untyped input
+
+`validateProductInput`, `validateShipmentInput`, `validateCarrierInput` and `validateInventoryMovementInput` take `unknown` and return `{ valid, errors, warnings }`. They never throw. They check the shape first, with `checkShape` and the record's shape (`productShape` and the others), and run the strict rules only when the shape holds:
+
+| Found | Kind | Message |
+|---|---|---|
+| Not an object | error | `product must be an object (got null)`; `(got a list)`, `(got text "abc")`, `(got a Date)` |
+| A required field missing or `undefined` | error | `dimensions is required` |
+| The wrong kind of value | error | `weightKg must be a number (got text "5")`, `isFragile must be true or false (got text "yes")`, `createdAt must be a Date (got text "2024-03-15")`, `sku must be text (got null)` |
+| A list entry of the wrong kind | error | `acceptsPriority[1] must be text (got number 5)` |
+| A field the shape doesn't list | warning | `colour is not a field of a product, so it is kept but not checked` |
+| An optional field missing | warning | `note is optional and missing` (no briefing field is optional yet) |
+
+Nothing is converted: `"5"` stays an error, since parsing input is parked in `docs/FUTURE_WORK.md`. `carrier` must be present and may be `null`. `isValidProduct(value)` and the other three guards return the result's `valid`; `assertValidProduct(value)` and the other three return when it is valid and otherwise throw a `ValidationError` whose `errors` lists every error, on purpose and never as a crash.
+
 ## Noticed while building, for WP8
 
 These are not built. They follow from the rules as written and are listed so WP8's review can weigh them:
 
 - A blank SKU (`"   "`) passes rule 1, and `Infinity` passes every rule that has no upper bound. The strict validators close both.
-- A fractional `quantity` or `stockQuantity`, such as 0.5 units, passes. WP8 already lists whole-number quantities.
+- A fractional `quantity` or `stockQuantity`, such as 0.5 units, passes. The strict validators refuse it since WP8 (R5).
 - `operatesIn: ["Spain", "Spain"]` passes rule 14, and the list isn't checked against `countries` for data that arrives untyped. WP8 already lists literal values on their lists.

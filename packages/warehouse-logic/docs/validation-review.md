@@ -1,7 +1,7 @@
 # Validation review: proposed improvements
 
 > **Date created**: 2026-11-19 (plan WP8, first phase)
-> **Status**: mae answered on 2026-11-19 ("mae's answers", below). Nothing is built yet. Only what mae approves is built.
+> **Status**: mae answered on 2026-11-19 ("mae's answers", below). R1, R2, R4, R5, R7, R13 and R14 are built (`validation-rules.md`, "WP8's improvements"). The rest wait for mae; only what mae approves is built.
 > **Reads with**: `validation-rules.md` (what is built), `erd.md` (the data model), `src/utils/validations.ts`.
 
 ## Where things stand
