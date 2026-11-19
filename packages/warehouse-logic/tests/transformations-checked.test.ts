@@ -454,21 +454,27 @@ describe("selectBestCarrierChecked: costs and scores that are not finite numbers
 
   test("every record warning comes first, then each carrier's cost before its score, in the list's order", () => {
     // A: an infinite rate per km (passes >= 0) and an on-time rate of NaN: cost Infinity, score NaN.
-    // B: clean: score 97, cost 80. C: an infinite rate per km only: score 97, cost Infinity.
-    // A's score can't reach 50 and C's cost is not the lowest, so B is selected.
+    // B: clean: score 97, cost 80. C: an infinite rate per km and 0 delivery days: score 97, cost
+    // Infinity. A's score can't reach 50 and C's cost is not the lowest, so B is selected. C's record
+    // warning comes before A's result warnings.
     const a = buildMockCarrier({
       id: "MOCK-CAR-A",
       ratePerKmUSD: Number.POSITIVE_INFINITY,
       onTimeRate: Number.NaN,
     });
     const b = buildMockCarrier({ id: "MOCK-CAR-B" });
-    const c = buildMockCarrier({ id: "MOCK-CAR-C", ratePerKmUSD: Number.POSITIVE_INFINITY });
+    const c = buildMockCarrier({
+      id: "MOCK-CAR-C",
+      ratePerKmUSD: Number.POSITIVE_INFINITY,
+      avgDeliveryDays: 0,
+    });
     const product = buildMockProduct({ minStockThreshold: -1 });
     assert.deepEqual(selectBestCarrierChecked([a, b, c], buildMockShipment(), product), {
       best: { carrier: b, score: 97, cost: 80 },
       warnings: [
         "Product MOCK-PRODUCT-1: minStockThreshold must be >= 0 (got -1)",
         "Carrier MOCK-CAR-A: onTimeRate must be between 0 and 100 (got NaN)",
+        "Carrier MOCK-CAR-C: avgDeliveryDays must be > 0 (got 0)",
         "Carrier MOCK-CAR-A: the shipping cost of shipment MOCK-SH-0100 is not a finite number (got Infinity)",
         "Carrier MOCK-CAR-A: the score for shipment MOCK-SH-0100 is not a finite number (got NaN)",
         "Carrier MOCK-CAR-C: the shipping cost of shipment MOCK-SH-0100 is not a finite number (got Infinity)",
