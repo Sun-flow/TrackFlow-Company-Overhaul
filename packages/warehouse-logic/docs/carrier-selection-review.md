@@ -2,7 +2,7 @@
 
 How the briefing's `selectBestCarrier` picks a carrier, the ways it picks a wrong one, and a proposed fix for mae to decide on (plan WP7, D4). This is the analysis only. No code is built from it until mae has agreed to it, and the briefing's functions stay exactly as they are either way.
 
-> **Status**: waiting for mae (2026-11-19). Of the five choices under "Choices for mae", mae answered three on 2026-11-19: CS1 (b), all four rules are must-haves; CS2 (b), the carrier must operate in the origin's country and the destination's; CS5 (a), the lowest cost decides among eligible carriers. CS3 and CS4 are open.
+> **Status**: waiting for mae (2026-11-19). Of the five choices under "Choices for mae", mae answered four on 2026-11-19: CS1 (b), all four rules are must-haves; CS2 (b), the carrier must operate in the origin's country and the destination's; CS3 (a), the whole shipment's weight is held against the limit; CS5 (a), the lowest cost decides among eligible carriers. CS4 is open.
 
 ## Summary
 
@@ -248,6 +248,8 @@ Each is a separate choice. The recommendation is first in each list of reasons.
 - **(b) One unit's**, `product.weightKg`, on the reading that a shipment travels as several packages. Fixes F7. But the briefing's cost formula charges one base rate for the shipment, and no data says how many units go in a box, so the cost of a shipment split into packages would be a guess.
 
 **Recommendation: (a).** It is the briefing's own formula, and "no carrier can take 80 kg in one shipment" is a true and useful answer. Splitting an order into packages is real work with its own data needs, and belongs in `docs/FUTURE_WORK.md`.
+
+**mae, 2026-11-19: (a).** The whole shipment's weight is held against the carrier's limit.
 
 #### CS4. What does the new function return?
 
