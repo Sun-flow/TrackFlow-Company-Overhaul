@@ -1,7 +1,18 @@
 // Searches (the briefing's "Search Operations", plan WP2): the briefing's three functions, built on three
 // generic blocks. docs/search-research.md compares the methods, times them and says which to use when.
-import type { Product, Shipment } from "../types/models.ts";
-import { normalizeSku } from "./views.ts";
+import type { Product, Shipment, WarehouseLocation } from "../types/models.ts";
+
+// ---------------------------------------------------------------------------------------------------
+// Keys
+// ---------------------------------------------------------------------------------------------------
+
+/**
+ * Upper-cases a SKU. Stored keys are upper case, so a SKU is normalized once, when a key is built, and
+ * the SKU searches compare in this form. views.ts passes on this same function (P1).
+ */
+export function normalizeSku(sku: string): string {
+  return sku.toUpperCase();
+}
 
 // ---------------------------------------------------------------------------------------------------
 // Generic blocks
@@ -54,6 +65,30 @@ export function binarySearchBy<Item, Key extends number | string>(
 }
 
 /**
+ * Whether `items` is sorted by `keyOf`, ascending, as binarySearchBy needs: every key at most the
+ * next, so equal keys side by side are fine. Text compares by character code, as in binarySearchBy.
+ * An empty or one-item list is sorted, but a NaN key anywhere makes it false, since binary search
+ * cannot place NaN. Reads up to n - 1 pairs, so check a list once before many searches (P2).
+ */
+export function isSortedBy<Item, Key extends number | string>(
+  items: readonly Item[],
+  keyOf: (item: Item) => Key,
+): boolean {
+  let previous: Key | undefined;
+  for (const item of items) {
+    const key = keyOf(item);
+    if (Number.isNaN(key)) {
+      return false;
+    }
+    if (previous !== undefined && !(previous <= key)) {
+      return false;
+    }
+    previous = key;
+  }
+  return true;
+}
+
+/**
  * A Map from each item's key to the item, built in one pass, for many exact lookups in the same list.
  * When two items share a key, the first one listed is kept, as a linear search would find it.
  */
@@ -75,13 +110,18 @@ export function indexBy<Item, Key>(
 // The briefing's searches
 // ---------------------------------------------------------------------------------------------------
 
+/** A test that passes a product whose SKU is `sku`, case ignored on both sides; only case is ignored. */
+function hasSku(sku: string): (product: Product) => boolean {
+  const wantedSku = normalizeSku(sku);
+  return (product) => normalizeSku(product.sku) === wantedSku;
+}
+
 /**
  * Linear search for a product by SKU, ignoring case on both sides; only case is ignored. A SKU stocked
  * in two warehouses is two products, and the first one listed is returned (Q10). Null when none matches.
  */
 export function findProductBySKU(products: Product[], sku: string): Product | null {
-  const wantedSku = normalizeSku(sku);
-  return linearSearch(products, (product) => normalizeSku(product.sku) === wantedSku);
+  return linearSearch(products, hasSku(sku));
 }
 
 /** Linear search for a shipment by id, matched exactly, case included (Q7). Null when none matches. */
@@ -98,4 +138,32 @@ export function binarySearchProductByWeight(
   targetWeight: number,
 ): number {
   return binarySearchBy(sortedProducts, targetWeight, (product) => product.weightKg);
+}
+
+
+// ---------------------------------------------------------------------------------------------------
+// Beyond the briefing (WP8b, docs/tracked-improvements.md)
+// ---------------------------------------------------------------------------------------------------
+
+/**
+ * A SKU's products, matched as in findProductBySKU (I3). Without a warehouse: every product with that
+ * SKU, one per warehouse it is stocked in, in the list's order, or [] when none. With a warehouse: the
+ * one product that SKU and warehouse identify (Q10), or null; were two listed, the first.
+ */
+export function findProductsBySKU(products: Product[], sku: string): Product[];
+export function findProductsBySKU(
+  products: Product[],
+  sku: string,
+  warehouse: WarehouseLocation,
+): Product | null;
+export function findProductsBySKU(
+  products: Product[],
+  sku: string,
+  warehouse?: WarehouseLocation,
+): Product[] | Product | null {
+  const matchesSku = hasSku(sku);
+  if (warehouse === undefined) {
+    return products.filter(matchesSku);
+  }
+  return linearSearch(products, (product) => product.warehouse === warehouse && matchesSku(product));
 }

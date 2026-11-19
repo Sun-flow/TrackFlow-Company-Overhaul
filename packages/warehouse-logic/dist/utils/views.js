@@ -1,10 +1,10 @@
+import { indexBy, normalizeSku } from "./search.js";
+// normalizeSku lives in search.ts, beside the searches that compare SKUs; it is passed on from here, the
+// same function, so code that builds keys can import it with them (P1).
+export { normalizeSku };
 // ---------------------------------------------------------------------------------------------------
 // Keys
 // ---------------------------------------------------------------------------------------------------
-/** Upper-cases a SKU. Stored keys are upper case, so a SKU is normalized once, when a key is built. */
-export function normalizeSku(sku) {
-    return sku.toUpperCase();
-}
 /**
  * The id of an item's stock record in one warehouse: the SKU, a hyphen, the warehouse id, all in
  * upper case, so whatever case the two were typed in, the result is a stored key.
@@ -29,17 +29,8 @@ export function parseStockRecordId(stockRecordId, warehouses) {
 // ---------------------------------------------------------------------------------------------------
 // Looking a record up by its key
 // ---------------------------------------------------------------------------------------------------
-/** Records by key, for exact lookups. When two records share a key, the first one listed is kept. */
-function indexByKey(records, keyOf) {
-    const recordsByKey = new Map();
-    for (const record of records) {
-        const key = keyOf(record);
-        if (!recordsByKey.has(key)) {
-            recordsByKey.set(key, record);
-        }
-    }
-    return recordsByKey;
-}
+// Records by key go through search.ts's indexBy, built once per list: when two records share a key,
+// which the model forbids, the first one listed is kept (P1).
 const itemKey = (item) => item.sku;
 const warehouseKey = (warehouse) => warehouse.warehouseId;
 const stockRecordKey = (stockRecord) => stockRecord.stockRecordId;
@@ -87,8 +78,8 @@ export function toProduct(item, stockRecord, warehouse) {
  * A stock record whose item or warehouse is missing is left out.
  */
 export function toProducts(items, stockRecords, warehouses) {
-    const itemsBySku = indexByKey(items, itemKey);
-    const warehousesById = indexByKey(warehouses, warehouseKey);
+    const itemsBySku = indexBy(items, itemKey);
+    const warehousesById = indexBy(warehouses, warehouseKey);
     return withoutNulls(stockRecords.map((stockRecord) => {
         const item = itemsBySku.get(stockRecord.sku);
         const warehouse = warehousesById.get(stockRecord.warehouseId);
@@ -158,13 +149,13 @@ function buildShipment(shipmentRecord, stockRecordsById, warehousesById, carrier
  * stock record, its warehouse or the assigned carrier matches no record.
  */
 export function toShipment(shipmentRecord, stockRecords, warehouses, carrierRecords) {
-    return buildShipment(shipmentRecord, indexByKey(stockRecords, stockRecordKey), indexByKey(warehouses, warehouseKey), indexByKey(carrierRecords, carrierRecordKey));
+    return buildShipment(shipmentRecord, indexBy(stockRecords, stockRecordKey), indexBy(warehouses, warehouseKey), indexBy(carrierRecords, carrierRecordKey));
 }
 /** A Shipment for each shipment record, in the records' order, leaving out any with a broken link. */
 export function toShipments(shipmentRecords, stockRecords, warehouses, carrierRecords) {
-    const stockRecordsById = indexByKey(stockRecords, stockRecordKey);
-    const warehousesById = indexByKey(warehouses, warehouseKey);
-    const carrierRecordsById = indexByKey(carrierRecords, carrierRecordKey);
+    const stockRecordsById = indexBy(stockRecords, stockRecordKey);
+    const warehousesById = indexBy(warehouses, warehouseKey);
+    const carrierRecordsById = indexBy(carrierRecords, carrierRecordKey);
     return withoutNulls(shipmentRecords.map((shipmentRecord) => buildShipment(shipmentRecord, stockRecordsById, warehousesById, carrierRecordsById)));
 }
 // ---------------------------------------------------------------------------------------------------
@@ -193,11 +184,11 @@ function buildInventoryMovement(movementRecord, stockRecordsById, warehousesById
  * receiving one. Returns null when the stock record or its warehouse matches no record.
  */
 export function toInventoryMovement(movementRecord, stockRecords, warehouses) {
-    return buildInventoryMovement(movementRecord, indexByKey(stockRecords, stockRecordKey), indexByKey(warehouses, warehouseKey));
+    return buildInventoryMovement(movementRecord, indexBy(stockRecords, stockRecordKey), indexBy(warehouses, warehouseKey));
 }
 /** An InventoryMovement for each movement record, in order, leaving out any with a broken link. */
 export function toInventoryMovements(movementRecords, stockRecords, warehouses) {
-    const stockRecordsById = indexByKey(stockRecords, stockRecordKey);
-    const warehousesById = indexByKey(warehouses, warehouseKey);
+    const stockRecordsById = indexBy(stockRecords, stockRecordKey);
+    const warehousesById = indexBy(warehouses, warehouseKey);
     return withoutNulls(movementRecords.map((movementRecord) => buildInventoryMovement(movementRecord, stockRecordsById, warehousesById)));
 }

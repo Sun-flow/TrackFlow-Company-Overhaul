@@ -15,7 +15,7 @@ Data is stored as records with one key each: `Item`, `Warehouse`, `StockRecord`,
 | `src/types/models.ts` | Every type: the briefing's interfaces and literal types, field for field, and the stored records of `docs/erd.md`. Each literal type's values are written once, as a list such as `productCategories`, and the type is derived from the list; code that needs every value reads the list. Import types and these lists only from here. |
 | `src/utils/views.ts` | Builds the briefing's interfaces from stored records, and builds and splits stock record ids. |
 | `src/utils/collections.ts` | Filtering, sorting and grouping. `docs/collections.md` has worked examples. |
-| `src/utils/search.ts` | Searches. `docs/search-research.md` compares the methods and says which to use when. |
+| `src/utils/search.ts` | Searches. `docs/search-research.md` compares the methods and says which to use when; `docs/tracked-improvements.md` gives the reasons for what was added beyond the briefing. |
 | `src/utils/transformations.ts` | Shipping cost, carrier scoring, rounding and the reports. `docs/transformations.md` works every figure out by hand. |
 | `src/utils/validations.ts` | The briefing's validators and the strict ones beside them. `docs/validation-rules.md` tables every rule and its message. |
 | `src/data/samples.ts` | The briefing's sample products, carriers and shipment, as the briefing's interfaces and as the stored records they come from. |
@@ -23,7 +23,7 @@ Data is stored as records with one key each: `Item`, `Warehouse`, `StockRecord`,
 | `src/demo.ts` | What `pnpm demo` runs: each briefing function on the samples. |
 | `src/index.html`, `src/page/` | The test page and its script, stylesheet and helpers. The helpers are the page's own, not part of the API. |
 | `dist/` | What `pnpm build` writes: the compiled browser modules and the page's stylesheet. Committed, so the page works in a fresh clone (Q24); the suite fails when it is stale. |
-| `tests/` | `node:test` tests, one file per source file, the page's helpers under `tests/page/`. `readme.test.ts` checks that this README names every export. |
+| `tests/` | `node:test` tests, one file per source file, the page's helpers under `tests/page/`. An improvement beyond the briefing gets its own file beside it, such as `search-improved.test.ts`, so the briefing's tests stay as they are. `readme.test.ts` checks that this README names every export. |
 | `tests/fixtures/` | Mock data the briefing doesn't supply, labelled as mock. `movements.ts` has one movement for each row of the ERD's movement table. |
 | `tests/helpers/briefing.ts` | Reads the sample data out of the briefing file, so tests compare the code with the brief itself. |
 | `scripts/time-search.ts` | The timing run behind `docs/search-research.md`. |
@@ -100,7 +100,7 @@ Each builder takes every record it reads as a parameter. A builder of one view r
 
 | Export | Returns | Empty |
 |---|---|---|
-| `normalizeSku(sku: string): string` | The SKU in upper case. | — |
+| `normalizeSku(sku: string): string` | The SKU in upper case. The same function as `search.ts`'s, passed on from there (P1). | — |
 | `buildStockRecordId(sku: string, warehouseId: string): string` | The SKU, a hyphen and the warehouse id, upper case (Q20, Q27). `buildStockRecordId("shoe-blk-42", "WH-ZGZ")` is `"SHOE-BLK-42-WH-ZGZ"`. | — |
 | `parseStockRecordId(stockRecordId: string, warehouses: Warehouse[]): { sku: string; warehouseId: string } \| null` | The id split at the known warehouse id at its end, or `null`. | `null` |
 | `toProduct(item: Item, stockRecord: StockRecord, warehouse: Warehouse): Product` | A `Product`. | — |
@@ -136,7 +136,7 @@ Worked examples: `docs/collections.md`. Every sort is stable: entries that tie k
 
 ### Search: `src/utils/search.ts`
 
-Which method to use when, with a timing run: `docs/search-research.md`.
+Which method to use when, with a timing run: `docs/search-research.md`. What was added beyond the briefing, and why: `docs/tracked-improvements.md` (WP8b).
 
 | Export | Returns | Empty |
 |---|---|---|
@@ -146,6 +146,10 @@ Which method to use when, with a timing run: `docs/search-research.md`.
 | `linearSearch<Item>(items: readonly Item[], passes: (item: Item) => boolean): Item \| null` | The first item for which `passes` is true, or `null`. | `null` |
 | `binarySearchBy<Item, Key>(sortedItems: readonly Item[], target: Key, keyOf: (item: Item) => Key): number` | An index whose key equals `target` in a list sorted by `keyOf`, ascending, or `-1`. Keys are numbers or text. | `-1` |
 | `indexBy<Item, Key>(items: readonly Item[], keyOf: (item: Item) => Key): Map<Key, Item>` | A `Map` from each key to its item, the first listed kept, for many exact lookups in one list. | an empty `Map` |
+| `isSortedBy<Item, Key>(items: readonly Item[], keyOf: (item: Item) => Key): boolean` | Whether the list is sorted by `keyOf`, ascending, as a binary search needs; equal keys side by side are fine, and a `NaN` key makes it `false` (P2). The samples in the briefing's order are not sorted by weight, so check once before many searches. | `true` |
+| `findProductsBySKU(products: Product[], sku: string): Product[]` | Every product with that SKU, case ignored, one per warehouse it is stocked in, in the list's order (I3). | `[]` |
+| `findProductsBySKU(products: Product[], sku: string, warehouse: WarehouseLocation): Product \| null` | The one product that SKU and warehouse identify (Q10, I3), or `null`. `"PERFUME-COCO-50"` in `"Zaragoza"` gives `null`: the perfume is only in Los Angeles. | `null` |
+| `normalizeSku(sku: string): string` | The SKU in upper case; `views.ts` passes on this same function (P1). | — |
 
 ### Transformations: `src/utils/transformations.ts`
 

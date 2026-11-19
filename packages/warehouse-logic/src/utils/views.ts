@@ -17,15 +17,15 @@ import type {
   StockRecord,
   Warehouse,
 } from "../types/models.ts";
+import { indexBy, normalizeSku } from "./search.ts";
+
+// normalizeSku lives in search.ts, beside the searches that compare SKUs; it is passed on from here, the
+// same function, so code that builds keys can import it with them (P1).
+export { normalizeSku };
 
 // ---------------------------------------------------------------------------------------------------
 // Keys
 // ---------------------------------------------------------------------------------------------------
-
-/** Upper-cases a SKU. Stored keys are upper case, so a SKU is normalized once, when a key is built. */
-export function normalizeSku(sku: string): string {
-  return sku.toUpperCase();
-}
 
 /**
  * The id of an item's stock record in one warehouse: the SKU, a hyphen, the warehouse id, all in
@@ -57,20 +57,8 @@ export function parseStockRecordId(
 // Looking a record up by its key
 // ---------------------------------------------------------------------------------------------------
 
-/** Records by key, for exact lookups. When two records share a key, the first one listed is kept. */
-function indexByKey<RecordType>(
-  records: RecordType[],
-  keyOf: (record: RecordType) => string,
-): Map<string, RecordType> {
-  const recordsByKey = new Map<string, RecordType>();
-  for (const record of records) {
-    const key = keyOf(record);
-    if (!recordsByKey.has(key)) {
-      recordsByKey.set(key, record);
-    }
-  }
-  return recordsByKey;
-}
+// Records by key go through search.ts's indexBy, built once per list: when two records share a key,
+// which the model forbids, the first one listed is kept (P1).
 
 const itemKey = (item: Item): string => item.sku;
 const warehouseKey = (warehouse: Warehouse): string => warehouse.warehouseId;
@@ -131,8 +119,8 @@ export function toProducts(
   stockRecords: StockRecord[],
   warehouses: Warehouse[],
 ): Product[] {
-  const itemsBySku = indexByKey(items, itemKey);
-  const warehousesById = indexByKey(warehouses, warehouseKey);
+  const itemsBySku = indexBy(items, itemKey);
+  const warehousesById = indexBy(warehouses, warehouseKey);
 
   return withoutNulls(
     stockRecords.map((stockRecord) => {
@@ -226,9 +214,9 @@ export function toShipment(
 ): Shipment | null {
   return buildShipment(
     shipmentRecord,
-    indexByKey(stockRecords, stockRecordKey),
-    indexByKey(warehouses, warehouseKey),
-    indexByKey(carrierRecords, carrierRecordKey),
+    indexBy(stockRecords, stockRecordKey),
+    indexBy(warehouses, warehouseKey),
+    indexBy(carrierRecords, carrierRecordKey),
   );
 }
 
@@ -239,9 +227,9 @@ export function toShipments(
   warehouses: Warehouse[],
   carrierRecords: CarrierRecord[],
 ): Shipment[] {
-  const stockRecordsById = indexByKey(stockRecords, stockRecordKey);
-  const warehousesById = indexByKey(warehouses, warehouseKey);
-  const carrierRecordsById = indexByKey(carrierRecords, carrierRecordKey);
+  const stockRecordsById = indexBy(stockRecords, stockRecordKey);
+  const warehousesById = indexBy(warehouses, warehouseKey);
+  const carrierRecordsById = indexBy(carrierRecords, carrierRecordKey);
 
   return withoutNulls(
     shipmentRecords.map((shipmentRecord) =>
@@ -290,8 +278,8 @@ export function toInventoryMovement(
 ): InventoryMovement | null {
   return buildInventoryMovement(
     movementRecord,
-    indexByKey(stockRecords, stockRecordKey),
-    indexByKey(warehouses, warehouseKey),
+    indexBy(stockRecords, stockRecordKey),
+    indexBy(warehouses, warehouseKey),
   );
 }
 
@@ -301,8 +289,8 @@ export function toInventoryMovements(
   stockRecords: StockRecord[],
   warehouses: Warehouse[],
 ): InventoryMovement[] {
-  const stockRecordsById = indexByKey(stockRecords, stockRecordKey);
-  const warehousesById = indexByKey(warehouses, warehouseKey);
+  const stockRecordsById = indexBy(stockRecords, stockRecordKey);
+  const warehousesById = indexBy(warehouses, warehouseKey);
 
   return withoutNulls(
     movementRecords.map((movementRecord) =>

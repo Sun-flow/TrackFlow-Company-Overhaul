@@ -9,7 +9,7 @@
 // validators beside the brief's"): the same rules plus finite numbers and a pattern for each text
 // field, one message per field. The brief's validators are unchanged by them.
 import type { Carrier, Country, Dimensions, Product, Shipment } from "../types/models.ts";
-import { normalizeSku } from "./views.ts";
+import { normalizeSku } from "./search.ts";
 
 /** What each validator returns, as the briefing writes it: `{ valid, errors }`. */
 export type ValidationResult = { valid: boolean; errors: string[] };

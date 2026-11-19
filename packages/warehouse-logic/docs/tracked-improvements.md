@@ -1,7 +1,8 @@
 # Tracked improvements: I2, I3 and I5, with WP2's P1 and P2
 
 > **Status**: analysis for mae, 2026-11-19, answered by mae the same day ("mae's answers", below;
-> `docs/decisions.md`, "WP8b's tracked improvements decided"). Nothing here is built yet. Plan WP8b
+> `docs/decisions.md`, "WP8b's tracked improvements decided"). P2, I3 and P1 are built (PR #44,
+> `tests/search-improved.test.ts`); I5 comes in its own pull request. Plan WP8b
 > (`docs/milestones/milestone-2/plan.md`, "Phase 4").
 > **Rule for all five**: the briefing's interfaces and functions stay exactly as they are. Whatever mae
 > approves is built beside them, under new names, and logged in `docs/decisions.md` as a departure.
