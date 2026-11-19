@@ -129,7 +129,7 @@ type ErdItem = {
   dimensions: BriefDimensions;
   unitCostUSD: number;
   isFragile: boolean;
-  status: BriefProduct["status"];
+  isDiscontinued: boolean;
 };
 
 type ErdWarehouse = {
@@ -313,7 +313,7 @@ describe("the stored samples", () => {
     ]);
   });
 
-  test("one item per SKU, holding what is the same in every warehouse (Q11, Q12)", () => {
+  test("one item per SKU, holding what is the same in every warehouse (Q11, I5)", () => {
     assert.deepStrictEqual(sampleItems, [
       {
         sku: "SHOE-BLK-42",
@@ -323,7 +323,7 @@ describe("the stored samples", () => {
         dimensions: { lengthCm: 35, widthCm: 22, heightCm: 12 },
         unitCostUSD: 35,
         isFragile: false,
-        status: "Active",
+        isDiscontinued: false,
       },
       {
         sku: "LAPTOP-DELL-15",
@@ -333,7 +333,7 @@ describe("the stored samples", () => {
         dimensions: { lengthCm: 40, widthCm: 28, heightCm: 3 },
         unitCostUSD: 650,
         isFragile: true,
-        status: "Low stock",
+        isDiscontinued: false,
       },
       {
         sku: "PERFUME-COCO-50",
@@ -343,7 +343,7 @@ describe("the stored samples", () => {
         dimensions: { lengthCm: 12, widthCm: 8, heightCm: 15 },
         unitCostUSD: 85,
         isFragile: true,
-        status: "Active",
+        isDiscontinued: false,
       },
     ]);
   });
