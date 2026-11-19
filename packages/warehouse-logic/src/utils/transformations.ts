@@ -545,3 +545,46 @@ export function calculateMovementTotals(
     ),
   );
 }
+
+// ---------------------------------------------------------------------------------------------------
+// Checked versions: the same result, with warnings (Q32)
+// NOT BUILT YET: each throws until its tests have been seen failing.
+// ---------------------------------------------------------------------------------------------------
+
+/** What `calculateShippingCostChecked` returns: the briefing's cost, and what is wrong with the data. */
+export interface CheckedShippingCost {
+  cost: number;
+  warnings: string[];
+}
+
+/** What `scoreCarrierForShipmentChecked` returns: the briefing's score, and what is wrong with the data. */
+export interface CheckedCarrierScore {
+  score: number;
+  warnings: string[];
+}
+
+/** What `selectBestCarrierChecked` returns: the briefing's selection, and what is wrong with the data. */
+export interface CheckedCarrierSelection {
+  best: { carrier: Carrier; score: number; cost: number } | null;
+  warnings: string[];
+}
+
+function notBuiltYet(): never {
+  throw new Error("Not built yet");
+}
+
+export const calculateShippingCostChecked: (
+  shipment: Shipment,
+  product: Product,
+  carrier: Carrier,
+) => CheckedShippingCost = notBuiltYet;
+export const scoreCarrierForShipmentChecked: (
+  carrier: Carrier,
+  shipment: Shipment,
+  product: Product,
+) => CheckedCarrierScore = notBuiltYet;
+export const selectBestCarrierChecked: (
+  carriers: Carrier[],
+  shipment: Shipment,
+  product: Product,
+) => CheckedCarrierSelection = notBuiltYet;

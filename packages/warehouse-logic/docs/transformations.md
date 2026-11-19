@@ -8,7 +8,7 @@ Every worked figure below is from the briefing's sample data, calculated by hand
 
 ## What these functions do not check
 
-They trust the data they are given, as the briefing's formulas do. A carrier with an `onTimeRate` of 150 earns 45 reliability points, a negative rate gives a negative cost, and a priority that is not one of the three gives a cost of `NaN`. Checking data is the validations' job (`src/utils/validations.ts`): validate first, then calculate. The briefing's functions stay this way (Q32); a checked version beside them, which returns the same result with a list of warnings, waits for mae's go-ahead.
+They trust the data they are given, as the briefing's formulas do. A carrier with an `onTimeRate` of 150 earns 45 reliability points, a negative rate gives a negative cost, and a priority that is not one of the three gives a cost of `NaN`. Checking data is the validations' job (`src/utils/validations.ts`): validate first, then calculate. The briefing's functions stay this way (Q32). Beside each is a checked version, which returns the same result with a list of warnings: see "Checked versions" below.
 
 ## Rounding and floating-point noise
 
@@ -131,6 +131,51 @@ The briefing's, exactly as written: score every carrier, drop those scoring unde
 ### `findCheapestCarrierForShipment(carriers: Carrier[], shipment: Shipment, product: Product): CarrierEvaluation | null`
 
 A minimum report: the carrier with the lowest cost for the shipment among all the carriers given, whatever its score. When several cost the same, the first listed. `null` for no carriers. For the sample shipment: UPS, score 76.4, cost 30.89.
+
+## Checked versions: the same result, with warnings (Q32)
+
+mae's answer to Q32 (2026-11-19): data that is built wrong still goes through, and is flagged where it happens. Each of the briefing's three cost and scoring functions has a checked version beside it. It returns exactly what the briefing's function returns, and a list of `warnings` saying what is wrong with the data it was given. Nothing is clamped, nothing is left out and nothing throws. Clean data gives `warnings: []`.
+
+| Function | Returns |
+|---|---|
+| `calculateShippingCostChecked(shipment: Shipment, product: Product, carrier: Carrier): CheckedShippingCost` | `{ cost, warnings }`: `cost` is `calculateShippingCost(shipment, product, carrier)`. |
+| `scoreCarrierForShipmentChecked(carrier: Carrier, shipment: Shipment, product: Product): CheckedCarrierScore` | `{ score, warnings }`: `score` is `scoreCarrierForShipment(carrier, shipment, product)`. |
+| `selectBestCarrierChecked(carriers: Carrier[], shipment: Shipment, product: Product): CheckedCarrierSelection` | `{ best, warnings }`: `best` is `selectBestCarrier(carriers, shipment, product)`, a carrier with its score and cost, or `null`. |
+
+```typescript
+interface CheckedShippingCost {
+  cost: number;
+  warnings: string[];
+}
+interface CheckedCarrierScore {
+  score: number;
+  warnings: string[];
+}
+interface CheckedCarrierSelection {
+  best: { carrier: Carrier; score: number; cost: number } | null;
+  warnings: string[];
+}
+```
+
+**The warnings, in this order.**
+
+1. The records. Every message the briefing's validators give for the shipment, then the product, then the carrier (`validateShipment`, `validateProduct` and `validateCarrier` in `src/utils/validations.ts`; `docs/validation-rules.md` lists the messages). Each message is prefixed with the record it is about: `Shipment <id>: `, `Product <sku>: ` or `Carrier <id>: `, with the id as it is given. The order is the same in all three functions, whatever the order of their parameters. `selectBestCarrierChecked` checks the shipment and the product once, then every carrier in the list's order, and a carrier listed twice is checked twice.
+2. The results. A cost or a score that is not a finite number (`NaN`, `Infinity` or `-Infinity`) can't be used, and gets a warning of its own:
+   - `Carrier <id>: the shipping cost of shipment <shipment id> is not a finite number (got <value>)`
+   - `Carrier <id>: the score for shipment <shipment id> is not a finite number (got <value>)`
+
+   `calculateShippingCostChecked` gives only the first, `scoreCarrierForShipmentChecked` only the second, and `selectBestCarrierChecked` gives both for each carrier, in the list's order, a carrier's cost before its score. These come after every record warning.
+
+The rules themselves are written once, in the validators. The checked versions use the briefing's validators and not the strict ones.
+
+**Worked examples**, with the sample shipment `SH-2024-8821` and the Dell laptop:
+
+- Clean data. `calculateShippingCostChecked(sampleShipment, laptop, ups)` is `{ cost: 30.89, warnings: [] }`, and `scoreCarrierForShipmentChecked(ups, sampleShipment, laptop)` is `{ score: 76.4, warnings: [] }`.
+- A negative rate. UPS with a `baseRateUSD` of -5: the cost is (-5 + 2.76 + 16) × 1.3 = 17.888, so `{ cost: 17.89, warnings: ["Carrier CAR-UPS: baseRateUSD must be >= 0 (got -5)"] }`.
+- An on-time rate over 100. UPS with an `onTimeRate` of 150: 0 + 20 + 15 + 15 + 45 = 95, so `{ score: 95, warnings: ["Carrier CAR-UPS: onTimeRate must be between 0 and 100 (got 150)"] }`.
+- A priority that is not one of the three. No validation rule covers the priority, so no record warning is given, but the cost is `NaN`: `calculateShippingCostChecked` gives `{ cost: NaN, warnings: ["Carrier CAR-UPS: the shipping cost of shipment SH-2024-8821 is not a finite number (got NaN)"] }`. With the three sample carriers `selectBestCarrierChecked` gives `best: null` and that warning three times, for `CAR-UPS`, `CAR-SEUR` and `CAR-DHL` in turn.
+- Several records wrong. A shipment with a `quantity` of 0, the laptop with a `weightKg` of 0, and UPS with an `onTimeRate` of 150 give, from either single-carrier function, the three record warnings in the order shipment, product, carrier: `"Shipment SH-2024-8821: quantity must be > 0 (got 0)"`, `"Product LAPTOP-DELL-15: weightKg must be > 0 and <= 100 (got 0)"`, `"Carrier CAR-UPS: onTimeRate must be between 0 and 100 (got 150)"`.
+- The selection. `selectBestCarrierChecked(sampleCarriers, sampleShipment, laptop)` is `{ best: { carrier: ups, score: 76.4, cost: 30.89 }, warnings: [] }`. The briefing's known failure is not a warning: the data is right and the rules pick UPS (plan D4, WP7). With UPS's `baseRateUSD` at -5, UPS still wins, now at a cost of 17.89, and the warning `"Carrier CAR-UPS: baseRateUSD must be >= 0 (got -5)"` says why not to trust it. No carriers gives `{ best: null, warnings }` with only the shipment's and the product's warnings.
 
 ## Reports
 
