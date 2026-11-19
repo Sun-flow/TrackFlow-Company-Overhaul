@@ -699,22 +699,26 @@ export function assertValidInventoryMovement(value) {
     throwWhenInvalid("movement", validateInventoryMovementInput(value));
 }
 // ---------------------------------------------------------------------------------------------------
-// R9: a shipment whose status needs a carrier, with none
+// R9: a shipment whose status and carrier disagree
 // ---------------------------------------------------------------------------------------------------
 /**
- * The statuses a shipment can only have once a carrier is chosen (mae, 2026-11-19). "Pending" may
- * have a carrier or not, and so may "Failed".
+ * The one status a shipment has before it gets a carrier (mae, 2026-11-19, docs/decisions.md,
+ * "What each shipment status means"). Every other status, "Failed" included, keeps the carrier
+ * responsible for the shipment.
  */
-const statusesNeedingCarrier = [
-    "Assigned",
-    "In transit",
-    "Delivered",
-];
-/** A warning when the shipment's status needs a carrier and it has none (R9); `[]` otherwise. */
+const statusWithoutCarrier = "Pending";
+/**
+ * A warning when the shipment's status and carrier disagree (R9): a "Pending" shipment with a
+ * carrier, or any other status with none. `[]` otherwise.
+ */
 export function shipmentStatusWarnings(shipment) {
-    return isOneOf(shipment.status, statusesNeedingCarrier) && shipment.carrier === null
-        ? [`status is ${JSON.stringify(shipment.status)} but no carrier is assigned`]
-        : [];
+    const status = JSON.stringify(shipment.status);
+    if (shipment.status === statusWithoutCarrier) {
+        return shipment.carrier === null
+            ? []
+            : [`status is ${status} but carrier ${JSON.stringify(shipment.carrier)} is assigned`];
+    }
+    return shipment.carrier === null ? [`status is ${status} but no carrier is assigned`] : [];
 }
 /** What an empty or unknown priority becomes (mae, 2026-11-19). */
 const defaultPriority = "Standard";

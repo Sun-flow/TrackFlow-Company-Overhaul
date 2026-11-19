@@ -1121,11 +1121,13 @@ describe("R8: unitCostUSD and declaredValueUSD in whole cents", () => {
 });
 
 // ---------------------------------------------------------------------------------------------------
-// R9: a shipment that needs a carrier and has none is flagged
+// R9: a shipment's status and carrier agree. mae, 2026-11-19 (docs/decisions.md, "What each
+// shipment status means"): only a Pending shipment has no carrier; from Assigned on, Failed
+// included, it keeps the carrier responsible for it.
 // ---------------------------------------------------------------------------------------------------
 
 describe("R9: shipmentStatusWarnings", () => {
-  for (const status of ["Assigned", "In transit", "Delivered"] as const) {
+  for (const status of ["Assigned", "In transit", "Delivered", "Failed"] as const) {
     test(`"${status}" with no carrier is flagged`, () => {
       assert.deepEqual(shipmentStatusWarnings(shipmentWith({ status, carrier: null })), [
         `status is "${status}" but no carrier is assigned`,
@@ -1135,13 +1137,18 @@ describe("R9: shipmentStatusWarnings", () => {
       assert.deepEqual(shipmentStatusWarnings(shipmentWith({ status, carrier: "SEUR" })), []);
     });
   }
-  for (const status of ["Pending", "Failed"] as const) {
-    for (const carrier of [null, "SEUR"]) {
-      test(`"${status}" with carrier ${carrier} is fine`, () => {
-        assert.deepEqual(shipmentStatusWarnings(shipmentWith({ status, carrier })), []);
-      });
-    }
-  }
+  test(`"Pending" with no carrier is fine`, () => {
+    assert.deepEqual(shipmentStatusWarnings(shipmentWith({ status: "Pending", carrier: null })), []);
+  });
+  test(`"Pending" with a carrier is flagged, naming the carrier`, () => {
+    assert.deepEqual(
+      shipmentStatusWarnings(shipmentWith({ status: "Pending", carrier: "SEUR" })),
+      ['status is "Pending" but carrier "SEUR" is assigned'],
+    );
+  });
+  test("the briefing's sample shipment, Pending with no carrier, is fine", () => {
+    assert.deepEqual(shipmentStatusWarnings(briefingShipment), []);
+  });
 });
 
 describe("R9: the flag is a warning on validateShipmentInput, and the shipment stays valid", () => {
