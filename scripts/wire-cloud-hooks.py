@@ -11,6 +11,10 @@ folder a .claude/ of its own:
 The hook commands, "${CLAUDE_PROJECT_DIR}/.claude/testing-kit/...", then reach the kit through the
 symlink, and the kit finds the repo from its own location (kitlib.project_dir).
 
+It also records origin's default branch in the clone (`git remote set-head origin --auto`), which a fresh
+cloud clone lacks and scripts/check-memory.py needs. Doing it here, before the hooks load, keeps the kit
+from asking about that command at the start of every session.
+
 The project's cloud environment runs it from its setup script, before Claude starts:
     python3 TrackFlow-Company-Overhaul/scripts/wire-cloud-hooks.py
 Run it again after changing .claude/settings.json; it overwrites what it wrote. It leaves alone a parent
@@ -19,6 +23,7 @@ settings file it didn't write, which it tells by the symlink beside it.
 from __future__ import annotations
 
 import json
+import subprocess
 import sys
 from pathlib import Path
 
@@ -30,7 +35,24 @@ def point_into_repo(rule: str, repo_name: str) -> str:
     return rule.replace("(./", f"(./{repo_name}/", 1)
 
 
+def record_default_branch() -> None:
+    """Point refs/remotes/origin/HEAD at origin's default branch. Never fails the setup: without it the
+    session protocol in AGENTS.md has the session run the command itself."""
+    try:
+        done = subprocess.run(["git", "remote", "set-head", "origin", "--auto"], cwd=REPO,
+                              capture_output=True, text=True, timeout=60)
+    except (OSError, subprocess.TimeoutExpired) as err:
+        print(f"wire-cloud-hooks: origin's default branch not recorded ({err})", file=sys.stderr)
+        return
+    if done.returncode == 0:
+        print(f"wire-cloud-hooks: {done.stdout.strip() or 'origin/HEAD set'}")
+    else:
+        print(f"wire-cloud-hooks: origin's default branch not recorded ({done.stderr.strip()})",
+              file=sys.stderr)
+
+
 def main() -> int:
+    record_default_branch()
     parent = REPO.parent
     source = REPO / ".claude" / "settings.json"
     kit = REPO / ".claude" / "testing-kit"

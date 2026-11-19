@@ -50,5 +50,4 @@ WP1 to WP7 of its plan are built (2026-11-19). Milestone 1, the public website, 
 
 ## Open questions
 
-- Should session start stop running `git remote set-head`, which the kit now asks about?
-  `docs/open-questions.md`, under Waiting elsewhere. (2026-11-19)
+- None open: `docs/open-questions.md`. (2026-11-19)

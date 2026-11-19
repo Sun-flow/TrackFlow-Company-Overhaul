@@ -50,8 +50,8 @@ goes in `memory-bank/website.md`.
 - Run a claim about JavaScript's arithmetic before writing it down: `0.3 * 100` is exactly 30, and
   `0.28 * 25` is not 7. (2026-11-18)
 - A fresh cloud clone doesn't record the remote's default branch, and the check doesn't guess
-  `production`. Until `git remote set-head origin --auto` has run, the check can't tell what is merged or
-  in flight. (2026-11-13)
+  `production`: without it the check can't tell what is merged or in flight.
+  `scripts/wire-cloud-hooks.py` records it before Claude starts. (2026-11-19)
 - The check's "Merged with no log entry" warning lists pull requests #2 to #24 and #32. Nothing is
   missing: #2 to #24 were logged while the log was one file, and those entries left in the Milestone 2
   reconcile (git keeps them); #32's entry was added later, and the check only sees an entry added by
