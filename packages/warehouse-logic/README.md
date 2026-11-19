@@ -91,7 +91,7 @@ What every function keeps to, unless its row says otherwise:
 | `Product`, `Dimensions`, `Shipment`, `Destination`, `Carrier`, `InventoryMovement` | The briefing's interfaces, field for field. |
 | `ProductCategory`, `WarehouseLocation`, `ProductStatus`, `Country`, `ShipmentPriority`, `ShipmentStatus`, `MovementType` | The briefing's literal types, each derived from its list below (Q26). |
 | `productCategories`, `warehouseLocations`, `productStatuses`, `countries`, `shipmentPriorities`, `shipmentStatuses`, `movementTypes` | Each literal type's values, in the briefing's order, as a read-only list. `productCategories` is `["Fashion", "Electronics", "Cosmetics", "Home", "Other"]`. |
-| `Item`, `Warehouse`, `StockRecord`, `ShipmentRecord`, `MovementRecord`, `CarrierRecord` | The stored records of `docs/erd.md`, one key each. |
+| `Item`, `Warehouse`, `StockRecord`, `ShipmentRecord`, `MovementRecord`, `CarrierRecord` | The stored records of `docs/erd.md`, one key each. An `Item` stores `isDiscontinued`, not a status: each warehouse's status is worked out (I5). |
 | `MovementDirection`, `movementDirections` | A stored movement's direction, `"In"` or `"Out"`, and the list of both. |
 
 ### Views: `src/utils/views.ts`
@@ -103,7 +103,8 @@ Each builder takes every record it reads as a parameter. A builder of one view r
 | `normalizeSku(sku: string): string` | The SKU in upper case. The same function as `search.ts`'s, passed on from there (P1). | — |
 | `buildStockRecordId(sku: string, warehouseId: string): string` | The SKU, a hyphen and the warehouse id, upper case (Q20, Q27). `buildStockRecordId("shoe-blk-42", "WH-ZGZ")` is `"SHOE-BLK-42-WH-ZGZ"`. | — |
 | `parseStockRecordId(stockRecordId: string, warehouses: Warehouse[]): { sku: string; warehouseId: string } \| null` | The id split at the known warehouse id at its end, or `null`. | `null` |
-| `toProduct(item: Item, stockRecord: StockRecord, warehouse: Warehouse): Product` | A `Product`. | — |
+| `productStatusOf(item: Item, stockRecord: StockRecord): ProductStatus` | The product's status in that stock record's warehouse, worked out, never stored (I5): `"Discontinued"` when the item is, else `"Out of stock"` at 0 units or fewer, else `"Low stock"` by `isLowStock`, else `"Active"`. The laptop in Zaragoza, 8 of 10: `"Low stock"`. | — |
+| `toProduct(item: Item, stockRecord: StockRecord, warehouse: Warehouse): Product` | A `Product`, its `status` from `productStatusOf`. | — |
 | `toProducts(items: Item[], stockRecords: StockRecord[], warehouses: Warehouse[]): Product[]` | A `Product` for each stock record: one for each item in each warehouse. The stored samples give back `sampleProducts`. | `[]` |
 | `toCarrier(carrierRecord: CarrierRecord): Carrier` | A `Carrier`. | — |
 | `toCarriers(carrierRecords: CarrierRecord[]): Carrier[]` | A `Carrier` for each record. | `[]` |
@@ -123,7 +124,7 @@ Worked examples: `docs/collections.md`. Every sort is stable: entries that tie k
 | `filterLowStockProducts(products: Product[]): Product[]` | The briefing's. The products with `stockQuantity <= minStockThreshold`. The samples give the laptop. | `[]` |
 | `sortProductsByStock(products: Product[], order: SortOrder): Product[]` | The briefing's. A copy sorted by `stockQuantity`. `"desc"` gives the perfume, the shoes, the laptop. | `[]` |
 | `sortCarriersByReliability(carriers: Carrier[], order: SortOrder): Carrier[]` | The briefing's. A copy sorted by `onTimeRate`. `"desc"` gives DHL Express (95), SEUR (92), UPS (88). | `[]` |
-| `isLowStock(product: Product): boolean` | `stockQuantity <= minStockThreshold`, the briefing's rule. | — |
+| `isLowStock(product: Pick<Product, "stockQuantity" \| "minStockThreshold">): boolean` | `stockQuantity <= minStockThreshold`, the briefing's rule. It reads only those two numbers, so it takes a `StockRecord` too. | — |
 | `filterProducts(products: Product[], criteria: ProductCriteria): Product[]` | The products that meet every criterion. `{ warehouse: "Los Angeles", stockQuantity: { min: 50 } }` gives the perfume; `{}` keeps every product. | `[]` |
 | `sortProductsBy(products: Product[], keys: readonly SortKey<Product>[]): Product[]` | A copy sorted by the first key, ties broken by the next. | `[]` |
 | `filterBy<Entry>(entries: readonly Entry[], predicates: readonly Predicate<Entry>[]): Entry[]` | The entries that pass every predicate; no predicates keeps them all. | `[]` |

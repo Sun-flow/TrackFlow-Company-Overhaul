@@ -136,7 +136,10 @@ export type MovementType = (typeof movementTypes)[number];
 // record has that record's key name. Stored keys are upper case, so they compare exactly.
 // ---------------------------------------------------------------------------------------------------
 
-/** One per SKU: everything about a product that is the same in every warehouse. */
+/**
+ * One per SKU: everything about a product that is the same in every warehouse. A product's status
+ * is not stored: views.ts works it out from `isDiscontinued` and the stock record (I5).
+ */
 export interface Item {
   sku: string; // Key. Unique, upper case (e.g., "SHOE-BLK-42")
   name: string;
@@ -145,7 +148,7 @@ export interface Item {
   dimensions: Dimensions;
   unitCostUSD: number;
   isFragile: boolean;
-  status: ProductStatus;
+  isDiscontinued: boolean; // No longer sold, in any warehouse
 }
 
 /** One per warehouse. */

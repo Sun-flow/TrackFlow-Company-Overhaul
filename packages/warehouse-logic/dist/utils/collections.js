@@ -114,7 +114,10 @@ function unlistedKeyWarning(key, entryCount) {
 // ---------------------------------------------------------------------------------------------------
 // Products and carriers
 // ---------------------------------------------------------------------------------------------------
-/** The briefing's low-stock rule: stock at or below the product's threshold. */
+/**
+ * The briefing's low-stock rule: stock at or below the product's threshold. It reads only those two
+ * numbers, so a stock record can be checked too (I5).
+ */
 export function isLowStock(product) {
     return product.stockQuantity <= product.minStockThreshold;
 }

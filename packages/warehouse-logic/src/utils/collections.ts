@@ -241,8 +241,11 @@ function unlistedKeyWarning(key: string, entryCount: number): string {
 // Products and carriers
 // ---------------------------------------------------------------------------------------------------
 
-/** The briefing's low-stock rule: stock at or below the product's threshold. */
-export function isLowStock(product: Product): boolean {
+/**
+ * The briefing's low-stock rule: stock at or below the product's threshold. It reads only those two
+ * numbers, so a stock record can be checked too (I5).
+ */
+export function isLowStock(product: Pick<Product, "stockQuantity" | "minStockThreshold">): boolean {
   return product.stockQuantity <= product.minStockThreshold;
 }
 
