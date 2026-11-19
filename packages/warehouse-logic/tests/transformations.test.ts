@@ -2,7 +2,7 @@
 // the reports. They were written from the briefing and docs/transformations.md before the code.
 // Every expected value is the briefing's formula worked by hand, with the arithmetic beside it; none
 // comes from running the code. A test that depends on one of mae's answers names it (Q2 to Q6, Q8,
-// Q16, Q23, Q25 in docs/decisions.md; Q30 to Q33 are open in docs/open-questions.md). Mock data is in
+// Q16, Q23, Q25 and Q30 to Q33 in docs/decisions.md). Mock data is in
 // tests/fixtures/ and is labelled there.
 import { describe, test } from "node:test";
 import assert from "node:assert/strict";
@@ -782,6 +782,35 @@ describe("scoreCarrierForShipment: each rule, on both sides", () => {
       buildMockProduct({ weightKg: 0.28 }),
     );
     assert.equal(score, 77);
+  });
+
+  describe("a weight that is truly over the limit still fails it, however little (Q30)", () => {
+    // Only what lies past the 15th digit is removed, so a real excess stays. Each row is one unit
+    // against a 7 kg limit: 20 + 0 + 15 + 15 + 27 = 77, where passing the rule would give 97.
+    const rows: [number, string][] = [
+      [7.0000001, "a tenth of a milligram over"],
+      [7.000000000001, "a billionth of a gram over"],
+      [7.00000000000001, "the smallest excess 15 digits can hold"],
+    ];
+    for (const [weightKg, label] of rows) {
+      test(`${String(weightKg)} kg against 7 kg, ${label}: the rule fails`, () => {
+        const carrier = buildMockCarrier({ maxWeightKg: 7 });
+        const shipment = buildMockShipment({ quantity: 1 });
+        const product = buildMockProduct({ weightKg });
+        assert.equal(calculateShipmentWeightKg(shipment, product), weightKg);
+        assert.equal(carrierCanCarryWeight(carrier, calculateShipmentWeightKg(shipment, product)), false);
+        assert.equal(scoreCarrierForShipment(carrier, shipment, product), 77);
+      });
+    }
+
+    test("twenty-five units of 0.2800001 kg, 7.0000025 kg by hand, fail a 7 kg limit", () => {
+      const score = scoreCarrierForShipment(
+        buildMockCarrier({ maxWeightKg: 7 }),
+        buildMockShipment({ quantity: 25 }),
+        buildMockProduct({ weightKg: 0.2800001 }),
+      );
+      assert.equal(score, 77);
+    });
   });
 
   test("it leaves the carrier, the shipment and the product unchanged", () => {

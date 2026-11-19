@@ -9,8 +9,8 @@
 //   Q23, Q25) and plan D4, the briefing's known failure;
 // - packages/warehouse-logic/docs/transformations.md, the only spec for the functions the briefing
 //   doesn't name;
-// - docs/open-questions.md Q30, still open: the code follows its recommendation, and the tests that
-//   depend on it say so.
+// - Q30, open in docs/open-questions.md when these were written and since answered by mae as
+//   recommended (docs/decisions.md): the tests that depend on it say so.
 // No expected value was taken from running the code.
 import { describe, test } from "node:test";
 import assert from "node:assert/strict";
@@ -194,7 +194,7 @@ const mockPerfumeOrder: Shipment = {
   declaredValueUSD: 8500,
 };
 
-// Mock: the order of Q30 (docs/open-questions.md). Twenty-five units of a 0.28 kg product weigh
+// Mock: the order of Q30 (docs/decisions.md). Twenty-five units of a 0.28 kg product weigh
 // 0.28 x 25 = 7 kg by hand, where JavaScript's 0.28 * 25 is 7.000000000000001.
 const mockQ30Product: Product = productWith({
   sku: "MOCK-BOX-280G",

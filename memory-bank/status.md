@@ -20,11 +20,11 @@ WP1 to WP5 of its plan are built (2026-11-18). Milestone 1, the public website, 
   (2026-11-13)
 - The live site at https://sun-flow.github.io/TrackFlow-Company-Overhaul/ serves the same home page as
   `production`; its last deploy, for pull request #25, succeeded. (2026-11-13)
-- The warehouse logic's types check and its 1123 tests pass, the views giving back the briefing's samples:
+- The warehouse logic's types check and its 1127 tests pass, the views giving back the briefing's samples:
   `(cd packages/warehouse-logic && pnpm typecheck && pnpm test)`. (2026-11-18)
 - WP3's collections filter, sort and group:
   `packages/warehouse-logic/tests/collections.test.ts`. (2026-11-18)
-- WP4's shipping cost, carrier scoring and reports give the briefing's hand-worked figures, 571 tests:
+- WP4's shipping cost, carrier scoring and reports give the briefing's hand-worked figures, 575 tests:
   `packages/warehouse-logic/docs/transformations.md`. (2026-11-18)
 - WP2's searches and mock data generator pass their tests, 98 of the package's tests, and the
   timing run behind `packages/warehouse-logic/docs/search-research.md` runs:
@@ -54,5 +54,5 @@ WP1 to WP5 of its plan are built (2026-11-18). Milestone 1, the public website, 
 
 ## Open questions
 
-- Q30 to Q33, from WP4: `docs/open-questions.md`. The code follows each recommendation, as Proposed
-  in `docs/decisions.md`. (2026-11-18)
+- Q32, in part: whether to build checked cost and scoring functions that return warnings:
+  `docs/open-questions.md`. (2026-11-19)

@@ -8,7 +8,7 @@ Every worked figure below is from the briefing's sample data, calculated by hand
 
 ## What these functions do not check
 
-They trust the data they are given, as the briefing's formulas do. A carrier with an `onTimeRate` of 150 earns 45 reliability points, a negative rate gives a negative cost, and a priority that is not one of the three gives a cost of `NaN`. Checking data is the validations' job (`src/utils/validations.ts`): validate first, then calculate. Whether these functions should do more with such data is open (Q32).
+They trust the data they are given, as the briefing's formulas do. A carrier with an `onTimeRate` of 150 earns 45 reliability points, a negative rate gives a negative cost, and a priority that is not one of the three gives a cost of `NaN`. Checking data is the validations' job (`src/utils/validations.ts`): validate first, then calculate. The briefing's functions stay this way (Q32); a checked version beside them, which returns the same result with a list of warnings, waits for mae's go-ahead.
 
 ## Rounding and floating-point noise
 
@@ -48,7 +48,7 @@ The Tech Lead's "auxiliary methods" (definition of done, M8).
 | Function | Returns |
 |---|---|
 | `calculateStockValue(product: Product): number` | `stockQuantity * unitCostUSD`, not rounded. The sample shoes: 45 × 35 = 1575. |
-| `calculateShipmentWeightKg(shipment: Shipment, product: Product): number` | `product.weightKg * shipment.quantity`, with floating-point noise removed (Q30). The sample shipment: 2.3 kg. Twenty-five units of a 0.28 kg product: exactly 7 kg, where JavaScript's `0.28 * 25` is `7.000000000000001`. |
+| `calculateShipmentWeightKg(shipment: Shipment, product: Product): number` | `product.weightKg * shipment.quantity`, with floating-point noise removed (Q30). The sample shipment: 2.3 kg. Twenty-five units of a 0.28 kg product: exactly 7 kg, where JavaScript's `0.28 * 25` is `7.000000000000001`. Only what lies past the 15th significant digit is removed, so a weight that is truly over a limit stays over it: 7.0000001 kg, and even 7.00000000000001 kg, are more than 7 kg. |
 | `getPrioritySurchargeRate(priority: ShipmentPriority): number` | The briefing's surcharge as a fraction: `0` for Standard, `0.3` for Express, `0.6` for Same-day. |
 | `carrierOperatesInCountry(carrier: Carrier, country: Country): boolean` | Whether `carrier.operatesIn` has the country. |
 | `carrierCanCarryWeight(carrier: Carrier, weightKg: number): boolean` | Whether `weightKg <= carrier.maxWeightKg`. A weight equal to the limit passes. |
@@ -202,4 +202,4 @@ With the six mock movements in `tests/fixtures/movements.ts`, the sample stock r
 
 ## Answers these functions follow
 
-Q2 to Q6 and Q8 are in `docs/decisions.md`, "Milestone 2's open questions answered"; Q16, Q21, Q23 and Q25 in "Milestone 2's review questions answered" and "The movement totals report splits by direction". Q29 is in "`groupBy` keeps an entry whose key is not listed, and a checked version flags it". Q30 to Q33 are open in `docs/open-questions.md`, and the code follows each one's recommendation for now: Q30, remove floating-point noise from a shipment's weight before comparing it with a carrier's limit; Q31, `findTopCarriers` counts every shipment that has a carrier; Q32, calculate with the data as given and never throw; Q33, compare the rounded score with 50. The tests that depend on one name it.
+Q2 to Q6 and Q8 are in `docs/decisions.md`, "Milestone 2's open questions answered"; Q16, Q21, Q23 and Q25 in "Milestone 2's review questions answered" and "The movement totals report splits by direction". Q29 is in "`groupBy` keeps an entry whose key is not listed, and a checked version flags it". Q30 to Q33 are in "WP4's questions answered: the weight limit, "assigned shipments", unchecked data and the cut-off": Q30, remove floating-point noise from a shipment's weight before comparing it with a carrier's limit; Q31, `findTopCarriers` counts every shipment that has a carrier; Q32, calculate with the data as given and never throw; Q33, compare the rounded score with 50. The tests that depend on one name it.
