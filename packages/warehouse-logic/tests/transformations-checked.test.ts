@@ -483,6 +483,54 @@ describe("selectBestCarrierChecked: costs and scores that are not finite numbers
   });
 });
 
+describe("selectBestCarrierChecked: what the selection does with a score or cost that is not finite", () => {
+  // docs/transformations.md, `selectBestCarrier`: a score of NaN is not 50 or more, so the carrier is
+  // dropped; an infinite cost is compared as a number. The clean mock carrier scores 97 and costs 80.
+  const scoreIsNaN = buildMockCarrier({ id: "MOCK-CAR-NAN", onTimeRate: Number.NaN, baseRateUSD: 1 });
+  const scoreIsNaNWarnings = [
+    "Carrier MOCK-CAR-NAN: onTimeRate must be between 0 and 100 (got NaN)",
+    "Carrier MOCK-CAR-NAN: the score for shipment MOCK-SH-0100 is not a finite number (got NaN)",
+  ];
+
+  test("a carrier whose score is NaN is dropped, though it is the cheapest: 1 + 20 + 50 = 71 against 80", () => {
+    const clean = buildMockCarrier({ id: "MOCK-CAR-CLEAN" });
+    assert.deepEqual(
+      selectBestCarrierChecked([scoreIsNaN, clean], buildMockShipment(), buildMockProduct()),
+      { best: { carrier: clean, score: 97, cost: 80 }, warnings: scoreIsNaNWarnings },
+    );
+  });
+
+  test("when it is the only carrier: null, with its two warnings", () => {
+    assert.deepEqual(selectBestCarrierChecked([scoreIsNaN], buildMockShipment(), buildMockProduct()), {
+      best: null,
+      warnings: scoreIsNaNWarnings,
+    });
+  });
+
+  test("a cost of Infinity is still a cost: the only carrier is selected, and flagged", () => {
+    // An infinite base rate passes the briefing's rule (>= 0), so the cost's warning is the only one.
+    const carrier = buildMockCarrier({ id: "MOCK-CAR-INF", baseRateUSD: Number.POSITIVE_INFINITY });
+    assert.deepEqual(selectBestCarrierChecked([carrier], buildMockShipment(), buildMockProduct()), {
+      best: { carrier, score: 97, cost: Number.POSITIVE_INFINITY },
+      warnings: [
+        "Carrier MOCK-CAR-INF: the shipping cost of shipment MOCK-SH-0100 is not a finite number (got Infinity)",
+      ],
+    });
+  });
+
+  test("a cost of -Infinity is the lowest and wins, and both of its warnings say why not to trust it", () => {
+    const clean = buildMockCarrier({ id: "MOCK-CAR-CLEAN" });
+    const carrier = buildMockCarrier({ id: "MOCK-CAR-NEG", baseRateUSD: Number.NEGATIVE_INFINITY });
+    assert.deepEqual(selectBestCarrierChecked([clean, carrier], buildMockShipment(), buildMockProduct()), {
+      best: { carrier, score: 97, cost: Number.NEGATIVE_INFINITY },
+      warnings: [
+        "Carrier MOCK-CAR-NEG: baseRateUSD must be >= 0 (got -Infinity)",
+        "Carrier MOCK-CAR-NEG: the shipping cost of shipment MOCK-SH-0100 is not a finite number (got -Infinity)",
+      ],
+    });
+  });
+});
+
 describe("selectBestCarrierChecked: the briefing's function and the inputs", () => {
   test("best is what selectBestCarrier gives, for clean and for broken data", () => {
     const cases: [Carrier[], Shipment, Product][] = [

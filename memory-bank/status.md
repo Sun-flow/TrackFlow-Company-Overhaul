@@ -20,12 +20,10 @@ WP1 to WP5 of its plan are built (2026-11-18). Milestone 1, the public website, 
   (2026-11-13)
 - The live site at https://sun-flow.github.io/TrackFlow-Company-Overhaul/ serves the same home page as
   `production`; its last deploy, for pull request #25, succeeded. (2026-11-13)
-- The warehouse logic's types check and its 1127 tests pass, the views giving back the briefing's samples:
-  `(cd packages/warehouse-logic && pnpm typecheck && pnpm test)`. (2026-11-18)
-- WP3's collections filter, sort and group:
-  `packages/warehouse-logic/tests/collections.test.ts`. (2026-11-18)
-- WP4's shipping cost, carrier scoring and reports give the briefing's hand-worked figures, 575 tests:
-  `packages/warehouse-logic/docs/transformations.md`. (2026-11-18)
+- The warehouse logic's types check and its 1416 tests pass, the views giving back the briefing's samples:
+  `(cd packages/warehouse-logic && pnpm typecheck && pnpm test)`. (2026-11-19)
+- WP4's shipping cost, carrier scoring and reports give the briefing's hand-worked figures:
+  `packages/warehouse-logic/docs/transformations.md`. (2026-11-19)
 - WP2's searches and mock data generator pass their tests, 98 of the package's tests, and the
   timing run behind `packages/warehouse-logic/docs/search-research.md` runs:
   `(cd packages/warehouse-logic && pnpm test && pnpm time:search)`. (2026-11-18)
@@ -51,8 +49,8 @@ WP1 to WP5 of its plan are built (2026-11-18). Milestone 1, the public website, 
 - The testing kit's hooks run in a project thread only on the TrackFlow-Company-Overhaul cloud
   environment, whose setup script runs `scripts/wire-cloud-hooks.py`; on Default none run. Confirmed in a
   fresh thread on that environment. (2026-11-13)
+- `validateShipmentStrict` throws on a country that is not on its list. (2026-11-19)
 
 ## Open questions
 
-- Q32, in part: whether to build checked cost and scoring functions that return warnings:
-  `docs/open-questions.md`. (2026-11-19)
+- None. Q1 to Q33 are answered in `docs/decisions.md`. (2026-11-19)

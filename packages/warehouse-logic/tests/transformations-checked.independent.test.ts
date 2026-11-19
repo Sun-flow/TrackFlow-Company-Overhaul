@@ -1428,7 +1428,9 @@ describe("selectBestCarrierChecked: result warnings come after every record warn
   });
 
   test("a score that is NaN, with a real cost: the record's warning, then the score's (best is checked against selectBestCarrier below)", () => {
-    // The spec doesn't say whether a NaN score counts as "under 50", so only the warnings are pinned.
+    // When this was written the spec didn't say whether a NaN score counts as "under 50", so only the
+    // warnings are pinned here. It now says the carrier is dropped, and
+    // tests/transformations-checked.test.ts pins that selection by hand.
     const carrier = carrierWith({ onTimeRate: NaN });
     assert.deepStrictEqual(selectBestCarrierChecked([carrier], mockShipment, mockProduct).warnings, [
       "Carrier MOCK-CAR-A: onTimeRate must be between 0 and 100 (got NaN)",
@@ -1437,7 +1439,9 @@ describe("selectBestCarrierChecked: result warnings come after every record warn
   });
 
   test("a cost of Infinity on the only carrier: just the cost's warning (best is checked against selectBestCarrier below)", () => {
-    // The spec doesn't say whether an infinite cost "can be compared", so only the warnings are pinned.
+    // When this was written the spec didn't say whether an infinite cost "can be compared", so only
+    // the warnings are pinned here. It now says it is compared as a number, and
+    // tests/transformations-checked.test.ts pins that selection by hand.
     const carrier = carrierWith({ baseRateUSD: Infinity });
     assert.deepStrictEqual(selectBestCarrierChecked([carrier], mockShipment, mockProduct).warnings, [
       costWarning("MOCK-CAR-A", "MOCK-SH-1000", "Infinity"),
