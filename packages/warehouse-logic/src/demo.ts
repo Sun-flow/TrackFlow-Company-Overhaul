@@ -21,7 +21,13 @@ import {
   sortCarriersByReliability,
   sortProductsByStock,
 } from "./utils/collections.ts";
-import { binarySearchProductByWeight, findProductBySKU, findShipmentById } from "./utils/search.ts";
+import {
+  binarySearchProductByWeight,
+  findProductBySKU,
+  findProductsBySKU,
+  findShipmentById,
+  isSortedBy,
+} from "./utils/search.ts";
 import {
   calculateAverageShipmentDistance,
   calculateCarrierScoreBreakdown,
@@ -101,6 +107,14 @@ const byWeight = [...sampleProducts].sort((first, second) => first.weightKg - se
 console.log(`Products sorted by weight: ${byWeight.map((product) => `${product.sku} ${product.weightKg} kg`).join(", ")}`);
 result("binarySearchProductByWeight(sorted, 2.3)", binarySearchProductByWeight(byWeight, 2.3));
 result("binarySearchProductByWeight(sorted, 1)", binarySearchProductByWeight(byWeight, 1));
+console.log("Beyond the briefing (docs/tracked-improvements.md):");
+result("isSortedBy(products, weight), in the briefing's order", isSortedBy(sampleProducts, (product) => product.weightKg));
+result("isSortedBy(sorted, weight)", isSortedBy(byWeight, (product) => product.weightKg));
+result(
+  'findProductsBySKU(products, "laptop-dell-15")',
+  findProductsBySKU(sampleProducts, "laptop-dell-15").map((product) => `${product.sku} in ${product.warehouse}`).join(", "),
+);
+result('findProductsBySKU(products, "PERFUME-COCO-50", "Zaragoza")', findProductsBySKU(sampleProducts, "PERFUME-COCO-50", "Zaragoza"));
 
 heading("3. Shipping cost and carrier scoring (transformations.ts), for the sample shipment");
 console.log("SH-2024-8821: one Dell laptop (2.3 kg, fragile), Express, Zaragoza to Madrid, Spain, 320 km.");

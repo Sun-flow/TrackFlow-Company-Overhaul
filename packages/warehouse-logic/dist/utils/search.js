@@ -1,4 +1,13 @@
-import { normalizeSku } from "./views.js";
+// ---------------------------------------------------------------------------------------------------
+// Keys
+// ---------------------------------------------------------------------------------------------------
+/**
+ * Upper-cases a SKU. Stored keys are upper case, so a SKU is normalized once, when a key is built, and
+ * the SKU searches compare in this form. views.ts passes on this same function (P1).
+ */
+export function normalizeSku(sku) {
+    return sku.toUpperCase();
+}
 // ---------------------------------------------------------------------------------------------------
 // Generic blocks
 // ---------------------------------------------------------------------------------------------------
@@ -41,6 +50,26 @@ export function binarySearchBy(sortedItems, target, keyOf) {
     return -1;
 }
 /**
+ * Whether `items` is sorted by `keyOf`, ascending, as binarySearchBy needs: every key at most the
+ * next, so equal keys side by side are fine. Text compares by character code, as in binarySearchBy.
+ * An empty or one-item list is sorted, but a NaN key anywhere makes it false, since binary search
+ * cannot place NaN. Reads up to n - 1 pairs, so check a list once before many searches (P2).
+ */
+export function isSortedBy(items, keyOf) {
+    let previous;
+    for (const item of items) {
+        const key = keyOf(item);
+        if (Number.isNaN(key)) {
+            return false;
+        }
+        if (previous !== undefined && !(previous <= key)) {
+            return false;
+        }
+        previous = key;
+    }
+    return true;
+}
+/**
  * A Map from each item's key to the item, built in one pass, for many exact lookups in the same list.
  * When two items share a key, the first one listed is kept, as a linear search would find it.
  */
@@ -57,13 +86,17 @@ export function indexBy(items, keyOf) {
 // ---------------------------------------------------------------------------------------------------
 // The briefing's searches
 // ---------------------------------------------------------------------------------------------------
+/** A test that passes a product whose SKU is `sku`, case ignored on both sides; only case is ignored. */
+function hasSku(sku) {
+    const wantedSku = normalizeSku(sku);
+    return (product) => normalizeSku(product.sku) === wantedSku;
+}
 /**
  * Linear search for a product by SKU, ignoring case on both sides; only case is ignored. A SKU stocked
  * in two warehouses is two products, and the first one listed is returned (Q10). Null when none matches.
  */
 export function findProductBySKU(products, sku) {
-    const wantedSku = normalizeSku(sku);
-    return linearSearch(products, (product) => normalizeSku(product.sku) === wantedSku);
+    return linearSearch(products, hasSku(sku));
 }
 /** Linear search for a shipment by id, matched exactly, case included (Q7). Null when none matches. */
 export function findShipmentById(shipments, id) {
@@ -75,4 +108,11 @@ export function findShipmentById(shipments, id) {
  */
 export function binarySearchProductByWeight(sortedProducts, targetWeight) {
     return binarySearchBy(sortedProducts, targetWeight, (product) => product.weightKg);
+}
+export function findProductsBySKU(products, sku, warehouse) {
+    const matchesSku = hasSku(sku);
+    if (warehouse === undefined) {
+        return products.filter(matchesSku);
+    }
+    return linearSearch(products, (product) => product.warehouse === warehouse && matchesSku(product));
 }

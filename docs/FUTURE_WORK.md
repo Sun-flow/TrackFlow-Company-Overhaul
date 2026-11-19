@@ -107,6 +107,27 @@ The strict validators check data as it is stored, and `cleanText` and `cleanSku`
 - **Source:** mae, 2026-11-18, while reviewing the strict validators (PR #40)
 - **Target:** ?
 
+### Binary search that returns the first matching index
+
+`binarySearchProductByWeight` returns any index with the target weight (Q9), so on a SKU stocked in both warehouses it can land on either warehouse's product. A version that always returns the first match, built on a "first index at or above" search, was option (a) of I2; a weight range on the same search was option (b).
+
+- **Source:** mae's answer to I2, 2026-11-19 (`packages/warehouse-logic/docs/tracked-improvements.md`, decision 1)
+- **Target:** ?
+
+### Stock summary for a SKU across warehouses
+
+A function giving a SKU's total units and its units in each warehouse, every warehouse listed with 0 where it isn't stocked: close to the "unified inventory API" in `CONTEXT.md`.
+
+- **Source:** I3 option (c), 2026-11-19 (`packages/warehouse-logic/docs/tracked-improvements.md`, decision 3)
+- **Target:** the milestone that builds the inventory API
+
+### A held count on a stock record
+
+With I5 (c), "Low stock" and "Out of stock" are worked out from the numbers and can't be set by hand. If units ever need holding back (counted but damaged, say), a stock record could gain a held count that the status reads.
+
+- **Source:** I5 option (c), 2026-11-19 (`packages/warehouse-logic/docs/tracked-improvements.md`, decision 5)
+- **Target:** ?
+
 ### Say why a carrier was left out
 
 The must-have carrier selection names the winner, or returns `null`, and gives no reasons. A result that lists each rejected carrier with the must-haves it failed (wrong country, over the weight limit, priority not accepted, no fragile handling) would tell a coordinator what to change. It could also warn when the product passed in is not the shipment's. `CONTEXT.md` asks for "explainable recommendations".
