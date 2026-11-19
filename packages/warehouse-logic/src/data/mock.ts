@@ -17,7 +17,6 @@ import type {
 } from "../types/models.ts";
 import {
   productCategories,
-  productStatuses,
   shipmentPriorities,
   shipmentStatuses,
 } from "../types/models.ts";
@@ -55,6 +54,7 @@ const createdDaysAfterStart = { lowest: 0, highest: 365 };
 const createdStart = Date.UTC(2024, 0, 1);
 const millisecondsPerDay = 86_400_000;
 const shareFragile = 0.3;
+const shareDiscontinued = 0.25; // as often as when a status was picked from the four (I5)
 const shareStockedInBothWarehouses = 0.25;
 
 type RandomNumber = () => number;
@@ -105,7 +105,7 @@ function createItem(random: RandomNumber, position: number): Item {
     },
     unitCostUSD: wholeNumberIn(random, unitCostCents) / 100,
     isFragile: random() < shareFragile,
-    status: pickOne(random, productStatuses),
+    isDiscontinued: random() < shareDiscontinued,
   };
 }
 

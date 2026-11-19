@@ -12,11 +12,13 @@ import type {
   Item,
   MovementRecord,
   Product,
+  ProductStatus,
   Shipment,
   ShipmentRecord,
   StockRecord,
   Warehouse,
 } from "../types/models.ts";
+import { isLowStock } from "./collections.ts";
 import { indexBy, normalizeSku } from "./search.ts";
 
 // normalizeSku lives in search.ts, beside the searches that compare SKUs; it is passed on from here, the
@@ -91,7 +93,23 @@ function copyDate(date: Date): Date {
 // ---------------------------------------------------------------------------------------------------
 
 /**
- * The briefing's Product: an item, with the stock it has in one warehouse and that warehouse's name.
+ * A product's status in one warehouse, worked out, never stored (I5): "Discontinued" when the item is,
+ * whatever its stock; else "Out of stock" at 0 units or fewer; else "Low stock" when the stock is at or
+ * below its threshold (isLowStock, the briefing's rule); else "Active".
+ */
+export function productStatusOf(item: Item, stockRecord: StockRecord): ProductStatus {
+  if (item.isDiscontinued) {
+    return "Discontinued";
+  }
+  if (stockRecord.stockQuantity <= 0) {
+    return "Out of stock";
+  }
+  return isLowStock(stockRecord) ? "Low stock" : "Active";
+}
+
+/**
+ * The briefing's Product: an item, with the stock it has in one warehouse and that warehouse's name,
+ * and the status that stock gives it there (productStatusOf).
  * The caller passes the item's own stock record and that record's warehouse.
  */
 export function toProduct(item: Item, stockRecord: StockRecord, warehouse: Warehouse): Product {
@@ -106,7 +124,7 @@ export function toProduct(item: Item, stockRecord: StockRecord, warehouse: Wareh
     minStockThreshold: stockRecord.minStockThreshold,
     unitCostUSD: item.unitCostUSD,
     isFragile: item.isFragile,
-    status: item.status,
+    status: productStatusOf(item, stockRecord),
   };
 }
 

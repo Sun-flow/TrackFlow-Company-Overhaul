@@ -1,7 +1,7 @@
 # Warehouse logic: entity relationship diagram
 
-> **Status**: Agreed by mae (2026-11-18). It is the stored structure, with the brief's interfaces as views, a departure from the brief logged in `docs/decisions.md` ("Milestone 2 stores single-id records, with the brief's interfaces as views"). A review the same day named the stored carrier `CarrierRecord` and set the movement shapes out as a table. mae then changed how a movement is stored (Q19, 2026-11-18): one stock record and a `direction` for each movement, in place of a `from`, a `to` and a `transferId` (`docs/decisions.md`, "A movement is one warehouse's record of a change to its own stock").
-> **Source**: `docs/milestones/milestone-2/trackflow-BRIEFING.en.md`, "Business Entities", and mae's design (2026-11-17 and 2026-11-18). Every business field and value comes from the briefing, and the new records (`Item`, `Warehouse`, `StockRecord`) regroup them. What the model adds is its own keys and links: the warehouse id, in mae's format (Q13), `stockRecordId`, and on a movement `direction` and `shipmentId`. `Warehouse.country` is the briefing's "United States (Los Angeles) and Spain (Zaragoza)".
+> **Status**: Agreed by mae (2026-11-18). It is the stored structure, with the brief's interfaces as views, a departure from the brief logged in `docs/decisions.md` ("Milestone 2 stores single-id records, with the brief's interfaces as views"). A review the same day named the stored carrier `CarrierRecord` and set the movement shapes out as a table. mae then changed how a movement is stored (Q19, 2026-11-18): one stock record and a `direction` for each movement, in place of a `from`, a `to` and a `transferId` (`docs/decisions.md`, "A movement is one warehouse's record of a change to its own stock"). On 2026-11-19 mae chose to work a product's status out per warehouse (I5): `Item.status` became `Item.isDiscontinued` (`docs/decisions.md`, "WP8b's tracked improvements decided").
+> **Source**: `docs/milestones/milestone-2/trackflow-BRIEFING.en.md`, "Business Entities", and mae's design (2026-11-17 and 2026-11-18). Every business field and value comes from the briefing, and the new records (`Item`, `Warehouse`, `StockRecord`) regroup them. What the model adds is its own keys and links: the warehouse id, in mae's format (Q13), `stockRecordId`, and on a movement `direction` and `shipmentId`; and `Item.isDiscontinued` (I5, 2026-11-19), the one part of the briefing's `ProductStatus` that is not about stock. `Warehouse.country` is the briefing's "United States (Los Angeles) and Spain (Zaragoza)".
 
 ## The diagram
 
@@ -17,7 +17,7 @@ erDiagram
         Dimensions dimensions "stored inside"
         number unitCostUSD "same in every warehouse (Q11)"
         boolean isFragile
-        ProductStatus status "same in every warehouse (Q12, I5)"
+        boolean isDiscontinued "no longer sold, anywhere (I5)"
     }
     Dimensions {
         number lengthCm
@@ -91,7 +91,7 @@ How to read it: `PK` (primary key) marks the field that identifies a record, so 
 
 ## The records
 
-- **`Item`**: one per SKU, so the SKU is unique and is the item's key (`sku`). SKUs are stored upper case, so keys compare exactly (Q17). It holds everything that is the same in every warehouse. By mae's answers that includes `unitCostUSD` (Q11) and `status` (Q12). A status per warehouse is improvement I5.
+- **`Item`**: one per SKU, so the SKU is unique and is the item's key (`sku`). SKUs are stored upper case, so keys compare exactly (Q17). It holds everything that is the same in every warehouse. By mae's answers that includes `unitCostUSD` (Q11) and whether the item is discontinued, `isDiscontinued`. It stores no status: each warehouse's status is worked out from its stock (I5, below).
 - **`Warehouse`**: one per warehouse, with a `warehouseId` in the carriers' style (`WH-LA`, `WH-ZGZ`), its `name` (the briefing's `WarehouseLocation`) and its `country`.
 - **`StockRecord`**: one per item per warehouse. It holds the stock (`stockQuantity`, `minStockThreshold`). Its `stockRecordId` is the SKU, a hyphen, then the `warehouseId` (Q13), so the same item can never have two records in one warehouse. SKUs contain hyphens too, so an id is split by matching the known warehouse id at its end. This is the ProductId mae described.
 - **`ShipmentRecord`**: a shipment (`shipmentId`), pointing at the stock it ships from (`stockRecordId`) and at its carrier by id (`carrierId`), so renaming a carrier changes nothing (improvement I1, now part of the design).
@@ -119,7 +119,7 @@ The briefing's interfaces are kept in `src/types/models.ts` exactly as written, 
 
 | Brief interface | Built from |
 |---|---|
-| `Product` | An `Item`, plus one of its `StockRecord`s for `stockQuantity` and `minStockThreshold`, plus that record's `Warehouse` `name` for `warehouse`. One `Product` for each item in each warehouse. |
+| `Product` | An `Item`, plus one of its `StockRecord`s for `stockQuantity` and `minStockThreshold`, plus that record's `Warehouse` `name` for `warehouse`. One `Product` for each item in each warehouse. Its `status` is worked out (I5): `"Discontinued"` when the item is, else `"Out of stock"` at 0 units or fewer, else `"Low stock"` when the stock is at or below its threshold, else `"Active"` (`productStatusOf`). |
 | `Shipment` | A `ShipmentRecord`, with `id` its `shipmentId`, `sku` and `origin` read through its stock record (the item's SKU and the warehouse's name), and `carrier` the carrier's `name` (Q1) or `null`. |
 | `InventoryMovement` | A `MovementRecord`, with `id` its `movementId`, and `sku` and `warehouse` read through its stock record (the item's SKU and the warehouse's name). `direction` and `shipmentId` are not in the view. A transfer therefore shows as one Transfer at the sending warehouse and another at the receiving one (Q14). |
 | `Carrier` | A `CarrierRecord`, with `id` its `carrierId`. |

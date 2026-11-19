@@ -12,7 +12,7 @@ import {
   sampleStockRecords,
   sampleWarehouses,
 } from "./data/samples.ts";
-import { buildStockRecordId, toCarriers, toProducts, toShipment } from "./utils/views.ts";
+import { buildStockRecordId, productStatusOf, toCarriers, toProducts, toShipment } from "./utils/views.ts";
 import {
   filterLowStockProducts,
   filterProducts,
@@ -75,6 +75,16 @@ console.table(
     ({ sku, warehouse, stockQuantity, minStockThreshold, status }) => ({ sku, warehouse, stockQuantity, minStockThreshold, status }),
   ),
 );
+const [, laptopItem] = sampleItems;
+const [, laptopInZaragoza] = sampleStockRecords;
+if (laptopItem !== undefined && laptopInZaragoza !== undefined) {
+  // MOCK: the laptop in Los Angeles is made up for the demo; the briefing stocks it in Zaragoza only.
+  const mockLaptopInLosAngeles = { ...laptopInZaragoza, stockRecordId: "LAPTOP-DELL-15-WH-LA", warehouseId: "WH-LA", stockQuantity: 40 };
+  console.log("Each warehouse's status is worked out from its own stock (I5, docs/tracked-improvements.md):");
+  result("productStatusOf(laptop, Zaragoza, 8 of 10)", productStatusOf(laptopItem, laptopInZaragoza));
+  result("productStatusOf(laptop, Los Angeles (MOCK), 40 of 10)", productStatusOf(laptopItem, mockLaptopInLosAngeles));
+  result("productStatusOf(laptop marked discontinued, Zaragoza)", productStatusOf({ ...laptopItem, isDiscontinued: true }, laptopInZaragoza));
+}
 result("toCarriers(sampleCarrierRecords) names", toCarriers(sampleCarrierRecords).map((carrier) => carrier.name));
 result(
   "toShipment(sampleShipmentRecord, ...) id and origin",
