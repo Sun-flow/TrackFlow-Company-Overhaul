@@ -994,7 +994,7 @@ const defaultPriority = "Standard" satisfies ShipmentPriority;
  * (`""`, spaces, `null`, `undefined`) or one not on the list becomes "Standard", with a warning
  * naming `field`. Nothing else is read into it: "express" is not "Express".
  */
-export function cleanPriority(raw: unknown, field = "priority"): Cleaned<ShipmentPriority> {
+export function cleanPriority(raw: unknown, field: string = "priority"): Cleaned<ShipmentPriority> {
   const trimmed = typeof raw === "string" ? raw.trim() : raw;
   if (isOneOf(trimmed, shipmentPriorities)) {
     return { value: trimmed, warnings: [] };
@@ -1067,7 +1067,7 @@ function daysInMonth(year: number, month: number): number {
  * "+01:00"), since a time without one means a different moment in each place. Anything else gives
  * `null` and the reason, naming `field`. Reading other formats is parked in `docs/FUTURE_WORK.md`.
  */
-export function parseDate(raw: unknown, field = "date"): ParsedDate {
+export function parseDate(raw: unknown, field: string = "date"): ParsedDate {
   if (raw instanceof Date) {
     return isRealDate(raw)
       ? { date: raw, error: null }

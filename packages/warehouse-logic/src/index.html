@@ -149,8 +149,10 @@
       <section id="scoring" aria-labelledby="scoring-heading" class="panel">
         <h2 id="scoring-heading" class="panel-heading">Carrier for a shipment</h2>
         <p class="mt-2 text-sm text-slate-700">
-          The briefing's cost and scoring rules, exactly as written, on its three carriers. The fields start as the
-          briefing's sample shipment; the shipment leaves from the product's warehouse.
+          The briefing's cost and scoring rules, exactly as written, on its three carriers, and beside its pick the
+          one with must-haves (WP7): only carriers that serve both countries, carry the weight, accept the priority
+          and handle a fragile product. The fields start as the briefing's sample shipment; the shipment leaves from
+          the product's warehouse.
         </p>
         <form id="scoring-form" class="mt-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
           <div>
@@ -189,8 +191,10 @@
       <section id="validations" aria-labelledby="validations-heading" class="panel">
         <h2 id="validations-heading" class="panel-heading">Validations</h2>
         <p class="mt-2 text-sm text-slate-700">
-          Load a sample, change any value in its JSON, and validate it. The briefing's validators check its 14 rules;
-          the strict ones beside them also check finite numbers, text patterns and real dates.
+          Load a sample, change any value in its JSON, and validate it. The input validator checks the record's shape
+          first, then the strict rules, and never throws. Once the shape passes, the briefing's validators check its
+          14 rules, and the strict ones beside them also check finite numbers, text patterns, real dates and values
+          on their lists.
         </p>
         <form id="validations-form" class="mt-3 space-y-3">
           <div class="max-w-sm">

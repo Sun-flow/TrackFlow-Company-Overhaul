@@ -12,6 +12,7 @@ import {
   sampleStockRecords,
   sampleWarehouses,
 } from "./data/samples.ts";
+import { createMockData } from "./data/mock.ts";
 import { buildStockRecordId, productStatusOf, toCarriers, toProducts, toShipment } from "./utils/views.ts";
 import {
   filterLowStockProducts,
@@ -31,6 +32,7 @@ import {
 import {
   calculateAverageShipmentDistance,
   calculateCarrierScoreBreakdown,
+  calculateMovementTotals,
   calculateShippingCost,
   calculateShippingCostChecked,
   calculateTotalInventoryValue,
@@ -49,10 +51,16 @@ import {
   summarizeWarehouses,
 } from "./utils/transformations.ts";
 import {
+  parseDate,
+  shipmentStatusWarnings,
   validateCarrier,
+  validateMovementRecord,
   validateProduct,
+  validateProductInput,
+  validateProductList,
   validateProductStrict,
   validateShipment,
+  validateShipmentInput,
 } from "./utils/validations.ts";
 
 const skus = (products: Product[]): string => products.map((product) => product.sku).join(", ") || "(none)";
@@ -213,6 +221,14 @@ result("findHeaviestProduct(products)", findHeaviestProduct(sampleProducts)?.sku
 result("findLongestShipment([shipment])", findLongestShipment([sampleShipment])?.id ?? null);
 console.log("summarizeWarehouses(products):");
 console.table(summarizeWarehouses(sampleProducts));
+// The briefing has no movements, so the movement totals run on a small seeded mock set (Q34).
+const mock = createMockData({ seed: 20261118, itemCount: 5, shipmentCount: 10, movementCount: 20 });
+console.log("calculateMovementTotals(movementRecords, stockRecords, warehouses), on mock data:");
+console.table(
+  calculateMovementTotals(mock.movementRecords, mock.stockRecords, mock.warehouses).map(
+    ({ warehouseId, unitsIn, unitsOut, netChange }) => ({ warehouseId, unitsIn, unitsOut, netChange }),
+  ),
+);
 
 heading("5. Validations (validations.ts)");
 result("validateProduct(each sample product)", sampleProducts.map((product) => validateProduct(product).valid));
@@ -222,3 +238,18 @@ result("validateCarrier(each sample carrier)", sampleCarriers.map((carrier) => v
 const badProduct: Product = { ...laptop, sku: "", weightKg: 0, dimensions: { ...laptop.dimensions, heightCm: 250 } };
 result('validateProduct(laptop with sku "", weightKg 0, heightCm 250)', validateProduct(badProduct));
 result("validateProductStrict(the same)", validateProductStrict(badProduct));
+
+// WP8: data that may not be typed goes through the input validators, which never throw.
+result("validateProductInput(null)", validateProductInput(null));
+result(
+  'validateShipmentInput(shipment with createdAt "2024-03-15" as text)',
+  validateShipmentInput({ ...sampleShipment, createdAt: "2024-03-15" }),
+);
+result('parseDate("2024-03-15")', parseDate("2024-03-15"));
+result('parseDate("2024-02-30")', parseDate("2024-02-30"));
+result('shipmentStatusWarnings(shipment "In transit" with no carrier)', shipmentStatusWarnings({ ...sampleShipment, status: "In transit" }));
+result("validateProductList([shoes, shoes])", validateProductList([sampleProducts[0], sampleProducts[0]]));
+const firstMovement = mock.movementRecords[0];
+if (firstMovement !== undefined) {
+  result(`validateMovementRecord(mock ${firstMovement.type} movement, warehouses)`, validateMovementRecord(firstMovement, mock.warehouses));
+}

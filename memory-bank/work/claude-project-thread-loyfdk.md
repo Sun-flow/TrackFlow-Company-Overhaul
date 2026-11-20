@@ -1,6 +1,6 @@
 # Milestone 2's integration and QA (WP9): check the whole package and rate the definition of done
 
-- **Changes**: `docs/milestones/milestone-2/definition-of-done.md` and `plan.md` (ratings, progress),
+- **Changes**: `docs/milestones/milestone-2/definition-of-done.md` and `docs/milestones/milestone-2/plan.md` (ratings, progress),
   `packages/warehouse-logic/` (README reference and test page, only where QA finds them behind),
   `memory-bank/status.md`, `docs/FUTURE_WORK.md`, a log entry.
 - **Scope**: the plan's WP9 section. mae gave the go-ahead on 2026-11-20 after PR #51 merged.

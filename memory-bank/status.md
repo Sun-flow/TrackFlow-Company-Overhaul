@@ -7,24 +7,25 @@ work file, not here.
 
 Current milestone: Milestone 2, a TypeScript logic layer. Its brief, plan, definition of done and ERD
 are in `docs/milestones/milestone-2/` and `packages/warehouse-logic/docs/`, agreed by mae and reviewed.
-WP1 to WP7 of its plan are built (2026-11-19). Milestone 1, the public website, is finished.
+WP1 to WP9 are built, and Milestone 2 is done, waiting for mae's review and its `Milestone-2` branch
+(2026-11-20). Milestone 1, the public website, is finished.
 
 ## Works
 
 - The public website serves its four pages (landing, About, information-request form, placeholder
   privacy policy): `npx --yes http-server uis/website -p 3000 -c-1`. (2026-11-13)
-- The form's rules pass 481 tests: `(cd uis/website && pnpm test)`. (2026-11-13)
+- The form's rules pass 481 tests: `(cd uis/website && pnpm test)`. (2026-11-20)
 - Every page, the logic test page included, is clean in a browser at four widths, with no console
-  errors, sideways scroll or axe-core violations: `python3 scripts/site-check.py`. (2026-11-19)
+  errors, sideways scroll or axe-core violations: `python3 scripts/site-check.py`. (2026-11-20)
 - The committed stylesheet matches its source: `(cd uis/website && pnpm build)` changes nothing.
   (2026-11-13)
 - The live site at https://sun-flow.github.io/TrackFlow-Company-Overhaul/ serves the same home page as
   `production`; its last deploy, for pull request #25, succeeded. (2026-11-13)
-- The warehouse logic's types check and its 1819 tests pass, WP1 to WP7 and WP8b:
-  `(cd packages/warehouse-logic && pnpm typecheck && pnpm test)`. (2026-11-19)
+- The warehouse logic's types check and its 2071 tests pass, WP1 to WP8b:
+  `(cd packages/warehouse-logic && pnpm typecheck && pnpm test)`. (2026-11-20)
 - `pnpm demo` prints each briefing function on the samples, and the test page works from a fresh
   clone: `npx --yes http-server packages/warehouse-logic -p 3000 -c-1`, then `/src/index.html`.
-  (2026-11-19)
+  (2026-11-20)
 - The testing kit (0.4.1) is installed: its files match `.claude/testing-kit/manifest.json` except the
   hand-edited workflow, rules and guide and three patched scripts (`docs/decisions.md`). Its required
   check runs both test sets and the package's typecheck; its edit hook protects only tests
@@ -41,7 +42,8 @@ WP1 to WP7 of its plan are built (2026-11-19). Milestone 1, the public website, 
 
 ## Next
 
-1. Phase 4 of `docs/milestones/milestone-2/plan.md`: WP8, then WP9. (2026-11-19)
+1. mae reviews WP9 (integration and QA) and creates the `Milestone-2` branch at its merge.
+   (2026-11-20)
 
 ## Known problems
 
