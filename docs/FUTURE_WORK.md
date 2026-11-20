@@ -81,7 +81,7 @@ The home hero's map (`uis/website/assets/hero-map.svg`) shows only from the `lg`
 
 ### Find, report and repair broken links between records
 
-In Milestone 2 a view builder returns `null` when a link matches no record, and moves on. Later work: a function that lists every broken link (which record, which field, which missing id), scripts that log it and notify someone, a way to repair the records, and generated broken datasets to test all of it.
+In Milestone 2 a view builder returns `null` when a link matches no record, and moves on. Later work: a function that lists every broken link (which record, which field, which missing id), scripts that log it and notify someone, a way to repair the records, and generated broken datasets to test all of it. WP8's two cross-record checks wait with it: R15, a shipment's origin matches its product's warehouse, and R16, every shipment that has left has one matching Outbound (`packages/warehouse-logic/docs/validation-review.md`).
 
 - **Source:** mae's answer to Q16, 2026-11-18 (`docs/decisions.md`, "Milestone 2's review questions answered")
 - **Target:** ?
@@ -187,6 +187,13 @@ The briefing specifies "© 2025 TrackFlow"; consider showing the current year (o
 
 - **Source:** Milestone 1 briefing, "Footer"
 - **Target:** Any
+
+### A code formatter for the warehouse logic
+
+The package has no formatter, so line length and wrapping rest on each session. Its logic files are consistent, but some lines in the test page's script run past 200 characters. A pinned formatter (Prettier, for example) with a check in the suite would keep every file to one layout.
+
+- **Source:** Milestone 2's integration and QA (WP9), 2026-11-20
+- **Target:** ?
 
 ### Browser check in CI
 
