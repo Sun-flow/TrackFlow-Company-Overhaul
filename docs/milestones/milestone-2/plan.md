@@ -199,13 +199,13 @@ Update this table as packages start and merge.
 | Plan and definition of done | Plan Milestone 2 and its definition of done | `claude/project-thread-rky24u`, PR #33 | merged 2026-11-18 |
 | Review of the planning docs | Review Milestone 2 planning docs | `claude/project-thread-f2ngnb` | fixes applied and Q16 to Q24 answered 2026-11-18 |
 | D1 to D9 | Plan Milestone 2 and its definition of done | `claude/project-thread-rky24u` | answered by mae 2026-11-17, with Q1 to Q10 |
-| WP1 Package scaffold and data model | Build the Milestone 2 package scaffold | `claude/project-thread-vf1vdm` | built 2026-11-18, in review |
-| WP2 Search | | | not started |
-| WP3 Collections | | | not started |
-| WP4 Carrier cost, scoring and reports | | | not started |
-| WP5 Validations | | | not started |
-| WP6 Demo and test page | | | not started |
-| WP7 Carrier selection review and departure | | | not started |
-| WP8 Validation improvements | | | not started |
-| WP8b Tracked improvements | | | not started |
-| WP9 Integration and QA | | | not started |
+| WP1 Package scaffold and data model | Build the Milestone 2 package scaffold | `claude/project-thread-vf1vdm`, PR #36 | merged 2026-11-18 |
+| WP2 Search | Build the search functions | `claude/project-thread-s9127w`, PR #39 | merged 2026-11-18 |
+| WP3 Collections | Build the collection functions | `claude/project-thread-ssr36t`, PR #38 | merged 2026-11-18 |
+| WP4 Carrier cost, scoring and reports | Build the transformation functions | `claude/project-thread-48r0ba`, PRs #42 and #47 (the checked versions, Q32) | merged 2026-11-19 |
+| WP5 Validations | Build the validation functions | `claude/project-thread-oh545i`, PRs #37 and #40 (the strict validators) | merged 2026-11-18 |
+| WP6 Demo and test page | Build the demo and test page | `claude/project-thread-ac6wf1`, PR #46 | merged 2026-11-19 |
+| WP7 Carrier selection review and departure | Review carrier selection and propose fixes | `claude/project-thread-053bf6`, PRs #45 (review) and #48 (code) | merged 2026-11-19 |
+| WP8 Validation improvements | Review validation rules and propose improvements | `claude/project-thread-vxle9u`, PRs #43, #50 and #51 (mock movements, Q34) | merged 2026-11-19 |
+| WP8b Tracked improvements | Plan the tracked improvements | `claude/project-thread-07ir7r`, PRs #44 and #49 (I5) | merged 2026-11-19; I2 parked |
+| WP9 Integration and QA | Run Milestone 2 integration and QA | `claude/project-thread-loyfdk` | built 2026-11-20, in review |

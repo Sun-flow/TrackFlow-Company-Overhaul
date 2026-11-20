@@ -28,7 +28,7 @@ Data is stored as records with one key each: `Item`, `Warehouse`, `StockRecord`,
 | `tests/fixtures/` | Mock data the briefing doesn't supply, labelled as mock. `movements.ts` has one movement for each row of the ERD's movement table. |
 | `tests/helpers/briefing.ts` | Reads the sample data out of the briefing file, so tests compare the code with the brief itself. |
 | `scripts/time-search.ts` | The timing run behind `docs/search-research.md`. |
-| `docs/` | The agreed data model (`erd.md`) and one note per source file, linked above. |
+| `docs/` | The agreed data model (`erd.md`), one note per source file, linked above, and the mutation check on cost, scoring and validations (`mutation-check.md`). |
 
 ## Commands
 
@@ -57,7 +57,7 @@ npx --yes http-server packages/warehouse-logic -p 3000 -c-1
 
 Then open `http://localhost:3000/src/index.html`. The page is served from this folder, not from `src/`, because it loads `../dist/page/main.js` and `../dist/styles.css`.
 
-Its panels filter and sort products, sort carriers by reliability, run the three searches, score the three carriers for a shipment (with the briefing's known failure flagged where it happens), run the reports, validate a record typed as JSON with both sets of validators, and time linear search, binary search and a `Map` lookup on mock data (extra X5). Each panel shows the calls it made and what they returned. A data switch runs the panels on the briefing's samples or on seeded mock data.
+Its panels filter and sort products, sort carriers by reliability, run the three searches and find a SKU in every warehouse, score the three carriers for a shipment (with the briefing's known failure flagged where it happens, and the pick with must-haves beside the briefing's), run the reports, validate a record typed as JSON (its shape first with the input validator, then with the briefing's and the strict validators), and time linear search, binary search and a `Map` lookup on mock data (extra X5). Each panel shows the calls it made and what they returned. A data switch runs the panels on the briefing's samples or on seeded mock data.
 
 The browser check, `python3 scripts/site-check.py` from the root, checks the page with the website: screenshots at four widths, no console errors, no sideways scroll and no axe-core violations (extra X3).
 

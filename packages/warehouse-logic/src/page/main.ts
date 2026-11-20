@@ -19,10 +19,10 @@ import type {
   Warehouse,
 } from "../types/models.ts";
 import type { SortableField, SortOrder } from "../utils/collections.ts";
-import { sampleCarriers, sampleProducts, sampleShipment } from "../data/samples.ts";
+import { sampleCarriers, sampleProducts, sampleShipment, sampleWarehouses } from "../data/samples.ts";
 import { createMockData } from "../data/mock.ts";
 import { sortCarriersByReliability, sortProductsBy } from "../utils/collections.ts";
-import { binarySearchProductByWeight, findProductBySKU, findShipmentById } from "../utils/search.ts";
+import { binarySearchProductByWeight, findProductBySKU, findProductsBySKU, findShipmentById } from "../utils/search.ts";
 import {
   calculateAverageShipmentDistance,
   calculateCarrierScoreBreakdown,
@@ -35,20 +35,29 @@ import {
   findLongestShipment,
   findTopCarriers,
   groupShipmentsByStatus,
+  isCarrierEligibleForShipment,
   roundToTwoDecimals,
   scoreCarrierForShipment,
   selectBestCarrier,
+  selectBestEligibleCarrier,
   summarizeWarehouses,
 } from "../utils/transformations.ts";
 import {
+  carrierShape,
+  checkShape,
+  productShape,
+  shipmentShape,
   validateCarrier,
+  validateCarrierInput,
   validateCarrierStrict,
   validateProduct,
+  validateProductInput,
   validateProductStrict,
   validateShipment,
+  validateShipmentInput,
   validateShipmentStrict,
 } from "../utils/validations.ts";
-import type { ValidationResult } from "../utils/validations.ts";
+import type { InputValidationResult, ValidationResult } from "../utils/validations.ts";
 import { runProductQuery } from "./product-query.ts";
 import { parseRecordInput } from "./record-input.ts";
 import { compareSearchMethods, pickLookupSkus } from "./search-timing.ts";
@@ -286,9 +295,16 @@ function productSummary(product: Product): HTMLElement {
 function renderSkuSearch(): void {
   const sku = inputValue("search-sku");
   const found = findProductBySKU(current.products, sku);
+  const everyWarehouse = findProductsBySKU(current.products, sku);
   show(byId("search-sku-output"), [
     callList([`findProductBySKU(products, ${quoted(sku)})`]),
     found === null ? badge("null: no product has this SKU", "neutral") : productSummary(found),
+    callList([`findProductsBySKU(products, ${quoted(sku)})`]),
+    everyWarehouse.length === 0
+      ? badge("[]: no product has this SKU", "neutral")
+      : definitionList(
+          everyWarehouse.map((product) => [product.warehouse, `${formatNumber(product.stockQuantity)} units, ${product.status}`] as const),
+        ),
   ]);
 }
 
@@ -376,6 +392,7 @@ function renderScoring(): void {
   const carriers = sampleCarriers;
   const validation = validateShipment(shipment);
   const best = selectBestCarrier(carriers, shipment, product);
+  const bestEligible = selectBestEligibleCarrier(carriers, shipment, product, sampleWarehouses);
   const cheapest = findCheapestCarrierForShipment(carriers, shipment, product);
 
   const flagged: HTMLElement[] = validation.valid
@@ -408,7 +425,7 @@ function renderScoring(): void {
             ? []
             : [
                 element("p", "rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-950", [
-                  `${best.carrier.name} ${pickedFailures.join(" and ")}, yet the briefing's rules pick it: no scoring rule is a must-have, so a carrier that misses one can still win on cost. This is the failure plan D4 records, and WP7 reviews it.`,
+                  `${best.carrier.name} ${pickedFailures.join(" and ")}, yet the briefing's rules pick it: no scoring rule is a must-have, so a carrier that misses one can still win on cost. This is the failure plan D4 records; the pick with must-haves, beside it, leaves out every carrier that misses one (WP7).`,
                 ]),
               ]),
         ];
@@ -419,10 +436,11 @@ function renderScoring(): void {
       "scoreCarrierForShipment(carrier, shipment, product)",
       "calculateShippingCost(shipment, product, carrier)",
       "calculateCarrierScoreBreakdown(carrier, shipment, product)",
+      "isCarrierEligibleForShipment(carrier, shipment, product, warehouses)",
     ]),
     table(
       "Each carrier's points, score and cost",
-      ["Carrier", "Country (20)", "Weight (20)", "Priority (15)", "Fragile (15)", "Reliability", "Score", "Cost", "50 or more"],
+      ["Carrier", "Country (20)", "Weight (20)", "Priority (15)", "Fragile (15)", "Reliability", "Score", "Cost", "50 or more", "Every must-have"],
       carriers.map((carrier) => {
         const breakdown = calculateCarrierScoreBreakdown(carrier, shipment, product);
         const score = scoreCarrierForShipment(carrier, shipment, product);
@@ -436,14 +454,26 @@ function renderScoring(): void {
           formatNumber(score),
           formatUSD(calculateShippingCost(shipment, product, carrier)),
           score >= 50 ? badge("Yes", "good") : badge("No", "bad"),
+          isCarrierEligibleForShipment(carrier, shipment, product, sampleWarehouses) ? badge("Yes", "good") : badge("No", "bad"),
         ];
       }),
     ),
-    element("div", "grid gap-4 md:grid-cols-2", [
+    element("div", "grid gap-4 md:grid-cols-3", [
       element("div", "space-y-2", [
         element("h3", "font-semibold", ["The briefing's pick"]),
         callList(["selectBestCarrier(carriers, shipment, product)"]),
         ...picked,
+      ]),
+      element("div", "space-y-2", [
+        element("h3", "font-semibold", ["The pick with must-haves"]),
+        callList(["selectBestEligibleCarrier(carriers, shipment, product, warehouses)"]),
+        bestEligible === null
+          ? badge("null: no carrier has every must-have", "neutral")
+          : definitionList([
+              ["Carrier", bestEligible.carrier.name],
+              ["Score", formatNumber(bestEligible.score)],
+              ["Cost", formatUSD(bestEligible.cost)],
+            ]),
       ]),
       element("div", "space-y-2", [
         element("h3", "font-semibold", ["The cheapest, whatever its score"]),
@@ -588,37 +618,75 @@ const validationSamples: ValidationSample[] = [
   ...sampleCarriers.map((carrier): ValidationSample => ({ kind: "carrier", label: `Carrier ${carrier.name}`, record: carrier })),
 ];
 
-function validationCard(call: string, result: ValidationResult): HTMLElement {
+function messageList(label: string, messages: readonly string[]): HTMLElement[] {
+  return messages.length === 0
+    ? [note(`${label}: []`)]
+    : [
+        note(`${label}:`),
+        element("ul", "list-disc space-y-1 pl-5 text-sm text-slate-800", messages.map((message) => element("li", "", [message]))),
+      ];
+}
+
+function validationCard(call: string, result: ValidationResult | InputValidationResult): HTMLElement {
   return element("article", "min-w-0 space-y-2 rounded-lg border border-slate-200 p-3", [
     element("h3", "font-semibold", [code(call)]),
     result.valid ? badge("valid: true", "good") : badge("valid: false", "bad"),
-    result.errors.length === 0
-      ? note("errors: []")
-      : element(
-          "ul",
-          "list-disc space-y-1 pl-5 text-sm text-slate-800",
-          result.errors.map((error) => element("li", "", [error])),
-        ),
+    ...messageList("errors", result.errors),
+    ...("warnings" in result ? messageList("warnings", result.warnings) : []),
   ]);
+}
+
+/**
+ * The briefing's and the strict validators take a typed record, so they run only once its shape passes
+ * (WP8 R4: validate the input first, then use it as typed).
+ */
+function typedCards(shapeErrors: readonly string[], calls: string, cards: () => HTMLElement[]): HTMLElement[] {
+  return shapeErrors.length === 0
+    ? cards()
+    : [note(`${calls} take a typed record, so they run once its shape passes the input validator.`)];
 }
 
 function validateText(kind: RecordKind, text: string): HTMLElement[] {
   if (kind === "product") {
     const parsed = parseRecordInput(text, "product");
-    return parsed.ok
-      ? [validationCard("validateProduct(record)", validateProduct(parsed.record)), validationCard("validateProductStrict(record)", validateProductStrict(parsed.record))]
-      : [parseError(parsed.error)];
+    if (!parsed.ok) {
+      return [parseError(parsed.error)];
+    }
+    const record = parsed.record;
+    return [
+      validationCard("validateProductInput(record)", validateProductInput(record)),
+      ...typedCards(checkShape(record, productShape, "product").errors, "validateProduct and validateProductStrict", () => [
+        validationCard("validateProduct(record)", validateProduct(record)),
+        validationCard("validateProductStrict(record)", validateProductStrict(record)),
+      ]),
+    ];
   }
   if (kind === "shipment") {
     const parsed = parseRecordInput(text, "shipment");
-    return parsed.ok
-      ? [validationCard("validateShipment(record)", validateShipment(parsed.record)), validationCard("validateShipmentStrict(record)", validateShipmentStrict(parsed.record))]
-      : [parseError(parsed.error)];
+    if (!parsed.ok) {
+      return [parseError(parsed.error)];
+    }
+    const record = parsed.record;
+    return [
+      validationCard("validateShipmentInput(record)", validateShipmentInput(record)),
+      ...typedCards(checkShape(record, shipmentShape, "shipment").errors, "validateShipment and validateShipmentStrict", () => [
+        validationCard("validateShipment(record)", validateShipment(record)),
+        validationCard("validateShipmentStrict(record)", validateShipmentStrict(record)),
+      ]),
+    ];
   }
   const parsed = parseRecordInput(text, "carrier");
-  return parsed.ok
-    ? [validationCard("validateCarrier(record)", validateCarrier(parsed.record)), validationCard("validateCarrierStrict(record)", validateCarrierStrict(parsed.record))]
-    : [parseError(parsed.error)];
+  if (!parsed.ok) {
+    return [parseError(parsed.error)];
+  }
+  const record = parsed.record;
+  return [
+    validationCard("validateCarrierInput(record)", validateCarrierInput(record)),
+    ...typedCards(checkShape(record, carrierShape, "carrier").errors, "validateCarrier and validateCarrierStrict", () => [
+      validationCard("validateCarrier(record)", validateCarrier(record)),
+      validationCard("validateCarrierStrict(record)", validateCarrierStrict(record)),
+    ]),
+  ];
 }
 
 function parseError(message: string): HTMLElement {
@@ -632,14 +700,7 @@ function selectedValidationSample(): ValidationSample {
 function renderValidations(): void {
   const sample = selectedValidationSample();
   const text = byId<HTMLTextAreaElement>("validations-json").value;
-  let results: HTMLElement[];
-  try {
-    results = validateText(sample.kind, text);
-  } catch (error) {
-    // A record missing a whole nested object, such as `dimensions`, can't be read field by field.
-    results = [parseError(`The validators could not read this record: ${error instanceof Error ? error.message : String(error)}`)];
-  }
-  show(byId("validations-output"), results);
+  show(byId("validations-output"), validateText(sample.kind, text));
 }
 
 function loadValidationSample(): void {
