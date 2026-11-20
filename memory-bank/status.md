@@ -21,7 +21,7 @@ WP1 to WP9 are built, and Milestone 2 is done, waiting for mae's review and its 
   (2026-11-13)
 - The live site at https://sun-flow.github.io/TrackFlow-Company-Overhaul/ serves the same home page as
   `production`; its last deploy, for pull request #25, succeeded. (2026-11-13)
-- The warehouse logic's types check and its 2071 tests pass, WP1 to WP8b:
+- The warehouse logic's types check and its 2071 tests pass, WP1 to WP9:
   `(cd packages/warehouse-logic && pnpm typecheck && pnpm test)`. (2026-11-20)
 - `pnpm demo` prints each briefing function on the samples, and the test page works from a fresh
   clone: `npx --yes http-server packages/warehouse-logic -p 3000 -c-1`, then `/src/index.html`.

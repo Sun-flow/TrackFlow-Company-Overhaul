@@ -1,7 +1,7 @@
 # Milestone 2 definition of done
 
 > **Date created**: 2026-11-17
-> **Last checked**: 2026-11-18, on WP1's branch. WP1, the package scaffold and data model, is built: M1 to M7 and M9 are done, and ST1, ST4, ST5 and ST14 are done as far as WP1 goes. Nothing else is built yet. Revised on 2026-11-17 with mae's answers to the plan's decisions, on 2026-11-18 with M9 for the stored model and X1 to X5 for the extras, and after a review that day with the Package column and clearer rows. On 2026-11-19, on WP7's branch, K5 and K6 were rated done; the rows of WP2 to WP6 were not re-rated there.
+> **Last checked**: 2026-11-20, in WP9 (integration and QA), on its branch against the code of `production` at 80dd054 plus WP9's own changes. Every row was re-rated with evidence: 66 are done, and P2, the `Milestone-2` branch, waits on mae. Revised on 2026-11-17 with mae's answers to the plan's decisions, on 2026-11-18 with M9 for the stored model and X1 to X5 for the extras, and after a review that day with the Package column and clearer rows.
 > **Built from**: every checklist and requirement in this folder, merged and de-duplicated. The company briefing (`trackflow-BRIEFING.en.md`, called `BRIEFING.md` in the checklists) still wins where it is more specific.
 
 Milestone 2 is done when every item below is rated ✅. The test page (O) is optional in its checklist but required here: mae counts optional work as required (2026-11-17, plan D8). Items marked "after review" are built only once mae has approved the analysis that comes before them (plan, "How this milestone works"). Where several sources ask for the same thing, they are one item and the Source column lists each. The Package column names the package in `plan.md` that delivers each item; "all" means every package keeps to it and WP9 checks it. The D numbers point to the plan's Phase 0 decisions, and the Q numbers to `docs/open-questions.md` or, once answered, `docs/decisions.md`.
@@ -16,10 +16,10 @@ To re-check, update the rating and evidence in place and the "Last checked" line
 
 | Rating | Items |
 |---|---|
-| ✅ Completely done | 10 |
-| 🟡 Partially done | 4 |
-| ⬜ Not done | 53 |
-| 🙋 Needs mae | 0 |
+| ✅ Completely done | 66 |
+| 🟡 Partially done | 0 |
+| ⬜ Not done | 0 |
+| 🙋 Needs mae | 1 |
 | ❔ Not verifiable here | 0 |
 | **Total** | **67** |
 
@@ -122,7 +122,7 @@ The plan's extras X1 to X5 joined this list when mae picked all five (2026-11-18
 | ID | Item | Source | Package | Rating | Evidence |
 |---|---|---|---|---|---|
 | P1 | Every function has tests whose expected values come from the briefing worked by hand, including empty and failing cases, and they pass | B's "What Ana Expects", B-A2 | WP2 to WP8b | ✅ | 2071 tests pass (`pnpm test`, 2026-11-20), with expected values worked by hand from the briefing and independent twins for the money paths; empty and failing cases for every function |
-| P2 | A `Milestone-2` branch at the end of the milestone, for grading | `docs/decisions.md` | mae, at WP9 | ⬜ | |
+| P2 | A `Milestone-2` branch at the end of the milestone, for grading | `docs/decisions.md` | mae, at WP9 | 🙋 | mae creates the `Milestone-2` branch on github.com at WP9's merge |
 
 ## Test page (optional in its checklist, required here)
 
@@ -139,5 +139,5 @@ The plan's extras X1 to X5 joined this list when mae picked all five (2026-11-18
 | X1 | An API reference in the package README: every exported function, its signature, what it returns for empty input, and an example | mae (D8, plan X1) | WP6, then Phase 4 | ✅ | The package README's API reference; `tests/readme.test.ts` fails on any export it doesn't name, and WP9 checked every signature in it against the source (2026-11-20) |
 | X2 | A seeded mock data generator, clearly labelled as mock, for larger test arrays and the search timing, which makes stored records and builds the views from them | mae (D8, plan X2) | WP2 | ✅ | `src/data/mock.ts`, `createMockData` with a seeded generator, labelled as mock, makes stored records and builds the views through `views.ts`; used by the search timing and the test page (`tests/mock.test.ts`, `tests/mock-movements.test.ts`) |
 | X3 | The test page in the browser check: screenshots, no console errors, axe clean | mae (D8, plan X3) | WP6 | ✅ | `scripts/site-check.py` checks the page with the website by default: four widths, no console errors or sideways scroll, axe clean (2026-11-19) |
-| X4 | A mutation check on cost, scoring and validations, with its score reported against a target of 70% or more | mae (D8, plan X4) | WP9 | ⬜ | |
+| X4 | A mutation check on cost, scoring and validations, with its score reported against a target of 70% or more | mae (D8, plan X4) | WP9 | ✅ | `packages/warehouse-logic/docs/mutation-check.md`: Stryker on `transformations.ts`, `validations.ts` and `numbers.ts`, 1,151 mutants, score 94.87% against the 70% target (2026-11-20). No survivor showed a defect; 40 show messages and edge cases no test pins yet, listed there |
 | X5 | A search comparison panel on the test page: linear, binary and `Map` lookup timed on the mock data | mae (D8, plan X5) | WP6 | ✅ | The page's "Search comparison" panel times linear, binary and `Map` lookup on X2's mock data; its logic is tested in `tests/page/search-timing.test.ts` (2026-11-19) |

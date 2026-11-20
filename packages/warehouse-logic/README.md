@@ -28,7 +28,7 @@ Data is stored as records with one key each: `Item`, `Warehouse`, `StockRecord`,
 | `tests/fixtures/` | Mock data the briefing doesn't supply, labelled as mock. `movements.ts` has one movement for each row of the ERD's movement table. |
 | `tests/helpers/briefing.ts` | Reads the sample data out of the briefing file, so tests compare the code with the brief itself. |
 | `scripts/time-search.ts` | The timing run behind `docs/search-research.md`. |
-| `docs/` | The agreed data model (`erd.md`) and one note per source file, linked above. |
+| `docs/` | The agreed data model (`erd.md`), one note per source file, linked above, and the mutation check on cost, scoring and validations (`mutation-check.md`). |
 
 ## Commands
 
