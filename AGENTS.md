@@ -48,7 +48,8 @@ file near its limit, or before reorganising the bank, read `memory-bank/README.m
 ## Session protocol
 
 1. **Start.**
-   - Branch: run `git fetch --prune && git remote set-head origin --auto`. New work: branch from
+   - Branch: run `git fetch --prune`. If `git symbolic-ref -q refs/remotes/origin/HEAD` prints nothing,
+     run `git remote set-head origin --auto`, which the testing kit asks mae about. New work: branch from
      `origin/production` in a clone no other session uses; a Claude thread uses the branch it was given.
      Resumed work: check out its branch and read its work file.
    - Orient: run `python3 scripts/check-memory.py` and read its output (if the script is missing, tell

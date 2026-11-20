@@ -26,10 +26,9 @@ WP1 to WP9 are built, and Milestone 2 is done, waiting for mae's review and its 
 - `pnpm demo` prints each briefing function on the samples, and the test page works from a fresh
   clone: `npx --yes http-server packages/warehouse-logic -p 3000 -c-1`, then `/src/index.html`.
   (2026-11-20)
-- The testing kit (0.4.1) is installed: its files match `.claude/testing-kit/manifest.json` except the
-  hand-edited workflow, rules and guide and three patched scripts (`docs/decisions.md`). Its required
-  check runs both test sets and the package's typecheck; its edit hook protects only tests
-  `production` has. (2026-11-18)
+- The testing kit (0.5.0) is installed: its files match `.claude/testing-kit/manifest.json` except the
+  hand-edited workflow, rules and guide (`docs/decisions.md`). Its required check runs both test sets
+  and the package's typecheck; its hooks protect only tests `production` has. (2026-11-19)
 - `production` is protected: a ruleset requires the testing kit's `all-green` check and, since
   2026-11-18, `checks / suite` before a merge (mae; not checked from a session). (2026-11-18)
 - The `Milestone-1` branch, for grading, points at the end of Milestone 1, the merge of pull request
